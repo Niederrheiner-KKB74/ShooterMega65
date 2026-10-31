@@ -9,18 +9,17 @@
 video_init:
     lda #0
     sta VIC_SPREN
-    lda #$1b                    // legacy registers first (HOTREG recalculates from them) ...
-    sta VIC_CTRL1
-    lda #$08
-    sta VIC_CTRL2
-    lda VIC_D05D                // ... then switch HOTREG off and cancel any pending recalculation
+    lda VIC_D05D                // switch HOTREG off and cancel any pending recalculation;
+                                // every register is then set explicitly (legacy $D011/$D016 untouched)
     and #$7f
     sta VIC_D05D
     sta VIC_D05D
 
     lda #$40                    // FAST, H320, V200, no ATTR, no bitplanes
     sta VIC_D031
-    lda #$04                    // RAM palette, no ROMs, CRAM2K off (keeps CIA1 visible)
+    lda VIC_D030                // RAM palette, CRAM2K off (keeps CIA1 visible),
+    and #%11111110              // ROM banking bits unchanged (restored on exit anyway)
+    ora #%00000100
     sta VIC_D030
     lda VIC_D054                // keep the user's PALEMU setting (bit 5)
     and #%00100000
@@ -132,6 +131,12 @@ dma_replicate:
     sta tmp2
     sty tmp2+1
     stx rep_count
+    ldy #DMA_DST+2              // remember the destination: the job must be reusable on a second RUN
+!:  lda (tmp2),y
+    sta rep_dst-DMA_DST,y
+    dey
+    cpy #DMA_DST-1
+    bne !-
 !loop:
     lda #0
     sta DMA_ADDRBANK
@@ -155,8 +160,15 @@ dma_replicate:
     sta (tmp2),y
     dec rep_count
     bne !loop-
+    ldy #DMA_DST+2
+!:  lda rep_dst-DMA_DST,y
+    sta (tmp2),y
+    dey
+    cpy #DMA_DST-1
+    bne !-
     rts
 rep_count: .byte 0
+rep_dst:   .fill 3, 0
 
 // Show the buffer that was just built (back), then make the other one the back buffer.
 flip:

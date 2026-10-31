@@ -26,12 +26,13 @@ The output is `build/SHOOTER.PRG` and `build/SHOOTER65.D81`. The script checks t
 - **D81**: mount it, then `LOAD "SHOOTER",8` and `RUN` (or `DLOAD "SHOOTER"` / `RUN`).
 - **XEMU**: `xmega65 -prg SHOOTER.PRG`, or the D81 with `-8 SHOOTER65.D81 -autoload`.
 
-The program does not return to BASIC. Use reset to leave.
+Press **X** or **RUN/STOP** to return to BASIC. `RUN` starts the game again.
 
 ## Verification so far
 | Check | Result |
 |---|---|
 | Assembly (KickAss65CE02 5.25), PRG < `$C000`, D81 read-back | ✔ |
+| XEMU exit test: RUN → X → `READY.` → RUN → X → `READY.` | ✔ |
 | XEMU (git master 2026-01, ROM 920395), headless screenshots | ✔ The image builds correctly, scrolling is 0.5 px/frame, the loop is locked to one frame (50 frames ↔ +50 frame counter), joystick movement and firing work, hits register (score counter), RRB overflow 0 |
 | **Real MEGA65** | **open – please test** |
 
@@ -51,6 +52,8 @@ a hardware test before Stage 1 can be declared stable.
    16-bit pointers and the extended height.
 6. Raster time: the red border band should stay small. Note how high it reaches.
 7. Joystick port 2: all 8 directions and fire work.
+8. Exit: X (and RUN/STOP) returns to `READY.` with the normal BASIC colours, the screen readable and the cursor
+   blinking. `RUN` starts the game again correctly, and exiting works again. Also try it once in 80×50 mode.
 
 Please report what you see, ideally with a photo of anything unexpected, before Stage 1 is
 marked `stage1-stable`.

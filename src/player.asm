@@ -172,3 +172,6 @@ player_update_sprites:
     sta VIC_SPR0Y
     sta VIC_SPR1Y
     rts
+
+.align 16
+SPRPTR_TABLE: .fill 16, 0       // 16-bit sprite pointer table (inside the program, not in BASIC's RAM)

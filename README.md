@@ -19,14 +19,17 @@ python3 tools/build.py --kickass /path/to/KickAss65CE02-5.25.jar
 ```
 The output is `build/SHOOTER.PRG` and `build/SHOOTER65.D81` (`LOAD "SHOOTER",8` / `RUN`).
 
+Controls: joystick in port 2 (fire = shoot). Press X or RUN/STOP to go back to BASIC.
+
 ## Documentation
 - [Technical design and roadmap](docs/design.md)
 - [Memory map](docs/memory_map.md)
+- [Artwork specification](docs/artwork_spec.md)
 - [Working rules](CLAUDE.md)
 
 ## Layout
 ```
-src/       engine sources (main, video, scroll, pixie, objects, player, hw, layout)
+src/       engine sources (main, video, scroll, pixie, objects, player, system, hw, layout)
 tools/     build.py, make_assets.py (placeholder graphics), d81.py
 docs/      design, memory map, stage notes
 releases/  tested stage builds (PRG + D81)

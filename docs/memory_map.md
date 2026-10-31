@@ -1,17 +1,17 @@
 # Memory map (Stage 1)
 
-All addresses are 28-bit physical addresses. The program unmaps all ROMs at start (`MAP` all zero, `$01 = $35`,
-`$D030 = $04`), so bank 0 is plain RAM plus I/O at `$D000`. The program never returns to BASIC.
+All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
+I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
+BASIC's screen RAM, colour RAM `$0000–$0FFF` and RAM below `$2000` are never written.
 
 ## Bank 0
 
 | Address | Use |
 |---|---|
-| `$0002–$0053` | zero page variables (see `main.asm`, `pixie.asm`, `objects.asm`, `player.asm`) |
-| `$1F00–$1F0F` | 16-bit sprite pointer table |
+| `$0002–$0053` | zero page variables (see `main.asm`, `pixie.asm`, `objects.asm`, `player.asm`); `$02–$FF` saved at start and restored on exit |
 | `$2001–$2010` | BASIC stub `BANK 0:SYS 8224` |
-| `$2020–$31xx` | code and tables (`code_end` is printed by the build) |
-| `…–$9D5F` | map (21 bytes/row × 512), map colours, tile/pixie glyph staging, sprites, palettes |
+| `$2020–…` | code and tables, incl. the 16-bit sprite pointer table `SPRPTR_TABLE` and the exit save area (zero page, VIC registers, palettes, about 1.2 KB) |
+| `…–$A45F` | map (21 bytes/row × 512), map colours, tile/pixie glyph staging, sprites, palettes |
 | `< $C000` | assembler guard: the PRG must end below `$C000` |
 
 ## Banks 4/5 (chip RAM)
@@ -33,9 +33,9 @@ All addresses are 28-bit physical addresses. The program unmaps all ROMs at star
 
 | Offset | Use |
 |---|---|
-| `$0000–$07FF` | unused (BASIC's colour RAM; not restored on exit) |
-| `$0800–$19ED` | colour buffer A (27×170) |
-| `$2000–$31ED` | colour buffer B (27×170) |
+| `$0000–$0FFF` | BASIC's colour RAM (80×50 needs 4000 bytes), never written |
+| `$1000–$21ED` | colour buffer A (27×170) |
+| `$2400–$35ED` | colour buffer B (27×170) |
 
 ## VIC-IV configuration
 
@@ -53,6 +53,9 @@ All addresses are 28-bit physical addresses. The program unmaps all ROMs at star
 | `$D07B` | 26 | display rows (27 rows fetched, last one under the border) |
 | `$D051` | `$00` | RRB double buffering |
 | `$D070` | `$04` | text palette 0, sprite palette 1 |
+| `$D030` | BASIC value, bit 0 cleared, bit 2 set | RAM palette, CRAM2K off |
+
+All registers above, palette 0 and palette 1 entries 0–31 are saved at start and restored on exit.
 
 ## Palettes
 

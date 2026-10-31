@@ -24,16 +24,14 @@
 
 // Colour RAM (offsets; CPU/DMA see it at $ff80000)
 .const COLRAM       = $ff80000
-.const COLOUR_A     = $0800
-.const COLOUR_B     = $2000
+.const COLOUR_A     = $1000            // $0000-$0FFF stays BASIC's (80x50 uses 4000 bytes)
+.const COLOUR_B     = $2400
 
 .const TILE_CHAR    = TILE_ADDR / 64     // $1000
 .const PIXIE_CHAR   = PIXIE_ADDR / 64    // $1400
 .const SPRITE_PTR0  = SPRITE_ADDR / 64
 .const SPRITE_PTR1  = (SPRITE_ADDR + $100) / 64
 
-// Bank 0
-.const SPRPTR_TABLE = $1f00              // 16-bit sprite pointer table (8 x 2 bytes)
 
 .if (ROW_BYTES * 2 * RING_SLOTS > $3000) .error "ring buffer too large"
 .if (SCREEN_A + ROW_BYTES * BUF_ROWS > SCREEN_B) .error "screen buffer A overlaps B"

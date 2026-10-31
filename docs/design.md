@@ -64,7 +64,7 @@ fall under the right border.
   static "null" row under the bottom border.
 - **Double buffering**: screen A/B (bank 5) and colour A/B (colour RAM). The flip during the
   vertical blank writes `$D060-62`, `$D064-65`, `$D04E` and `$D051`.
-- **Speed**: `SCROLL_SPEED` is 8.8 fixed point, currently 0.5 px/frame (25 px/s). **(decision)**
+- **Speed**: `SCROLL_SPEED` is 8.8 fixed point: 0.5 px/frame (25 px/s), confirmed by the owner on 31.10.2026.
 - Ground objects store screen coordinates and add `scroll_delta` (the whole pixels scrolled
   this frame), so they stay locked to the landscape.
 
@@ -120,9 +120,9 @@ can be recoloured, for example to make an enemy flash white when hit.
   - fixed ground targets: part of the tile map. A target table per level (row, column, hit points, rubble tiles)
     patches the ring rows when the target is destroyed.
   - collectibles (persons, power-ups), and the boss.
-- Player weapons **(decision)**: an upgradable main gun, with a bomb or air-to-ground weapon on the second
-  fire button or the space bar. Many shooters of this kind use separate air and ground weapons
-  (Xevious style). Otherwise every shot hits both air and ground targets.
+- Player weapons (decided 31.10.2026): **one fire button** for an upgradable main gun that hits air and
+  ground targets, plus a **special weapon on the space bar** (implemented in a later stage; the key
+  is already read from the hardware keyboard queue `$D610` and sets `special_req`).
 
 ## 7. Boss
 - The boss is a multi-char pixie object, for example 96×64 px = 6 chars × 8 rows, which is 7 tokens per row
@@ -130,8 +130,8 @@ can be recoloured, for example to make an enemy flash white when hit.
   be destroyed one by one. Big frames may need DMA-based glyph streaming for animation.
 - Scrolling stops (`SCROLL_SPEED = 0`) or loops a short boss-arena section of the map while the boss is alive.
 
-## 8. HUD (decision)
-Fine scrolling moves the whole text area, so a HUD made of plain text chars would scroll too. Options:
+## 8. HUD
+**Decided (31.10.2026): option 1, a score strip at the top of the screen.** Fine scrolling moves the whole text area, so a HUD made of plain text chars would scroll too. The options were:
 1. **A pixie strip at a fixed screen y** (recommended). It is 1–2 rows of 20 glyphs drawn from a small dynamic
    glyph buffer, re-rendered only when the score changes. Its cost is about 42 tokens in 2 rows.
 2. Hardware sprites for the score and lives (sprites 2–7, 16-colour, 16 px wide each).
@@ -172,10 +172,24 @@ Vyper's stage files are not copied wholesale, because they carry their full hist
 | 7 | Sound (SID music + DMA SFX) | HW |
 | 8 | Loader, packed level files, several themed levels, polish | HW |
 
-## 13. Open questions for the owner
-1. Scroll speed (0.5 px/frame now), and whether the speed should change per level or section.
-2. Controls: one fire button only, or a second weapon (bomb) on fire-2 or the keyboard?
-3. HUD: top pixie strip, sprites, or something else (§8)?
-4. Art pipeline: will you draw tiles and sprites (PNG/Aseprite/Tiled), or should placeholders stay
-   generated for now? Converters for PNG → NCM glyphs and sprites are planned for Stage 3.
-5. Number of levels and themes (for example countryside, desert, coast/sea, city, fortress).
+## 13. Leaving the game
+**X** or **RUN/STOP** returns to BASIC (`system.asm`), following Vyper's exit strategy: the VIC-IV
+registers and palettes are saved at start and written back with HOTREG off, and HOTREG is restored last.
+To make this possible, the game leaves the memory map, the stack, the interrupt sources (only `SEI`),
+BASIC's screen RAM and colour RAM `$0000–$0FFF` untouched. On exit it restores zero page, the base page and the stack
+pointer and returns with `RTS` to the SYS caller. Every routine with self-modifying DMA lists resets them,
+so `RUN` works again after an exit.
+
+## 14. Decisions log
+| Date | Decision |
+|---|---|
+| 31.10.2026 | Scroll speed 0.5 px/frame |
+| 31.10.2026 | One fire button; special weapon on the space bar (later stage) |
+| 31.10.2026 | Score display at the top of the screen (pixie strip, §8) |
+| 31.10.2026 | Artwork made by the owner (with ChatGPT), following `docs/artwork_spec.md` |
+| 31.10.2026 | Exit to BASIC with X or RUN/STOP, as in Vyper |
+
+## 15. Open questions for the owner
+1. Should the scroll speed change per level or section, for example a faster section before the boss?
+2. What should the special weapon be (screen bomb, laser, shield …), and how many uses should there be per life or level?
+3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?

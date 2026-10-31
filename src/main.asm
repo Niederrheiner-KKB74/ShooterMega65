@@ -3,6 +3,7 @@
 //   H320/V200, 16-colour (NCM) tiles, vertically scrolling landscape,
 //   RRB pixies for all moving objects, hardware sprites for the player.
 // Build: python3 tools/build.py   (KickAssembler 65CE02 5.25, see README)
+// Keys:  joystick port 2, X or RUN/STOP = back to BASIC
 // ============================================================================
 .cpu _45gs02
 
@@ -49,37 +50,20 @@ basic_end:
 // ---------------------------------------------------------------- entry
 start:
     sei
-    lda #$35
-    sta $01
-    lda #0                             // unmap everything: plain bank 0 RAM + I/O
-    tax
-    tay
-    taz
-    map
-    eom
-    tab                                // base page = $00xx
     lda #$47                           // VIC-IV I/O personality
     sta VIC_KEY
     lda #$53
     sta VIC_KEY
-    lda #65                            // 40.5 MHz
-    sta $00
-    lda #$7f                           // no CIA / VIC interrupts, we poll the raster
-    sta CIA1_ICR
-    sta CIA2_ICR
-    lda CIA1_ICR
-    lda CIA2_ICR
+    jsr system_save                    // everything needed to return to BASIC (also sets B = 0)
+    // The memory map, the stack and the interrupt sources stay as BASIC left them;
+    // SEI keeps the KERNAL interrupt handler from running while the game owns the machine.
+    // Code and data stay below $C000, which is RAM under the SYS memory map (as in Vyper).
     lda #0
-    sta VIC_IRQMASK
-    lda #$ff
-    sta VIC_IRQ
-    lda #0
-    sta CIA1_DDRA                      // port A as input: joystick 2 only
+    sta CIA1_DDRA                      // port A as input: joystick 2 only (restored on exit)
     cld
-    ldx #$ff
-    txs
 
     lda #0
+    sta special_req
     sta frame_lo
     sta frame_hi
     jsr video_init
@@ -107,6 +91,7 @@ main_loop:
     bne !+
     inc frame_hi
 !:
+    jsr read_keys                      // X or RUN/STOP: exit to BASIC; space: special weapon request
     jsr read_joystick
     jsr player_move
     jsr scroll_advance
@@ -157,6 +142,7 @@ random:
 #import "pixie.asm"
 #import "objects.asm"
 #import "player.asm"
+#import "system.asm"
 
 // ---------------------------------------------------------------- data
 .align $100
