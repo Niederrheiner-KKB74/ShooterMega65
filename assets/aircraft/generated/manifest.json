@@ -1,0 +1,230 @@
+{
+  "schema": 1,
+  "provenance": "New manually specified pixel designs by Codex, 2026-10-31. Original generated sheet unavailable; NOT traced or extracted from it. Based only on the requested aircraft descriptions.",
+  "hardwareTested": false,
+  "transparentIndex": 0,
+  "palette": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      23,
+      38,
+      56
+    ],
+    [
+      52,
+      72,
+      93
+    ],
+    [
+      99,
+      125,
+      146
+    ],
+    [
+      167,
+      191,
+      203
+    ],
+    [
+      237,
+      245,
+      237
+    ],
+    [
+      22,
+      77,
+      152
+    ],
+    [
+      36,
+      140,
+      218
+    ],
+    [
+      101,
+      217,
+      244
+    ],
+    [
+      89,
+      31,
+      54
+    ],
+    [
+      170,
+      51,
+      71
+    ],
+    [
+      237,
+      101,
+      88
+    ],
+    [
+      73,
+      62,
+      38
+    ],
+    [
+      125,
+      132,
+      59
+    ],
+    [
+      190,
+      203,
+      100
+    ],
+    [
+      0,
+      0,
+      0
+    ]
+  ],
+  "sprites": [
+    {
+      "id": "player",
+      "width": 24,
+      "height": 24,
+      "facing": "up",
+      "formats": {
+        "fcm": {
+          "file": "player.fcm.bin",
+          "tileWidth": 8,
+          "tileHeight": 8,
+          "columns": 3,
+          "rows": 3,
+          "storedWidth": 24,
+          "bytes": 576,
+          "sha256": "b4baf9227cfa682881d0290dfc84f560ea872735a01ce9973fff48ff7b9ab86b"
+        },
+        "ncm": {
+          "file": "player.ncm.bin",
+          "tileWidth": 16,
+          "tileHeight": 8,
+          "columns": 2,
+          "rows": 3,
+          "storedWidth": 32,
+          "bytes": 384,
+          "sha256": "5c19ca71f7cd7d9e7074f32c049770f58915f667299dac54e05e8e9992b0bc9c"
+        }
+      }
+    },
+    {
+      "id": "enemy_scout",
+      "width": 16,
+      "height": 16,
+      "facing": "down",
+      "formats": {
+        "fcm": {
+          "file": "enemy_scout.fcm.bin",
+          "tileWidth": 8,
+          "tileHeight": 8,
+          "columns": 2,
+          "rows": 2,
+          "storedWidth": 16,
+          "bytes": 256,
+          "sha256": "63e5254571060a4d44ec5b21a07bfc675e6adcca5b6049b11f8a649894ce8e6a"
+        },
+        "ncm": {
+          "file": "enemy_scout.ncm.bin",
+          "tileWidth": 16,
+          "tileHeight": 8,
+          "columns": 1,
+          "rows": 2,
+          "storedWidth": 16,
+          "bytes": 128,
+          "sha256": "8b49d2da517d9a76edb3dfccb73741c24237a9045afd76ea4aa49277ba2de025"
+        }
+      }
+    },
+    {
+      "id": "enemy_interceptor",
+      "width": 16,
+      "height": 16,
+      "facing": "down",
+      "formats": {
+        "fcm": {
+          "file": "enemy_interceptor.fcm.bin",
+          "tileWidth": 8,
+          "tileHeight": 8,
+          "columns": 2,
+          "rows": 2,
+          "storedWidth": 16,
+          "bytes": 256,
+          "sha256": "d28bee1ac93a39cb2e43c6ac11053b9147507c8180f2263f282fef18017e222e"
+        },
+        "ncm": {
+          "file": "enemy_interceptor.ncm.bin",
+          "tileWidth": 16,
+          "tileHeight": 8,
+          "columns": 1,
+          "rows": 2,
+          "storedWidth": 16,
+          "bytes": 128,
+          "sha256": "69a27bea24e5bff0a163ab347dca7d32b748c0348b639a46a32979cdc5038a77"
+        }
+      }
+    },
+    {
+      "id": "enemy_bomber",
+      "width": 24,
+      "height": 24,
+      "facing": "down",
+      "formats": {
+        "fcm": {
+          "file": "enemy_bomber.fcm.bin",
+          "tileWidth": 8,
+          "tileHeight": 8,
+          "columns": 3,
+          "rows": 3,
+          "storedWidth": 24,
+          "bytes": 576,
+          "sha256": "1abcc045912f6ecc7b3a19f54a1f5e87569dd27801d5bf0cea602862917b7040"
+        },
+        "ncm": {
+          "file": "enemy_bomber.ncm.bin",
+          "tileWidth": 16,
+          "tileHeight": 8,
+          "columns": 2,
+          "rows": 3,
+          "storedWidth": 32,
+          "bytes": 384,
+          "sha256": "0383c827076396e30ebbbcb640a53823bfc618d364857f0c971f2313e2a57723"
+        }
+      }
+    },
+    {
+      "id": "enemy_heavy",
+      "width": 24,
+      "height": 24,
+      "facing": "down",
+      "formats": {
+        "fcm": {
+          "file": "enemy_heavy.fcm.bin",
+          "tileWidth": 8,
+          "tileHeight": 8,
+          "columns": 3,
+          "rows": 3,
+          "storedWidth": 24,
+          "bytes": 576,
+          "sha256": "60b6806ceb47bbb4e288ffd26b0f80bdbe78a4d2efc8fb51e0b7b48fae349a56"
+        },
+        "ncm": {
+          "file": "enemy_heavy.ncm.bin",
+          "tileWidth": 16,
+          "tileHeight": 8,
+          "columns": 2,
+          "rows": 3,
+          "storedWidth": 32,
+          "bytes": 384,
+          "sha256": "53011ad7680a0348dab69b98fd34fd8b15a54115df9cf513b7c274f67d14231c"
+        }
+      }
+    }
+  ]
+}
