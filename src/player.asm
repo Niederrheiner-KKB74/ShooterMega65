@@ -43,6 +43,8 @@ player_init:
     sta VIC_SPR0COL             // in 16-colour mode: transparent colour index
     sta VIC_SPR1COL
     sta pl_cd
+    sta pl_frame
+    sta pl_drawn_frame
     lda #<(160 - PL_W/2)
     sta pl_x
     lda #>(160 - PL_W/2)
@@ -55,6 +57,20 @@ player_init:
     rts
 
 player_move:
+    lda #0
+    sta pl_frame
+    lda joy
+    and #(JOY_LEFT | JOY_RIGHT)
+    cmp #JOY_LEFT
+    bne !right_art+
+    inc pl_frame
+    bne !art_done+
+!right_art:
+    cmp #JOY_RIGHT
+    bne !art_done+
+    lda #2
+    sta pl_frame
+!art_done:
     lda joy
     and #JOY_UP
     beq !+
@@ -171,7 +187,25 @@ player_update_sprites:
     adc #SPR_YOFS
     sta VIC_SPR0Y
     sta VIC_SPR1Y
+    .if (PLAYER_FRAMES > 1) {
+        // Only called in vblank, or with sprites disabled during init.
+        lda pl_frame
+        cmp pl_drawn_frame
+        beq !art_done+
+        sta pl_drawn_frame
+        asl                       // 512 bytes per pair, bank-0 source
+        clc
+        adc #>sprite_data
+        sta job_player_frame+DMA_SRC+1
+        RunDma(job_player_frame)
+    !art_done:
+    }
     rts
+
+pl_frame:       .byte 0            // 0 normal, 1 left, 2 right
+pl_drawn_frame: .byte 0
+job_player_frame: DmaJob(DMA_CMD_COPY, sprite_data, SPRITE_ADDR, $200)
 
 .align 16
 SPRPTR_TABLE: .fill 16, 0       // 16-bit sprite pointer table (inside the program, not in BASIC's RAM)
+

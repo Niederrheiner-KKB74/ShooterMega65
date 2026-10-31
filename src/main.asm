@@ -159,8 +159,14 @@ pixie_data:   .import binary "../build/gen/pixies.bin"
 pixie_end:
 .align $100
 sprite_data:  .import binary "../build/gen/sprite.bin"
+sprite_end:
 palette_data: .import binary "../build/gen/palette.bin"
 sprpal_data:  .import binary "../build/gen/sprpal.bin"
 prg_end:
 .errorif (prg_end > $c000), "PRG too large for bank 0 below $c000"
+.errorif ((sprite_data & $ff) != 0), "player DMA frames must be page aligned"
+.errorif (sprite_end - sprite_data != PLAYER_FRAMES * $200), "player frame size mismatch"
+.errorif (pixie_end - pixie_data > $4000), "pixie data overlaps screen buffer A"
+.errorif (PIXIE_GLYPHS > 256), "pixie frame bases must fit in a byte"
 .print "code ends at $" + toHexString(code_end) + ", PRG ends at $" + toHexString(prg_end)
+

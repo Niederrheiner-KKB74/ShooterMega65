@@ -39,6 +39,8 @@ obj_fr:   .fill MAXOBJ, 0
 obj_t:    .fill MAXOBJ, 0
 obj_a:    .fill MAXOBJ, 0
 obj_b:    .fill MAXOBJ, 0
+obj_airbase: .fill MAXOBJ, 0    // first frame of the current air animation
+wave_kind: .byte 0             // fighter, bomber, helicopter, armoured plane
 
 objects_init:
     ldx #MAXOBJ-1
@@ -48,6 +50,7 @@ objects_init:
     bpl !-
     sta score
     sta score+1
+    sta wave_kind
     lda #40
     sta wave_timer
     lda #20
@@ -134,12 +137,18 @@ spawn_update:
     asl
     asl
     sta obj_b,x                 // phase
-    lda #FR_ENEMY
+    ldy wave_kind
+    lda air_frame_first,y
     sta obj_fr,x
+    sta obj_airbase,x
     inc wave_n
     lda wave_n
     cmp #6
     bne !w-
+    inc wave_kind
+    lda wave_kind
+    and #3
+    sta wave_kind
 !no_wave:
     dec tank_timer
     bne !no_tank+
@@ -284,6 +293,18 @@ move_down:
 
 upd_air:
     inc obj_t,x
+    lda obj_t,x
+    and #7
+    bne !anim_done+
+    inc obj_fr,x
+    lda obj_airbase,x
+    clc
+    adc #AIR_ANIM_FRAMES
+    cmp obj_fr,x
+    bne !anim_done+
+    lda obj_airbase,x
+    sta obj_fr,x
+!anim_done:
     lda #1
     jsr move_down
     lda obj_type,x
@@ -439,41 +460,97 @@ collide_shots:
     stx cs_s
     lda obj_type,x
     cmp #T_PSHOT
-    bne !nexts+
+    beq !+
+    jmp !nexts+
+!:
     ldy #GROUND_FIRST
 !en:
     lda obj_type,y
     cmp #T_AIR
     beq !test+
     cmp #T_TANK
-    bne !nexte+
+    beq !test+
+    jmp !nexte+
 !test:
-    // |shot x - enemy x| < 10
-    sec
+    // Compare shot centre (x+8,y+4) to the visible target rectangle.
+    // NCM padding on 24px targets does not enlarge the hitbox.
+    sty cs_e
+    lda obj_fr,y
+    tay
+    lda frame_hit_cx,y
+    sta hit_centre
+    lda frame_hit_halfw,y
+    clc
+    adc #2
+    sta hit_limit
+    ldy cs_e
+    clc
     lda obj_xl,x
-    sbc obj_xl,y
+    adc #8
     sta tmp
     lda obj_xh,x
-    sbc obj_xh,y
-    jsr abs_lt10
-    bcs !nexte+
-    // |shot y - enemy y - 4| < 10
-    sec
-    lda obj_yl,x
-    sbc obj_yl,y
-    sta tmp
-    lda obj_yh,x
-    sbc obj_yh,y
+    adc #0
     sta tmp+1
     sec
     lda tmp
-    sbc #4
+    sbc obj_xl,y
     sta tmp
     lda tmp+1
-    sbc #0
-    jsr abs_lt10
-    bcs !nexte+
+    sbc obj_xh,y
+    sta tmp+1
+    jsr hit_axis
+    bcc !+
+    jmp !nexte+
+!:
+    lda obj_fr,y
+    tay
+    lda frame_hit_cy,y
+    sta hit_centre
+    lda frame_hit_halfh,y
+    clc
+    adc #2
+    sta hit_limit
+    ldy cs_e
+    clc
+    lda obj_yl,x
+    adc #4
+    sta tmp
+    lda obj_yh,x
+    adc #0
+    sta tmp+1
+    sec
+    lda tmp
+    sbc obj_yl,y
+    sta tmp
+    lda tmp+1
+    sbc obj_yh,y
+    sta tmp+1
+    jsr hit_axis
+    bcc !+
+    jmp !nexte+
+!:
     // hit: enemy explodes, shot disappears
+    // Keep the existing 16px explosion centred on a 24px/32px canvas target.
+    ldx obj_fr,y
+    lda frame_hit_cx,x
+    sec
+    sbc #8
+    clc
+    adc obj_xl,y
+    sta obj_xl,y
+    lda obj_xh,y
+    adc #0
+    sta obj_xh,y
+    lda frame_hit_cy,x
+    sec
+    sbc #8
+    clc
+    adc obj_yl,y
+    sta obj_yl,y
+    lda obj_yh,y
+    adc #0
+    sta obj_yh,y
+    ldx cs_s
     lda obj_type,y
     cmp #T_TANK
     lda #0
@@ -494,32 +571,47 @@ collide_shots:
 !nexte:
     iny
     cpy #AIR_END
-    bne !en-
+    beq !nexts+
+    jmp !en-
 !nexts:
     ldx cs_s
     inx
     cpx #SHOT_END
-    bne !shot-
+    beq !done+
+    jmp !shot-
+!done:
     rts
 
-// A = high byte, tmp = low byte of a signed difference. Carry clear if |d| < 10.
-abs_lt10:
-    cmp #0
-    beq !pos+
-    cmp #$ff
+// tmp = shot centre - target origin. Carry clear if |tmp-centre| < limit.
+// X/Y (the object indices) survive this helper.
+hit_axis:
+    sec
+    lda tmp
+    sbc hit_centre
+    sta tmp
+    lda tmp+1
+    sbc #0
+    sta tmp+1
+    bpl !positive+
+    sec
+    lda #0
+    sbc tmp
+    sta tmp
+    lda #0
+    sbc tmp+1
+    sta tmp+1
+!positive:
+    lda tmp+1
     bne !no+
     lda tmp
-    cmp #<-9
-    bcc !no+
-    clc
-    rts
-!pos:
-    lda tmp
-    cmp #10
+    cmp hit_limit
     rts
 !no:
     sec
     rts
+
+hit_centre: .byte 0
+hit_limit:  .byte 0
 
 // ---------------------------------------------------------------- drawing
 objects_draw:
@@ -535,7 +627,8 @@ objects_draw:
     sta px_y
     lda obj_yh,x
     sta px_y+1
-    lda #PAL_OBJ
+    ldy obj_fr,x
+    lda frame_pal,y
     sta px_pal
     lda obj_fr,x
     jsr pixie_draw
@@ -545,3 +638,4 @@ objects_draw:
     cpx #MAXOBJ
     bne !-
     rts
+

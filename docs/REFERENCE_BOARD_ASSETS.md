@@ -1,5 +1,11 @@
 # PNG-Referenzboard: konvertierte Assets und Übergabe an Claude
 
+**Integrationsstand dieses Branches:** Player und die vier Luftgegner sind jetzt
+über `tools/integrate_aircraft.py` in den normalen Build eingebunden. Die unten
+beschriebene ursprüngliche Asset-Lieferung bleibt als Herkunftsdokumentation
+erhalten. Aktuelle Nutzung, Tests und offene Hardwareprüfung:
+`docs/stage1-aircraft.md`. Landschaft/Projektile/Explosionen bleiben Platzhalter.
+
 Stand 31.10.2026. Diese Lieferung ersetzt die frei neu entworfenen Platzhalter
 aus PR #1 durch **aus dem bereitgestellten PNG abgeleitete** Daten. Sie wird
 separat auf Basis von `stage1-engine-prototype` angeboten. Keine bestehende

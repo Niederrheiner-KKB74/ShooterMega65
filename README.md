@@ -10,7 +10,10 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
 ## Status
 **Stage 1 – engine prototype** (branch `stage1-engine-prototype`): scrolling, double-buffered
 RRB, pixies, player sprite and demo enemies with placeholder graphics.
-Smoke-tested in XEMU; **waiting for the real-hardware test**. See [docs/stage1.md](docs/stage1.md).
+The original placeholder build was smoke-tested in XEMU; **waiting for the real-hardware test**.
+This branch now integrates the reference-board player and four animated air enemies.
+That artwork build is assembled and data-tested; its emulator and hardware checks are still open.
+See [docs/stage1-aircraft.md](docs/stage1-aircraft.md).
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.
@@ -18,6 +21,8 @@ Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`
 python3 tools/build.py --kickass /path/to/KickAss65CE02-5.25.jar
 ```
 The output is `build/SHOOTER.PRG` and `build/SHOOTER65.D81` (`LOAD "SHOOTER",8` / `RUN`).
+The normal build selects the new aircraft. `--placeholder-art` retains the old artwork
+for comparison. `python3 tools/check_aircraft_integration.py` checks the normal build.
 
 Controls: joystick in port 2 (fire = shoot). Press X or RUN/STOP to go back to BASIC.
 
@@ -25,6 +30,7 @@ Controls: joystick in port 2 (fire = shoot). Press X or RUN/STOP to go back to B
 - [Technical design and roadmap](docs/design.md)
 - [Memory map](docs/memory_map.md)
 - [Artwork specification](docs/artwork_spec.md)
+- [Aircraft integration, build evidence and hardware checklist](docs/stage1-aircraft.md)
 - [Working rules](CLAUDE.md)
 
 ## Layout
@@ -34,3 +40,4 @@ tools/     build.py, make_assets.py (placeholder graphics), d81.py
 docs/      design, memory map, stage notes
 releases/  tested stage builds (PRG + D81)
 ```
+

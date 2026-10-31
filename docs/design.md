@@ -1,6 +1,8 @@
 # ShooterMega65 – Technical Design
 
-Status: draft for Stage 1 (31.10.2026). Items marked **(decision)** need the
+Status: Stage 1 with reference-aircraft integration (31.10.2026); aircraft build
+assembled and data-tested, emulator/hardware confirmation still open.
+Items marked **(decision)** need the
 project owner's confirmation. Items marked **(HW)** have to be checked on real
 MEGA65 hardware, because XEMU is not authoritative for them (see Vyper rule 19).
 
@@ -101,10 +103,27 @@ Slot ranges define the draw order: ground objects 0–9, air objects 10–29, sh
 Later fragments are drawn on top. Each object passes its own palette byte, so the same glyphs
 can be recoloured, for example to make an enemy flash white when hit.
 
+The current emitter obtains the palette from `frame_pal[obj_fr]`: bank 2 for
+the original tank/shots/explosions, banks 3–6 for the four air-enemy types.
+Waves cycle fighter → bomber → helicopter → armoured plane. Air enemies keep
+their animation base in `obj_airbase` and advance one of three frames every
+eight ticks. The original sine paths, firing and wave size remain unchanged.
+Frames are contiguous within a type. `--placeholder-art` emits one-frame
+animations and four aliases for the original enemy, using the same code path.
+
+Air hitboxes use visible 16×16 or 24×24 bounds, centred in their 16px/32px NCM
+canvases, with the existing two-pixel shot allowance. The 16px explosion graphic
+is positioned at the target centre. Explosion artwork and its four-frame timing
+are unchanged. See `docs/stage1-aircraft.md` for validation and remaining tests.
+
 ## 5. Hardware sprites
-- Sprites 0+1: the player, 16-colour, 16×24 each, 16-bit sprite pointers (table at `$1F00`,
+- Sprites 0+1: the player, 16-colour, 16×24 each, 16-bit sprite pointers (16-byte-aligned table in bank 0,
   data at `$5F000`), sprite palette = palette set 1 (`$D070 = $04`). In 16-colour mode the
   sprite colour register holds the *transparent* index (0). **(HW)**
+- The 24×24 reference-board player is centred in its existing 32×24 canvas.
+  Three 512-byte pairs (normal/left/right) are staged in bank 0; a change of
+  horizontal input copies one pair to the unchanged `$5F000` region in vblank.
+  Initial asset DMA and `player_init` reset the normal frame on every RUN.
 - Sprites 2–7 are free. Candidates **(decision)**: the player's shadow, option drones, a HUD part, or boss turrets
   that must sit above everything.
 
@@ -193,3 +212,4 @@ so `RUN` works again after an exit.
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 2. What should the special weapon be (screen bomb, laser, shield …), and how many uses should there be per life or level?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
+
