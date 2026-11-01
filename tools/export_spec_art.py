@@ -8,6 +8,7 @@ import json
 import math
 from pathlib import Path
 from PIL import Image, ImageDraw, __version__
+import aircraft_animation
 
 ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/'assets/art/spec-v2'
@@ -116,6 +117,7 @@ def main():
             data.append(cache[key])
         p.putdata(data);return p
     for g in groups:g['frames']=[index(p,palettes[g['palette']]) for p in g['frames']]
+    aircraft_fixes,animation_metadata=aircraft_animation.apply(groups,palettes,BASE)
     palettes['fixed_targets']=[[0,0,0],[18,25,32],[39,45,47],[69,77,76],[103,112,106],[153,164,145],[213,219,181],[173,67,32],[245,157,51],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
     palettes['fixed_targets'][9:12]=[[36,62,28],[58,85,37],[90,116,54]]
     for name,p in draw_targets().items():groups.append(dict(id=name,kind='fixed_target',size=list(p.size),palette='fixed_targets',frames=[p],provenance='new code-native pixel design by Codex; upper-left bevel lighting; not extracted from poster'))
@@ -162,6 +164,11 @@ def main():
     (OUT/'frames.indices.bin').write_bytes(raw);(OUT/'frames.fcm.bin').write_bytes(fcm);(OUT/'frames.ncm.bin').write_bytes(ncmdata)
     (OUT/'rrb-pixies.bin').write_bytes(rrb);(OUT/'player.sprite.bin').write_bytes(player)
     manifest['rrb_frames']=rrb_frames
+    manifest['animations']=animation_metadata
+    for name,data in aircraft_fixes.items():
+        data['mask'].save(OUT/('animation-mask-'+name+'.png'))
+        anim=[rgba(data['frames'][i],data['palette']).resize((data['frames'][i].width*6,data['frames'][i].height*6),Image.Resampling.NEAREST) for i in range(3)]
+        anim[0].save(OUT/('animated-'+name+'.webp'),save_all=True,append_images=anim[1:],duration=100,loop=0,lossless=True,background=(0,0,0,0))
     manifest['runtime_budget']={'all_rrb_glyphs':len(rrb)//64,'stage1_limit':256,'all_frames_fit_stage1':len(rrb)<=16384,'automatic_integration':False}
     (OUT/'indexed-source.json').write_text(json.dumps(indexed,indent=2)+'\n')
     rgbdata=bytearray();regs=bytearray();manifest['palette_offsets']={}

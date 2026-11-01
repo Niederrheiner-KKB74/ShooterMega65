@@ -1,0 +1,239 @@
+{
+  "schema": 1,
+  "designs": [
+    {
+      "id": "capsule_S",
+      "label": "S",
+      "size": [
+        16,
+        16
+      ],
+      "body_box": [
+        2,
+        1,
+        13,
+        14
+      ],
+      "glyph_scale": 1,
+      "indices_offset": 0,
+      "ncm_offset": 0,
+      "fcm_offset": 0,
+      "rrb_base": 1,
+      "palette_byte": 207,
+      "glyph_origin": [
+        5,
+        4
+      ]
+    },
+    {
+      "id": "capsule_dollar_small",
+      "label": "$",
+      "size": [
+        16,
+        16
+      ],
+      "body_box": [
+        3,
+        2,
+        12,
+        13
+      ],
+      "glyph_scale": 1,
+      "indices_offset": 256,
+      "ncm_offset": 128,
+      "fcm_offset": 256,
+      "rrb_base": 4,
+      "palette_byte": 207,
+      "glyph_origin": [
+        5,
+        3
+      ]
+    },
+    {
+      "id": "capsule_dollar_medium",
+      "label": "$",
+      "size": [
+        16,
+        24
+      ],
+      "body_box": [
+        1,
+        2,
+        14,
+        21
+      ],
+      "glyph_scale": 1,
+      "indices_offset": 512,
+      "ncm_offset": 256,
+      "fcm_offset": 512,
+      "rrb_base": 7,
+      "palette_byte": 207,
+      "glyph_origin": [
+        5,
+        7
+      ]
+    },
+    {
+      "id": "capsule_dollar_large",
+      "label": "$",
+      "size": [
+        32,
+        32
+      ],
+      "body_box": [
+        4,
+        2,
+        27,
+        29
+      ],
+      "glyph_scale": 2,
+      "indices_offset": 896,
+      "ncm_offset": 448,
+      "fcm_offset": 896,
+      "rrb_base": 11,
+      "palette_byte": 207,
+      "glyph_origin": [
+        11,
+        7
+      ]
+    }
+  ],
+  "palette": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      54,
+      82,
+      111
+    ],
+    [
+      221,
+      239,
+      247
+    ],
+    [
+      255,
+      165,
+      50
+    ],
+    [
+      14,
+      18,
+      30
+    ],
+    [
+      150,
+      160,
+      178
+    ],
+    [
+      60,
+      205,
+      90
+    ],
+    [
+      245,
+      215,
+      40
+    ],
+    [
+      230,
+      50,
+      40
+    ],
+    [
+      36,
+      42,
+      58
+    ],
+    [
+      160,
+      245,
+      175
+    ],
+    [
+      20,
+      120,
+      55
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ]
+  ],
+  "shared_palette": "Stage 2 HUD/bonus bank 12, $cf; exact RGB match",
+  "provenance": "New native pixel capsule designs by Codex, with explicit S and dollar-sign glyphs.",
+  "integrated": false,
+  "hardware_tested": false,
+  "emulator_tested": false,
+  "rrb_glyphs": 21,
+  "files": {
+    "capsule_dollar_large.png": {
+      "bytes": 265,
+      "sha256": "bbc5514226f8a3f8803737d3cf800f4b86cbd8317efbfa0c4c1058b3cc9ebb92"
+    },
+    "capsule_dollar_medium.png": {
+      "bytes": 239,
+      "sha256": "3c64f2fe95b2a2f11fc5af63eb8add53ada46a59945c5072dcb3562aa76a2dca"
+    },
+    "capsule_dollar_small.png": {
+      "bytes": 195,
+      "sha256": "99ba188d518d137d8f0c285583773095831346807997fdcc345e66101cb1efdc"
+    },
+    "capsule_S.png": {
+      "bytes": 204,
+      "sha256": "5c7036adda7f26969e10b580f5491c2f5195b2537b0f18912386f250ca3a5ff2"
+    },
+    "capsules.fcm.bin": {
+      "bytes": 1920,
+      "sha256": "977b36e078ca3b26ebe047b6f76afedc286979ff86abe884690858358ea84734"
+    },
+    "capsules.indices.bin": {
+      "bytes": 1920,
+      "sha256": "02586a87d6424b7010471b631653fee52fa0f2dd32f0d15c3bc2035f51109d4c"
+    },
+    "capsules.ncm.bin": {
+      "bytes": 960,
+      "sha256": "684dea58bad79ba746d77f0bb365e1b73a61f3ee70a29da84158a38d20edcb6d"
+    },
+    "capsules.rrb.bin": {
+      "bytes": 1344,
+      "sha256": "b4d0e617fd1530cc893ab3722cdebb01ab213b71c0dcdf499eec40b65137cafd"
+    },
+    "indexed-source.json": {
+      "bytes": 5219,
+      "sha256": "e65d79b23fac6930257466e99f89c4d3c675f9a29a9f384d5d87d273aadd7dcc"
+    },
+    "palette.palregs.bin": {
+      "bytes": 48,
+      "sha256": "630d3570aaab734d8f068562552a9af477fbec6552d78a4e9037cb049b5d7866"
+    },
+    "palette.rgb": {
+      "bytes": 48,
+      "sha256": "88838ac6bed0b1cdb40c339fbca087f13e71a2427e7988de14064118f9a269d4"
+    },
+    "preview.png": {
+      "bytes": 4773,
+      "sha256": "a038df7cfc4ab86641826839696d77f4cf934a0d61126736fe47d843165252f7"
+    }
+  }
+}
