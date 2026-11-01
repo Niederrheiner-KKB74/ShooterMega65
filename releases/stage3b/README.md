@@ -6,4 +6,4 @@ Rebuild from the sources of the commit that added this folder (branch `stage3`):
 ```
 python3 tools/build.py --kickass /path/to/KickAss65CE02-5.25.jar
 ```
-Notes and hardware checklist: `docs/stage3.md` (Stage 3b section). Status: XEMU-tested, hardware test pending.
+Notes and hardware checklist: `docs/stage3.md` (Stage 3b section). Status: confirmed on real hardware by the owner (01.11.2026), tag `stage3b-stable`.

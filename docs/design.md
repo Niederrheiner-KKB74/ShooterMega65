@@ -269,6 +269,7 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Levels written as JSON text so ChatGPT can create them; shops are an overlay over the game screen; a level lasts about 4 minutes |
 | 01.11.2026 | Coastal-base level and new shield/coin capsules (PR #8) adopted; coastal level is the default |
 | 01.11.2026 | Shop icons (PR #9) adopted for SHOT II–IV, MISSILE, SHIELD, BOMB; tags `stage1-stable`, `stage1-aircraft-stable`, `stage2-stable`, `stage3a-stable` set by the owner |
+| 01.11.2026 | Stage 3b (shop) confirmed on hardware |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)

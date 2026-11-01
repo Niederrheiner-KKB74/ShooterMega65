@@ -13,10 +13,11 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
 - **Stage 2** (branch `stage2`): artwork v2 and animated tanks, HUD with score, lives, credits and shield bar,
   shield/damage, three lives, capsules. Confirmed on real hardware (01.11.2026), `stage2-stable`.
 - **Stage 3a** (branch `stage3`): capsule and weapon rules; levels as JSON files, converted into level files
-  on the D81 (map, formations, flight paths, ground units). XEMU-tested, hardware test pending.
+  on the D81 (map, formations, flight paths, ground units). Confirmed on real hardware (01.11.2026), `stage3a-stable`.
   See [docs/stage3.md](docs/stage3.md), level format for ChatGPT: [docs/level_json.md](docs/level_json.md).
 - **Stage 3b** (branch `stage3`): shop overlay (weapon levels, missile, shield, bomb, extra life), HUD counters
-  for bombs and invulnerability, coastal-base level (PR #8) as the default. XEMU-tested, hardware test pending.
+  for bombs and invulnerability, coastal-base level (PR #8) as the default, shop icons (PR #9).
+  Confirmed on real hardware (01.11.2026), `stage3b-stable`.
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.

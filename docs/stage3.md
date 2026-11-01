@@ -80,7 +80,7 @@ Release files are in `releases/stage3b/`. Design details: `docs/design.md` §15.
 | Assembly, D81 with `SHOOTER`, `SHOP`, `L1GFX`, `L1DAT` read back | ✔ |
 | XEMU, test level with a shop at row 20 and 999 credits: message, skip with fire, grid, dimming, cursor moves, YES/NO dialog, buying all items, HUD counters, credits, EXIT back into the game | ✔ |
 | XEMU, release build: the mid-level shop of the coastal level opens after about 2 minutes (no credits: everything dimmed, cursor on EXIT) | ✔ |
-| **Real MEGA65** | **open – please test** |
+| Real MEGA65 | ✔ all checklist items confirmed by the owner (01.11.2026), `stage3b-stable` |
 
 ## Hardware test checklist
 1. Start from the D81. The coastal level appears (water on the left, then forest).
