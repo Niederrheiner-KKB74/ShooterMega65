@@ -55,9 +55,11 @@ Wiederholungen lassen sich kompakt schreiben:
 ]
 ```
 
-Grenzen: höchstens **256 verschiedene Zeilen** pro Level (gleiche Zeilen werden automatisch nur einmal
-gespeichert). Ein Level kann beliebig lang sein, solange `LnDAT` unter 16 KB bleibt (etwa 650 verschiedene Zeilen
-oder mehrere tausend Wiederholungen). Für schöne Übergänge (Küste, Straße) müssen benachbarte Tiles
+Grenzen:
+- höchstens **256 verschiedene Zeilen** pro Level. Gleiche Zeilen werden automatisch nur einmal gespeichert.
+- die Datei `LnDAT` darf höchstens **16 KB** groß sein. Jede verschiedene Zeile kostet 21 Byte, jede Kartenzeile
+  1 Byte, jedes Ereignis 8 Byte. 256 verschiedene Zeilen belegen also 5,4 KB, der Rest reicht für mehrere tausend
+  Kartenzeilen. Durch wiederverwendete Zeilen dürfen Level deutlich länger als 256 Zeilen sein. Für schöne Übergänge (Küste, Straße) müssen benachbarte Tiles
 zueinander passen. Die Vorschau zeigt sofort, ob es stimmt.
 
 ### `paths` – Flugbahnen

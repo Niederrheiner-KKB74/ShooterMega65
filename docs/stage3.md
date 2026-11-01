@@ -28,12 +28,22 @@ The D81 contains `SHOOTER`, `L1GFX` and `L1DAT`. `LOAD "SHOOTER",8` then `RUN`.
 | `build_level.py`: 384 rows, 15 different rows, 35 metatiles; `L1GFX` 8132 bytes, `L1DAT` 1929 bytes; preview picture | ✔ |
 | Assembly, D81 with three files read back | ✔ |
 | XEMU: files loaded from drive 8, landscape from the level file, formations fly their paths, tanks from events, capsules, RRB overflow 0 | ✔ |
-| **Real MEGA65** | **open – please test** |
+| XEMU: 16,000 frames (5 min 20 s), across the level end and into the second pass | ✔ |
+| Real MEGA65 (first build) | runs without errors, but froze after about 4 minutes, see below |
+| **Real MEGA65 (fixed build)** | **open – please test** |
+
+## Fixed: freeze at the level end
+The first Stage 3a build froze when the level end was reached (map row 384, about 4 minutes). The `end` event
+moves the event list back to its start, but the event loop kept comparing against the old position, so it ran
+every event of the level at once, including the `end` event again, endlessly. The loop now stops after the
+`end` event and continues with the new position in the next frame. Reproduced and verified in XEMU (frame counter
+stopped at 11,888 before the fix; runs past 16,000 frames after it).
 
 ## Hardware test checklist
 1. Start from the D81: the game starts after a short load. Without the D81 (or with a missing `L1DAT`),
    a "CANNOT LOAD" message appears and BASIC is still usable.
-2. The landscape looks as in Stage 2; after about 4 minutes the level starts again without a visible jump.
+2. The landscape looks as in Stage 2; after about 4 minutes the level starts again without a visible jump and
+   **without freezing** (play for at least 5 minutes).
 3. Formations: snakes, dives towards the player, swoops from the left and the right (mirrored), zigzag helicopters,
    hovering helicopters, bombers with bursts of fire. Movement is smooth (no jerks).
 4. Tanks appear on the ground in different directions.

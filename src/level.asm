@@ -458,6 +458,9 @@ level_events:
     bcc !+
     inc lev_evp+1
 !:  jsr ev_run
+    lda ev_type                 // after the level end the event list starts again: the
+    cmp #EV_END                 // position must be recomputed against the new base first
+    beq !done+                  // (otherwise every event runs again at once, endlessly)
     jmp !next-
 !done:
     rts
