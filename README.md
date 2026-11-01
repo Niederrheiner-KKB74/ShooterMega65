@@ -40,6 +40,7 @@ Controls: joystick in port 2 (fire = shoot), space = bomb, S = invulnerability (
 - [Stage 2 notes and hardware checklist](docs/stage2.md)
 - [Level data: research and format proposal](docs/level_format.md)
 - [Level JSON format (for level design)](docs/level_json.md)
+- [Music JSON format (for music with ChatGPT)](docs/music_json.md)
 - [Working rules](CLAUDE.md)
 
 ## Layout

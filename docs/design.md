@@ -214,6 +214,9 @@ Original plan:
 
 ## 10. Sound
 - Music: SID tunes. The MEGA65 has 4 SIDs, so music and sound effects can use separate chips.
+- **Decided 01.11.2026:** music on one SID (3 voices), sound effects on another. Music is written as JSON text
+  (`docs/music_json.md`, tracker-like: instruments, patterns, one order list per voice), converted at build
+  time and played by our own 50 Hz player. By default SIDs 1/2 are panned slightly right and 3/4 slightly left.
 - Sample effects: Vyper's audio-DMA driver (`stage10a6_audio_core.asm`), with the register order from §2.2.
 
 ## 11. Reuse from Vyper
