@@ -59,8 +59,9 @@ Grenzen:
 - höchstens **256 verschiedene Zeilen** pro Level. Gleiche Zeilen werden automatisch nur einmal gespeichert.
 - die Datei `LnDAT` darf höchstens **16 KB** groß sein. Jede verschiedene Zeile kostet 21 Byte, jede Kartenzeile
   1 Byte, jedes Ereignis 8 Byte. 256 verschiedene Zeilen belegen also 5,4 KB, der Rest reicht für mehrere tausend
-  Kartenzeilen. Durch wiederverwendete Zeilen dürfen Level deutlich länger als 256 Zeilen sein. Für schöne Übergänge (Küste, Straße) müssen benachbarte Tiles
-zueinander passen. Die Vorschau zeigt sofort, ob es stimmt.
+  Kartenzeilen. Durch wiederverwendete Zeilen dürfen Level deutlich länger als 256 Zeilen sein.
+
+Für schöne Übergänge (Küste, Straße) müssen benachbarte Tiles zueinander passen. Die Vorschau zeigt sofort, ob es stimmt.
 
 ### `paths` – Flugbahnen
 Benannte Befehlslisten. Geschwindigkeiten in **Pixel pro Frame**, Vielfache von 0,25, Bereich −31,75 … 31,75.
