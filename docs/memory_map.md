@@ -119,10 +119,21 @@ is 265 of 512 glyphs. The shop uses 148 glyphs / 9476 bytes including its header
 within its existing 255-glyph/load-buffer limit. See `docs/COASTAL_BASE_LEVEL.md` for build evidence and
 remaining emulator/hardware tests.
 
-The additional clockwise-45-degree rocket view is a standalone asset in
-`assets/art/rocket-directions/`, not appended to runtime pixies. It retains the
-rocket palette (bank 13); its local RRB bases require relocation on later import.
-It allocates no runtime memory and does not change projectile movement.
+The clockwise-45-degree rocket source in `assets/art/rocket-directions/` is now
+used by Stage 4/5 to derive eight runtime missile directions through the existing
+bank-13 remap. These are included in the current glyph count below.
+
+## Enemy artwork revision (Stage 5)
+
+The repaired canonical enemy hulls and 18px large coin retain the current
+289/512 runtime glyph allocation and existing 61 frame IDs. No address or region
+is added; the verified candidate PRG ends at `$B460` (exclusive).
+`assets/art/enemy-views/` is an offline 325-glyph pose bundle, not runtime data.
+Replacing all 12 canonical air frames (78 glyphs) with its 66 frames (324 glyphs
+plus the shared existing blank) would need 535 runtime glyphs, exceeding the
+512-glyph area by 23. Do not append/import the whole bundle without deduplication
+or selecting fewer poses. Local bases and source palette indices require relocation
+and the existing per-type palette remap. See `docs/ENEMY_VIEWS_AND_OPACITY.md`.
 
 ## Sound chips
 

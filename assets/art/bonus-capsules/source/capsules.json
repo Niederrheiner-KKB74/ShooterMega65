@@ -162,14 +162,14 @@
         32
       ],
       "body_box": [
-        3,
-        3,
-        28,
-        28
+        7,
+        7,
+        24,
+        24
       ],
-      "glyph_scale": 2,
+      "glyph_scale": 1,
       "design": "gold_coin"
     }
   ],
-  "revision": "Heraldic shield instead of S box; three circular gold coin diameters, stable IDs and frame sizes"
+  "revision": "Coin diameter progression 10/14/18 pixels; stable IDs, palettes and frame canvases"
 }

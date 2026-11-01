@@ -1,0 +1,22 @@
+{
+  "fighter": {
+    "repaired_pixels_per_phase": 1,
+    "opaque_before": 104,
+    "opaque_after": 105
+  },
+  "helicopter": {
+    "repaired_pixels_per_phase": 0,
+    "opaque_before": 59,
+    "opaque_after": 59
+  },
+  "bomber": {
+    "repaired_pixels_per_phase": 10,
+    "opaque_before": 444,
+    "opaque_after": 454
+  },
+  "armoured_plane": {
+    "repaired_pixels_per_phase": 21,
+    "opaque_before": 366,
+    "opaque_after": 387
+  }
+}

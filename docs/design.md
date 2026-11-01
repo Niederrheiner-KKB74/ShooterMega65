@@ -383,3 +383,15 @@ The actual 16KB GFX budget allows 126 tiles including the header/palettes.
 `assets/art/rocket-directions/` supplies original and clockwise-45-degree static
 views of the game projectile with exactly the existing rocket palette. These
 are optional standalone assets, not animation frames or a new homing mechanic.
+
+## Enemy opacity fixes and additional poses
+
+Explicit indexed hull repairs fill 1/10/21 previously transparent pixels per
+fighter/bomber/armoured phase. Existing opaque pixels, palettes, player, helicopter
+and tanks stay unchanged. Canonical three-phase animation remains the runtime path.
+`assets/art/enemy-views/` additionally supplies eight fighter/helicopter headings
+and straight/left/right bank poses for large aircraft, each with three effect phases.
+These views are standalone assets: full replacement would require 535 of the
+available 512 glyphs, so direction selection and packing optimisation remain future work.
+The large bonus coin is reduced from 26 to 18 visible pixels, giving 10/14/18 sizes.
+See `docs/ENEMY_VIEWS_AND_OPACITY.md` for source provenance, packing and validation.

@@ -18,7 +18,7 @@ def decode(data,w,h,tw):
 
 def main():
     m=json.loads((OUT/'manifest.json').read_text());cfg=json.loads((BASE/'source/capsules.json').read_text())
-    assert len(m['designs'])==4 and m['palette']==cfg['palette'] and not m['integrated']
+    assert len(m['designs'])==4 and m['palette']==cfg['palette'] and m['integrated']
     for name,info in m['files'].items():
         data=(OUT/name).read_bytes();assert len(data)==info['bytes'] and hashlib.sha256(data).hexdigest()==info['sha256']
     source={s['id']:s for s in json.loads((OUT/'indexed-source.json').read_text())}
@@ -57,6 +57,7 @@ def main():
         if desc['label']=='$':sizes.append((w,h,(desc['body_box'][2]-desc['body_box'][0]+1)*(desc['body_box'][3]-desc['body_box'][1]+1)))
         assert desc['palette_byte']==0xcf
     assert len(used)<=15 and len({s[:2] for s in sizes})==3 and sizes[0][2]<sizes[1][2]<sizes[2][2]
+    assert [round(s[2]**.5) for s in sizes]==[10,14,18], 'coin diameters must form balanced 10/14/18 progression'
     print(f'PASS: pointed medieval shield without S; 3 circular coins with embossed dollar glyphs; {len(used)} shared colours; exact FCM/NCM/RRB and guards.')
 
 

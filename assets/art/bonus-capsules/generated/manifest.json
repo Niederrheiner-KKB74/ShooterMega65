@@ -84,12 +84,12 @@
         32
       ],
       "body_box": [
-        3,
-        3,
-        28,
-        28
+        7,
+        7,
+        24,
+        24
       ],
-      "glyph_scale": 2,
+      "glyph_scale": 1,
       "design": "gold_coin",
       "indices_offset": 896,
       "ncm_offset": 448,
@@ -97,8 +97,8 @@
       "rrb_base": 11,
       "palette_byte": 207,
       "glyph_origin": [
-        11,
-        7
+        13,
+        11
       ]
     }
   ],
@@ -185,15 +185,15 @@
     ]
   ],
   "shared_palette": "Stage 2 HUD/bonus bank 12, $cf; exact RGB match",
-  "provenance": "Revised native pixel designs: heraldic medieval shield without S, circular gold coins in three diameters with embossed dollar signs.",
-  "integrated": false,
+  "provenance": "Revised native pixel designs: heraldic medieval shield without S, circular gold coins in balanced 10/14/18 pixel diameters with embossed dollar signs.",
+  "integrated": true,
   "hardware_tested": false,
   "emulator_tested": false,
   "rrb_glyphs": 21,
   "files": {
     "capsule_dollar_large.png": {
-      "bytes": 376,
-      "sha256": "1cacbcd02e83eceb917a60a956e3c64bba0d4ce2ea55b18f57345a9cb175a696"
+      "bytes": 328,
+      "sha256": "6ecec19578a77bf3a52af89cd3ba9997fc454ebef1ecd0dfb51ab95a6a2e1945"
     },
     "capsule_dollar_medium.png": {
       "bytes": 250,
@@ -209,23 +209,23 @@
     },
     "capsules.fcm.bin": {
       "bytes": 1920,
-      "sha256": "56e13bfa843c1e76baec4e76bfdddf027c176d45b662ecc40fa890c5a1356f15"
+      "sha256": "c29259bb554d5cadd6404c9bd724b9b297b8797b5a14916eb696b3cece200df2"
     },
     "capsules.indices.bin": {
       "bytes": 1920,
-      "sha256": "3bb62bddebedaf426c2e5860aaa853309eeb658a0208781b6b7bd840f9c7cd02"
+      "sha256": "a6fb16c6968fde57c86688c14ddb5c9b13b1feec929e0b2b68150091d71e806d"
     },
     "capsules.ncm.bin": {
       "bytes": 960,
-      "sha256": "6f02705708720289cdefac5bd5f4bfdf97e0c62c8e693d4cdb9d8daff080ca0a"
+      "sha256": "830144479df66452f0d8f1a0d3c4e13a6d6edab5f165c8aa5bb04355b1642482"
     },
     "capsules.rrb.bin": {
       "bytes": 1344,
-      "sha256": "dd2ec5da5a67cd180f0b6d6ae5471f1901783fc88ff13cc27502fd7b722ec92e"
+      "sha256": "d493b4266cb9bbb2ed8e30aff72de32f4580bdbe2d8cfceb6d6fa69c5517ec0d"
     },
     "indexed-source.json": {
       "bytes": 5219,
-      "sha256": "debb12c87db36e13afbea65b51ff66b85318d04f3115d6b4fb9ed20f953817ff"
+      "sha256": "f2cc26a09cf0b1e1a2463a16252268c20819f676479e2fc4f02fabf15ad08325"
     },
     "palette.palregs.bin": {
       "bytes": 48,
@@ -236,8 +236,8 @@
       "sha256": "88838ac6bed0b1cdb40c339fbca087f13e71a2427e7988de14064118f9a269d4"
     },
     "preview.png": {
-      "bytes": 5357,
-      "sha256": "d34a74df6e1b9d6bc1384b9f340d095592c93603c5bd325c56c99bf129816f5e"
+      "bytes": 6389,
+      "sha256": "a5635e7692f0730b7a0d9a54d31712e2bdedb763e3ef6b03068538c5b12602ac"
     }
   }
 }

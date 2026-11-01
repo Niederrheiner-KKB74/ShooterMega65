@@ -3208,7 +3208,7 @@
       ],
       "frame_ms": 100,
       "mask_file": "animation-mask-fighter.png",
-      "notes": "One canonical body, palette reduced to 12 body colours + 3 dedicated flame colours; indices 3/5 are separate banking poses.",
+      "notes": "One canonical body, palette reduced to 12 body colours + 3 dedicated flame colours; indices 3/5 are separate banking poses. 1 transparent body pixels repaired explicitly; see source/enemy-opacity.json.",
       "steady_frame": 0,
       "banking_frames": []
     },
@@ -3221,7 +3221,7 @@
       ],
       "frame_ms": 100,
       "mask_file": "animation-mask-bomber.png",
-      "notes": "One canonical body, palette reduced to 12 body colours + 3 dedicated flame colours; indices 3/5 are separate banking poses.",
+      "notes": "One canonical body, palette reduced to 12 body colours + 3 dedicated flame colours; indices 3/5 are separate banking poses. 10 transparent body pixels repaired explicitly; see source/enemy-opacity.json.",
       "steady_frame": 0,
       "banking_frames": []
     },
@@ -3247,7 +3247,7 @@
       ],
       "frame_ms": 100,
       "mask_file": "animation-mask-armoured_plane.png",
-      "notes": "One canonical body, palette reduced to 12 body colours + 3 dedicated flame colours; indices 3/5 are separate banking poses.",
+      "notes": "One canonical body, palette reduced to 12 body colours + 3 dedicated flame colours; indices 3/5 are separate banking poses. 21 transparent body pixels repaired explicitly; see source/enemy-opacity.json.",
       "steady_frame": 0,
       "banking_frames": []
     }
@@ -3304,16 +3304,16 @@
   ],
   "files": {
     "animated-armoured_plane.webp": {
-      "bytes": 930,
-      "sha256": "4833b00bdde4527af55666500f485f1a015de3dc52a24b467822a686687a5053"
+      "bytes": 928,
+      "sha256": "71090f1ab26b6572ceb9dcbd6e26d161de42701a5d47ea08f41ace57008bfd70"
     },
     "animated-bomber.webp": {
-      "bytes": 950,
-      "sha256": "14d9cb4bd9d3c278c2e260b042a7bd9fd93866b0cc958ab694d21c9b3f3e0fee"
+      "bytes": 952,
+      "sha256": "f236d66ebca47e6e4abedb75ef03b9319fded9efad2a0f3a3ef2183cf1c7e14a"
     },
     "animated-fighter.webp": {
       "bytes": 548,
-      "sha256": "cd6e3c846e09ccc403be50dd249419b145b393dac69565892be4daf89411d608"
+      "sha256": "dd84062a09997fb163c701acb50e87770a09eb87450a855c39784daa2558a07d"
     },
     "animated-helicopter.webp": {
       "bytes": 628,
@@ -3344,16 +3344,16 @@
       "sha256": "2aaf9746285c79a4d98d310d98f2fde0ab34de76f2e68d77c8f8afe24c5c2200"
     },
     "armoured_plane.png": {
-      "bytes": 1184,
-      "sha256": "05ea741c8f5ccf46ea7ade3efc58e966e25dbf569ce5920b9daddc22311b79c5"
+      "bytes": 1164,
+      "sha256": "4a37b32594c4d8037d371ed354d2f007ef5a6c346ad5c12956c84efb1fcd86a1"
     },
     "base.png": {
       "bytes": 1928,
       "sha256": "0e79a053985dd791e80b4ea8742f4b2460553b2c57b00984eb48562624e96aa2"
     },
     "bomber.png": {
-      "bytes": 1260,
-      "sha256": "0591d733c5061cbb600b63751be81ad70ef4b15d6aa4ab5a1f09270e6bb8593e"
+      "bytes": 1249,
+      "sha256": "d1f9c8758f1eb41c1cf325b0cf1f0a1fc8a6fb59029e8cdeb33f2edb6098881f"
     },
     "bunker.png": {
       "bytes": 240,
@@ -3396,8 +3396,8 @@
       "sha256": "eb53d500f56ed3e08ab4444ac222d26442bbb29ab94e255027d6cb10ed988158"
     },
     "fighter.png": {
-      "bytes": 491,
-      "sha256": "19115c0fc524350b760356e2960376850386a01b3a61cc731fd20f463348ec5f"
+      "bytes": 503,
+      "sha256": "ec2197359a1e168cfeecf2910fef4273fc3eca1bbf525e976e11d5fba2db5f06"
     },
     "flak.png": {
       "bytes": 206,
@@ -3413,15 +3413,15 @@
     },
     "frames.fcm.bin": {
       "bytes": 38464,
-      "sha256": "e33102ff65b38c609eb3ef856fc58f9b46c12650e4d6eb53e3b9500a0d420d83"
+      "sha256": "a1891f2b42f675f147fe71aceff82a3ef9818b2318ee60fc5794862bfea7046e"
     },
     "frames.indices.bin": {
       "bytes": 38464,
-      "sha256": "634f40ade4adcaa2c7087db940bf38dcec82005fd888c1f2d36db680643830fb"
+      "sha256": "c2525641f51bd31ecb512663a476a72ea33e2ac2883dd7733cff4e024a54dcc2"
     },
     "frames.ncm.bin": {
       "bytes": 18816,
-      "sha256": "930f82d7554e91e4b444d970d639c3ca142e2db629780796a9cb307b3d3be591"
+      "sha256": "b60f9c8f809b0b1af17f442c7994b8eb8c7e7390aa26889ff3eff9895c997648"
     },
     "helicopter.png": {
       "bytes": 375,
@@ -3437,7 +3437,7 @@
     },
     "indexed-source.json": {
       "bytes": 113113,
-      "sha256": "b27d281c50ca66a46b80a3ef36039031f791bf063919bc4efe9315dff5fc6922"
+      "sha256": "588c52ebc734be9f84900e3e4223701d701c1cd60bf976212c5dd86d5f5d54c6"
     },
     "level-example.json": {
       "bytes": 14476,
@@ -3488,12 +3488,12 @@
       "sha256": "395abb43a951a7262a764adac6009fce66c24b2e34a3ac137a4df4e2c47e851a"
     },
     "preview-aircraft.png": {
-      "bytes": 16090,
-      "sha256": "a310cbc0b51152001b4d1e7f6f72a81aad6fbf46c18f1ed6541425bffbaeffb5"
+      "bytes": 16057,
+      "sha256": "13271cb7ee232bdc7a79022d431e11e4589179b9709005c67158803b7d2626aa"
     },
     "preview-all.png": {
-      "bytes": 90485,
-      "sha256": "e0738e5736c633f3ddb2596351be21d863eebcb2cdd429ea754914d5e3138716"
+      "bytes": 90446,
+      "sha256": "c75e9124ac04a9caf51f8d0f0a407ce6ba05a30545f796b4f11edad6e2ec9dfe"
     },
     "road.png": {
       "bytes": 1851,
@@ -3505,7 +3505,7 @@
     },
     "rrb-pixies.bin": {
       "bytes": 11712,
-      "sha256": "bb36a3ae48e3f743bce6aeeb3c07b01892e3d80c5f6a60a236b019c9e98ef1ae"
+      "sha256": "684737a2f24da74a1350c857d56bc9c7a21bb8137a8adbd81b30af5a04b3c977"
     },
     "sea.png": {
       "bytes": 2147,
