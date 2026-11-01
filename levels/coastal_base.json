@@ -421,45 +421,76 @@
         "end"
       ]
     ],
-    "heli_patrol": [
+    "heli_hunt": [
       [
         "move",
-        60,
+        50,
         0,
         1.5
       ],
       [
+        "move",
+        30,
+        -1,
+        0.75
+      ],
+      [
         "wait",
-        35
+        20
       ],
       [
         "fire"
       ],
       [
         "move",
-        80,
-        0,
-        1.5
+        60,
+        -1.5,
+        0.25
       ],
       [
         "move",
-        100,
-        0,
-        2
+        40,
+        -1,
+        1
+      ],
+      [
+        "sine",
+        24,
+        80,
+        2,
+        1
       ],
       [
         "end"
       ]
     ],
-    "bomber_pass": [
+    "bomber_weave": [
       [
         "move",
-        100,
+        70,
         0,
         1
       ],
       [
+        "move",
+        50,
+        1,
+        0.75
+      ],
+      [
         "fire"
+      ],
+      [
+        "move",
+        60,
+        -1,
+        0.75
+      ],
+      [
+        "move",
+        50,
+        1,
+        1
       ],
       [
         "move",
@@ -471,15 +502,30 @@
         "end"
       ]
     ],
-    "armour_push": [
+    "armour_sweep": [
       [
         "move",
-        90,
+        80,
         0,
         0.75
       ],
       [
         "fire"
+      ],
+      [
+        "move",
+        64,
+        1.25,
+        0.5
+      ],
+      [
+        "fire"
+      ],
+      [
+        "move",
+        96,
+        -1.25,
+        0.5
       ],
       [
         "move",
@@ -512,7 +558,7 @@
     "helis": {
       "enemy": "helicopter",
       "count": 5,
-      "path": "heli_patrol",
+      "path": "heli_hunt",
       "delay": 24,
       "x": 185,
       "y": -24
@@ -520,7 +566,7 @@
     "bombers": {
       "enemy": "bomber",
       "count": 4,
-      "path": "bomber_pass",
+      "path": "bomber_weave",
       "delay": 30,
       "x": 144,
       "y": -40
@@ -528,7 +574,7 @@
     "armoured": {
       "enemy": "armoured",
       "count": 4,
-      "path": "armour_push",
+      "path": "armour_sweep",
       "delay": 30,
       "x": 144,
       "y": -40
@@ -953,6 +999,7 @@
     "first_contact_row": 17,
     "ground_spawn_surface": "road / land",
     "boss": "none",
-    "revision": "denser waves and authored terrain landmarks; playtest required"
+    "revision": "denser waves and authored terrain landmarks; playtest required",
+    "paths_revision": "Claude, Stage 6b: helicopters, bombers and armoured planes fly curves (owner request); paths edited in this file, the generator script still has the old paths"
   }
 }

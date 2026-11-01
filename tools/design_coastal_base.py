@@ -297,16 +297,17 @@ def main():
     paths={
       'coast_swoop':[['move',48,0,1.5],['move',48,1,1.25],['fire'],['move',96,0,2],['end']],
       'forest_snake':[['sine',28,96,2,1.5],['end']],
-      'heli_patrol':[['move',60,0,1.5],['wait',35],['fire'],['move',80,0,1.5],['move',100,0,2],['end']],
-      'bomber_pass':[['move',100,0,1],['fire'],['move',127,0,1.5],['end']],
-      'armour_push':[['move',90,0,.75],['fire'],['move',127,0,1.5],['end']],
+      # Stage 6b (Claude): helicopters, bombers and armoured planes fly curves so their views are used
+      'heli_hunt':[['move',50,0,1.5],['move',30,-1,.75],['wait',20],['fire'],['move',60,-1.5,.25],['move',40,-1,1],['sine',24,80,2,1],['end']],
+      'bomber_weave':[['move',70,0,1],['move',50,1,.75],['fire'],['move',60,-1,.75],['move',50,1,1],['move',127,0,1.5],['end']],
+      'armour_sweep':[['move',80,0,.75],['fire'],['move',64,1.25,.5],['fire'],['move',96,-1.25,.5],['move',127,0,1.5],['end']],
     }
     forms={
       'scouts':dict(enemy='fighter',count=6,path='coast_swoop',delay=18,x=40,y=-24),
       'forest_fighters':dict(enemy='fighter',count=7,path='forest_snake',delay=18,x=142,y=-24),
-      'helis':dict(enemy='helicopter',count=5,path='heli_patrol',delay=24,x=185,y=-24),
-      'bombers':dict(enemy='bomber',count=4,path='bomber_pass',delay=30,x=144,y=-40),
-      'armoured':dict(enemy='armoured',count=4,path='armour_push',delay=30,x=144,y=-40),
+      'helis':dict(enemy='helicopter',count=5,path='heli_hunt',delay=24,x=185,y=-24),
+      'bombers':dict(enemy='bomber',count=4,path='bomber_weave',delay=30,x=144,y=-40),
+      'armoured':dict(enemy='armoured',count=4,path='armour_sweep',delay=30,x=144,y=-40),
     }
     # Three escalating acts; long enough shop approach to let every air path exit.
     waves=[]
