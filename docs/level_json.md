@@ -108,7 +108,7 @@ Wird eine Formation komplett abgeschossen, lässt der letzte Gegner eine $-Kapse
 | `formation` | `formation`, optional `x`, `mirror` (true/false) | Formation starten. `mirror` spiegelt Bahn und Startpunkt (von links ↔ von rechts) |
 | `ground` | `enemy`: `tank`, `x` (0–304), `dir`: `north`/`east`/`south`/`west` | Panzer am oberen Rand absetzen |
 | `speed` | `value` (Pixel pro Frame, 0–4) | Scrollgeschwindigkeit ändern (0 = Stillstand, z. B. für den Boss) |
-| `shop` | `id`: `mid` oder `end` | Shop (Overlay folgt in Stage 3b) |
+| `shop` | `id`: `mid` oder `end` | Spiel hält an, „ENTERING SHOP“, dann Shop-Overlay. Alle Gegner, Schüsse und Kapseln auf dem Bildschirm verschwinden dabei. Deshalb in eine ruhige Stelle setzen |
 | `boss` | `id` | Endgegner (folgt) |
 | `end` | – | Levelende (vorerst: Level beginnt von vorn) |
 

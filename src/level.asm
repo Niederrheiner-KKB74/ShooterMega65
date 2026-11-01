@@ -42,12 +42,15 @@
 // ============================================================== loading (KERNAL)
 // Called before anything else, in BASIC's environment. Carry set = failed
 // (a message has been printed).
-level_load:
+load_device:
     lda $ba                     // device of the last LOAD (Vyper: capture_device)
     cmp #8
     bcs !+
     lda #8
 !:  sta ld_device
+    rts
+
+level_load:
     lda #<name_gfx
     ldx #>name_gfx
     ldy #name_gfx_end - name_gfx

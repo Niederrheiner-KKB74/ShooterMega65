@@ -21,8 +21,9 @@ import d81            # noqa: E402
 import make_assets    # noqa: E402
 import import_art     # noqa: E402
 import build_level    # noqa: E402
+import make_shop      # noqa: E402
 
-LEVELS = [('L1', 'levels/level01.json')]   # (file prefix on the disk, source)
+LEVELS = [('L1', 'levels/coastal_base.json')]   # (file prefix on the disk, source)
 
 KICKASS_SHA256 = '5d8544280dae2d018c79151d8c7b877eca1fb994096e54ca380b26d0cd79f847'
 PRG_NAME = 'SHOOTER'
@@ -41,6 +42,7 @@ def main():
     ap.add_argument('--out', default=str(ROOT / 'build'))
     ap.add_argument('--allow-other-kickass', action='store_true')
     ap.add_argument('--level', help='build this level JSON as L1 instead of the default test level')
+    ap.add_argument('--test-credits', action='store_true', help='test build: start with 999 credits (shop tests)')
     a = ap.parse_args()
     out = Path(a.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -50,6 +52,8 @@ def main():
         sys.exit(f'unexpected KickAssembler build {digest}; pass --allow-other-kickass to continue')
 
     import_art.main(ROOT / 'build/gen')        # artwork v2 (assets/art/spec-v2)
+    print('\n'.join(make_shop.main(ROOT / 'build/gen')))     # shop overlay (Stage 3b)
+    shop = (ROOT / 'build/gen/SHOP').read_bytes()
     level_files = []
     selected_levels = [('L1', a.level)] if a.level else LEVELS
     for name, src in selected_levels:
@@ -64,8 +68,9 @@ def main():
     # A failed assembly must not leave a previous build looking current.
     prg.unlink(missing_ok=True)
     (out / 'SHOOTER65.D81').unlink(missing_ok=True)
+    defines = ['-define', 'TEST_CREDITS'] if a.test_credits else []
     run = subprocess.run(['java', '-jar', str(jar), str(ROOT / 'src/main.asm'), '-o', str(prg),
-                          '-symbolfile', '-odir', str(out), '-showmem'],
+                          '-symbolfile', '-odir', str(out), '-showmem'] + defines,
                          cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     log = run.stdout
     (out / 'assembly.txt').write_text(log)
@@ -78,7 +83,7 @@ def main():
     data = prg.read_bytes()
     if data[:2] != b'\x01\x20':
         sys.exit('PRG must load at $2001')
-    files = [(PRG_NAME, data, d81.PRG)] + level_files
+    files = [(PRG_NAME, data, d81.PRG), ('SHOP', shop, d81.SEQ)] + level_files
     image = d81.build_disk(files)
     for fname, payload, _ in files:
         if d81.read_file(image, fname) != payload:

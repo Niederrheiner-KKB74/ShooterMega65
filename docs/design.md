@@ -202,7 +202,7 @@ and `LnDAT` (metatile table, row dictionary, row list, event list sorted by map 
 `level.asm` loads both with the KERNAL before the game takes over (Vyper loader rules), unpacks the graphics
 and keeps the data at `$50000`. The map, the spawning (formations, tanks, scroll speed) and the enemy movement
 (path interpreter: move/sine/aim/wait/fire/loop/end, mirrored formations) all come from the level data.
-At the `end` event the level currently repeats. Shop and boss events are recognised but have no effect yet.
+At the `end` event the level currently repeats. Shop events open the shop (§15, Stage 3b); boss events have no effect yet.
 
 Original plan:
 - Per level: a tile set (NCM glyphs and up to n palette banks), a map (21 glyph bytes and 21 colour bytes
@@ -267,18 +267,55 @@ so `RUN` works again after an exit.
 | 01.11.2026 | S capsule: 20 % shield, random drop; $ capsule: completed formation or single ground enemy |
 | 01.11.2026 | Levels are stored in separate files, not in the program (format proposal: `docs/level_format.md`) |
 | 01.11.2026 | Levels written as JSON text so ChatGPT can create them; shops are an overlay over the game screen; a level lasts about 4 minutes |
+| 01.11.2026 | Coastal-base level and new shield/coin capsules (PR #8) adopted; coastal level is the default |
+| 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
-## 15. Open questions for the owner
+## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
+- A `shop` event sets `shop_req`; the main loop calls `shop_run`, which **pauses** the game. All objects are
+  removed (their pixies would draw over the panel), both screen buffers are rebuilt without them, the player
+  sprites are switched off.
+- The pictures replace **background tokens** of both screen buffers (opaque 16×8 NCM glyphs, no RRB cost).
+  Leaving the shop rebuilds the frame from the ring buffer, which removes them again. Positions (screen rows /
+  background tokens): "ENTERING SHOP" box rows 12–14, tokens 7–14; panel rows 3–24, tokens 2–19 (288×176 px,
+  16 px landscape left and right); "PURCHASE ITEM?" dialog rows 10–15, tokens 6–15.
+- Glyphs: file `SHOP` on the D81 (146 glyphs now), loaded at start to `$44000` (char `$1100`). Token maps,
+  items, prices and palettes are generated into `build/gen/shop_*.inc`; **items and prices are defined only in
+  `tools/make_shop.py` (`ITEMS`)**, because the prices are drawn into the glyphs.
+- Palettes: while the shop is open, banks 13–15 (rocket and explosions; no objects exist) hold the shop palette
+  in three versions: normal, dimmed (cannot be bought), highlight (cursor / selected button). The cursor frame
+  blinks by changing one palette entry (bank 15, colour 4) every 8 frames. On leaving, banks 13–15 are restored
+  from the game palette.
+- Flow: "ENTERING SHOP" 3 s (fire skips) → 4×4 grid. The joystick moves the cursor only between cells that can be
+  bought now and EXIT (nearest cell in the pressed direction, auto repeat), fire on an item opens
+  "PURCHASE ITEM?" with YES / NO (left/right, **NO preselected**), fire confirms. Fire on EXIT resumes the game
+  (1 s invulnerable). Only new fire presses count, so holding fire from the game does not skip anything.
+- A cell can be bought if: credits ≥ price; shot level n needs level n−1 (bought ones stay dimmed); missile once;
+  shield (invulnerability), bomb and extra life up to 9 each (one HUD digit).
+
+| Cell | Item | Price | Effect now |
+|---|---|---|---|
+| 0–2 | SHOT II / III / IV | 100 / 200 / 400 | weapon level 2–4 = damage per shot |
+| 3 | MISSILE | 250 | flag `has_missile` (homing missile: later stage) |
+| 4 | SHIELD | 150 | `inv_count` + 1, HUD (activation, 10 s invulnerability with shimmering frame: later stage) |
+| 5 | BOMB | 200 | `bomb_count` + 1, HUD (activation, destroys all enemies on screen: later stage) |
+| 6 | EXTRA LIFE | 300 | one more life |
+| 7–14 | – | | empty, kept for later items |
+| 15 | EXIT | | leave the shop |
+
+The HUD has a fourth box (48 px, x = 168) with a bomb icon + count and an invulnerability icon + count;
+the credits box moved to x = 96. Bought items stay for the whole game; a new game (after the last life) resets them.
+
+## 16. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 2. What should the special weapon be (screen bomb, laser, shield …), and how many uses should there be per life or level?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
 5. Are the damage values and points in §6 a good starting point?
 
-## Coastal-base level design candidate
+## Coastal-base level ("Operation Küstenwald", PR #8)
 
-`levels/coastal_base.json` is a separately selectable coastal → forest → military
-road/bridge → base scenario. `tools/build.py --level` packs it as L1 while leaving
-the original test level as the default. Native transition tiles and the four
+`levels/coastal_base.json` is a coastal → forest → military road/bridge → base scenario.
+**Since Stage 3b it is the default level L1**; `tools/build.py --level levels/level01.json` still builds the
+old test level. Native transition tiles and the four
 palette budget are documented in `docs/COASTAL_BASE_LEVEL.md`. Bonus graphics now
 show a medieval shield and three gold coin sizes, retaining their IDs and bank 12.
 Level/data checks and assembly passed; no new emulator or hardware acceptance is

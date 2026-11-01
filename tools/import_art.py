@@ -11,7 +11,7 @@ example level (level-example.json + terrain.ncm.bin). Writes into build/gen/:
   sprite.bin     6 player frame pairs, 512 bytes each (2 x 192 + padding)
   palette.bin    text palette 0 (R/G/B planes, nibble-swapped), sprpal.bin sprite palette
   hud.bin        HUD source data: 10 digit half-glyphs (32 bytes), lives glyph template (64 bytes),
-                 shield box template (256 bytes)
+                 credits box (192 bytes), shield box template (256 bytes), bombs/invulnerability box (192 bytes)
   assets.inc     constants, frames.inc frame tables, previews
 
 Palette banks (text palette 0): 0 C64 colours, 1-4 landscape, 5-8 air enemies,
@@ -53,6 +53,9 @@ HUD_PAL = [(0, 0, 0), (54, 82, 111), (221, 239, 247), (255, 165, 50),     # 1-3 
            (160, 245, 175),     # 10 bonus light
            (20, 120, 55),       # 11 bonus dark
            (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+# placeholder HUD icons (HUD palette indices), 8x8: bomb and invulnerability (shop items, Stage 3b)
+HUD_BOMB = ['....3.3.', '.....3..', '...55...', '..5555..', '.555555.', '.525555.', '.555555.', '..5555..']
+HUD_INVULN = ['7777777.', '7222227.', '7222227.', '7222227.', '.72227..', '.72227..', '..727...', '...7....']
 TANKS = ROOT / 'assets/art/ground-vehicles/generated'
 TANK_DIRS = ('north', 'east', 'south', 'west')       # engine direction 0-3
 TANK_PHASES = 4
@@ -246,7 +249,7 @@ def main(out):
             glyphs.append(bytes(64))
         table.append(dict(name=name, base=base, w=w, h=h, pal=(bank << 4) | 15, hit=hb))
     # HUD: score box 3 columns, shield box 4 columns (h = 1), contents written at run time
-    for name, w in (('HUD_SCORE', 4), ('HUD_CREDITS', 3), ('HUD_SHIELD', 4)):
+    for name, w in (('HUD_SCORE', 4), ('HUD_CREDITS', 3), ('HUD_SHIELD', 4), ('HUD_SPECIAL', 3)):
         base = len(glyphs)
         glyphs += [bytes(64)] * (2 * w)
         table.append(dict(name=name, base=base, w=w, h=1, pal=(HUD_BANK << 4) | 15, hit=(8, 4, 1, 1)))
@@ -306,7 +309,14 @@ def main(out):
             if c == '1':
                 credits[y, 1 + x] = 3
     cred = b''.join(ph.ncm_glyph(credits[:, c * 16:c * 16 + 16]) for c in range(3))
-    (out / 'hud.bin').write_bytes(bytes(digits) + ph.ncm_glyph(lives) + cred + template)
+    special = np.full((8, 48), 4, np.uint8)    # bombs + invulnerability: icon at x 0 / 24, digit at x 8 / 32
+    for x0, icon in ((0, HUD_BOMB), (24, HUD_INVULN)):
+        for y, row in enumerate(icon):
+            for x, c in enumerate(row):
+                if c != '.':
+                    special[y, x0 + x] = int(c)
+    spec = b''.join(ph.ncm_glyph(special[:, c * 16:c * 16 + 16]) for c in range(3))
+    (out / 'hud.bin').write_bytes(bytes(digits) + ph.ncm_glyph(lives) + cred + template + spec)
 
     # ------------------------------------------------------------ player sprites
     spr = bytearray()

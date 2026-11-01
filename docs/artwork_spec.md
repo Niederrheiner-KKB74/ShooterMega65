@@ -47,6 +47,19 @@ time in every 8-pixel row it touches. Many small objects are therefore cheaper t
 ## HUD (score strip at the top)
 - A font of **8×8 or 8×16 digits 0–9** plus a few icons (lives, special weapon) in up to 15 colours.
 
+## Shop (Stage 3b, placeholders until the artwork exists)
+- **Item icons: 16×16 pixels**, one per item: SHOT II, SHOT III, SHOT IV, MISSILE, SHIELD (invulnerability),
+  BOMB, EXTRA LIFE, EXIT. They sit in the middle of a 64×40 cell, the name above, the price below.
+- All shop graphics share **one 16-colour palette** (index 0 is not usable). Fixed roles: 1 panel background,
+  2 outline/text shadow, 3 thick frame, 4 thin cell frame (blinks for the cursor), 5 text, 6 price, 7 frame light
+  edge, 8 cell interior. **Icons may use indices 9–15 plus 2, 5, 8** (currently red, orange, yellow, green, cyan,
+  grey, dark grey). A new icon set may bring new colours for 9–15. A dimmed copy of the palette is made
+  automatically.
+- Deliver the icons as indexed PNG or JSON pixel rows (like `assets/art/bonus-capsules`), in
+  `assets/art/shop/`. The frame, font and texts are drawn by `tools/make_shop.py`.
+- **HUD icons 8×8** (7 px wide plus one free column) in the HUD palette (bank 12): bomb and invulnerability
+  (shield with a glow). Placeholders are in `tools/import_art.py` (`HUD_BOMB`, `HUD_INVULN`).
+
 ## Working with ChatGPT
 - Ask for *"pixel art, top-down view, flat colours, no anti-aliasing, limited palette of 15 colours, on a
   transparent background, each sprite exactly 16×16 pixels (shown enlarged 8×)"*.

@@ -10,6 +10,7 @@
 #import "hw.asm"
 #import "layout.asm"
 #import "../build/gen/assets.inc"
+#import "../build/gen/shop_const.inc"
 
 // ---------------------------------------------------------------- zero page
 .const ZP = $02
@@ -47,8 +48,12 @@ basic_end:
 
 // ---------------------------------------------------------------- entry
 start:
+    jsr load_device                    // drive of the last LOAD
+    jsr shop_load                      // shop glyphs from disk (shop.asm)
+    bcs !fail+
     jsr level_load                     // level files from disk, still with the KERNAL (level.asm)
     bcc !+
+!fail:
     rts                                // failed: message printed, back to BASIC
 !:  sei
     lda #$47                           // VIC-IV I/O personality
@@ -73,6 +78,7 @@ start:
     jsr level_init
     jsr scroll_init
     jsr objects_init
+    jsr shop_reset
     jsr hud_reset
     jsr player_init
     lda #$a7
@@ -103,7 +109,10 @@ main_loop:
     jsr build_frame
     lda #0
     sta VIC_BORDER
-    jmp main_loop
+    lda shop_req                       // shop event reached: paused shop overlay
+    beq !+
+    jsr shop_run
+!:  jmp main_loop
 
 // ---------------------------------------------------------------- frame
 // Build the complete next frame into the back buffer.
@@ -150,6 +159,7 @@ random:
 #import "hud.asm"
 #import "system.asm"
 #import "level.asm"
+#import "shop.asm"
 
 // ---------------------------------------------------------------- data
 #import "../build/gen/frames.inc"

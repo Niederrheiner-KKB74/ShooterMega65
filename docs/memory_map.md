@@ -1,4 +1,4 @@
-# Memory map (Stage 3)
+# Memory map (Stage 3b)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -23,12 +23,15 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 | `$71` | player weapon damage (`pl_power`) |
 | `$72–$75` | 32-bit pointer into the level data |
 
+Shop state (`bomb_count`, `inv_count`, `has_missile`, cursor and dialog variables) lives in bank 0 in `shop.asm`,
+not in the zero page.
+
 ## Bank 0
 
 | Address | Use |
 |---|---|
 | `$2001–$2010` | BASIC stub `BANK 0:SYS 8224` |
-| `$2020–$4407` | code and tables: sprite pointer table, HUD work buffer (7×64), HUD digits/template, exit save area, sine table, frame tables |
+| `$2020–…` | code and tables: sprite pointer table, HUD work buffer (14×64), HUD digits/templates, exit save area, sine table, frame tables, shop code, token maps and palettes |
 | `…` | level loader buffer (256 bytes), metatile tables (3×256 bytes) |
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
@@ -39,9 +42,10 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 
 | Address | Size | Use |
 |---|---|---|
-| `$40000–$47FFF` | 32 KB | landscape NCM glyphs, char `$1000`+ (max. 512; tile offsets in the map are bytes, so 256 per level; Stage 2 uses 124) |
+| `$40000–$43FFF` | 16 KB | landscape NCM glyphs, char `$1000`+ (max. 256 per level: tile offsets in the map are bytes; `build_level.py` allows 128 tiles; the coastal level uses 208 glyphs) |
+| `$44000–$47FFF` | 16 KB | shop glyphs from the file `SHOP`, char `$1100`+ (max. 255; 146 used). Guarded in `shop.asm` |
 | `$48000–$4FFFF` | 32 KB | pixie NCM glyphs, char `$1200`+ (max. 512, 16-bit frame bases; Stage 2 uses 259); glyph `$1200` = blank; HUD glyphs at `HUD_GLYPH + 2k`, k = 0..10. The area is cleared by DMA at start and only the non-blank glyph runs are copied from the PRG |
-| `$50000–$53FFF` | 16 KB | level buffer: `LnGFX` is loaded here first (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths) stays here for the whole level |
+| `$50000–$53FFF` | 16 KB | load buffer: first `SHOP` (glyphs → `$44000`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths), which stays here for the whole level |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |
 | `$58000–$5AA7F` | 64×170 | ring buffer, screen part (32 slots stored twice) |
@@ -92,10 +96,13 @@ All registers above, palette 0 and palette 1 entries 0–31 are saved at start a
 | 6 | bomber | 14 | small explosion |
 | 7 | helicopter | 15 | big explosion |
 
+While the shop is open (Stage 3b), banks 13–15 hold the shop palettes (normal, dimmed, highlight); no objects
+exist then. They are restored from the game palette when the shop closes.
+
 All 16 banks are in use. Further object types must share a bank; the importer merges and, if needed,
 reduces colours (`merge_bank`). Sprite palette (set 1) entries `$00–$1F`: player (sprites 0 and 1).
 
-## Coastal-base candidate
+## Coastal-base level (default since Stage 3b)
 
 `--level levels/coastal_base.json` selects a separate 375-row level without
 changing the default source. Its 104 tiles use 208 glyphs (13312 bytes) at

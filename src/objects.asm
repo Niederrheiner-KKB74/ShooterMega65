@@ -112,6 +112,7 @@ objects_init:
 
 game_restart:
     jsr objects_init
+    jsr shop_reset
     jsr hud_reset
     jmp player_new_game
 

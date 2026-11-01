@@ -7,6 +7,7 @@
 // rebuilt in a bank-0 buffer and copied only when score, lives or shield change.
 // Score box: columns 0-2 = 6 digits, column 3 = plane icon + lives digit.
 // Credits box: columns 4-6 = '$' icon + 4 digits. Shield box: columns 7-10.
+// Special box: columns 11-13 = bomb icon + count, invulnerability icon + count (shop items).
 // ----------------------------------------------------------------------------
 .label hud_dirty = $59      // bit 0 score + lives, bit 1 shield
 .label hp_src    = $5a      // 16 bit
@@ -18,15 +19,24 @@
 .const HUD_Y       = 2
 .const HUD_SCORE_X = 4
 .const HUD_SHIELD_X = 320 - 64 - 4
-.const HUD_CREDITS_X = (320 - 48) / 2
-.const HUD_COLS     = 11
+.const HUD_CREDITS_X = 96
+.const HUD_SPECIAL_X = 168
+.const HUD_COLS     = 14
 .const CREDITS_BUF  = 4*64      // credits box in hud_buf
 .const SHIELD_BUF   = 7*64      // shield box in hud_buf
+.const SPECIAL_BUF  = 11*64     // bombs / invulnerability box in hud_buf
 
 hud_reset:
     lda #0
     sta credit_bcd
     sta credit_bcd+1
+#if TEST_CREDITS
+    lda #$09                    // test build (build.py --test-credits): 999 credits
+    sta credit_bcd
+    lda #$99
+    sta credit_bcd+1
+    lda #0
+#endif
     sta score_bcd
     sta score_bcd+1
     sta score_bcd+2
@@ -135,9 +145,19 @@ hud_render_score:
     dex
     cpx #$ff
     bne !-
+    ldx #191                    // bombs / invulnerability box template
+!:  lda hud_special_tpl,x
+    sta hud_buf+SPECIAL_BUF,x
+    dex
+    cpx #$ff
+    bne !-
     ldx #0
 !digit:
-    cpx #7                      // digits 7-10 = credits
+    cpx #11                     // digits 11-12 = bombs, invulnerability (0-9)
+    bcc !+
+    lda bomb_count-11,x
+    jmp !got+
+!:  cpx #7                      // digits 7-10 = credits
     bcc !+
     txa
     sec
@@ -206,7 +226,7 @@ hud_render_score:
     cpy #32
     bne !row-
     inx
-    cpx #11
+    cpx #13
     bne !digit-
     ldz #0
     rts
@@ -306,6 +326,16 @@ hud_draw:
     lda #>HUD_SHIELD_X
     sta px_x+1
     lda #FR_HUD_SHIELD
+    jsr pixie_draw
+    lda #HUD_Y
+    sta px_y
+    lda #0
+    sta px_y+1
+    lda #<HUD_SPECIAL_X
+    sta px_x
+    lda #>HUD_SPECIAL_X
+    sta px_x+1
+    lda #FR_HUD_SPECIAL
     jmp pixie_draw
 
 hs_lo: .byte 0
@@ -319,17 +349,21 @@ hud_digits:   .import binary "../build/gen/hud.bin", 0, 320
 hud_lives_tpl:.import binary "../build/gen/hud.bin", 320, 64
 hud_credits_tpl: .import binary "../build/gen/hud.bin", 384, 192
 hud_template: .import binary "../build/gen/hud.bin", 576, 256
+hud_special_tpl: .import binary "../build/gen/hud.bin", 832, 192
 digit_src_lo: .fill 10, <(hud_digits + i*32)
 digit_src_hi: .fill 10, >(hud_digits + i*32)
-// digits 0-5 score, 6 lives (column 3, right half), 7-10 credits (box pixels 8, 16, 24, 32)
+// digits 0-5 score, 6 lives (column 3, right half), 7-10 credits (box pixels 8, 16, 24, 32),
+// 11 bombs (special box pixel 8), 12 invulnerability (pixel 32)
 .function digit_dst(i) {
     .if (i < 6) .return hud_buf + (i>>1)*64 + (i&1)*4
     .if (i == 6) .return hud_buf + 3*64 + 4
+    .if (i == 11) .return hud_buf + SPECIAL_BUF + 4
+    .if (i == 12) .return hud_buf + SPECIAL_BUF + 2*64
     .eval var px = 8 + (i-7)*8
     .return hud_buf + CREDITS_BUF + (px>>4)*64 + ((px>>3)&1)*4
 }
-digit_dst_lo: .fill 11, <digit_dst(i)
-digit_dst_hi: .fill 11, >digit_dst(i)
+digit_dst_lo: .fill 13, <digit_dst(i)
+digit_dst_hi: .fill 13, >digit_dst(i)
 hud_src_lo:   .fill HUD_COLS, <(hud_buf + i*64)
 hud_src_hi:   .fill HUD_COLS, >(hud_buf + i*64)
 hud_dst_lo:   .fill HUD_COLS, <(((PIXIE_ADDR & $ffff) + (HUD_GLYPH + 2*i)*64))

@@ -116,6 +116,8 @@ def build(src, outdir, name):
     terrain = (tileset / 'terrain.ncm.bin').read_bytes()
     manifest = json.loads((tileset / 'manifest.json').read_text())
     ntiles = len(terrain) // 128
+    if ntiles > 128:                 # glyph offsets are bytes; the shop glyphs follow at $44000
+        raise LevelError(f'tile set has {ntiles} tiles, maximum 128 (256 glyphs)')
     tile_bank = {t['id']: LAND_BANKS[t['palette']] for t in tiles_meta}
 
     # ---------------- GFX file: palettes of banks 1-4 + all landscape glyphs

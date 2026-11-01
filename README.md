@@ -15,6 +15,8 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
 - **Stage 3a** (branch `stage3`): capsule and weapon rules; levels as JSON files, converted into level files
   on the D81 (map, formations, flight paths, ground units). XEMU-tested, hardware test pending.
   See [docs/stage3.md](docs/stage3.md), level format for ChatGPT: [docs/level_json.md](docs/level_json.md).
+- **Stage 3b** (branch `stage3`): shop overlay (weapon levels, missile, shield, bomb, extra life), HUD counters
+  for bombs and invulnerability, coastal-base level (PR #8) as the default. XEMU-tested, hardware test pending.
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.
@@ -36,8 +38,8 @@ Controls: joystick in port 2 (fire = shoot). D toggles the raster time display. 
 
 ## Layout
 ```
-src/       engine sources (main, video, scroll, pixie, objects, player, hud, system, hw, layout)
-tools/     build.py, import_art.py (artwork importer), build_level.py (JSON → level files), d81.py
+src/       engine sources (main, video, scroll, pixie, objects, player, hud, shop, level, system, hw, layout)
+tools/     build.py, import_art.py (artwork importer), build_level.py (JSON → level files), make_shop.py, d81.py
 levels/    level descriptions (JSON)
 docs/      design, memory map, stage notes
 releases/  tested stage builds (PRG + D81)
