@@ -22,7 +22,9 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
   shimmering ring (S), homing missile; extra life / exit icons and denser coastal level (PR #10).
   Confirmed on real hardware (01.11.2026), `stage4-stable`. See [docs/stage4.md](docs/stage4.md).
 - **Stage 4b** (branch `stage4`): missile drawn in 8 flight directions, revised coastal level (PR #11).
-  XEMU-tested, hardware test pending.
+  Confirmed on real hardware (01.11.2026), `stage4b-stable`.
+- **Stage 5** (branch `stage5`): music (four pieces composed by Claude) and 14 sound effects on separate SIDs;
+  MUSICTEST program with a 440 Hz tuning tone. XEMU-tested, hardware test pending. See [docs/stage5.md](docs/stage5.md).
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.
@@ -46,8 +48,10 @@ Controls: joystick in port 2 (fire = shoot), space = bomb, S = invulnerability (
 ## Layout
 ```
 src/       engine sources (main, video, scroll, pixie, objects, player, hud, shop, level, system, hw, layout)
-tools/     build.py, import_art.py (artwork importer), build_level.py (JSON → level files), make_shop.py, d81.py
+tools/     build.py, import_art.py (artwork importer), build_level.py (JSON → level files), make_shop.py,
+           build_music.py (JSON → MUSIC), compose_music.py (score of the four pieces), d81.py
 levels/    level descriptions (JSON)
+music/     music pieces and sound effects (JSON)
 docs/      design, memory map, stage notes
 releases/  tested stage builds (PRG + D81)
 ```

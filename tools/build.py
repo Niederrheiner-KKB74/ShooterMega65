@@ -22,6 +22,7 @@ import make_assets    # noqa: E402
 import import_art     # noqa: E402
 import build_level    # noqa: E402
 import make_shop      # noqa: E402
+import build_music    # noqa: E402
 
 LEVELS = [('L1', 'levels/coastal_base.json')]   # (file prefix on the disk, source)
 
@@ -54,6 +55,11 @@ def main():
     import_art.main(ROOT / 'build/gen')        # artwork v2 (assets/art/spec-v2)
     print('\n'.join(make_shop.main(ROOT / 'build/gen')))     # shop overlay (Stage 3b)
     shop = (ROOT / 'build/gen/SHOP').read_bytes()
+    try:
+        print('\n'.join(build_music.main(ROOT / 'build/gen')))   # music + sound effects (Stage 5)
+    except build_music.MusicError as e:
+        sys.exit(f'music: {e}')
+    music = (ROOT / 'build/gen/MUSIC').read_bytes()
     level_files = []
     selected_levels = [('L1', a.level)] if a.level else LEVELS
     for name, src in selected_levels:
@@ -83,7 +89,15 @@ def main():
     data = prg.read_bytes()
     if data[:2] != b'\x01\x20':
         sys.exit('PRG must load at $2001')
-    files = [(PRG_NAME, data, d81.PRG), ('SHOP', shop, d81.SEQ)] + level_files
+    # music test program for the same disk: keys 1-4 play the pieces, T = 440 Hz tuning tone
+    mt = out / 'MUSICTEST.PRG'
+    run2 = subprocess.run(['java', '-jar', str(jar), str(ROOT / 'src/main.asm'), '-o', str(mt), '-odir', str(out),
+                           '-define', 'MUSIC_TEST'] + defines, cwd=ROOT, text=True,
+                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    if run2.returncode or 'Error' in run2.stdout:
+        print(run2.stdout)
+        sys.exit('assembly of MUSICTEST failed')
+    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ)] + level_files
     image = d81.build_disk(files)
     for fname, payload, _ in files:
         if d81.read_file(image, fname) != payload:

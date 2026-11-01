@@ -1,4 +1,4 @@
-# Memory map (Stage 4)
+# Memory map (Stage 5)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -22,6 +22,7 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 | `$6A–$6F` | collision centres |
 | `$71` | player weapon damage (`pl_power`) |
 | `$72–$75` | 32-bit pointer into the level data |
+| `$76–$79` | 32-bit pointer into the music data (`sound.asm`) |
 
 Shop state (`bomb_count`, `inv_count`, `has_missile`, cursor and dialog variables) lives in bank 0 in `shop.asm`,
 not in the zero page.
@@ -45,12 +46,12 @@ not in the zero page.
 | `$40000–$43FFF` | 16 KB | landscape NCM glyphs, char `$1000`+ (max. 256 per level: tile offsets in the map are bytes; `build_level.py` allows 128 tiles; the coastal level uses 208 glyphs) |
 | `$44000–$47FFF` | 16 KB | shop glyphs from the file `SHOP`, char `$1100`+ (max. 255; 148 used). Guarded in `shop.asm` |
 | `$48000–$4FFFF` | 32 KB | pixie NCM glyphs, char `$1200`+ (max. 512, 16-bit frame bases; Stage 4b uses 289); glyph `$1200` = blank; HUD glyphs at `HUD_GLYPH + 2k`, k = 0..10. The area is cleared by DMA at start and only the non-blank glyph runs are copied from the PRG |
-| `$50000–$53FFF` | 16 KB | load buffer: first `SHOP` (glyphs → `$44000`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths), which stays here for the whole level |
+| `$50000–$53FFF` | 16 KB | load buffer: first `SHOP` (glyphs → `$44000`), `MUSIC` (→ `$5E000`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths), which stays here for the whole level |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |
 | `$58000–$5AA7F` | 64×170 | ring buffer, screen part (32 slots stored twice) |
 | `$5B000–$5DA7F` | 64×170 | ring buffer, colour part |
-| `$5E000–$5EFFF` | | free |
+| `$5E000–$5EFFF` | 4 KB | music and sound effects from the file `MUSIC` (Stage 5: 2,859 bytes used) |
 | `$5F000–$5FBFF` | | player sprites, 6 frame pairs (left/right half 256 bytes each) |
 | `$5FC00–$5FEFF` | | invulnerability ring, sprites 2–4 (256 bytes each, `special.asm`) |
 | `$5FF00–$5FFFF` | | free |
@@ -122,3 +123,14 @@ The additional clockwise-45-degree rocket view is a standalone asset in
 `assets/art/rocket-directions/`, not appended to runtime pixies. It retains the
 rocket palette (bank 13); its local RRB bases require relocation on later import.
 It allocates no runtime memory and does not change projectile movement.
+
+## Sound chips
+
+| SID | Address | Use |
+|---|---|---|
+| 1 | `$D400` | music (3 voices) |
+| 2 | `$D420` | sound effects (3 voices) |
+| 3 | `$D440` | copy of SID 1 (SIDs 1/2 are panned slightly right, 3/4 slightly left) |
+| 4 | `$D460` | copy of SID 2 |
+
+All four are silenced on the way back to BASIC.

@@ -62,7 +62,7 @@ Release files are in `releases/stage4b/`.
 |---|---|
 | Assembly, D81 read back; pixies 289 of 512 glyphs; `L1GFX` 16324 bytes | ✔ |
 | XEMU: missile frames follow the flight (memory dump: up-right, down-right, right; screenshot: horizontal missile flying at a fighter) | ✔ |
-| **Real MEGA65** | **open – please test** |
+| Real MEGA65 | ✔ confirmed by the owner (01.11.2026), `stage4b-stable` |
 
 ## Hardware test checklist
 1. Buy the missile, fly to one side of the screen and fire: the missile points where it flies (diagonal,

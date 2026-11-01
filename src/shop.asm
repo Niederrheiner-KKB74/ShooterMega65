@@ -86,6 +86,8 @@ shop_run:
     lda #0
     sta shop_req
     jsr objects_init            // the overlay replaces background tokens: no pixies may cover it
+    lda #MUS_SHOP
+    jsr music_play
     jsr build_frame             // rebuild both buffers without objects
     jsr wait_vblank
     jsr flip
@@ -125,6 +127,8 @@ shop_run:
     jsr joy_dir                 // A = direction bits 0-3 (new press or auto repeat)
     beq !loop-
     jsr move_cursor
+    lda #SFX_CURSOR
+    jsr sfx_play
     jsr draw_panel
     jmp !loop-
 !fire:
@@ -137,6 +141,10 @@ shop_run:
     jsr draw_panel
     jmp !loop-
 !leave:
+    lda #SFX_SELECT
+    jsr sfx_play
+    lda #MUS_LEVEL1
+    jsr music_play
     jsr shop_restore
     lda #INV_FRAMES             // a moment to get oriented again
     sta pl_inv
@@ -144,6 +152,8 @@ shop_run:
 
 // "PURCHASE ITEM?" YES / NO for the cell at the cursor; buys on YES
 purchase_dialog:
+    lda #SFX_SELECT
+    jsr sfx_play
     lda #1                      // NO preselected
     sta sh_choice
 !draw:
@@ -162,17 +172,22 @@ purchase_dialog:
     lda sh_choice
     eor #1
     sta sh_choice
+    lda #SFX_CURSOR
+    jsr sfx_play
     jmp !draw-
 !fire:
     lda sh_choice
     bne !done+
     jsr buy
+    lda #SFX_BUY
+    jsr sfx_play
 !done:
     rts
 
 // one paused frame: wait for the vertical blank, blink, read keys and joystick
 shop_frame:
     jsr wait_vblank
+    jsr sound_frame
     inc sh_blink
     ldx #0                      // highlight colour changes every 8 frames
     lda sh_blink

@@ -260,6 +260,14 @@ se_frame: .byte 0
 //   any other enemy           -> S capsule with S_CHANCE
 kill_obj:
     stx ko_i
+    ldy obj_kind,x              // explosion sound by size
+    lda kind_big,y
+    beq !+
+    lda #SFX_EXPLODE_BIG
+    bne !snd+
+!:  lda #SFX_EXPLODE
+!snd:
+    jsr sfx_play
     lda #0
     sta ko_drop
     lda ko_flags
@@ -844,7 +852,10 @@ collide_shots:
     sbc pl_power
     sta obj_hp,y
     beq !+
-    bcs !nexts+
+    bcc !+
+    lda #SFX_HIT                // damaged, not destroyed
+    jsr sfx_play
+    jmp !nexts+
 !:
     tya
     tax
@@ -978,12 +989,16 @@ collide_player:
     jsr score_add
     lda #BONUS_SHIELD
     jsr player_heal
+    lda #SFX_SHIELD
+    jsr sfx_play
     ldx cs_s
     jmp !next+
 !cash:
     tay
     lda cash_value-K_CASH1,y
     jsr credits_add
+    lda #SFX_COIN
+    jsr sfx_play
     ldx cs_s
     jmp !next+
 !harm:

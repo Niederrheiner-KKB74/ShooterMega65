@@ -11,6 +11,7 @@
 #import "layout.asm"
 #import "../build/gen/assets.inc"
 #import "../build/gen/shop_const.inc"
+#import "../build/gen/music_const.inc"
 
 // ---------------------------------------------------------------- zero page
 .const ZP = $02
@@ -51,6 +52,8 @@ start:
     jsr load_device                    // drive of the last LOAD
     jsr shop_load                      // shop glyphs from disk (shop.asm)
     bcs !fail+
+    jsr music_load                     // music and sound effects (sound.asm)
+    bcs !fail+
     jsr level_load                     // level files from disk, still with the KERNAL (level.asm)
     bcc !+
 !fail:
@@ -79,11 +82,17 @@ start:
     jsr scroll_init
     jsr objects_init
     jsr shop_reset
+    jsr sound_init
+    lda #MUS_LEVEL1
+    jsr music_play
     jsr hud_reset
     jsr player_init
     lda #$a7
     sta seed
 
+#if MUSIC_TEST
+    jmp music_test                     // test build: keys 1-4 play the pieces, X = BASIC
+#endif
     // build the first frame into buffer A, show it, then run the loop
     lda #0
     sta back
@@ -94,6 +103,7 @@ main_loop:
     jsr flip                           // show the buffer just built
     jsr player_update_sprites          // sprite registers during vblank
     jsr special_vblank                 // invulnerability ring colours, bomb flash
+    jsr sound_frame                    // music and sound effects, 50 times per second
     lda debug_raster                   // D key: border shows the CPU time per frame
     beq !+
     lda #2
@@ -115,6 +125,49 @@ main_loop:
     beq !+
     jsr shop_run
 !:  jmp main_loop
+
+#if MUSIC_TEST
+music_test:
+    jsr wait_vblank
+    jsr sound_frame
+    lda $d610                          // KEYQUEUE
+    beq music_test
+    sta $d610
+    cmp #$31
+    bcc !+
+    cmp #$31 + MUSIC_PIECES
+    bcs !+
+    sec
+    sbc #$31
+    jsr music_play
+    jmp music_test
+!:  and #$df
+    cmp #$54                           // T: test tone A-4 = 440 Hz (tuning check), triangle, SID 1 + 3
+    bne !+
+    jsr music_stop
+    lda freq_lo+57
+    sta $d400
+    sta $d440
+    lda freq_hi+57
+    sta $d401
+    sta $d441
+    lda #$00
+    sta $d405
+    sta $d445
+    lda #$f0
+    sta $d406
+    sta $d446
+    lda #$0f
+    sta $d418
+    sta $d458
+    lda #$11
+    sta $d404
+    sta $d444
+    jmp music_test
+!:  cmp #$58
+    bne music_test
+    jmp exit_to_basic
+#endif
 
 // ---------------------------------------------------------------- frame
 // Build the complete next frame into the back buffer.
@@ -163,6 +216,7 @@ random:
 #import "level.asm"
 #import "shop.asm"
 #import "special.asm"
+#import "sound.asm"
 
 // ---------------------------------------------------------------- data
 #import "../build/gen/frames.inc"

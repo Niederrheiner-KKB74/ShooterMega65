@@ -1,7 +1,7 @@
 # Musikformat (JSON) – Anleitung für Musik mit ChatGPT
 
 Musik für ShooterMega65 wird als **JSON-Textdatei** geschrieben, nicht als SID-, PRG- oder MIDI-Datei.
-Ein Konverter (`tools/build_music.py`, kommt mit der Sound-Stage) prüft die Datei, meldet Fehler mit Pattern und
+Ein Konverter (`tools/build_music.py`) prüft die Datei, meldet Fehler mit Pattern und
 Zeile und erzeugt daraus die Daten für den Abspieler im Spiel. Der Abspieler läuft 50-mal pro Sekunde (PAL).
 
 ## Klangrahmen
@@ -43,7 +43,7 @@ Jedes Stück ist eine eigene Datei: `music/level1.json`, `music/shop.json` usw.
 
 | Feld | Bedeutung |
 |---|---|
-| `tempo` | Frames pro Patternzeile (1–31). 6 Frames = 0,12 s pro Zeile; mit 4 Zeilen pro Schlag sind das 125 BPM. |
+| `tempo` | Frames pro Patternzeile (3–31). 6 Frames = 0,12 s pro Zeile; mit 4 Zeilen pro Schlag sind das 125 BPM. Zwei Frames vor jeder neuen Note schaltet der Abspieler den Ton kurz ab (Hard Restart), damit die Hüllkurve sauber neu startet. |
 | `volume` | Gesamtlautstärke 0–15 (Standard 15). |
 | `filter` | Optional: `mode` `lowpass`/`bandpass`/`highpass`, `cutoff` 0–2047, `resonance` 0–15. Welche Stimmen gefiltert werden, steht beim Instrument. Filter sparsam einsetzen, er klingt je nach SID-Modell unterschiedlich. |
 | `order` | Reihenfolge der Patterns, **für jede Stimme eine eigene Liste**. Alle drei Listen müssen zusammen gleich viele Zeilen ergeben, sonst laufen die Stimmen auseinander (der Konverter prüft das). |
@@ -103,8 +103,19 @@ Höchstens 128 Patterns pro Stück, höchstens 128 Einträge pro `order`-Liste.
 
 ## Soundeffekte
 Die Effekte (Schüsse, Explosionen, Kapsel aufsammeln, Kauf im Shop, Bombe, Unverwundbarkeit, Rakete) laufen auf
-einem eigenen SID und unterbrechen die Musik nicht. Ich lege dafür zunächst eigene Klänge an. Wer möchte, kann sie
-im selben Instrumentformat als eigene Datei `music/sfx.json` liefern:
+einem eigenen SID und unterbrechen die Musik nicht. Sie stehen in `music/sfx.json`; die Namen der Effekte sind
+fest, weil das Spiel sie aufruft (`shot`, `missile`, `cursor`, `select`, `hit`, `explode`, `explode_big`,
+`player_hit`, `player_dead`, `bomb`, `coin`, `shield`, `invulnerable`, `buy`). Ein Effekt besteht aus:
+
+| Feld | Bedeutung |
+|---|---|
+| `voice` | Effektstimme 0–2. Schüsse/Rakete/Shop-Cursor 0, Explosionen/Bombe 1, Treffer/Kapseln/Kauf 2 |
+| `priority` | 1–255. Ein Effekt unterbricht einen noch klingenden Effekt derselben Stimme nur bei gleicher oder höherer Priorität |
+| `note` | Grundton für Zahlenabstände in der `wave_table` |
+| `frames` | Frames bis zum Loslassen (Release), Standard = Länge der `wave_table` |
+| `attack` … `release`, `pulse`, `wave_table` | wie bei den Instrumenten |
+
+Beispiel:
 
 ```json
 {"format": "shootermega65-sfx-1",

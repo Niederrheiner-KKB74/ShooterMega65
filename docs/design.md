@@ -214,6 +214,14 @@ Original plan:
 
 ## 10. Sound
 - Music: SID tunes. The MEGA65 has 4 SIDs, so music and sound effects can use separate chips.
+- **Implemented in Stage 5 (`sound.asm`, `tools/build_music.py`, score `tools/compose_music.py`):** music on SID 1
+  mirrored to SID 3, effects on SID 2 mirrored to SID 4, so both sound from the middle. All pieces and effects are
+  in the file `MUSIC` (≤ 4 KB) at `$5E000`. Player per frame (called in the vertical blank, also inside the shop):
+  row every `tempo` frames, the next row decoded two frames earlier with a hard restart (gate off, ADSR 0) for new
+  notes; wave tables, arpeggios, vibrato (step = semitone × depth / 8 / speed, computed at note start), pulse sweep.
+  Effects: fixed voice and priority per effect. Pieces: level music (loops), shop music while the shop is open,
+  game-over jingle, level-clear fanfare at the `end` event, each followed by the level music. SID clock assumed
+  1 MHz (`SID_CLOCK` in `build_music.py`); the tuning is checked on hardware.
 - **Decided 01.11.2026:** music on one SID (3 voices), sound effects on another. Music is written as JSON text
   (`docs/music_json.md`, tracker-like: instruments, patterns, one order list per voice), converted at build
   time and played by our own 50 Hz player. By default SIDs 1/2 are panned slightly right and 3/4 slightly left.
@@ -277,6 +285,7 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Capsules fall at their own speed (1.5 px/frame), not with the landscape |
 | 01.11.2026 | Stage 4 (special weapons) confirmed on hardware |
 | 01.11.2026 | Missile in 8 flight directions (45° view from PR #11); revised coastal level (PR #11) |
+| 01.11.2026 | Stage 4b confirmed on hardware; music composed by Claude instead of PR #12 (owner's choice) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)

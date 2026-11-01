@@ -185,6 +185,8 @@ player_move:
     jsr fire_shot
     lda #12                     // right gun
     jsr fire_shot
+    lda #SFX_SHOT
+    jsr sfx_play
     jsr missile_try             // homing missile, if bought (special.asm)
 !done:
     rts
@@ -233,12 +235,21 @@ player_damage:
     beq player_destroyed
     lda #INV_FRAMES
     sta pl_inv
+    lda #SFX_PLAYER_HIT
+    jmp sfx_play
 !no:
     rts
 
 player_destroyed:
+    lda #SFX_PLAYER_DEAD
+    jsr sfx_play
     dec pl_lives
-    jsr hud_score_changed
+    bne !+
+    lda #MUS_GAME_OVER          // last plane lost: jingle, then the level music for the new game
+    jsr music_play
+    lda #MUS_LEVEL1
+    jsr music_queue
+!:  jsr hud_score_changed
     lda #1
     sta pl_state
     lda #RESTART_FRAMES

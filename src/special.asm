@@ -68,6 +68,8 @@ special_update:
     ora inv_timer+1
     bne !done+
     dec inv_count
+    lda #SFX_INVULNERABLE
+    jsr sfx_play
     jsr hud_score_changed
     lda #<INV_LONG
     sta inv_timer
@@ -119,7 +121,8 @@ bomb_fire:
     bne !--
     lda #FLASH_FRAMES
     sta bomb_flash
-    rts
+    lda #SFX_BOMB
+    jmp sfx_play
 
 // object X: carry clear if it is an enemy that is (at least partly) on the screen
 enemy_visible:
@@ -185,6 +188,8 @@ missile_try:
     lda #MS_LIFE
     sta obj_t,x
     stx ms_slot
+    lda #SFX_MISSILE
+    jsr sfx_play
 !no:
     rts
 ms_target: .byte 0

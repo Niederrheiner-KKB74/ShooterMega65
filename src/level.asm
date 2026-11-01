@@ -492,6 +492,10 @@ ev_run:
     rts
 !:  cmp #EV_END
     bne !+
+    lda #MUS_LEVEL_CLEAR        // level end: fanfare, then the level music again
+    jsr music_play
+    lda #MUS_LEVEL1
+    jsr music_queue
     clc                         // level end: the map repeats, events start again
     lda lev_base
     adc lev_nrows

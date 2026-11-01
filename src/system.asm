@@ -74,6 +74,7 @@ system_save:
 
 exit_to_basic:
     sei
+    jsr sound_off                // all four SIDs silent
     lda #0
     sta VIC_SPREN
     jsr wait_vblank              // switch modes while the raster is in the border
