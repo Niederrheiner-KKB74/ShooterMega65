@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "palette": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      54,
+      82,
+      111
+    ],
+    [
+      221,
+      239,
+      247
+    ],
+    [
+      255,
+      165,
+      50
+    ],
+    [
+      14,
+      18,
+      30
+    ],
+    [
+      150,
+      160,
+      178
+    ],
+    [
+      60,
+      205,
+      90
+    ],
+    [
+      245,
+      215,
+      40
+    ],
+    [
+      230,
+      50,
+      40
+    ],
+    [
+      36,
+      42,
+      58
+    ],
+    [
+      160,
+      245,
+      175
+    ],
+    [
+      20,
+      120,
+      55
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ]
+  ],
+  "palette_source": "Stage 3 tools/import_art.py HUD_PAL, bank 12 (), checked at 07dce498c2f211cd00fc6f1a4af65782abe6e8a7",
+  "icons": [
+    {
+      "id": "shot_ii",
+      "title": "Shot II"
+    },
+    {
+      "id": "shot_iii",
+      "title": "Shot III"
+    },
+    {
+      "id": "shot_iv",
+      "title": "Shot IV"
+    },
+    {
+      "id": "bomb",
+      "title": "Bombe"
+    },
+    {
+      "id": "homing_missile",
+      "title": "Zielsuchende Rakete"
+    },
+    {
+      "id": "invulnerability",
+      "title": "Unverwundbarkeit"
+    }
+  ]
+}
