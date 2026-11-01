@@ -1,0 +1,229 @@
+{
+  "schema": 1,
+  "icons": [
+    {
+      "id": "shot_ii",
+      "title": "Shot II",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 0,
+      "ncm_offset": 0,
+      "fcm_offset": 0,
+      "rrb_base": 1,
+      "palette_byte": 207
+    },
+    {
+      "id": "shot_iii",
+      "title": "Shot III",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 256,
+      "ncm_offset": 128,
+      "fcm_offset": 256,
+      "rrb_base": 4,
+      "palette_byte": 207
+    },
+    {
+      "id": "shot_iv",
+      "title": "Shot IV",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 512,
+      "ncm_offset": 256,
+      "fcm_offset": 512,
+      "rrb_base": 7,
+      "palette_byte": 207
+    },
+    {
+      "id": "bomb",
+      "title": "Bombe",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 768,
+      "ncm_offset": 384,
+      "fcm_offset": 768,
+      "rrb_base": 10,
+      "palette_byte": 207
+    },
+    {
+      "id": "homing_missile",
+      "title": "Zielsuchende Rakete",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 1024,
+      "ncm_offset": 512,
+      "fcm_offset": 1024,
+      "rrb_base": 13,
+      "palette_byte": 207
+    },
+    {
+      "id": "invulnerability",
+      "title": "Unverwundbarkeit",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 1280,
+      "ncm_offset": 640,
+      "fcm_offset": 1280,
+      "rrb_base": 16,
+      "palette_byte": 207
+    }
+  ],
+  "palette": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      54,
+      82,
+      111
+    ],
+    [
+      221,
+      239,
+      247
+    ],
+    [
+      255,
+      165,
+      50
+    ],
+    [
+      14,
+      18,
+      30
+    ],
+    [
+      150,
+      160,
+      178
+    ],
+    [
+      60,
+      205,
+      90
+    ],
+    [
+      245,
+      215,
+      40
+    ],
+    [
+      230,
+      50,
+      40
+    ],
+    [
+      36,
+      42,
+      58
+    ],
+    [
+      160,
+      245,
+      175
+    ],
+    [
+      20,
+      120,
+      55
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ]
+  ],
+  "palette_source": "Stage 3 tools/import_art.py HUD_PAL, bank 12 (), checked at 07dce498c2f211cd00fc6f1a4af65782abe6e8a7",
+  "rrb_glyphs": 19,
+  "integrated": false,
+  "emulator_tested": false,
+  "hardware_tested": false,
+  "provenance": "New native pixel icons by Codex; deterministic integer geometry, not resized concept art.",
+  "files": {
+    "bomb.png": {
+      "bytes": 239,
+      "sha256": "495383c483201ceff80bb8019ef1f1e565e02e79ec1acc7f381de2480075d28f"
+    },
+    "homing_missile.png": {
+      "bytes": 267,
+      "sha256": "c5c7f24b8c94096295e1fe0bd418071fb0b03106229622cdec3ff29e72a74c7c"
+    },
+    "indexed-source.json": {
+      "bytes": 4470,
+      "sha256": "1f28d3863349c46a581d6a756f21bba7f0fb91ada0fe2cd060b0893428f2f0f2"
+    },
+    "invulnerability.png": {
+      "bytes": 256,
+      "sha256": "1ca3fbbe9e55f34fa17295ac1ea7df910771085136e860e20e7536f610d51a3a"
+    },
+    "palette.palregs.bin": {
+      "bytes": 48,
+      "sha256": "630d3570aaab734d8f068562552a9af477fbec6552d78a4e9037cb049b5d7866"
+    },
+    "palette.rgb": {
+      "bytes": 48,
+      "sha256": "88838ac6bed0b1cdb40c339fbca087f13e71a2427e7988de14064118f9a269d4"
+    },
+    "preview.png": {
+      "bytes": 6926,
+      "sha256": "d7c71017206b3da73a51240fe37ad49ba94f3212b43ecfc17450d40e06470b71"
+    },
+    "shop-icons-atlas.png": {
+      "bytes": 748,
+      "sha256": "a55392953bec0720bc29398ff0c30d148ea8a937b5819b64191bbe6c170d3198"
+    },
+    "shop-icons-strip.png": {
+      "bytes": 766,
+      "sha256": "7f8a3c38ae789e315b5a159d63607a51caad068ae4cfb4786a117d1ab2e60173"
+    },
+    "shop-icons.inc": {
+      "bytes": 352,
+      "sha256": "67db03ce6b63ad42f95f1905f5a2d54ddc3c9df5dc955c4978a9c243310e0b73"
+    },
+    "shop.fcm.bin": {
+      "bytes": 1536,
+      "sha256": "cfae4976308ddbc2756e5b01f5d8f2ac8b55493df43998c34e714779b65bd76a"
+    },
+    "shop.indices.bin": {
+      "bytes": 1536,
+      "sha256": "9afa05940997f08551eec61a8a51e375c2438acfae77fa3b695ad41ee5cd26ee"
+    },
+    "shop.ncm.bin": {
+      "bytes": 768,
+      "sha256": "d900cd56cd4d2ff9f76689ff5d91c6fe9898365bbb4f4e614c20ba2e73bdde7e"
+    },
+    "shop.rrb.bin": {
+      "bytes": 1216,
+      "sha256": "71c451a82285df49a0bd8648a11f8f9d82c93ec99329274acc5f7008bb809761"
+    },
+    "shot_ii.png": {
+      "bytes": 114,
+      "sha256": "f1a5e938de0404ebf262c58ce1fb4b2c2c9e66818c6a74fe6179e2200281c4d3"
+    },
+    "shot_iii.png": {
+      "bytes": 154,
+      "sha256": "3757f69de574422d9088497191f66f2cd75d484cbeaa776069cf832d06c6f4ee"
+    },
+    "shot_iv.png": {
+      "bytes": 163,
+      "sha256": "3fc9096b313d79a451203afad57ccedbe39b3e8f6cfaafea5d3cd6e941bea54a"
+    }
+  }
+}
