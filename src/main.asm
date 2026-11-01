@@ -33,7 +33,6 @@
 .label pend_typos   = $38      // TEXTYPOS for the frame being built
 
 .const SCROLL_SPEED = $0080    // 8.8 pixels per frame (0.5 px = 25 px/s)
-.const DEBUG_RASTER = 1        // border shows CPU time used per frame
 
 // ---------------------------------------------------------------- BASIC stub
 *=$2001
@@ -64,12 +63,14 @@ start:
 
     lda #0
     sta special_req
+    sta debug_raster
     sta frame_lo
     sta frame_hi
     jsr video_init
     jsr assets_init
     jsr scroll_init
     jsr objects_init
+    jsr hud_reset
     jsr player_init
     lda #$a7
     sta seed
@@ -83,10 +84,11 @@ main_loop:
     jsr wait_vblank
     jsr flip                           // show the buffer just built
     jsr player_update_sprites          // sprite registers during vblank
-    .if (DEBUG_RASTER == 1) {
-        lda #2
-        sta VIC_BORDER
-    }
+    lda debug_raster                   // D key: border shows the CPU time per frame
+    beq !+
+    lda #2
+    sta VIC_BORDER
+!:
     inc frame_lo
     bne !+
     inc frame_hi
@@ -96,10 +98,8 @@ main_loop:
     jsr player_move
     jsr scroll_advance
     jsr build_frame
-    .if (DEBUG_RASTER == 1) {
-        lda #0
-        sta VIC_BORDER
-    }
+    lda #0
+    sta VIC_BORDER
     jmp main_loop
 
 // ---------------------------------------------------------------- frame
@@ -109,7 +109,9 @@ build_frame:
     jsr spawn_update
     jsr objects_update
     jsr collide_shots
-    jsr objects_draw
+    jsr collide_player
+    jsr hud_update
+    jsr objects_draw                   // objects, then the HUD on top
     rts
 
 // Wait until the raster is in the bottom border area (VIC-II line >= 256),
@@ -142,6 +144,7 @@ random:
 #import "pixie.asm"
 #import "objects.asm"
 #import "player.asm"
+#import "hud.asm"
 #import "system.asm"
 
 // ---------------------------------------------------------------- data

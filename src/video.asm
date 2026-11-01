@@ -218,7 +218,7 @@ show_buffer_b:
 // ---------------------------------------------------------------- DMA jobs
 job_tiles:   DmaJob(DMA_CMD_COPY, tile_data, TILE_ADDR, tile_end - tile_data)
 job_pixies:  DmaJob(DMA_CMD_COPY, pixie_data, PIXIE_ADDR, pixie_end - pixie_data)
-job_sprites: DmaJob(DMA_CMD_COPY, sprite_data, SPRITE_ADDR, $200)
+job_sprites: DmaJob(DMA_CMD_COPY, sprite_data, SPRITE_ADDR, sprite_end - sprite_data)
 job_ring_scr: DmaJob(DMA_CMD_COPY, row_tpl_scr, RING_SCR, ROW_BYTES)
 job_ring_col: DmaJob(DMA_CMD_COPY, row_tpl_col, RING_COL, ROW_BYTES)
 job_scr_a:   DmaJob(DMA_CMD_COPY, row_tpl_scr, SCREEN_A, ROW_BYTES)

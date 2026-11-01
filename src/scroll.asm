@@ -76,6 +76,7 @@ decode_row:
     sta dr_slot
     // source offset = (m & 511) * 21 = m*16 + m*4 + m
     lda tmp
+    and #<(MAP_ROWS-1)
     sta tmp2
     lda tmp+1
     and #>(MAP_ROWS-1)

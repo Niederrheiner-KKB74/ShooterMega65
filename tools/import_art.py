@@ -1,0 +1,311 @@
+#!/usr/bin/env python3
+"""Import the artwork v2 package (assets/art/spec-v2, PR #4) into the engine's data formats.
+
+Reads the indexed pixel data (indexed-source.json), the palettes (manifest.json) and the
+example level (level-example.json + terrain.ncm.bin). Writes into build/gen/:
+
+  tiles.bin      landscape NCM glyphs (tile t: glyph 2t = upper half, 2t+1 = lower half)
+  map.bin        MAP_ROWS x 21 glyph offsets, glyph row 0 = level start (bottom)
+  mapcol.bin     MAP_ROWS x 21 colour-RAM byte 1 (palette bank << 4 | $0f)
+  pixies.bin     all pixie frames, column stacks with blank guards (+ HUD glyph area)
+  sprite.bin     6 player frame pairs, 512 bytes each (2 x 192 + padding)
+  palette.bin    text palette 0 (R/G/B planes, nibble-swapped), sprpal.bin sprite palette
+  hud.bin        HUD source data: 10 digit half-glyphs (32 bytes) + shield box template (256 bytes)
+  assets.inc     constants, frames.inc frame tables, previews
+
+Palette banks (text palette 0): 0 C64 colours, 1-4 landscape, 5-8 air enemies,
+9 player shot, 10 red enemy shot, 11 fire shot, 12 HUD + bonus + placeholder tank,
+13 rocket, 14 small explosion, 15 big explosion. All 15 banks are in use; groups that
+have to share a bank later (e.g. the orange/green weapon shots) are merged by
+merge_bank(): above 15 colours it reduces them (median cut) and remaps every pixel.
+"""
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+
+ROOT = Path(__file__).resolve().parents[1]
+ART = ROOT / 'assets/art/spec-v2'
+GEN = ART / 'generated'
+sys.path.insert(0, str(ROOT / 'tools'))
+import make_assets as ph  # noqa: E402  (placeholder tank, C64 colours, NCM packer)
+
+BG_COLS = 21
+LAND = {'water': 1, 'nature': 2, 'structures': 3, 'fixed_targets': 4}
+BANKS = {
+    5: ['fighter'], 6: ['bomber'], 7: ['helicopter'], 8: ['armoured_plane'],
+    9: ['player_shot_blue'], 10: ['enemy_shot_red'], 11: ['enemy_shot_fire'], 13: ['rocket'],
+    14: ['explosion_16'], 15: ['explosion_32'],
+}
+HUD_BANK = 12
+# HUD bank colours (index: role)
+HUD_PAL = [(0, 0, 0), (54, 82, 111), (221, 239, 247), (255, 165, 50),     # 1-3 from hud.json
+           (14, 18, 30),        # 4 backdrop
+           (150, 160, 178),     # 5 bar frame
+           (60, 205, 90),       # 6 shield high
+           (245, 215, 40),      # 7 shield medium
+           (230, 50, 40),       # 8 shield low
+           (36, 42, 58),        # 9 bar empty
+           (160, 245, 175),     # 10 bonus light
+           (20, 120, 55),       # 11 bonus dark
+           (16, 16, 24), (60, 70, 30), (100, 110, 50), (150, 160, 80)]  # 12-15 placeholder tank
+TANK_REMAP = {1: 12, 6: 13, 7: 14, 8: 15}
+SHIELD_MAX = 48                 # bar length in pixels
+BAR_X0 = 11                     # first bar pixel inside the 64 px shield box
+
+# frames in engine order: (constant name, group, frame)
+AIR = [('FIGHTER', 'fighter'), ('BOMBER', 'bomber'), ('HELI', 'helicopter'), ('ARMOURED', 'armoured_plane')]
+
+
+def load():
+    manifest = json.loads((GEN / 'manifest.json').read_text())
+    src = json.loads((GEN / 'indexed-source.json').read_text())
+    pix = {}
+    for s in src:
+        a = np.frombuffer(bytes.fromhex(''.join(s['rows'])), np.uint8).reshape(s['height'], s['width'])
+        pix[s['group'], s['frame']] = a.copy()
+    return manifest, pix
+
+
+def merge_bank(groups, manifest, pix):
+    """Return (palette[16], {group: remap array}) for groups sharing one bank."""
+    colours = {}
+    for g in groups:
+        pal = manifest['palettes'][g]
+        for (gg, _), a in pix.items():
+            if gg != g:
+                continue
+            for idx, n in zip(*np.unique(a, return_counts=True)):
+                if idx:
+                    c = tuple(pal[idx])
+                    colours[c] = colours.get(c, 0) + int(n)
+    cols = sorted(colours, key=lambda c: -colours[c])
+    if len(cols) > 15:      # median cut on a weighted swatch, then nearest colour
+        swatch = []
+        for c in cols:
+            swatch += [c] * max(1, colours[c] // 4)
+        img = Image.fromarray(np.array(swatch, np.uint8).reshape(1, -1, 3))
+        q = img.quantize(15, method=Image.Quantize.MEDIANCUT)
+        qp = q.getpalette()[:45]
+        reduced = [tuple(qp[i:i + 3]) for i in range(0, 45, 3)]
+    else:
+        reduced = cols
+    palette = [(0, 0, 0)] + reduced + [(0, 0, 0)] * (15 - len(reduced))
+    remaps = {}
+    for g in groups:
+        pal = manifest['palettes'][g]
+        m = np.zeros(16, np.uint8)
+        for i in range(1, 16):
+            c = np.array(pal[i])
+            m[i] = 1 + int(np.argmin([((c - np.array(r)) ** 2).sum() for r in reduced]))
+        remaps[g] = m
+    return palette, remaps, len(cols)
+
+
+def hitbox(a):
+    ys, xs = np.nonzero(a)
+    if not len(xs):
+        return a.shape[1] // 2, a.shape[0] // 2, 1, 1
+    x0, x1, y0, y1 = xs.min(), xs.max() + 1, ys.min(), ys.max() + 1
+    return (x0 + x1) // 2, (y0 + y1) // 2, max(1, (x1 - x0) // 2), max(1, (y1 - y0) // 2)
+
+
+def pad16(a):
+    h, w = a.shape
+    out = np.zeros((h, (w + 15) // 16 * 16), np.uint8)
+    off = (out.shape[1] - w) // 2
+    out[:, off:off + w] = a
+    return out
+
+
+def bonus_item(hud):
+    """Placeholder 16x16 shield capsule (bank 12) until real artwork exists."""
+    a = np.zeros((16, 16), np.uint8)
+    for y in range(16):
+        for x in range(16):
+            d = ((x - 7.5) ** 2 + (y - 7.5) ** 2) ** .5
+            if d < 7.6:
+                a[y, x] = 11 if d > 6.2 else 4
+    icon = [[int(c) for c in row] for row in hud['icons'][2]]
+    for y in range(8):
+        for x in range(8):
+            if icon[y][x]:
+                a[4 + y, 4 + x] = 10 if icon[y][x] == 2 else 6
+    a[3, 5] = a[3, 6] = 10
+    return a
+
+
+def main(out):
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    manifest, pix = load()
+    hud = json.loads((ART / 'source/hud.json').read_text())
+    report = []
+
+    # ------------------------------------------------------------ palettes
+    pal = [(0, 0, 0)] * 256
+    pal[:16] = [(0, 0, 0), (255, 255, 255), (136, 0, 0), (170, 255, 238), (204, 68, 204), (0, 204, 85),
+                (0, 0, 170), (238, 238, 119), (221, 136, 85), (102, 68, 0), (255, 119, 119), (51, 51, 51),
+                (119, 119, 119), (170, 255, 102), (0, 136, 255), (187, 187, 187)]
+    for name, bank in LAND.items():
+        pal[bank * 16:bank * 16 + 16] = [tuple(c) for c in manifest['palettes'][name]]
+    remap = {}
+    for bank, groups in BANKS.items():
+        p, r, n = merge_bank(groups, manifest, pix)
+        pal[bank * 16:bank * 16 + 16] = p
+        remap.update({g: (bank, m) for g, m in r.items()})
+        report.append(f'bank {bank:2}: {"+".join(groups)} ({n} colours{" -> 15" if n > 15 else ""})')
+    pal[HUD_BANK * 16:HUD_BANK * 16 + 16] = HUD_PAL
+    (out / 'palette.bin').write_bytes(bytes(ph.swap(c[ch]) for ch in range(3) for c in pal))
+    sprpal = [tuple(c) for c in manifest['palettes']['player']] * 2
+    (out / 'sprpal.bin').write_bytes(bytes(ph.swap(c[ch]) for ch in range(3) for c in sprpal))
+
+    # ------------------------------------------------------------ landscape
+    level = json.loads((GEN / 'level-example.json').read_text())
+    terrain = (GEN / 'terrain.ncm.bin').read_bytes()
+    ntiles = len(terrain) // 128
+    assert ntiles * 2 <= 256, 'tile glyph offsets must fit a byte'
+    (out / 'tiles.bin').write_bytes(terrain)
+    tile_pal = {t['id']: LAND[t['palette']] for t in level['tiles']}
+    rows = level['rows']                         # top to bottom
+    assert all(len(r) == BG_COLS for r in rows)
+    map_bytes, col_bytes = bytearray(), bytearray()
+    for meta in reversed(rows):                  # bottom (level start) first
+        for half in (1, 0):                      # lower glyph row first: rows count upwards
+            for t in meta:
+                map_bytes.append(t * 2 + half)
+                col_bytes.append((tile_pal[t] << 4) | 0x0F)
+    map_rows = len(rows) * 2
+    assert map_rows & (map_rows - 1) == 0, 'map rows must be a power of two (ring index masking)'
+    (out / 'map.bin').write_bytes(map_bytes)
+    (out / 'mapcol.bin').write_bytes(col_bytes)
+
+    # check: rebuild the level picture from our map + glyphs and compare with level-example.png
+    ref = np.array(Image.open(GEN / 'level-example.png').convert('RGB'))
+    img = np.zeros((map_rows * 8, BG_COLS * 16, 3), np.uint8)
+    for r in range(map_rows):
+        y = (map_rows - 1 - r) * 8
+        for c in range(BG_COLS):
+            g = terrain[map_bytes[r * BG_COLS + c] * 64:][:64]
+            bank = col_bytes[r * BG_COLS + c] >> 4
+            for yy in range(8):
+                for xx in range(16):
+                    v = (g[yy * 8 + xx // 2] >> (4 * (xx & 1))) & 15
+                    img[y + yy, c * 16 + xx] = pal[bank * 16 + v]
+    assert (img == ref).all(), 'map conversion does not reproduce level-example.png'
+    report.append(f'landscape: {ntiles} tiles, {map_rows} glyph rows, matches level-example.png')
+
+    # ------------------------------------------------------------ pixie frames
+    frames = []          # (name, pixels padded, bank, hitbox from unpadded)
+
+    def add(name, a, bank):
+        p = pad16(a)
+        off = (p.shape[1] - a.shape[1]) // 2
+        cx, cy, hw, hh = hitbox(a)
+        frames.append((name, p, bank, (cx + off, cy, hw, hh)))
+
+    def grp(group, n):
+        bank, m = remap[group]
+        return m[pix[group, n]], bank
+
+    for const, group in AIR:
+        for n in range(3):
+            a, b = grp(group, n)
+            add(f'{const}{n}', a, b)
+    for n in range(2):
+        add(f'PSHOT{n}', *grp('player_shot_blue', n))
+    add('ESHOT_RED', *grp('enemy_shot_red', 0))
+    add('ESHOT_FIRE', *grp('enemy_shot_fire', 0))
+    add('ROCKET', *grp('rocket', 0))
+    for n in range(6):
+        add(f'EX16_{n}', *grp('explosion_16', n))
+    for n in range(6):
+        add(f'EX32_{n}', *grp('explosion_32', n))
+    tank = np.vectorize(lambda v: TANK_REMAP.get(int(v), 0))(dict(ph.FRAMES)['TANK']).astype(np.uint8)
+    add('TANK', tank, HUD_BANK)
+    add('BONUS', bonus_item(hud), HUD_BANK)
+
+    glyphs = [bytes(64)]
+    table = []
+    for name, p, bank, hb in frames:
+        h, w = p.shape[0] // 8, p.shape[1] // 16
+        base = len(glyphs)
+        for c in range(w):
+            for i in range(h):
+                glyphs.append(ph.ncm_glyph(p[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
+            glyphs.append(bytes(64))
+        table.append(dict(name=name, base=base, w=w, h=h, pal=(bank << 4) | 15, hit=hb))
+    # HUD: score box 3 columns, shield box 4 columns (h = 1), contents written at run time
+    for name, w in (('HUD_SCORE', 3), ('HUD_SHIELD', 4)):
+        base = len(glyphs)
+        glyphs += [bytes(64)] * (2 * w)
+        table.append(dict(name=name, base=base, w=w, h=1, pal=(HUD_BANK << 4) | 15, hit=(8, 4, 1, 1)))
+    assert len(glyphs) <= 256 and all(t['base'] <= 255 for t in table), 'pixie glyph budget (256) exceeded'
+    (out / 'pixies.bin').write_bytes(b''.join(glyphs))
+    report.append(f'pixies: {len(table)} frames, {len(glyphs)} glyphs of 256')
+
+    # ------------------------------------------------------------ HUD source data
+    digits = bytearray()
+    for d in hud['digits']:
+        for row in d:
+            v = [int(c) or 4 for c in row]                 # transparent -> backdrop
+            digits += bytes(v[x] | (v[x + 1] << 4) for x in range(0, 8, 2))
+    box = np.full((8, 64), 4, np.uint8)
+    for y, row in enumerate(hud['icons'][2]):
+        for x, c in enumerate(row):
+            if int(c):
+                box[y, x] = int(c)
+    box[1, BAR_X0 - 1:BAR_X0 + SHIELD_MAX + 1] = 5
+    box[6, BAR_X0 - 1:BAR_X0 + SHIELD_MAX + 1] = 5
+    box[1:7, BAR_X0 - 1] = 5
+    box[1:7, BAR_X0 + SHIELD_MAX] = 5
+    box[2:6, BAR_X0:BAR_X0 + SHIELD_MAX] = 9
+    template = b''.join(ph.ncm_glyph(box[:, c * 16:c * 16 + 16]) for c in range(4))
+    (out / 'hud.bin').write_bytes(bytes(digits) + template)
+
+    # ------------------------------------------------------------ player sprites
+    spr = bytearray()
+    for n in range(6):
+        a = pix['player', n]
+        for half in range(2):
+            part = a[:, half * 16:half * 16 + 16].reshape(-1)
+            spr += bytes((int(part[i]) << 4) | int(part[i + 1]) for i in range(0, len(part), 2)) + bytes(64)
+    (out / 'sprite.bin').write_bytes(spr)
+
+    # ------------------------------------------------------------ constants
+    names = {t['name']: i for i, t in enumerate(table)}
+    lines = ['// generated by tools/import_art.py - do not edit',
+             f'.const MAP_ROWS={map_rows}', f'.const MAP_COLS={BG_COLS}',
+             f'.const TILE_GLYPHS={ntiles * 2}', f'.const PIXIE_GLYPHS={len(glyphs)}',
+             '.const PLAYER_FRAMES=6   // 0-2 straight (exhaust animation), 3 left, 4 normal, 5 right',
+             '.const AIR_ANIM_FRAMES=3', f'.const SHIELD_MAX={SHIELD_MAX}', f'.const BAR_X0={BAR_X0}',
+             f'.const HUD_GLYPH={table[names["HUD_SCORE"]]["base"]}',
+             f'.const PAL_HUD=${(HUD_BANK << 4) | 15:02x}']
+    for name, i in names.items():
+        lines.append(f'.const FR_{name}={i}')
+    (out / 'assets.inc').write_text('\n'.join(lines) + '\n')
+    tl = ['// generated by tools/import_art.py - do not edit']
+    for label, f in [('frame_base', lambda t: t['base']), ('frame_w', lambda t: t['w']), ('frame_h', lambda t: t['h']),
+                     ('frame_pal', lambda t: t['pal']), ('frame_hit_cx', lambda t: t['hit'][0]),
+                     ('frame_hit_cy', lambda t: t['hit'][1]), ('frame_hit_halfw', lambda t: t['hit'][2]),
+                     ('frame_hit_halfh', lambda t: t['hit'][3])]:
+        tl.append(f'{label}: .byte ' + ','.join(str(f(t)) for t in table))
+    (out / 'frames.inc').write_text('\n'.join(tl) + '\n')
+
+    # ------------------------------------------------------------ preview of what the engine shows
+    tiles = []
+    for name, p, bank, _ in frames:
+        rgb = np.array([[pal[bank * 16 + v] if v else (40, 40, 48) for v in row] for row in p], np.uint8)
+        tiles.append(np.pad(rgb, ((0, 32 - rgb.shape[0]), (0, 2), (0, 0)), constant_values=40))
+    sheet = np.hstack(tiles)
+    Image.fromarray(sheet).resize((sheet.shape[1] * 3, sheet.shape[0] * 3), Image.NEAREST).save(out / 'preview_pixies.png')
+    hudimg = np.array([[pal[HUD_BANK * 16 + v] for v in row] for row in box], np.uint8)
+    Image.fromarray(hudimg).resize((256, 32), Image.NEAREST).save(out / 'preview_hud.png')
+    (out / 'import_report.txt').write_text('\n'.join(report) + '\n')
+    print('artwork v2: ' + '; '.join(report))
+
+
+if __name__ == '__main__':
+    main(sys.argv[1] if len(sys.argv) > 1 else ROOT / 'build/gen')

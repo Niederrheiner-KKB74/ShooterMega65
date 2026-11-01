@@ -1,34 +1,48 @@
-# Memory map (Stage 1)
+# Memory map (Stage 2)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
 BASIC's screen RAM, colour RAM `$0000–$0FFF` and RAM below `$2000` are never written.
+Exact addresses of the bank-0 areas come from `build/main.sym`; the values below are from the Stage 2 build.
+
+## Zero page (`$02–$FF` saved at start, restored on exit)
+
+| Address | Use |
+|---|---|
+| `$02–$0D` | frame counter, buffer select, scroll state, joystick, random seed, RRB overflow counter |
+| `$10–$1B` | 32-bit screen/colour pointers, temporaries |
+| `$1C–$2F` | pixie emitter |
+| `$34–$38` | back buffer addresses, pending TEXTYPOS |
+| `$40–$4F` | object system (current object, timers, spawn position, kill flags, collision temporaries) |
+| `$50–$58` | player (position, fire cooldown, shield, invulnerability, state, timer, sprite frame) |
+| `$59–$66` | HUD (dirty flags, pointers, 32-bit glyph pointer, score BCD `$64–$66`) |
+| `$6A–$6F` | collision centres |
 
 ## Bank 0
 
 | Address | Use |
 |---|---|
-| `$0002–$0053` | zero page variables (see `main.asm`, `pixie.asm`, `objects.asm`, `player.asm`); `$02–$FF` saved at start and restored on exit |
 | `$2001–$2010` | BASIC stub `BANK 0:SYS 8224` |
-| `$2020–$3A9B` | code/tables, 16-bit sprite pointer table, exit save area, 48-byte air-animation base table and wave-kind byte |
-| `$3B00–$9A7F` | unchanged map, map colours and landscape glyph staging |
-| `$9A80–$AFFF` | 86 guarded pixie glyphs (5504 bytes) |
-| `$B000–$B5FF` | three 512-byte player pairs in bank-0 staging (normal, left, right) |
-| `$B600–$B95F` | text palette (768 bytes) and sprite palette (96 bytes) |
+| `$2020–$4407` | code and tables: sprite pointer table, HUD work buffer (7×64), HUD digits/template, exit save area, sine table, frame tables |
+| `$4500–$4F7F` | map (64 glyph rows × 21) and map colours |
+| `$4F80–$6E7F` | landscape glyph staging (124 glyphs) |
+| `$6E80–$9DBF` | pixie glyph staging (189 glyphs incl. the 14 HUD glyphs) |
+| `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
+| `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
 | `< $C000` | assembler guard: the PRG must end below `$C000` |
 
 ## Banks 4/5 (chip RAM)
 
 | Address | Size | Use |
 |---|---|---|
-| `$40000–$4FFFF` | 64 KB | landscape NCM glyphs, char `$1000`+ (1024 glyphs) |
-| `$50000–$53FFF` | 16 KB | pixie NCM glyphs, char `$1400`+ (256 glyphs); glyph `$1400` = blank |
+| `$40000–$4FFFF` | 64 KB | landscape NCM glyphs, char `$1000`+ (Stage 2 uses 124) |
+| `$50000–$53FFF` | 16 KB | pixie NCM glyphs, char `$1400`+ (Stage 2 uses 189 of 256); glyph `$1400` = blank; HUD glyphs at `HUD_GLYPH + 2k` |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |
 | `$58000–$5AA7F` | 64×170 | ring buffer, screen part (32 slots stored twice) |
 | `$5B000–$5DA7F` | 64×170 | ring buffer, colour part |
-| `$5E000–$5EFFF` | | free (planned: HUD glyphs) |
-| `$5F000–$5F1FF` | 512 bytes | one resident player pair (2 × 192 bytes, 256-byte aligned); 512-byte DMA only when tilt changes, during vblank |
+| `$5E000–$5EFFF` | | free |
+| `$5F000–$5FBFF` | | player sprites, 6 frame pairs (left/right half 256 bytes each) |
 
 `$20000–$3FFFF` is ROM and is never used for data (Vyper rule 4).
 
@@ -60,23 +74,18 @@ BASIC's screen RAM, colour RAM `$0000–$0FFF` and RAM below `$2000` are never w
 
 All registers above, palette 0 and palette 1 entries 0–31 are saved at start and restored on exit.
 
-## Palettes
+## Palette banks (text palette 0, 16 entries each; made by `tools/import_art.py`)
 
-| Entries | Use |
-|---|---|
-| text `$00–$0F` | C64 colours (debug border colours) |
-| text `$10–$1F` | landscape (bank 1) |
-| text `$20–$2F` | unchanged ground tank, shots and explosions (bank 2) |
-| text `$30–$3F` | reference-board fighter (bank 3) |
-| text `$40–$4F` | reference-board bomber (bank 4) |
-| text `$50–$5F` | reference-board helicopter (bank 5) |
-| text `$60–$6F` | reference-board armoured plane (bank 6) |
-| sprite set 1 `$00–$1F` | player sprites 0 and 1 |
+| Bank | Use | Bank | Use |
+|---|---|---|---|
+| 0 | C64 colours (border, debug) | 8 | armoured plane |
+| 1 | landscape: water | 9 | player shot |
+| 2 | landscape: nature | 10 | red enemy shot |
+| 3 | landscape: structures | 11 | fire shot |
+| 4 | landscape: fixed targets | 12 | HUD, bonus item, placeholder tank |
+| 5 | fighter | 13 | rocket |
+| 6 | bomber | 14 | small explosion |
+| 7 | helicopter | 15 | big explosion |
 
-Addresses above describe the default aircraft build (PRG end exclusive `$B960`,
-1696 bytes free before `$C000`). Chip-RAM regions and zero-page allocation are
-unchanged. All text palette entries were already saved/restored by `system.asm`.
-`--placeholder-art` uses fewer staging bytes; always check the assembler's actual
-memory report. Guards cover PRG size, 16KB pixie region, byte-sized glyph bases,
-player frame length and page alignment.
-
+All 16 banks are in use. Further object types must share a bank; the importer merges and, if needed,
+reduces colours (`merge_bank`). Sprite palette (set 1) entries `$00–$1F`: player (sprites 0 and 1).

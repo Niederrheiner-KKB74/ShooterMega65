@@ -1,7 +1,7 @@
 # ShooterMega65 – Technical Design
 
-Status: Stage 1 with reference-aircraft integration (31.10.2026); aircraft build
-assembled and data-tested, emulator/hardware confirmation still open.
+Status: Stage 2 (01.11.2026): artwork v2, HUD, shield and bonus items. Assembled and XEMU smoke-tested;
+hardware test pending. Stage 1 and Stage 1-aircraft were confirmed on real hardware by the owner on 01.11.2026.
 Items marked **(decision)** need the
 project owner's confirmation. Items marked **(HW)** have to be checked on real
 MEGA65 hardware, because XEMU is not authoritative for them (see Vyper rule 19).
@@ -120,19 +120,37 @@ are unchanged. See `docs/stage1-aircraft.md` for validation and remaining tests.
 - Sprites 0+1: the player, 16-colour, 16×24 each, 16-bit sprite pointers (16-byte-aligned table in bank 0,
   data at `$5F000`), sprite palette = palette set 1 (`$D070 = $04`). In 16-colour mode the
   sprite colour register holds the *transparent* index (0). **(HW)**
-- The 24×24 reference-board player is centred in its existing 32×24 canvas.
-  Three 512-byte pairs (normal/left/right) are staged in bank 0; a change of
-  horizontal input copies one pair to the unchanged `$5F000` region in vblank.
-  Initial asset DMA and `player_init` reset the normal frame on every RUN.
+- Since Stage 2 all six frame pairs of the artwork v2 player (3 exhaust frames, left, normal, right)
+  are copied once to `$5F000–$5FBFF`. Changing the frame only rewrites the two 16-bit sprite
+  pointers in the vertical blank, so no DMA is needed during play.
+- While invulnerable after a hit the sprites blink (enable register toggled every 4 frames).
 - Sprites 2–7 are free. Candidates **(decision)**: the player's shadow, option drones, a HUD part, or boss turrets
   that must sit above everything.
 
 ## 6. Objects, collisions, gameplay
 
-- Structure-of-arrays tables (`obj_type, x, y (16-bit signed), frame, t, a, b`). Updates go
-  through a jump table per type. Stage 1 types: player shot, air enemy, tank, enemy shot, explosion.
-- Collisions use bounding boxes with 16-bit signed differences, and only shots against targets
-  (O(shots × targets) ≤ 18 × 30 checks).
+- Structure-of-arrays tables (`obj_type, kind, x, y (16-bit signed), frame, t, a, b, hp, wave`). Updates go
+  through a jump table per type: player shot, air enemy, tank, enemy shot, explosion, bonus item.
+- **Kinds** (Stage 2) carry the gameplay values in tables in `objects.asm`: frame, hit points, damage
+  to the player's shield, points, explosion size, weapon, firing rate and guaranteed bonus drop.
+
+  | Kind | HP | Shield damage on contact | Points | Weapon (damage) |
+  |---|---|---|---|---|
+  | fighter (16×16, formation of 6) | 1 | 12 | 100 | red shot (6) |
+  | helicopter (16×16, formation of 6) | 2 | 12 | 150 | red shot (6) |
+  | bomber (32×32, formation of 3) | 5 | 20 | 300 | fire shot (10) |
+  | armoured plane (32×32, formation of 3) | 8 | 24 | 500 | fire shot (10), always drops a bonus |
+  | tank (placeholder art) | 2 | – (ground) | 200 | rocket (14) |
+
+- **Shield** (decided 01.11.2026): the player has `SHIELD_MAX = 48` shield points instead of dying on the first
+  contact. Contact with an enemy plane or an enemy shot costs the kind's damage; the plane is destroyed (no points).
+  After a hit the player is invulnerable for 1 s. At 0 the plane explodes; after 3 s a new game starts
+  (no lives yet, see §15).
+- **Bonus items** refill the shield (+16, plus 250 points). They are dropped when a whole formation was shot down
+  (per-formation kill counter) and always by armoured planes. Placeholder graphic until real artwork exists.
+- Collisions use bounding boxes from the visible pixels of every frame (`frame_hit_*` tables made by the
+  importer) with 16-bit signed differences: player shots against air enemies and tanks, and the player
+  against enemy planes, enemy shots and bonus items.
 - Planned types:
   - formation flyers driven by path tables. The path format follows Vyper's curve interpreter (segments of dx/dy/frames).
   - turret and tank ground units that aim at the player.
@@ -150,6 +168,11 @@ are unchanged. See `docs/stage1-aircraft.md` for validation and remaining tests.
 - Scrolling stops (`SCROLL_SPEED = 0`) or loops a short boss-arena section of the map while the boss is alive.
 
 ## 8. HUD
+**Implemented in Stage 2** (`hud.asm`): two pixie boxes at the top, the 6-digit BCD score on the left
+(48×8 px) and the shield box on the right (64×8 px: shield icon and a 48 px bar, green → yellow → red).
+Their 7 glyphs sit in the pixie glyph area; they are rebuilt in bank 0 and copied only when the score or the
+shield changes. Cost: 2 rows × (4 + 5) tokens.
+
 **Decided (31.10.2026): option 1, a score strip at the top of the screen.** Fine scrolling moves the whole text area, so a HUD made of plain text chars would scroll too. The options were:
 1. **A pixie strip at a fixed screen y** (recommended). It is 1–2 rows of 20 glyphs drawn from a small dynamic
    glyph buffer, re-rendered only when the score changes. Its cost is about 42 tokens in 2 rows.
@@ -183,7 +206,8 @@ Vyper's stage files are not copied wholesale, because they carry their full hist
 | Stage | Content | Acceptance |
 |---|---|---|
 | **1** | Engine prototype: mode, scrolling ring, double-buffered RRB, pixies, sprite player, demo enemies | XEMU smoke test ✔, **real hardware test by owner** |
-| 2 | HUD, player hit/lives, game states (title → play → game over) | HW |
+| **2** | Artwork v2 import, HUD (score + shield bar), shield/damage, bonus items, restart | XEMU ✔, HW open |
+| 2b | Lives, game states (title → play → game over), special weapon on space | HW |
 | 3 | Level format and tool (PNG/Tiled → tiles/map/script), first real tile set, spawn script | HW |
 | 4 | Enemy paths and formations, ground turrets, fixed targets (tile patching) | HW |
 | 5 | Collectibles, weapon power-ups, bombs | HW |
@@ -207,9 +231,14 @@ so `RUN` works again after an exit.
 | 31.10.2026 | Score display at the top of the screen (pixie strip, §8) |
 | 31.10.2026 | Artwork made by the owner (with ChatGPT), following `docs/artwork_spec.md` |
 | 31.10.2026 | Exit to BASIC with X or RUN/STOP, as in Vyper |
+| 01.11.2026 | HUD also shows a shield bar; the player has shield hit points, damage depends on the enemy kind |
+| 01.11.2026 | Shield refills come from bonus items left by certain enemies or completed formations |
+| 01.11.2026 | Artwork v2 (PR #4) adopted; Stage 1 and Stage 1-aircraft confirmed on hardware |
 
 ## 15. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 2. What should the special weapon be (screen bomb, laser, shield …), and how many uses should there be per life or level?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
+4. Lives: should there be several lives (the HUD artwork has a plane icon), and does a new life start with a full shield?
+5. Are the damage values and points in §6 a good starting point?
 

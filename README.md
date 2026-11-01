@@ -8,12 +8,10 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
 - formations, ground targets, collectibles and a boss at the end of every level
 
 ## Status
-**Stage 1 – engine prototype** (branch `stage1-engine-prototype`): scrolling, double-buffered
-RRB, pixies, player sprite and demo enemies with placeholder graphics.
-The original placeholder build was smoke-tested in XEMU; **waiting for the real-hardware test**.
-This branch now integrates the reference-board player and four animated air enemies.
-That artwork build is assembled and data-tested; its emulator and hardware checks are still open.
-See [docs/stage1-aircraft.md](docs/stage1-aircraft.md).
+- **Stage 1** (engine prototype) and **Stage 1-aircraft**: confirmed on real hardware (01.11.2026),
+  `stage1-stable` / `stage1-aircraft-stable`.
+- **Stage 2** (branch `stage2`): artwork v2, HUD with score and shield bar, shield/damage, bonus items.
+  Smoke-tested in XEMU; **waiting for the real-hardware test**. See [docs/stage2.md](docs/stage2.md).
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.
@@ -24,7 +22,7 @@ The output is `build/SHOOTER.PRG` and `build/SHOOTER65.D81` (`LOAD "SHOOTER",8` 
 The normal build selects the new aircraft. `--placeholder-art` retains the old artwork
 for comparison. `python3 tools/check_aircraft_integration.py` checks the normal build.
 
-Controls: joystick in port 2 (fire = shoot). Press X or RUN/STOP to go back to BASIC.
+Controls: joystick in port 2 (fire = shoot). D toggles the raster time display. Press X or RUN/STOP to go back to BASIC.
 
 ## Documentation
 - [Technical design and roadmap](docs/design.md)
@@ -35,8 +33,8 @@ Controls: joystick in port 2 (fire = shoot). Press X or RUN/STOP to go back to B
 
 ## Layout
 ```
-src/       engine sources (main, video, scroll, pixie, objects, player, system, hw, layout)
-tools/     build.py, make_assets.py (placeholder graphics), d81.py
+src/       engine sources (main, video, scroll, pixie, objects, player, hud, system, hw, layout)
+tools/     build.py, import_art.py (artwork v2 importer), make_assets.py (placeholders), d81.py
 docs/      design, memory map, stage notes
 releases/  tested stage builds (PRG + D81)
 ```

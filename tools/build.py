@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 import d81            # noqa: E402
 import make_assets    # noqa: E402
-import integrate_aircraft  # noqa: E402
+import import_art     # noqa: E402
 
 KICKASS_SHA256 = '5d8544280dae2d018c79151d8c7b877eca1fb994096e54ca380b26d0cd79f847'
 PRG_NAME = 'SHOOTER'
@@ -37,7 +37,6 @@ def main():
     ap.add_argument('--kickass')
     ap.add_argument('--out', default=str(ROOT / 'build'))
     ap.add_argument('--allow-other-kickass', action='store_true')
-    ap.add_argument('--placeholder-art', action='store_true', help='use the original Stage-1 placeholder aircraft')
     a = ap.parse_args()
     out = Path(a.out).resolve()
     jar = find_kickass(a.kickass)
@@ -45,9 +44,7 @@ def main():
     if digest != KICKASS_SHA256 and not a.allow_other_kickass:
         sys.exit(f'unexpected KickAssembler build {digest}; pass --allow-other-kickass to continue')
 
-    make_assets.main(ROOT / 'build/gen')
-    if not a.placeholder_art:
-        integrate_aircraft.main(ROOT / 'build/gen')
+    import_art.main(ROOT / 'build/gen')        # artwork v2 (assets/art/spec-v2)
     prg = out / f'{PRG_NAME}.PRG'
     out.mkdir(parents=True, exist_ok=True)
     # A failed assembly must not leave a previous build looking current.

@@ -145,6 +145,11 @@ read_keys:
     and #$df                     // fold lower case
     cmp #$58                     // X
     beq !exit+
+    cmp #$44                     // D: toggle the raster time display
+    bne !none+
+    lda debug_raster
+    eor #1
+    sta debug_raster
     rts
 !space:
     lda #1                       // space: request the special weapon (handled in a later stage)
@@ -162,6 +167,7 @@ key_drain:
 !:  rts
 
 special_req: .byte 0
+debug_raster: .byte 0
 saved_sp:   .byte 0
 saved_sph:  .byte 0
 saved_b:    .byte 0
