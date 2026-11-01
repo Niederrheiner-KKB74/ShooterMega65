@@ -99,7 +99,7 @@ All registers above (plus the sprite colour registers `$D029–$D02B`), palette 
 | 3 | landscape: structures | 11 | fire shot |
 | 4 | landscape: fixed targets; tanks | 12 | HUD, bonus capsules |
 | 5 | fighter | 13 | rocket |
-| 6 | bomber | 14 | small explosion |
+| 6 | bomber; during the boss fight: boss hit flash (Stage 7b) | 14 | small explosion |
 | 7 | helicopter | 15 | big explosion |
 
 While the shop is open (Stage 3b), banks 13–15 hold the shop palettes (normal, dimmed, highlight); no objects

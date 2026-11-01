@@ -95,7 +95,7 @@ def main(out):
     tpal = [tuple(t_img.getpalette()[i:i + 3]) for i in range(0, 48, 3)]
     assert title.shape == (200, 320) and not title[176:].any(), 'title: bottom 24 rows must be free'
     blank_title = title.copy()
-    text(title, 'PRESS FIRE', None, 177, 15, shadow=8)
+    text(title, 'PRESS FIRE', None, 176, 15, shadow=8)    # text + shadow stay in tile row 22 (y 176-183), which blinks
     end = text(title, 'HIGH SCORE', None, 192, 7)
     title[192:200, TITLE_DIGITS[1] * 16 - 2:] = 0
     lx = TITLE_DIGITS[1] * 16 - 4 - (len('HIGH SCORE') * 6 - 1)

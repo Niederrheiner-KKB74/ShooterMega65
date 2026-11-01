@@ -291,6 +291,7 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Curved paths for helicopters, bombers, armoured planes; Stage 6 confirmed on hardware |
 | 01.11.2026 | Game name "Shooter65" (repository keeps its name); PR #14 adopted: title, game-over banner, level-1 boss; boss and title music by Claude |
 | 01.11.2026 | Stage 7 confirmed on hardware |
+| 01.11.2026 | Stage 7b: boss parts flash when hit, wrecks vanish with the body, "PRESS FIRE" shadow kept inside the blinking row; boss harder (70 / 200 hit points, 1–2 px/frame plus bob, faster turret fire, core fires fans of three) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -368,11 +369,20 @@ Requests while the plane is destroyed or inside the shop are dropped.
   afterwards both are swapped back and `palette_init` restores the bank. The frame table entries of the boss
   (`FR_BOSS_*`) point to the swapped place already. South-west turret views are mirrored south-east views.
 - Body and the four rotors are drawn by `boss_draw` before all objects; the four turrets and the core are objects of
-  type `T_BOSS` (air slots), so shots, the missile and the bomb (20 damage) work on them. Turrets: 40 hit points,
-  aim south / south-east / south-west at the player, red shots every 1.2–2.5 s, muzzle flash; 1,000 points each.
-  When all four are destroyed the core opens (120 hit points, fire shots every 0.6–1.3 s, faster movement);
-  core destroyed: 5,000 points, 3 s of explosions, glyphs/palette back, scrolling and level music resume.
-- The boss moves sideways (x 24–200, 0.5 px/frame, 1 px in the core phase); touching its body costs 16 shield.
+  type `T_BOSS` (air slots), so shots, the missile and the bomb (20 damage) work on them. Turrets (Stage 7b): 70 hit points,
+  aim south / south-east / south-west at the player, red shots every 0.5–1.7 s (interval 24 + 8 per standing
+  turret + 0–31 frames, so the last turrets fire faster), muzzle flash; 1,000 points each.
+  When all four are destroyed the core opens (200 hit points, a fan of three fire shots left / down / right every
+  0.7–1.3 s, faster movement); core destroyed: 5,000 points, 3 s of explosions, glyphs/palette back, scrolling and
+  level music resume. Stage 7: 40 / 120 hit points, slower fire; the owner found the boss too easy.
+- Hit feedback (Stage 7b): a part that is hit but survives is drawn for 4 frames (`FLASH_FRAMES_HIT`, `obj_a`) with
+  palette bank 6, a copy of the boss palette lightened 65 % toward white (`boss_flash_pal`, made by
+  `import_art.py`; bank 6 belongs to the bomber, which cannot appear during the fight).
+- The boss moves sideways (x 24–200, 1 px/frame, 2 px in the core phase) and bobs up and down (y 20–44,
+  0.5 px/frame); touching its body costs 16 shield. If the core opens while the boss is still flying in, it first
+  descends to its fighting height.
+- Halfway through the death explosions the body disappears, together with the turret wrecks (`boss_parts_away`,
+  each with an explosion).
 
 ## 19. Title, game over, high score (Stage 7, `screens.asm`, `tools/make_screens.py`)
 - Flow: start → title → game → last plane lost → game-over banner (fire after 1 s, or 5 s) → title → new game.

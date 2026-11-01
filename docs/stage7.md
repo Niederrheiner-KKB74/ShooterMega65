@@ -45,3 +45,39 @@ Design details: `docs/design.md` §18 (boss) and §19 (title, game over).
 6. Losing the last plane during the boss fight: game over, title and the new game look right.
 7. `MUSICTEST`: keys 5 and 6 play the boss and the title music.
 8. X returns to BASIC (also on the title and game-over screens).
+
+# Stage 7b – boss feedback and difficulty, title fix
+
+Branch `stage7`, on top of the confirmed Stage 7 (`stage7-release`). Release files are in `releases/stage7b/`.
+
+## What changed
+- **Title**: the shadow of "PRESS FIRE" now stays inside the blinking row, so no blue fragments remain.
+- **Hit flash**: a turret or the core that is hit but not destroyed lights up for 4 frames (shots, missile and bomb).
+- **Wrecks**: halfway through the death explosions the turret wrecks disappear with the body, each with an explosion.
+- **Harder boss**: turrets 70 hit points (was 40), core 200 (was 120). The boss moves twice as fast sideways
+  (1 px/frame, 2 px in the core phase) and also bobs up and down. Turrets fire more often, and the fewer are left, the
+  faster they fire. The open core fires a fan of three shots (left, down, right).
+- Fixed during the work: a label mix-up in the new drawing code froze the game at the start (found in XEMU before
+  the release).
+
+## Verification so far
+| Check | Result |
+|---|---|
+| Assembly; D81 with 10 files read back | ✔ |
+| XEMU title: row 23 has no non-background pixels in both blink phases | ✔ |
+| XEMU boss test level (fire held, player not moving): the hit turret is drawn lightened (screenshot), `obj_a` counts down on turrets and core | ✔ |
+| XEMU: boss x moves 1 px/frame and bounces, y bobs 20–44; core phase 2 px/frame; core fan: three shots with direction −1 / 0 / +1 | ✔ |
+| XEMU weak boss (`BOSS_TEST`): at the halfway point of the explosions no boss parts are left; 9,000 points, scrolling resumes | ✔ |
+| XEMU weak boss: turrets destroyed while it is still flying in → the core keeps descending to its fighting height | ✔ |
+| XEMU full-strength boss, player standing still: after 65 s three turrets are left (one at 10 HP), the player loses all three planes → game-over banner, boss removed | ✔ |
+| XEMU default level for 58 s after the start, RRB overflow 0 (also in all boss runs) | ✔ |
+| Real MEGA65 | open |
+
+## Hardware test checklist
+1. Title: "PRESS FIRE" blinks without any blue remains under the letters.
+2. Boss: every hit on a turret or on the open core makes it light up briefly; also with missile and bomb.
+3. The boss moves noticeably faster sideways and bobs up and down; turrets fire more often, faster when only one or
+   two are left; the open core fires fans of three shots.
+4. The fight takes clearly longer than in Stage 7 (turrets 70, core 200 hit points). Is the difficulty right?
+5. After the core is destroyed: halfway through the explosions the body **and** the turret wrecks disappear.
+6. Everything else as in the Stage 7 checklist (end shop, next round, game over during the boss fight, title).

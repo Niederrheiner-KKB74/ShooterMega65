@@ -179,6 +179,8 @@ spawn_eshot:
 // same with shot kind A
 spawn_eshot_a:
     sta es_kind
+    lda #$ff                    // es_slot: the new shot's slot, $ff = none
+    sta es_slot
     ldy obj_fr,x
     clc
     lda obj_xl,x
@@ -209,6 +211,7 @@ spawn_eshot_a:
     bcs !full+
     lda #T_ESHOT
     jsr init_slot
+    stx es_slot
     ldy es_kind
     jsr set_kind
     lda shot_speed-K_SHOT_RED,y
@@ -240,6 +243,7 @@ spawn_eshot_a:
     ldx ob_i
     rts
 es_kind: .byte 0
+es_slot: .byte $ff
 
 // explosion with first frame A at sp_x/sp_y (air range, does not scroll)
 spawn_explosion:
@@ -913,12 +917,17 @@ collide_shots:
     sec
     sbc pl_power
     sta obj_hp,y
-    beq !+
-    bcc !+
-    lda #SFX_HIT                // damaged, not destroyed
+    beq !kill+
+    bcc !kill+
+    lda obj_type,y              // boss part: hit flash
+    cmp #T_BOSS
+    bne !+
+    lda #FLASH_FRAMES_HIT
+    sta obj_a,y
+!:  lda #SFX_HIT                // damaged, not destroyed
     jsr sfx_play
     jmp !nexts+
-!:
+!kill:
     tya
     tax
     lda obj_type,x
@@ -1120,6 +1129,14 @@ objects_draw:
     ldy obj_fr,x
     lda frame_pal,y
     sta px_pal
+    lda obj_type,x              // boss part that was just hit: lightened palette
+    cmp #T_BOSS
+    bne !pal+
+    lda obj_a,x
+    beq !pal+
+    lda #PAL_BOSS_FLASH
+    sta px_pal
+!pal:                           // named: an anonymous label here would capture the loop's "bne !-"
     lda obj_fr,x
     jsr pixie_draw
     ldx ob_i

@@ -410,6 +410,9 @@ def main(out):
                      ('frame_hit_cy', lambda t: t['hit'][1]), ('frame_hit_halfw', lambda t: t['hit'][2]),
                      ('frame_hit_halfh', lambda t: t['hit'][3])]:
         tl.append(f'{label}: .byte ' + ','.join(str(f(t)) for t in table))
+    # boss hit flash (Stage 7b): the boss palette lightened towards white, loaded into bank 6 during the fight
+    flash = [tuple(min(255, int(v + (255 - v) * 0.65)) for v in c) for c in bpal]
+    tl.append('boss_flash_pal: .byte ' + ','.join(str(ph.swap(c[ch])) for ch in range(3) for c in flash))
     (out / 'frames.inc').write_text('\n'.join(tl) + '\n')
 
     # ------------------------------------------------------------ preview of what the engine shows

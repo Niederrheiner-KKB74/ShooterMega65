@@ -16,11 +16,12 @@
 .const BOSS_HP_TURRET = 4          // test build (build.py --define BOSS_TEST): quick boss
 .const BOSS_HP_CORE  = 8
 #else
-.const BOSS_HP_TURRET = 40
-.const BOSS_HP_CORE  = 120
+.const BOSS_HP_TURRET = 70         // Stage 7b (owner: boss too easy); Stage 7: 40 / 120
+.const BOSS_HP_CORE  = 200
 #endif
 .const BOSS_BOMB_DMG = 20
-.const BOSS_Y        = 20          // fighting height
+.const BOSS_Y        = 20          // fighting height (top of the bob)
+.const BOSS_BOB      = 24          // vertical bob range in pixels
 .const BOSS_X0       = 112         // entry x (96 px wide, screen centre)
 .const BOSS_XMIN     = 24
 .const BOSS_XMAX     = 320 - 96 - 24
@@ -28,6 +29,7 @@
 .const BOSS_DIE      = 150         // 3 s of explosions
 .const BOSS_BUF      = LEVEL_BUF + LEVEL_MAX - BOSS_FILE_BYTES   // where L1BOSS is loaded
 
+// FLASH_BANK, PAL_BOSS_FLASH, FLASH_FRAMES_HIT: layout.asm (used by objects.asm before this file)
 .const BS_OFF = 0
 .const BS_WAIT = 1
 .const BS_ENTER = 2
@@ -40,6 +42,7 @@ boss_state: .byte 0
 boss_x:     .word 0
 boss_y:     .word 0
 boss_vx:    .byte 0
+boss_vy:    .byte 0
 boss_t:     .byte 0
 boss_left:  .byte 0                // turrets still standing
 boss_spd:   .word 0                // scroll speed before the boss
@@ -162,6 +165,7 @@ boss_wait:
     sta boss_y+1
     lda #1
     sta boss_vx
+    sta boss_vy
     lda #4
     sta boss_left
     ldy #0                      // the four turrets
@@ -229,8 +233,46 @@ boss_enter:
 !rts:
     jmp boss_touch
 
-// move sideways, bounce at the edges; the parts fire in their own update
+// move sideways (1 px per frame, 2 in the core phase) and bob up and down (0.5 px per frame);
+// the parts fire in their own update
 boss_fight:
+    jsr boss_step_x
+    lda boss_state
+    cmp #BS_CORE
+    bne !+
+    jsr boss_step_x
+!:  lda boss_t                  // vertical bob between BOSS_Y and BOSS_Y + BOSS_BOB
+    and #1
+    bne boss_touch
+    lda boss_y+1                // core opened while still flying in: keep descending first
+    bne !down+
+    lda boss_y
+    cmp #BOSS_Y
+    bcs !bob+
+!down:
+    inc boss_y
+    bne !+
+    inc boss_y+1
+!:  jmp boss_touch
+!bob:
+    lda boss_y
+    clc
+    adc boss_vy
+    sta boss_y
+    cmp #BOSS_Y
+    beq !turn+
+    cmp #BOSS_Y + BOSS_BOB
+    bne boss_touch
+!turn:
+    lda boss_vy
+    eor #$ff
+    clc
+    adc #1
+    sta boss_vy
+    jmp boss_touch
+
+// one pixel sideways, turn at BOSS_XMIN / BOSS_XMAX
+boss_step_x:
     lda boss_vx
     bmi !left+
     clc
@@ -249,7 +291,8 @@ boss_fight:
     clc
     adc #1
     sta boss_vx
-    jmp !ok+
+!ok:
+    rts
 !left:
     clc
     adc boss_x
@@ -261,33 +304,7 @@ boss_fight:
     lda boss_x
     cmp #BOSS_XMIN
     bcc !turn-
-!ok:
-    lda boss_t                  // steps every second frame (every frame in the core phase)
-    and #1
-    bne boss_touch
-    lda boss_state
-    cmp #BS_CORE
-    beq boss_touch
-    // undo every second step: 0.5 px per frame
-    lda boss_vx
-    eor #$ff
-    clc
-    adc #1
-    bmi !l+
-    clc
-    adc boss_x
-    sta boss_x
-    lda boss_x+1
-    adc #0
-    sta boss_x+1
-    jmp boss_touch
-!l: clc
-    adc boss_x
-    sta boss_x
-    lda boss_x+1
-    adc #$ff
-    sta boss_x+1
-    // fall through
+    rts
 
 // the player flying into the boss body: damage (the hit invulnerability limits it)
 boss_touch:
@@ -364,6 +381,10 @@ boss_dying:
     lda #FR_EX16_0
     jsr spawn_explosion
 !:  lda boss_t
+    cmp #BOSS_DIE / 2           // the wreck disappears (boss_draw): the turret wrecks go with it
+    bne !+
+    jsr boss_parts_away
+!:  lda boss_t
     cmp #BOSS_DIE
     bcc !rts+
     // gone: parts away, glyphs and palette back, the landscape moves again
@@ -388,6 +409,33 @@ boss_dying:
 !rts:
     rts
 
+// all T_BOSS objects disappear, each with an explosion
+boss_parts_away:
+    ldx #AIR_FIRST
+!:  lda obj_type,x
+    cmp #T_BOSS
+    bne !next+
+    lda #T_NONE
+    sta obj_type,x
+    stx bpa_x
+    lda obj_xl,x
+    sta sp_x
+    lda obj_xh,x
+    sta sp_x+1
+    lda obj_yl,x
+    sta sp_y
+    lda obj_yh,x
+    sta sp_y+1
+    lda #FR_EX16_0
+    jsr spawn_explosion
+    ldx bpa_x
+!next:
+    inx
+    cpx #AIR_END
+    bne !-
+    rts
+bpa_x: .byte 0
+
 boss_restore:
     jsr boss_swap               // the fighter and bomber glyphs back
     jmp palette_init
@@ -399,7 +447,10 @@ upd_boss:
     bne !+
     rts
 !:  jsr part_pos
-    lda obj_wave,x              // muzzle flash timer
+    lda obj_a,x                 // hit flash timer
+    beq !+
+    dec obj_a,x
+!:  lda obj_wave,x              // muzzle flash timer
     beq !+
     dec obj_wave,x
 !:  lda obj_b,x
@@ -409,12 +460,21 @@ upd_boss:
     bcc part_frame              // no shots while entering
     dec obj_t,x
     bne part_frame
-    jsr random                  // next shot in 1.2-2.5 s (core: 0.6-1.3 s)
-    and #63
+    jsr random                  // next shot: turrets 0.5-1.7 s, faster with fewer left; core 0.7-1.3 s
+    and #31
     ldy obj_kind,x
     cpy #4
     beq !core+
-    adc #60
+    clc
+    adc #24
+    adc boss_left               // + 8 per turret still standing
+    adc boss_left
+    adc boss_left
+    adc boss_left
+    adc boss_left
+    adc boss_left
+    adc boss_left
+    adc boss_left
     sta obj_t,x
     lda #6
     sta obj_wave,x
@@ -422,11 +482,24 @@ upd_boss:
     jsr spawn_eshot_a
     jmp part_frame
 !core:
-    adc #30
+    clc
+    adc #36
     sta obj_t,x
+    lda #$ff                    // fan of three shots: left, straight down, right
+    sta cf_dx
+!fan:
     lda #K_SHOT_FIRE
     jsr spawn_eshot_a
-    // fall through
+    ldy es_slot
+    bmi !+
+    lda cf_dx
+    sta obj_a,y                 // shot direction (spawn_eshot_a aimed it at the player)
+!:  inc cf_dx
+    lda cf_dx
+    cmp #2
+    bne !fan-
+    jmp part_frame
+cf_dx: .byte 0
 // frame of part X: turrets aim south / south-east / south-west, destroyed view; core overlay
 part_frame:
     lda obj_kind,x
@@ -569,7 +642,10 @@ boss_bomb_part:
     sbc #BOSS_BOMB_DMG
     sta obj_hp,x
     beq !down+
-    bcs !+
+    bcc !down+
+    lda #FLASH_FRAMES_HIT       // still standing: hit flash
+    sta obj_a,x
+    rts
 !down:
     jmp boss_part_down
 !:  rts
@@ -745,6 +821,15 @@ boss_palette:
     cpx #16
     bne !-
     ldz #0
+    ldx #15                     // lightened copy for the hit flash
+!:  lda boss_flash_pal,x
+    sta PAL_RED + FLASH_BANK * 16,x
+    lda boss_flash_pal+16,x
+    sta PAL_GREEN + FLASH_BANK * 16,x
+    lda boss_flash_pal+32,x
+    sta PAL_BLUE + FLASH_BANK * 16,x
+    dex
+    bpl !-
     rts
 
 .errorif (BOSS_BUF < LEVEL_BUF), "boss file larger than the level buffer"

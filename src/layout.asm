@@ -32,6 +32,12 @@
 .const MS_LIFE      = 200                // frames until a missile gives up
 .const FLASH_FRAMES = 4                  // bomb flash
 
+// Boss hit flash (boss.asm): hit parts are drawn with a lightened copy of the boss palette in bank 6
+// (the bomber palette; no bombers during the boss fight)
+.const FLASH_BANK       = 6
+.const PAL_BOSS_FLASH   = (FLASH_BANK << 4) | $0f
+.const FLASH_FRAMES_HIT = 4
+
 // Colour RAM (offsets; CPU/DMA see it at $ff80000)
 .const COLRAM       = $ff80000
 .const COLOUR_A     = $1000            // $0000-$0FFF stays BASIC's (80x50 uses 4000 bytes)
