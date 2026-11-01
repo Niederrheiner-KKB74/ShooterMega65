@@ -287,6 +287,7 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Missile in 8 flight directions (45° view from PR #11); revised coastal level (PR #11) |
 | 01.11.2026 | Stage 4b confirmed on hardware; music composed by Claude instead of PR #12 (owner's choice) |
 | 01.11.2026 | Stage 5 (music, effects) confirmed on hardware; the SID tuning (1 MHz) is right |
+| 01.11.2026 | Aircraft views (PR #13); music volume 11 (effects 15); shop fire needs 8 frames release; S capsule 5 % |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -343,7 +344,19 @@ Requests while the plane is destroyed or inside the shop are dropped.
   does `pl_power` damage to whatever enemy it touches. Graphic (Stage 4b): 8 frames in the flight direction,
   made at build time from the upward rocket and a 45° view by 90° rotations (no hardware flipping, see `docs/stage4.md`).
 
-## 17. Open questions for the owner
+## 17. Aircraft views (Stage 6)
+- Artwork PR #13: fighter and helicopter in 8 directions (N, NE … NW), bomber and armoured plane straight / left /
+  right bank, 3 effect phases each (66 frames), plus repaired transparent holes in the hulls.
+- `air_pose` (objects.asm) picks the view every frame from the path velocity (`obj_a`, `obj_b`): small aircraft
+  with `vec_dir` (the missile's 45° sectors), large ones bank when |vx| ≥ 0.75 px/frame. The effect phase is kept;
+  no movement keeps the view.
+- Glyph budget: 535 of 608. To make room the pixie area starts at `$46800` (behind the 160 glyphs reserved for the
+  shop) and frame bases are absolute character numbers. The glyph image left the PRG: file `PIXIES` (34 KB) is
+  loaded straight into the pixie area. The PRG shrank from `$B460` to `$8460`.
+- Column stacks must stay contiguous in memory (the hardware Y offset reads into the glyph above), so identical
+  glyphs of different frames cannot be shared.
+
+## 18. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
 5. Are the damage values and points in §6 a good starting point?

@@ -94,8 +94,20 @@ level_load:
     sec
     rts
 
-// A/X = file name, Y = length. Loads to LEVEL_BUF. Carry set on error (message printed).
+// A/X = file name, Y = length. Loads to LEVEL_BUF (max. LEVEL_MAX bytes). Carry set on error (message printed).
 load_seq:
+    pha
+    lda #<(LEVEL_BUF & $ffff)
+    sta ld_dst
+    lda #>(LEVEL_BUF & $ffff)
+    sta ld_dst+1
+    lda #(LEVEL_BUF >> 16)
+    sta ld_dst+2
+    lda #>LEVEL_MAX
+    sta ld_maxhi
+    pla
+// same, destination ld_dst (bank 0-15, must not cross a 64 KB boundary), at most ld_maxhi * 256 bytes
+load_seq_to:
     sta ld_name
     stx ld_name+1
     sty ld_len
@@ -103,10 +115,12 @@ load_seq:
     sta ld_x
     sta ld_total
     sta ld_total+1
-    lda #<(LEVEL_BUF & $ffff)   // DMA destination of the first block
+    lda ld_dst                  // DMA destination of the first block
     sta job_ldflush+DMA_DST
-    lda #>(LEVEL_BUF & $ffff)
+    lda ld_dst+1
     sta job_ldflush+DMA_DST+1
+    lda ld_dst+2
+    sta job_ldflush+DMA_DST+2
     lda #2
     ldx ld_device
     ldy #2
@@ -204,7 +218,7 @@ ld_flush:
     lda ld_total+1
     adc job_ldflush+DMA_COUNT+1
     sta ld_total+1
-    cmp #>LEVEL_MAX             // file too big for the buffer
+    cmp ld_maxhi                // file too big for the destination
     bcs !+
     lda #0
     sta ld_x
@@ -232,6 +246,8 @@ ld_len:    .byte 0
 ld_x:      .byte 0
 ld_st:     .byte 0
 ld_total:  .word 0
+ld_dst:    .fill 3, 0
+ld_maxhi:  .byte 0
 name_gfx:  .text "L1GFX,S,R"
 name_gfx_end:
 name_dat:  .text "L1DAT,S,R"

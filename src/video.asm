@@ -119,28 +119,7 @@ palette_init:
 
 // Copy glyphs and sprites to their final place, initialise all RRB rows.
 assets_init:
-    // pixie glyphs: clear the whole area, then copy the stored (non-blank) glyph runs
-    RunDma(job_pixclear)
-    ldx #0
-!run:
-    lda pixrun_src_lo,x
-    sta job_pixrun+DMA_SRC
-    lda pixrun_src_hi,x
-    sta job_pixrun+DMA_SRC+1
-    lda pixrun_dst_lo,x
-    sta job_pixrun+DMA_DST
-    lda pixrun_dst_hi,x
-    sta job_pixrun+DMA_DST+1
-    lda pixrun_len_lo,x
-    sta job_pixrun+DMA_COUNT
-    lda pixrun_len_hi,x
-    sta job_pixrun+DMA_COUNT+1
-    stx rep_count
-    RunDma(job_pixrun)
-    ldx rep_count
-    inx
-    cpx #PIX_RUNS
-    bne !run-
+    // pixie glyphs: loaded from the file PIXIES directly into the pixie area (pixies_load)
     RunDma(job_sprites)
     RunDma(job_ring)
     ldx #RING_SLOTS*2
@@ -258,8 +237,6 @@ show_buffer_b:
     rts
 
 // ---------------------------------------------------------------- DMA jobs
-job_pixclear: DmaJob(DMA_CMD_FILL, 0, PIXIE_ADDR, PIXIE_MAX * 64)
-job_pixrun:  DmaJob(DMA_CMD_COPY, pixie_data, PIXIE_ADDR, 64)
 job_sprites: DmaJob(DMA_CMD_COPY, sprite_data, SPRITE_ADDR, sprite_end - sprite_data)
 job_ring:    DmaJob(DMA_CMD_COPY, ring_data, RING_ADDR, ring_end - ring_data)
 job_ring_scr: DmaJob(DMA_CMD_COPY, row_tpl_scr, RING_SCR, ROW_BYTES)

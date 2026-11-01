@@ -37,7 +37,7 @@
 
 .const BONUS_SHIELD = (SHIELD_MAX * 20 + 50) / 100   // S capsule refills 20 % of the shield
 .const BONUS_VY     = 384         // capsule fall speed in 1/256 px per frame (1.5 px; the landscape scrolls 0.5)
-.const S_CHANCE     = 38          // S capsule chance per enemy shot down (38/256 = 15 %)
+.const S_CHANCE     = 13          // S capsule chance per enemy shot down (13/256 = 5 %; was 15 %, too easy)
 
 //                    fighter      bomber        heli       armoured       tank       red  fire  rocket bonus
 kind_frame: .byte FR_FIGHTER0, FR_BOMBER0, FR_HELI0, FR_ARMOURED0, FR_TANK_N0, FR_ESHOT_RED, FR_ESHOT_FIRE, FR_ROCKET
@@ -47,6 +47,8 @@ kind_dmg:   .byte 12, 20, 12, 24, 0,  6, 10, 14, 0    // shield points lost on c
 kind_pts_lo:.byte $00,$00,$50,$00,$00                 // BCD points
 kind_pts_hi:.byte $01,$03,$01,$05,$02                 // fighter 100, bomber 300, heli 150, armoured 500, tank 200
 kind_big:   .byte 0,  1,  0,  1,  0                   // 32x32 explosion
+kind_poses: .byte 8,  3,  8,  3                       // aircraft views: 8 directions / straight-left-right
+kind_dir0:  .byte FR_FIGHTER_DIR0, FR_BOMBER_DIR0, FR_HELI_DIR0, FR_ARMOURED_DIR0   // first view, phase 0
 kind_drop:  .byte K_CASH1, K_CASH2, K_CASH1, K_CASH3, K_CASH1   // $ capsule: whole formation / every tank
 cash_value: .byte $10, $25, $50                       // BCD credits of the small / medium / large $ capsule
 kind_shot:  .byte K_SHOT_RED, K_SHOT_FIRE, K_SHOT_RED, K_SHOT_FIRE, K_ROCKET
@@ -565,9 +567,61 @@ upd_air:
     cmp #<-48
     bcc !gone+
 !ok:
+    jsr air_pose
     jmp maybe_fire
 !gone:
     jmp free_x
+
+// View of aircraft X from its velocity (obj_a = x, obj_b = y, 1/4 px): fighter and helicopter one of
+// 8 directions, bomber and armoured plane banking left/right while moving sideways. The effect phase
+// (obj_fr - obj_base) is kept. No movement: view unchanged.
+.const BANK_VX = 3              // |vx| >= 0.75 px/frame: banking
+air_pose:
+    ldy obj_kind,x
+    lda kind_poses,y
+    cmp #8
+    bne !bank+
+    lda obj_a,x
+    sta ms_sx
+    lda obj_b,x
+    sta ms_sy
+    jsr vec_dir                 // 0 north … 7 north-west
+    bpl !set+
+    rts
+!bank:
+    lda obj_a,x
+    bmi !neg+
+    cmp #BANK_VX
+    lda #2                      // right
+    bcs !set+
+    lda #0                      // straight
+    beq !set+
+!neg:
+    cmp #<-BANK_VX+1
+    lda #1                      // left
+    bcc !set+
+    lda #0
+!set:
+    sta tmp                     // view * 3 + first view of the kind
+    asl
+    adc tmp
+    ldy obj_kind,x
+    clc
+    adc kind_dir0,y
+    cmp obj_base,x
+    beq !same+
+    pha
+    sec                         // keep the effect phase
+    lda obj_fr,x
+    sbc obj_base,x
+    sta tmp
+    pla
+    sta obj_base,x
+    clc
+    adc tmp
+    sta obj_fr,x
+!same:
+    rts
 
 // A = velocity (signed, 1/4 px) -> tmp = fraction (A << 6), tmp+1 = whole part (A >> 2), tmp2 = sign
 vel_split:

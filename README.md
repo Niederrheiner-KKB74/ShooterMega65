@@ -25,6 +25,9 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
   Confirmed on real hardware (01.11.2026), `stage4b-stable`.
 - **Stage 5** (branch `stage5`): music (four pieces composed by Claude) and 14 sound effects on separate SIDs;
   MUSICTEST program with a 440 Hz tuning tone. Confirmed on real hardware (01.11.2026), `stage5-stable`. See [docs/stage5.md](docs/stage5.md).
+- **Stage 6** (branch `stage6`): aircraft turn and bank in flight (PR #13), object graphics loaded from the file
+  `PIXIES`, quieter music, debounced shop fire, fewer shield capsules. XEMU-tested, hardware test pending.
+  See [docs/stage6.md](docs/stage6.md).
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.

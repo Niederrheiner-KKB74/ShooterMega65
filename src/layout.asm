@@ -15,7 +15,8 @@
 
 // Chip RAM
 .const TILE_ADDR    = $040000            // landscape NCM glyphs  -> char $1000+ (max. 512 glyphs, $40000-$47FFF)
-.const PIXIE_ADDR   = $048000            // pixie NCM glyphs      -> char $1200+ (max. 512 glyphs, $48000-$4FFFF)
+.const PIXIE_ADDR   = $046800            // pixie NCM glyphs      -> char $11A0+ (max. 608 glyphs, $46800-$4FFFF)
+                                         // (directly behind the 160 glyphs reserved for the shop at $44000)
 .const SCREEN_A     = $054000            // RRB screen buffer A (27 x 170 bytes)
 .const SCREEN_B     = $056000            // RRB screen buffer B
 .const RING_SCR     = $058000            // 64 x 170 bytes decoded map rows (screen part)
@@ -37,8 +38,8 @@
 .const COLOUR_B     = $2400
 
 .const TILE_CHAR    = TILE_ADDR / 64     // $1000
-.const PIXIE_CHAR   = PIXIE_ADDR / 64    // $1200
-.const PIXIE_MAX    = 512
+.const PIXIE_CHAR   = PIXIE_ADDR / 64    // $11A0 (frame bases in frames.inc are absolute character numbers)
+.const PIXIE_MAX    = ($050000 - PIXIE_ADDR) / 64   // 608
 .const SPRITE_PTR0  = SPRITE_ADDR / 64
 .const SPRITE_PTR1  = (SPRITE_ADDR + $100) / 64
 

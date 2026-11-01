@@ -2,7 +2,7 @@
  "format": "shootermega65-music-1",
  "name": "Supply Depot",
  "tempo": 7,
- "volume": 12,
+ "volume": 9,
  "instruments": {
   "flute": {
    "wave": "triangle",

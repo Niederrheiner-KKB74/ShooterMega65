@@ -54,6 +54,8 @@ start:
     bcs !fail+
     jsr music_load                     // music and sound effects (sound.asm)
     bcs !fail+
+    jsr pixies_load                    // all pixie glyphs, straight into the pixie area
+    bcs !fail+
     jsr level_load                     // level files from disk, still with the KERNAL (level.asm)
     bcc !+
 !fail:
@@ -218,13 +220,29 @@ random:
 #import "special.asm"
 #import "sound.asm"
 
+// file PIXIES: the complete pixie glyph area image (tools/import_art.py), loaded to PIXIE_ADDR
+pixies_load:
+    lda #<(PIXIE_ADDR & $ffff)
+    sta ld_dst
+    lda #>(PIXIE_ADDR & $ffff)
+    sta ld_dst+1
+    lda #(PIXIE_ADDR >> 16)
+    sta ld_dst+2
+    lda #>(PIXIE_MAX * 64)
+    sta ld_maxhi
+    lda #<name_pixies
+    ldx #>name_pixies
+    ldy #name_pixies_end - name_pixies
+    jmp load_seq_to
+name_pixies: .text "PIXIES"
+name_pixies_end:
+.errorif (((PIXIE_ADDR & $ffff) + PIXIE_MAX * 64) > $10000), "pixie area crosses a 64 KB boundary"
+
 // ---------------------------------------------------------------- data
 #import "../build/gen/frames.inc"
-#import "../build/gen/pixruns.inc"
 
 code_end:
 .align $100
-pixie_data:   .import binary "../build/gen/pixies.bin"
 pixie_end:
 .align $100
 sprite_data:  .import binary "../build/gen/sprite.bin"
@@ -237,6 +255,6 @@ prg_end:
 .errorif (prg_end > $c000), "PRG too large for bank 0 below $c000"
 .errorif ((sprite_data & $ff) != 0), "player DMA frames must be page aligned"
 .errorif (sprite_end - sprite_data != PLAYER_FRAMES * $200), "player frame size mismatch"
-.errorif (PIXIE_GLYPHS > PIXIE_MAX), "pixie glyph area ($48000-$4FFFF) exceeded"
+.errorif (PIXIE_GLYPHS > PIXIE_MAX), "pixie glyph area ($46800-$4FFFF) exceeded"
 .print "code ends at $" + toHexString(code_end) + ", PRG ends at $" + toHexString(prg_end)
 

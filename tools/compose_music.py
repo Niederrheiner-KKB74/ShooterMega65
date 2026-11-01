@@ -14,6 +14,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+MUSIC_VOLUME = 11        # SID volume of the level music (0-15); effects play at 15 (owner: music was too loud at 15)
 FLAT = {'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#'}
 NAMES = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 
@@ -253,7 +254,7 @@ def level1():
     for i, r in enumerate(('Bb1', 'C2', 'A1', 'A1')):
         bass_drums(low, r, 'drive_fill' if i == 3 else 'drive')
     vs = [fix_instruments(v) for v in (lead, harm, low)]
-    build('Coastal Run', 6, 15, vs, 64, LEVEL_INST, ROOT / 'music/level1.json')
+    build('Coastal Run', 6, MUSIC_VOLUME, vs, 64, LEVEL_INST, ROOT / 'music/level1.json')
 
 
 SHOP_INST = {
@@ -298,7 +299,7 @@ def shop():
                  ('A5', 16),
                  ('-', 12), ('C5', 4)], 'flute')
     vs = [fix_instruments(v) for v in (lead, harm, low)]
-    build('Supply Depot', 7, 12, vs, 0, SHOP_INST, ROOT / 'music/shop.json')
+    build('Supply Depot', 7, MUSIC_VOLUME - 2, vs, 0, SHOP_INST, ROOT / 'music/shop.json')
 
 
 JINGLE_INST = {
@@ -317,7 +318,7 @@ def game_over():
     lead.melody([('A5', 4), ('G5', 4), ('F5', 4), ('E5', 4), ('D5', 14), ('-', 2)], 'lead')
     harm.note('Bb3', 8, 'arp_maj'); harm.note('A3', 8, 'arp_maj'); harm.note('D3', 14, 'arp_min'); harm.off(2)
     low.note('Bb1', 8, 'bass'); low.note('A1', 8, 'bass'); low.note('D1', 14, 'bass'); low.off(2)
-    build('Game Over', 9, 15, [lead, harm, low], None, JINGLE_INST, ROOT / 'music/game_over.json')
+    build('Game Over', 9, MUSIC_VOLUME + 1, [lead, harm, low], None, JINGLE_INST, ROOT / 'music/game_over.json')
 
 
 def level_clear():
@@ -329,7 +330,7 @@ def level_clear():
     for n in ('D2', 'A1', 'D2', 'A1'):
         low.note(n, 4, 'bass')
     low.note('A1', 8, 'bass'); low.note('E2', 8, 'bass'); low.note('D2', 14, 'bass'); low.off(2)
-    build('Level Clear', 6, 15, [lead, harm, low], None, JINGLE_INST, ROOT / 'music/level_clear.json')
+    build('Level Clear', 6, MUSIC_VOLUME + 1, [lead, harm, low], None, JINGLE_INST, ROOT / 'music/level_clear.json')
 
 
 if __name__ == '__main__':

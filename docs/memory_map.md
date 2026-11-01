@@ -1,4 +1,4 @@
-# Memory map (Stage 5)
+# Memory map (Stage 6)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -44,9 +44,9 @@ not in the zero page.
 | Address | Size | Use |
 |---|---|---|
 | `$40000–$43FFF` | 16 KB | landscape NCM glyphs, char `$1000`+ (max. 256 per level: tile offsets in the map are bytes; `build_level.py` allows 128 tiles; the coastal level uses 208 glyphs) |
-| `$44000–$47FFF` | 16 KB | shop glyphs from the file `SHOP`, char `$1100`+ (max. 255; 148 used). Guarded in `shop.asm` |
-| `$48000–$4FFFF` | 32 KB | pixie NCM glyphs, char `$1200`+ (max. 512, 16-bit frame bases; Stage 4b uses 289); glyph `$1200` = blank; HUD glyphs at `HUD_GLYPH + 2k`, k = 0..10. The area is cleared by DMA at start and only the non-blank glyph runs are copied from the PRG |
-| `$50000–$53FFF` | 16 KB | load buffer: first `SHOP` (glyphs → `$44000`), `MUSIC` (→ `$5E000`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths), which stays here for the whole level |
+| `$44000–$467FF` | 10 KB | shop glyphs from the file `SHOP`, char `$1100`+ (160 reserved, 148 used). Guarded in `shop.asm` |
+| `$46800–$4FFFF` | 38 KB | pixie NCM glyphs, char `$11A0`+ (max. 608, Stage 6 uses 535): loaded at start from the file `PIXIES` (complete image incl. blank guards) straight into this area. Frame bases in `frames.inc` are absolute character numbers. HUD glyphs at `HUD_GLYPH + 2k`, rebuilt at run time |
+| `$50000–$53FFF` | 16 KB | load buffer: first `SHOP` (glyphs → `$44000`), `MUSIC` (→ `$5E000`) (`PIXIES` goes straight to `$46800`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths), which stays here for the whole level |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |
 | `$58000–$5AA7F` | 64×170 | ring buffer, screen part (32 slots stored twice) |

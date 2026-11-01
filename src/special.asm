@@ -350,6 +350,17 @@ upd_missile:
 // Missile frame from the step (ms_sx, ms_sy): one of 8 directions (45 degree sectors,
 // a component counts when it is at least half the other one). No movement: frame kept.
 ms_dir:
+    jsr vec_dir
+    bmi !keep+
+    clc
+    adc #FR_MS0
+    sta obj_fr,x
+!keep:
+    rts
+
+// direction of the vector (ms_sx, ms_sy): A = 0 up, 1 up-right … 7 up-left (45 degree sectors,
+// a component counts when it is at least half the other one), $ff = no movement. Keeps X.
+vec_dir:
     lda ms_sx
     jsr ms_abs
     sta ms_ax
@@ -386,11 +397,6 @@ ms_dir:
     adc ms_h
     tay
     lda ms_dir_tab,y
-    bmi !keep+
-    clc
-    adc #FR_MS0
-    sta obj_fr,x
-!keep:
     rts
 
 ms_abs:

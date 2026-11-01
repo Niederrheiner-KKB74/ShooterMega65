@@ -369,3 +369,4 @@ hud_src_hi:   .fill HUD_COLS, >(hud_buf + i*64)
 hud_dst_lo:   .fill HUD_COLS, <(((PIXIE_ADDR & $ffff) + (HUD_GLYPH + 2*i)*64))
 hud_dst_hi:   .fill HUD_COLS, >(((PIXIE_ADDR & $ffff) + (HUD_GLYPH + 2*i)*64))
 .errorif (HUD_GLYPH + 2*HUD_COLS > PIXIE_MAX), "HUD glyphs outside the pixie area"
+.errorif ((PIXIE_ADDR & $ffff) + (HUD_GLYPH + 2*HUD_COLS) * 64 > $10000), "HUD glyphs cross a 64 KB bank"

@@ -2,7 +2,7 @@
  "format": "shootermega65-music-1",
  "name": "Game Over",
  "tempo": 9,
- "volume": 15,
+ "volume": 12,
  "instruments": {
   "lead": {
    "wave": "pulse",

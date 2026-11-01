@@ -2,8 +2,8 @@
 // RRB pixie emitter
 //
 // A pixie frame is w NCM chars wide (16 px each) and h glyph rows high.
-// Glyph layout (made by tools/make_assets.py): column c, row i is glyph
-// PIXIE_CHAR + base + c*(h+1) + i, and the glyph directly before every column
+// Glyph layout (made by tools/import_art.py): column c, row i is character
+// base + c*(h+1) + i (base = absolute character number), and the glyph directly before every column
 // and the glyph after it are blank. Vertical sub-row positioning uses the
 // GOTOX Y offset (screen byte 1: bit 4 set + offset in bits 5-7 = glyph rows are
 // fetched "offset" lines earlier), so an object at sub-row k touches h+1 rows:
@@ -171,13 +171,13 @@ emit_fragment:
     pla
     sta rowfill,x
 
-    // glyph = PIXIE_CHAR + base + i
+    // glyph = base + i (absolute character number)
     clc
     lda px_base
     adc px_i
     sta px_gl
     lda px_bhi
-    adc #>PIXIE_CHAR
+    adc #0
     sta px_gl+1
 
     ldz #0

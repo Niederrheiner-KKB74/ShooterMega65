@@ -23,6 +23,7 @@
 .const PAL_SHOP_D = (14 << 4) | $0f          // dimmed: cannot be bought
 .const PAL_SHOP_H = (15 << 4) | $0f          // highlighted: cursor / selected button
 .const MSG_FRAMES = 150                      // 3 s
+.const FIRE_RELEASE = 8                      // fire must be released this many frames before a press counts
 .const REPEAT_FIRST = 18                     // joystick auto repeat (frames)
 .const REPEAT_NEXT  = 8
 .const MAX_COUNT    = 9                      // bombs, invulnerability, lives (one HUD digit)
@@ -30,7 +31,7 @@
 
 .errorif (SHOP_GLYPHS > 255), "shop glyphs exceed 255"
 .errorif (TILE_ADDR + 256*64 > SHOP_ADDR), "shop glyphs overlap the landscape glyphs"
-.errorif (SHOP_ADDR + SHOP_GLYPHS*64 > PIXIE_ADDR), "shop glyphs overlap the pixie glyphs"
+.errorif (SHOP_ADDR + SHOP_GLYPHS*64 > PIXIE_ADDR), "shop glyphs overlap the pixie glyphs (160 reserved)"
 .errorif (PANEL_ROW0 + PANEL_ROWS > VIS_ROWS - 1), "shop panel below the visible rows"
 .errorif (PANEL_COL0 + PANEL_COLS > BG_TOKENS), "shop panel wider than the background"
 
@@ -99,6 +100,8 @@ shop_run:
     jsr shop_palettes
     lda joy
     sta sh_prev
+    lda #0                      // fire must be released first
+    sta sh_rel
 
     // ---------------- "ENTERING SHOP"
     lda #<shop_msg_glyph
@@ -212,7 +215,25 @@ shop_frame:
     sta sh_press
     lda joy
     sta sh_prev
+    // fire counts only after it was released for FIRE_RELEASE frames (contact bounce gave double actions)
+    lda sh_rel
+    cmp #FIRE_RELEASE
+    bcs !+
+    lda sh_press
+    and #%11101111
+    sta sh_press
+!:  lda joy
+    and #$10
+    beq !up+
+    lda #0                      // held: count again from 0
+    sta sh_rel
     rts
+!up:
+    lda sh_rel
+    cmp #$ff
+    beq !+
+    inc sh_rel
+!:  rts
 
 // direction with auto repeat: A = new direction bits (0 = none), Z flag set accordingly
 joy_dir:
@@ -646,6 +667,7 @@ buf_col_hi: .byte >COLOUR_A, >COLOUR_B
 .errorif ((SCREEN_A >> 16) != (SCREEN_B >> 16)), "screen buffers must share a bank"
 
 sh_prev:   .byte 0
+sh_rel:    .byte 0                  // frames since fire was released
 sh_press:  .byte 0
 sh_rep:    .byte 0
 sh_timer:  .byte 0

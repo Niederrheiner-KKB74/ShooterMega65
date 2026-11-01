@@ -60,6 +60,7 @@ def main():
     except build_music.MusicError as e:
         sys.exit(f'music: {e}')
     music = (ROOT / 'build/gen/MUSIC').read_bytes()
+    pixies = (ROOT / 'build/gen/PIXIES').read_bytes()
     level_files = []
     selected_levels = [('L1', a.level)] if a.level else LEVELS
     for name, src in selected_levels:
@@ -97,7 +98,7 @@ def main():
     if run2.returncode or 'Error' in run2.stdout:
         print(run2.stdout)
         sys.exit('assembly of MUSICTEST failed')
-    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ)] + level_files
+    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ), ('PIXIES', pixies, d81.SEQ)] + level_files
     image = d81.build_disk(files)
     for fname, payload, _ in files:
         if d81.read_file(image, fname) != payload:
