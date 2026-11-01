@@ -27,7 +27,7 @@ Branch `stage6`, based on `stage5-stable` plus PR #13. Release files are in `rel
 | XEMU shop (999 credits): purchases work; a second press 2 frames after releasing fire is ignored | ✔ |
 | XEMU curve test level (helicopters, bombers, armoured planes early), memory dumps: helicopters W/SW/SE/S, bombers and armoured planes left/right/straight, each matching the velocity | ✔ |
 | XEMU full level with scripted shop exits: past the level end into the second pass (frame 16,791), RRB overflow 0 | ✔ |
-| **Real MEGA65** | **open – please test** |
+| Real MEGA65 | ✔ all checklist items confirmed by the owner (01.11.2026), `stage6-stable` |
 
 ## Hardware test checklist
 1. Loading: how long until the game starts? (The new `PIXIES` file adds 34 KB.)
