@@ -24,7 +24,7 @@ Design details: `docs/design.md` §16.
 | XEMU, release build with fire held: dense level, no RRB overflow at 40 s and 75 s | ✔ |
 | XEMU, full level with fire held and scripted EXIT in both shops: past the level end into the second pass (frame 16,805, scroll 8,402 px), RRB overflow 0 | ✔ |
 | XEMU, capsule speed measured: 75 px in 50 frames (landscape: 25 px) | ✔ |
-| **Real MEGA65** | **open – please test** |
+| Real MEGA65 | ✔ all checklist items confirmed by the owner (01.11.2026), `stage4-stable` |
 
 ## Hardware test checklist
 1. Buy SHIELD, BOMB and MISSILE in the mid-level shop (about 2 minutes in).
