@@ -268,6 +268,7 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Levels are stored in separate files, not in the program (format proposal: `docs/level_format.md`) |
 | 01.11.2026 | Levels written as JSON text so ChatGPT can create them; shops are an overlay over the game screen; a level lasts about 4 minutes |
 | 01.11.2026 | Coastal-base level and new shield/coin capsules (PR #8) adopted; coastal level is the default |
+| 01.11.2026 | Shop icons (PR #9) adopted for SHOT II–IV, MISSILE, SHIELD, BOMB; tags `stage1-stable`, `stage1-aircraft-stable`, `stage2-stable`, `stage3a-stable` set by the owner |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -278,7 +279,7 @@ so `RUN` works again after an exit.
   Leaving the shop rebuilds the frame from the ring buffer, which removes them again. Positions (screen rows /
   background tokens): "ENTERING SHOP" box rows 12–14, tokens 7–14; panel rows 3–24, tokens 2–19 (288×176 px,
   16 px landscape left and right); "PURCHASE ITEM?" dialog rows 10–15, tokens 6–15.
-- Glyphs: file `SHOP` on the D81 (146 glyphs now), loaded at start to `$44000` (char `$1100`). Token maps,
+- Glyphs: file `SHOP` on the D81 (148 glyphs now), loaded at start to `$44000` (char `$1100`). Token maps,
   items, prices and palettes are generated into `build/gen/shop_*.inc`; **items and prices are defined only in
   `tools/make_shop.py` (`ITEMS`)**, because the prices are drawn into the glyphs.
 - Palettes: while the shop is open, banks 13–15 (rocket and explosions; no objects exist) hold the shop palette

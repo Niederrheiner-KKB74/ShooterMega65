@@ -14,8 +14,10 @@ Attribute of a token: 0-15 = item cell (palette chosen at run time: normal, dimm
 highlighted), 16 = frame (always normal), 17/18 = YES/NO button of the dialog.
 
 The items and prices are defined here only (ITEMS); the engine gets them from shop.inc.
-Icons are placeholders until the artwork exists (docs/artwork_spec.md, shop icons).
+Icons: assets/art/shop-upgrades (PR #9, HUD palette, mapped by ICON_HUD_MAP); EXTRA LIFE and EXIT
+are still placeholders drawn here (docs/artwork_spec.md, shop icons).
 """
+import json
 import sys
 from pathlib import Path
 
@@ -49,13 +51,13 @@ PAL = [(0, 0, 0),            # 0 unused (index 0 is not drawn on opaque tokens)
        (255, 200, 60),       # 6 price
        (176, 194, 230),      # 7 thick frame light edge
        (30, 36, 64),         # 8 cell interior
-       (220, 60, 50),        # 9 red
-       (255, 140, 40),       # 10 orange
-       (250, 230, 90),       # 11 yellow
-       (80, 200, 100),       # 12 green
-       (90, 200, 240),       # 13 cyan
-       (150, 152, 165),      # 14 grey
-       (72, 74, 88)]         # 15 dark grey
+       (230, 50, 40),        # 9 red         } icon colours 9-15 = the HUD palette colours
+       (255, 165, 50),       # 10 orange     } used by the shop icons of PR #9
+       (245, 215, 40),       # 11 yellow     } (assets/art/shop-upgrades), see ICON_HUD_MAP
+       (60, 205, 90),        # 12 green
+       (54, 82, 111),        # 13 steel blue
+       (150, 160, 178),      # 14 grey
+       (160, 245, 175)]      # 15 light green
 DIM = [tuple(int(c * 0.42) for c in rgb) for rgb in PAL]
 HILITE = list(PAL)
 HILITE[4] = (255, 230, 80)   # blinks between this and BLINK_B at run time
@@ -181,11 +183,30 @@ ICONS = {
              '.....ggggg......', '.....ggggg......', '.....ggggg......', '................',
              '...WWWWWWWWWW...', '................', '................', '................'],
 }
-ICON_MAP = {'c': 13, 'd': 15, 'y': 11, 'r': 9, 'g': 14, 'W': 5, 'o': 10, 'G': 12}
+ICON_MAP = {'c': 14, 'd': 2, 'y': 11, 'r': 9, 'g': 14, 'W': 5, 'o': 10, 'G': 12}   # placeholders
+# Shop icons from PR #9 are drawn in the HUD palette (bank 12); their colours map to shop palette indices.
+# HUD 0 (transparent) -> cell interior, 2 (white) -> text white, 4 (backdrop) -> outline black.
+ICON_ART = ROOT / 'assets/art/shop-upgrades/generated/indexed-source.json'
+ICON_HUD_MAP = {0: 8, 1: 13, 2: 5, 3: 10, 4: 2, 5: 14, 6: 12, 7: 11, 8: 9, 10: 15}
+ICON_ART_IDS = {'shot2': 'shot_ii', 'shot3': 'shot_iii', 'shot4': 'shot_iv', 'bomb': 'bomb',
+                'missile': 'homing_missile', 'shield': 'invulnerability'}
 ICON_MAP_EXIT = dict(ICON_MAP, g=12)
 
 
+def art_icon(name):
+    for ic in json.loads(ICON_ART.read_text()):
+        if ic['id'] == ICON_ART_IDS[name]:
+            px = bytes.fromhex(''.join(ic['rows']))
+            assert len(px) == 256, f'shop icon {ic["id"]}: not 16x16'
+            unknown = set(px) - set(ICON_HUD_MAP)
+            assert not unknown, f'shop icon {ic["id"]}: HUD colours {sorted(unknown)} have no shop palette entry'
+            return np.array([ICON_HUD_MAP[v] for v in px], np.uint8).reshape(16, 16)
+    raise KeyError(name)
+
+
 def icon(name):
+    if name in ICON_ART_IDS and ICON_ART.exists():
+        return art_icon(name)
     a = np.full((16, 16), 8, np.uint8)
     if name.startswith('shot'):
         n = int(name[4])

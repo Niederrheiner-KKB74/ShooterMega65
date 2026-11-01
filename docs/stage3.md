@@ -68,6 +68,8 @@ Release files are in `releases/stage3b/`. Design details: `docs/design.md` §15.
 - Items and prices: SHOT II 100, SHOT III 200, SHOT IV 400, MISSILE 250, SHIELD 150, BOMB 200, EXTRA LIFE 300.
   Weapon levels raise the damage per shot (1 → 4) right away. Missile, shield (invulnerability) and bomb are
   only stored and counted for now; using them comes in a later stage.
+- **Shop icons** from ChatGPT (PR #9) for SHOT II–IV, MISSILE, SHIELD and BOMB; EXTRA LIFE and EXIT are still
+  placeholders.
 - **HUD**: new box with a bomb icon + count and an invulnerability icon + count; the credits box moved left.
 - Disk: new file `SHOP` (shop graphics).
 - Test build with 999 credits at the start: `python3 tools/build.py --test-credits` (not for releases).
@@ -84,7 +86,7 @@ Release files are in `releases/stage3b/`. Design details: `docs/design.md` §15.
 1. Start from the D81. The coastal level appears (water on the left, then forest).
 2. After about 2 minutes "ENTERING SHOP" appears in the middle for 3 seconds; the game stands still, enemies
    disappear. Pressing fire skips the message (holding fire from the game must not skip it).
-3. The grid: thick outer frame, thin frames, names, icons, prices. Too expensive items are darker. The selected
+3. The grid: thick outer frame, thin frames, names, icons (PR #9), prices. Too expensive items are darker. The selected
    cell has a blinking frame; the joystick moves it only to bright cells and EXIT.
 4. Fire on an item: "PURCHASE ITEM?" YES / NO; left/right changes the blinking button; NO closes the dialog
    without buying; YES buys: credits go down in the HUD, the item turns dark if it can no longer be bought.
