@@ -16,7 +16,7 @@
     $d030, $d031, $d048, $d049, $d04a, $d04b, $d04c, $d04d, $d04e, $d04f,
     $d051, $d054, $d055, $d056, $d057, $d058, $d059, $d05a, $d05c, $d05e,
     $d060, $d061, $d062, $d063, $d064, $d065, $d06b, $d06c, $d06d, $d06e,
-    $d070, $d07b).lock()
+    $d070, $d07b, $d029, $d02a, $d02b).lock()
 
 // called right after SEI, before anything is changed
 system_save:
@@ -43,7 +43,7 @@ system_save:
     }
     lda VIC_D05D
     sta saved_d05d
-    // palette 0 (all 256 entries) and palette 1 entries 0-31 (sprite palette)
+    // palette 0 (all 256 entries) and palette 1 entries 0-79 (sprite palette: player, ring)
     lda VIC_PALSEL
     and #%00111111               // MAPEDPAL = 0
     sta VIC_PALSEL
@@ -59,16 +59,16 @@ system_save:
     lda VIC_PALSEL
     ora #%01000000               // MAPEDPAL = 1
     sta VIC_PALSEL
-    ldx #31
+    ldx #79
 !:  lda PAL_RED,x
     sta saved_pal1,x
     lda PAL_GREEN,x
-    sta saved_pal1+32,x
+    sta saved_pal1+80,x
     lda PAL_BLUE,x
-    sta saved_pal1+64,x
+    sta saved_pal1+160,x
     dex
     bpl !-
-    lda saved_vic + vic_restore.size() - 2   // $d070
+    lda saved_vic + vic_restore.size() - 5   // $d070
     sta VIC_PALSEL
     jmp key_drain
 
@@ -91,12 +91,12 @@ exit_to_basic:
     bne !-
     lda #$40                     // MAPEDPAL = 1
     sta VIC_PALSEL
-    ldx #31
+    ldx #79
 !:  lda saved_pal1,x
     sta PAL_RED,x
-    lda saved_pal1+32,x
+    lda saved_pal1+80,x
     sta PAL_GREEN,x
-    lda saved_pal1+64,x
+    lda saved_pal1+160,x
     sta PAL_BLUE,x
     dex
     bpl !-
@@ -145,14 +145,19 @@ read_keys:
     and #$df                     // fold lower case
     cmp #$58                     // X
     beq !exit+
-    cmp #$44                     // D: toggle the raster time display
+    cmp #$53                     // S: invulnerability (special.asm)
+    bne !+
+    lda #1
+    sta inv_req
+    rts
+!:  cmp #$44                     // D: toggle the raster time display
     bne !none+
     lda debug_raster
     eor #1
     sta debug_raster
     rts
 !space:
-    lda #1                       // space: request the special weapon (handled in a later stage)
+    lda #1                       // space: bomb (special.asm)
     sta special_req
 !none:
     rts
@@ -176,4 +181,4 @@ saved_d05d: .byte 0
 saved_vic:  .fill vic_restore.size(), 0
 saved_zp:   .fill 256, 0
 saved_pal0: .fill 768, 0
-saved_pal1: .fill 96, 0
+saved_pal1: .fill 240, 0

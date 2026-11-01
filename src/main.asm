@@ -93,6 +93,7 @@ main_loop:
     jsr wait_vblank
     jsr flip                           // show the buffer just built
     jsr player_update_sprites          // sprite registers during vblank
+    jsr special_vblank                 // invulnerability ring colours, bomb flash
     lda debug_raster                   // D key: border shows the CPU time per frame
     beq !+
     lda #2
@@ -102,7 +103,8 @@ main_loop:
     bne !+
     inc frame_hi
 !:
-    jsr read_keys                      // X or RUN/STOP: exit to BASIC; space: special weapon request
+    jsr read_keys                      // X or RUN/STOP: exit to BASIC; space: bomb; S: invulnerability
+    jsr special_update
     jsr read_joystick
     jsr player_move
     jsr scroll_advance
@@ -160,6 +162,7 @@ random:
 #import "system.asm"
 #import "level.asm"
 #import "shop.asm"
+#import "special.asm"
 
 // ---------------------------------------------------------------- data
 #import "../build/gen/frames.inc"
@@ -172,6 +175,8 @@ pixie_end:
 .align $100
 sprite_data:  .import binary "../build/gen/sprite.bin"
 sprite_end:
+ring_data:    .import binary "../build/gen/ring.bin"
+ring_end:
 palette_data: .import binary "../build/gen/palette.bin"
 sprpal_data:  .import binary "../build/gen/sprpal.bin"
 prg_end:

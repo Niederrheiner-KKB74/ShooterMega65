@@ -21,6 +21,15 @@
 .const RING_SCR     = $058000            // 64 x 170 bytes decoded map rows (screen part)
 .const RING_COL     = $05b000            // 64 x 170 bytes decoded map rows (colour part)
 .const SPRITE_ADDR  = $05f000            // player sprites (256 bytes each)
+.const RING_ADDR    = $05fc00            // invulnerability ring, sprites 2-4 (256 bytes each)
+.const RING_PTR     = RING_ADDR / 64
+
+// Special weapons (special.asm)
+.const INV_LONG     = 500                // bought invulnerability: 10 s
+.const INV_WARN     = 100                // ring blinks during the last 2 s
+.const MS_SPEED     = 3                  // homing missile: px per frame on each axis
+.const MS_LIFE      = 200                // frames until a missile gives up
+.const FLASH_FRAMES = 4                  // bomb flash
 
 // Colour RAM (offsets; CPU/DMA see it at $ff80000)
 .const COLRAM       = $ff80000

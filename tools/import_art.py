@@ -9,6 +9,7 @@ example level (level-example.json + terrain.ncm.bin). Writes into build/gen/:
   mapcol.bin     MAP_ROWS x 21 colour-RAM byte 1 (palette bank << 4 | $0f)
   pixies.bin     all pixie frames, column stacks with blank guards (+ HUD glyph area)
   sprite.bin     6 player frame pairs, 512 bytes each (2 x 192 + padding)
+  ring.bin       invulnerability ring, 3 sprites x 256 bytes (48x24, colour indices 1-6)
   palette.bin    text palette 0 (R/G/B planes, nibble-swapped), sprpal.bin sprite palette
   hud.bin        HUD source data: 10 digit half-glyphs (32 bytes), lives glyph template (64 bytes),
                  credits box (192 bytes), shield box template (256 bytes), bombs/invulnerability box (192 bytes)
@@ -22,6 +23,7 @@ have to share a bank later (e.g. the orange/green weapon shots) are merged by
 merge_bank(): above 15 colours it reduces them (median cut) and remaps every pixel.
 """
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -326,6 +328,21 @@ def main(out):
             part = a[:, half * 16:half * 16 + 16].reshape(-1)
             spr += bytes((int(part[i]) << 4) | int(part[i + 1]) for i in range(0, len(part), 2)) + bytes(64)
     (out / 'sprite.bin').write_bytes(spr)
+    # invulnerability ring (Stage 4): 48x24 ellipse outline for sprites 2-4, colour indices 1-6 by angle,
+    # cycled at run time (palette 1 entries $21-$26, $31-$36, $41-$46). Left pixel in the high nibble.
+    ring = np.zeros((24, 48), np.uint8)
+    for y in range(24):
+        for x in range(48):
+            dx, dy = (x - 23.5) / 23.5, (y - 11.5) / 11.5
+            r = math.hypot(dx, dy)
+            if 0.84 <= r <= 1.0:
+                ang = (math.atan2(dy, dx) + math.pi) / (2 * math.pi)
+                ring[y, x] = int(ang * 12) % 6 + 1
+    rb = bytearray()
+    for k in range(3):
+        part = ring[:, k * 16:k * 16 + 16].reshape(-1)
+        rb += bytes((int(part[i]) << 4) | int(part[i + 1]) for i in range(0, len(part), 2)) + bytes(64)
+    (out / 'ring.bin').write_bytes(rb)
 
     # ------------------------------------------------------------ constants
     names = {t['name']: i for i, t in enumerate(table)}

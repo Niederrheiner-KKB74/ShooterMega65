@@ -38,7 +38,7 @@ player_init:
     sta VIC_SPRPTR+1
     lda #$80                    // table in bank 0, 16-bit pointers
     sta VIC_SPRPTR+2
-    lda #%00000011
+    lda #%00011111              // sprites 0-1 plane, 2-4 invulnerability ring (special.asm)
     sta VIC_SPR16EN             // 16 colours (16 px wide, 8 bytes per row)
     sta VIC_SPRHGTEN
     lda #PL_H
@@ -51,6 +51,14 @@ player_init:
     sta VIC_SPRMCM
     sta VIC_SPR0COL             // in 16-colour mode: transparent colour index
     sta VIC_SPR1COL
+    sta VIC_SPR0COL+2
+    sta VIC_SPR0COL+3
+    sta VIC_SPR0COL+4
+    ldx #5                      // ring sprite pointers (fixed)
+!:  lda ring_ptr_tab,x
+    sta SPRPTR_TABLE+4,x
+    dex
+    bpl !-
 // new game: three lives, then the first plane
 player_new_game:
     lda #START_LIVES
@@ -177,6 +185,7 @@ player_move:
     jsr fire_shot
     lda #12                     // right gun
     jsr fire_shot
+    jsr missile_try             // homing missile, if bought (special.asm)
 !done:
     rts
 
@@ -210,9 +219,9 @@ fire_shot:
 player_damage:
     ldy pl_state
     bne !no+
-    ldy pl_inv
-    bne !no+
     sta tmp
+    jsr player_vulnerable
+    bne !no+
     lda pl_shield
     sec
     sbc tmp
@@ -274,29 +283,49 @@ player_update_sprites:
     sta VIC_SPREN
     rts
 !on:
+    lda inv_timer               // bought invulnerability: ring sprites 2-4
+    ora inv_timer+1
+    beq !plane+
+    lda inv_timer+1
+    bne !ring+
+    lda inv_timer
+    cmp #INV_WARN
+    bcs !ring+
+    lda ring_tick               // last 2 seconds: blinking
+    and #8
+    beq !plane+
+!ring:
+    lda #%00011111
+    bne !en+
+!plane:
     lda #%00000011
+!en:
     sta VIC_SPREN
-    clc
+    // x: sprite n at pl_x + spr_xofs[n], bit n of $d010 = bit 8
+    lda #0
+    sta tmp
+    ldx #4
+!:  clc
     lda pl_x
-    adc #SPR_XOFS
-    sta VIC_SPR0X
+    adc spr_xofs,x
+    sta tmp2
     lda pl_x+1
     adc #0
-    sta tmp                     // bit 0 = sprite 0 x msb
-    clc
-    lda pl_x
-    adc #SPR_XOFS + 16
-    sta VIC_SPR1X
-    lda pl_x+1
-    adc #0
+    lsr                         // bit 8 -> carry
+    rol tmp
+    txa
     asl
-    ora tmp                     // bit 1 = sprite 1 x msb
-    sta VIC_SPRXMSB
+    tay
+    lda tmp2
+    sta VIC_SPR0X,y
     clc
     lda pl_y
     adc #SPR_YOFS
-    sta VIC_SPR0Y
-    sta VIC_SPR1Y
+    sta VIC_SPR0Y,y
+    dex
+    bpl !-
+    lda tmp
+    sta VIC_SPRXMSB
     // all six frame pairs are resident at SPRITE_ADDR: only the pointers change
     lda pl_frame
     asl
@@ -314,4 +343,6 @@ player_update_sprites:
 
 .align 16
 SPRPTR_TABLE: .fill 16, 0       // 16-bit sprite pointer table (inside the program, not in BASIC's RAM)
+spr_xofs:     .byte SPR_XOFS, SPR_XOFS + 16, SPR_XOFS - 8, SPR_XOFS + 8, SPR_XOFS + 24   // plane, ring (48 px, centred)
+ring_ptr_tab: .byte <RING_PTR, >RING_PTR, <(RING_PTR + 4), >(RING_PTR + 4), <(RING_PTR + 8), >(RING_PTR + 8)
 .errorif ((<SPRITE_PTR0) + 6*8 > 256), "player sprite pointers must not cross a 256 boundary"

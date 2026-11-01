@@ -45,7 +45,7 @@ shop_reset:
     sta bomb_count
     sta inv_count
     sta has_missile
-    rts
+    jmp special_reset
 
 // ============================================================== loading (KERNAL)
 // file SHOP: 'SH', glyph count (16 bit), glyphs. Carry set = failed (message printed).
@@ -189,6 +189,7 @@ shop_frame:
     jsr read_keys               // X / RUN-STOP still return to BASIC
     lda #0
     sta special_req
+    sta inv_req
     jsr read_joystick
     lda sh_prev                 // sh_press = buttons pressed since the last frame
     eor #$ff

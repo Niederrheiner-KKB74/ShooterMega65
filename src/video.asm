@@ -142,6 +142,7 @@ assets_init:
     cpx #PIX_RUNS
     bne !run-
     RunDma(job_sprites)
+    RunDma(job_ring)
     ldx #RING_SLOTS*2
     lda #<job_ring_scr
     ldy #>job_ring_scr
@@ -260,6 +261,7 @@ show_buffer_b:
 job_pixclear: DmaJob(DMA_CMD_FILL, 0, PIXIE_ADDR, PIXIE_MAX * 64)
 job_pixrun:  DmaJob(DMA_CMD_COPY, pixie_data, PIXIE_ADDR, 64)
 job_sprites: DmaJob(DMA_CMD_COPY, sprite_data, SPRITE_ADDR, sprite_end - sprite_data)
+job_ring:    DmaJob(DMA_CMD_COPY, ring_data, RING_ADDR, ring_end - ring_data)
 job_ring_scr: DmaJob(DMA_CMD_COPY, row_tpl_scr, RING_SCR, ROW_BYTES)
 job_ring_col: DmaJob(DMA_CMD_COPY, row_tpl_col, RING_COL, ROW_BYTES)
 job_scr_a:   DmaJob(DMA_CMD_COPY, row_tpl_scr, SCREEN_A, ROW_BYTES)

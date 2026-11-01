@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // Object system (structure of arrays). All moving objects except the player are
 // RRB pixies. Slot ranges also define the draw order (later = on top):
-//   0-9 ground objects, 10-29 air objects (+ explosions, bonus items), 30-47 shots.
+//   0-9 ground objects, 10-29 air objects (+ explosions, bonus items), 30-47 shots (+ missile).
 // Every object has a kind; per-kind tables below define frames, hit points,
 // damage to the player, points, explosion size, weapon and bonus drops.
 // ----------------------------------------------------------------------------
@@ -20,6 +20,7 @@
 .const T_ESHOT = 4
 .const T_EXPL  = 5
 .const T_BONUS = 6
+.const T_MISSILE = 7             // player's homing missile (special.asm)
 
 .const K_FIGHTER  = 0
 .const K_BOMBER   = 1
@@ -412,7 +413,7 @@ upd_call:
     rts
 
 upd_tab:
-    .word upd_pshot, upd_air, upd_tank, upd_eshot, upd_expl, upd_bonus
+    .word upd_pshot, upd_air, upd_tank, upd_eshot, upd_expl, upd_bonus, upd_missile
 
 free_x:
     lda #T_NONE
@@ -765,6 +766,8 @@ collide_shots:
     lda obj_type,x
     cmp #T_PSHOT
     beq !+
+    cmp #T_MISSILE              // homing missile (special.asm): same damage as a shot
+    beq !+
     jmp !nexts+
 !:  ldy #GROUND_FIRST
 !en:
@@ -980,7 +983,7 @@ collide_player:
     ldx cs_s
     jmp !next+
 !harm:
-    ldy pl_inv                  // invulnerable: no damage, nothing destroyed
+    jsr player_vulnerable       // invulnerable: no damage, nothing destroyed
     beq !+
     jmp !next+
 !:
