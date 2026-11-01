@@ -323,3 +323,15 @@ show a medieval shield and three gold coin sizes, retaining their IDs and bank 1
 Level/data checks and assembly passed; no new emulator or hardware acceptance is
 claimed for this candidate.
 
+## Shop icons and denser coastal-base revision
+
+Extra-Life and Exit now load from `assets/art/shop/generated/indexed-source.json`
+through the existing HUD-to-shop colour map. Prices, item codes, palette roles and
+runtime logic are unchanged. Extra-Life derives from the actual player sprite;
+Exit uses a green running-person/door/arrow motif.
+
+The coastal-base source now schedules 44 formations (240 aircraft) and 16 tanks,
+with 7–8 rows between waves and quiet shop approaches. New scenery includes
+islands, woodland ponds, rocks, supply areas, radar and a runway. All fixed
+structures remain decoration. See `docs/COASTAL_BASE_LEVEL.md` for budgets and
+validation; the denser schedule still requires a full gameplay/hardware pass.
