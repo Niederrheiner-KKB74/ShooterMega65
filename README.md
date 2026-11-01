@@ -30,7 +30,8 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
   (01.11.2026), `stage6-stable`.
   See [docs/stage6.md](docs/stage6.md).
 - **Stage 7** (branch `stage7`): title screen "Shooter65", level-1 boss, game-over banner and high score,
-  title and boss music (PR #14 artwork). XEMU-tested, hardware test pending. See [docs/stage7.md](docs/stage7.md).
+  title and boss music (PR #14 artwork). Confirmed on real hardware (01.11.2026), `stage7-stable`.
+  See [docs/stage7.md](docs/stage7.md).
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.

@@ -29,7 +29,7 @@ Design details: `docs/design.md` §18 (boss) and §19 (title, game over).
 | XEMU without attic RAM (`NO_ATTIC`): title at start, "GAME OVER" box, new game directly | ✔ |
 | XEMU full level with the (weak) boss at row 358, both shops, into the second pass (frame 16,831), RRB overflow 0; afterwards the fighter/bomber glyph area is byte-identical to `PIXIES` | ✔ |
 | XEMU audio: boss and title music recorded (`docs/audio/`) | ✔ |
-| **Real MEGA65** | **open – please test** |
+| Real MEGA65 | ✔ all checklist items confirmed by the owner (01.11.2026), `stage7-stable` |
 
 ## Hardware test checklist
 1. `RUN`: after loading the title screen appears with the title music; "PRESS FIRE" blinks; HIGH SCORE 000000.

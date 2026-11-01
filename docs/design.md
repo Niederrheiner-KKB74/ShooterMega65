@@ -290,6 +290,7 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Aircraft views (PR #13); music volume 11 (effects 15); shop fire needs 8 frames release; S capsule 5 % |
 | 01.11.2026 | Curved paths for helicopters, bombers, armoured planes; Stage 6 confirmed on hardware |
 | 01.11.2026 | Game name "Shooter65" (repository keeps its name); PR #14 adopted: title, game-over banner, level-1 boss; boss and title music by Claude |
+| 01.11.2026 | Stage 7 confirmed on hardware |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
