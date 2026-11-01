@@ -21,7 +21,7 @@ def remap(p,old,new):
     return p.point(lut+[0]*240)
 
 
-def make(source):
+def make(source,opacity=None):
     result={};metadata={}
     for name,record in source['groups'].items():
         w,h=record['width'],record['height']
@@ -50,6 +50,12 @@ def make(source):
             pal=record['palette'][:13]+WARM
             body=remap(load_pixels(record),record['palette'],pal)
             conf=SETTINGS[name];x0,y0,x1,y1=conf['rect'];ImageDraw.Draw(body).rectangle((x0,y0,x1-1,y1-1),fill=0)
+            # Explicit reviewed body repairs, not a blanket fill of transparent gaps.
+            for x,y,index in (opacity or {}).get('groups',{}).get(name,{}).get('repairs',[]):
+                assert body.getpixel((x,y))==0,(name,x,y,'repair would overwrite colour')
+                assert not (x0<=x<x1 and y0<=y<y1),(name,'repair touches exhaust')
+                assert 1<=index<=12
+                body.putpixel((x,y),index)
             mask=Image.new('L',(w,h));ImageDraw.Draw(mask).rectangle((x0,y0,x1-1,y1-1),fill=255)
             frames=[]
             for phase in range(3):
@@ -69,6 +75,8 @@ def make(source):
                 left,right=record['banking']
                 frames += [remap(load_pixels(left),record['palette'],pal),frames[0].copy(),remap(load_pixels(right),record['palette'],pal)]
             kind='exhaust';notes='One canonical body, palette reduced to 12 body colours + 3 dedicated flame colours; indices 3/5 are separate banking poses.'
+            repaired=len((opacity or {}).get('groups',{}).get(name,{}).get('repairs',[]))
+            if repaired:notes+=f' {repaired} transparent body pixels repaired explicitly; see source/enemy-opacity.json.'
         result[name]=dict(frames=frames,palette=pal,mask=mask)
         metadata[name]=dict(kind=kind,loop=[0,1,2],frame_ms=100,mask_file='animation-mask-'+name+'.png',notes=notes,
                             steady_frame=4 if name=='player' else 0,banking_frames=[3,5] if name=='player' else [])
@@ -77,7 +85,8 @@ def make(source):
 
 def apply(groups,palettes,base):
     source=json.loads((base/'source/aircraft-animation.json').read_text())
-    fixed,metadata=make(source)
+    opacity=json.loads((base/'source/enemy-opacity.json').read_text())
+    fixed,metadata=make(source,opacity)
     for g in groups:
         if g['id'] in fixed:
             g['frames']=fixed[g['id']]['frames'];palettes[g['palette']]=fixed[g['id']]['palette']

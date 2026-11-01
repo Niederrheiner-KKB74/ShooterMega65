@@ -54,11 +54,12 @@ def main():
         source.append(dict(id=desc['id'],width=w,height=h,rows=[p.tobytes()[y*w:(y+1)*w].hex() for y in range(h)]));records.append(rec)
         im=rgba(p,pal).resize((w*6,h*6),Image.Resampling.NEAREST);xx=12+i*158
         pd.text((xx,14),desc['id'],fill='white');pd.text((xx,31),f'{w}x{h}',fill='white');preview.paste(im,(xx,65),im)
+        if desc['design']=='gold_coin':pd.text((xx,47),f'Coin: {x1-x0+1}px',fill=(255,215,60))
     preview.save(OUT/'preview.png')
     for name,data in [('capsules.indices.bin',raw),('capsules.ncm.bin',nc),('capsules.fcm.bin',fc),('capsules.rrb.bin',rrb),('palette.rgb',bytes(v for c in pal for v in c)),('palette.palregs.bin',bytes(((c[ch]&15)<<4)|(c[ch]>>4) for ch in range(3) for c in pal))]: (OUT/name).write_bytes(data)
     (OUT/'indexed-source.json').write_text(json.dumps(source,indent=2)+'\n')
     m=dict(schema=1,designs=records,palette=pal,shared_palette='Stage 2 HUD/bonus bank 12, $cf; exact RGB match',
-           provenance='Revised native pixel designs: heraldic medieval shield without S, circular gold coins in three diameters with embossed dollar signs.',integrated=False,hardware_tested=False,emulator_tested=False,rrb_glyphs=len(rrb)//64)
+           provenance='Revised native pixel designs: heraldic medieval shield without S, circular gold coins in balanced 10/14/18 pixel diameters with embossed dollar signs.',integrated=True,hardware_tested=False,emulator_tested=False,rrb_glyphs=len(rrb)//64)
     m['files']={p.name:dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(OUT.iterdir()) if p.is_file() and p.name!='manifest.json'}
     (OUT/'manifest.json').write_text(json.dumps(m,indent=2)+'\n');print('Exported medieval shield and 3 gold coin sizes, using unchanged HUD/bonus bank 12.')
 

@@ -1,0 +1,239 @@
+{
+  "schema": 1,
+  "groups": [
+    {
+      "group": "fighter",
+      "size": [
+        16,
+        16
+      ],
+      "poses": [
+        "north",
+        "northeast",
+        "east",
+        "southeast",
+        "south",
+        "southwest",
+        "west",
+        "northwest"
+      ],
+      "phases": 3,
+      "strip_order": "pose-major, then phase 0/1/2"
+    },
+    {
+      "group": "helicopter",
+      "size": [
+        16,
+        16
+      ],
+      "poses": [
+        "north",
+        "northeast",
+        "east",
+        "southeast",
+        "south",
+        "southwest",
+        "west",
+        "northwest"
+      ],
+      "phases": 3,
+      "strip_order": "pose-major, then phase 0/1/2"
+    },
+    {
+      "group": "bomber",
+      "size": [
+        32,
+        32
+      ],
+      "poses": [
+        "straight",
+        "left",
+        "right"
+      ],
+      "phases": 3,
+      "strip_order": "pose-major, then phase 0/1/2"
+    },
+    {
+      "group": "armoured_plane",
+      "size": [
+        32,
+        32
+      ],
+      "poses": [
+        "straight",
+        "left",
+        "right"
+      ],
+      "phases": 3,
+      "strip_order": "pose-major, then phase 0/1/2"
+    }
+  ],
+  "frames": 66,
+  "rrb_glyphs": 325,
+  "source_palette_indices": true,
+  "runtime_integrated": false,
+  "hardware_tested": false,
+  "provenance": "Original indexed aircraft retained; explicit opaque-hull repairs. New 45-degree views use nearest-neighbour index sampling; banks use asymmetric wing foreshortening, roll and nose yaw. Existing exhaust/rotor phases retained.",
+  "files": {
+    "armoured_plane-left.webp": {
+      "bytes": 984,
+      "sha256": "fed285952dd9fe12e3aa45dadf0e49bcbff970204c324e31eef8490104555191"
+    },
+    "armoured_plane-preview.png": {
+      "bytes": 6463,
+      "sha256": "f9e13151e138e621db388139295e3aa06786de57b30c3cdd766c0a1ee12cd36f"
+    },
+    "armoured_plane-right.webp": {
+      "bytes": 958,
+      "sha256": "3770e2a587f21fe761988980c9556d4346fd5506ae704957dca9d2affc7ff184"
+    },
+    "armoured_plane-straight.webp": {
+      "bytes": 1090,
+      "sha256": "36cd75a18827b850cd54589172bfd7cde95005ecd40cdb73c81c8ad7ddab7fc6"
+    },
+    "armoured_plane.png": {
+      "bytes": 2490,
+      "sha256": "a97c2cc83aa46e0146fc8527969a58ff9ab40f96624cd37b4089b54eb86520b6"
+    },
+    "bomber-left.webp": {
+      "bytes": 1036,
+      "sha256": "28ee154d16d4aa3cc35ce815b83cfcb7d3d99c4c991a55dc24098f77149dcce1"
+    },
+    "bomber-preview.png": {
+      "bytes": 6626,
+      "sha256": "21f56c555fa538bd6c97e515b2a4b6e146d79545be0543a0337c50028188c2aa"
+    },
+    "bomber-right.webp": {
+      "bytes": 1044,
+      "sha256": "d4e269fc71b5adb0fc63c31d418232ab5fe24646b4785ab0e9594fdb3eec12cc"
+    },
+    "bomber-straight.webp": {
+      "bytes": 1112,
+      "sha256": "8a4181f22b06b98b9f1428138db149dbaafd50d8531042a0568c2041c96032cb"
+    },
+    "bomber.png": {
+      "bytes": 2526,
+      "sha256": "49e1b1bd06459c34bcec2583f113a9e42c4384c2c3dff0fe61ff07ea8c4455d7"
+    },
+    "fighter-east.webp": {
+      "bytes": 608,
+      "sha256": "16a6911ed12bc9f1488a02e7e7b9fcb76a660553d17bc4b032267bfc229c0ee8"
+    },
+    "fighter-north.webp": {
+      "bytes": 590,
+      "sha256": "76b2b22acd9f1e86fe7b9706fe28bd61b1911533736fd41b974e1202b8917747"
+    },
+    "fighter-northeast.webp": {
+      "bytes": 606,
+      "sha256": "51a4913dc1e805db4b0e3b55fb4e8fc0d61782da07caed29e7413a541bf3cf2e"
+    },
+    "fighter-northwest.webp": {
+      "bytes": 618,
+      "sha256": "4ad00cc223c8b076bdc511545415ae686f6fbd40f7df5f8b92ad81daa3ccceee"
+    },
+    "fighter-preview.png": {
+      "bytes": 6892,
+      "sha256": "6f66a951d623ccf07dd29b56b97e723b2b9c27a3022a40eef3c259e54b63ad14"
+    },
+    "fighter-south.webp": {
+      "bytes": 614,
+      "sha256": "39939c26485a61db8db6c921551d20239d5df7c577afcd4dbf5d112d3ec1caec"
+    },
+    "fighter-southeast.webp": {
+      "bytes": 620,
+      "sha256": "4840d6bf8c4fa98ca412b21e0a403ca3b44edd5c6a720d119738a748b62e1877"
+    },
+    "fighter-southwest.webp": {
+      "bytes": 608,
+      "sha256": "a2285a098f9d659a07562e2968e4b96048d63afacf16b7c09881dcf59afa627f"
+    },
+    "fighter-west.webp": {
+      "bytes": 620,
+      "sha256": "29885cbc8d5f479e4ae176f97780e768b7e31ba8e79ce16ff408f0721755a472"
+    },
+    "fighter.png": {
+      "bytes": 2671,
+      "sha256": "b69df04d858c9ca3d825aeb2528657d8a823a1466651162c4252eed718760a96"
+    },
+    "helicopter-east.webp": {
+      "bytes": 690,
+      "sha256": "fb9fb3079e3e2136f06167c08d509fc4eff450415c4d060431268af4f1548d18"
+    },
+    "helicopter-north.webp": {
+      "bytes": 688,
+      "sha256": "c0b6937d5790d7054275c93c7a1b5544ab6b2d26bfb9467bc87eacb4a1898c5d"
+    },
+    "helicopter-northeast.webp": {
+      "bytes": 782,
+      "sha256": "fd9f0dc7bf05d4d23057a4b75237359db562d3621a711eb765d8bceb2882e59e"
+    },
+    "helicopter-northwest.webp": {
+      "bytes": 754,
+      "sha256": "8a751d1c67a358fd97d61455618d7f77396f40d5cef2a0d306788ad309ef5951"
+    },
+    "helicopter-preview.png": {
+      "bytes": 4526,
+      "sha256": "a9fe46ba7ee52aea16be9c5ccba912432caf4be90f9f693e93d3490f99cfbf32"
+    },
+    "helicopter-south.webp": {
+      "bytes": 706,
+      "sha256": "ecbc37dd56fbfae7d1628caa8267bf46bcf5cc30b1bd2b95ddbb2b89acbb72ef"
+    },
+    "helicopter-southeast.webp": {
+      "bytes": 754,
+      "sha256": "91227dca67fc5de83783fbb0e2bc9ab297f557e8e47ae26c85e99f761fd6e8d6"
+    },
+    "helicopter-southwest.webp": {
+      "bytes": 786,
+      "sha256": "ed3f7e2cc610735d2717a7c866c859fcc2b89dc3e05b14d737c27438b8963d2a"
+    },
+    "helicopter-west.webp": {
+      "bytes": 688,
+      "sha256": "7663273915d33fde3c8c2262ec89871437a674897a6b91f1f8ffb13bf4d640bc"
+    },
+    "helicopter.png": {
+      "bytes": 1663,
+      "sha256": "ed58ef3ae7f8322d31bd387f2ef3b5d57114b6615e8eb28f071471783d1ef234"
+    },
+    "indexed-source.json": {
+      "bytes": 122381,
+      "sha256": "64c3038054fd2aa6c6c8e1eb340693a321ae2b321a28c2913c18df0d96187f74"
+    },
+    "opacity-audit.json": {
+      "bytes": 458,
+      "sha256": "ac3b4aee0c578653d42e49fe772e7c0def4182562998e53f0c4020cf128848de"
+    },
+    "opacity-audit.png": {
+      "bytes": 21388,
+      "sha256": "2f2ad4eac40b7a7330b44fd0b9e2410147980c2544e7efbcf2312baa1444a6ec"
+    },
+    "palettes.json": {
+      "bytes": 3200,
+      "sha256": "6d3a4ebf8cd0e114dae2a621cff6ae3a60a26c717a7cbb00dcc10989049546a8"
+    },
+    "preview.png": {
+      "bytes": 28022,
+      "sha256": "0621d0c7b71f332d573b5c53d27e73c5c1ec8c66d6775415fe343f658a620957"
+    },
+    "views.fcm.bin": {
+      "bytes": 30720,
+      "sha256": "313ff2346f01579857cdbdd617124443a858c987dfb1225dff5a71713bf2c8f9"
+    },
+    "views.inc": {
+      "bytes": 3393,
+      "sha256": "f42291478b440fada2040102260d165f8de825c8d7d00fdfddc4525474a80ee3"
+    },
+    "views.indices.bin": {
+      "bytes": 30720,
+      "sha256": "df0cf6b5775ec522bac0f2c81a2ce684ac6ddf7698c6681209f46aabff4575f6"
+    },
+    "views.ncm.bin": {
+      "bytes": 15360,
+      "sha256": "4b98cf5127140b92bce9ee0e3a6094341b8b42bad24743ae588b0d9fa02fb81e"
+    },
+    "views.rrb.bin": {
+      "bytes": 20800,
+      "sha256": "e9d3707df8c40a804eb418fd61bdc406620b6d534f5a676114687699d3d27723"
+    }
+  }
+}
