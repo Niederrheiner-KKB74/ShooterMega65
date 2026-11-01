@@ -1,0 +1,3413 @@
+{
+  "schema": 2,
+  "spec_sha256": "1d0cf25866d7c596c2a2474f092f896d786de48aeeacbd316073db191cbabb82",
+  "board_sha256": "4fc74bfe27d6cc11346d3a97247b7b6986e9d9da6bc5d642ac435852904f6ecf",
+  "pillow": "12.3.0",
+  "assembled": false,
+  "emulator_tested": false,
+  "hardware_tested": false,
+  "palettes": {
+    "player": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        243,
+        246,
+        241
+      ],
+      [
+        219,
+        205,
+        179
+      ],
+      [
+        176,
+        184,
+        199
+      ],
+      [
+        112,
+        183,
+        221
+      ],
+      [
+        174,
+        141,
+        116
+      ],
+      [
+        116,
+        123,
+        141
+      ],
+      [
+        31,
+        120,
+        209
+      ],
+      [
+        134,
+        77,
+        58
+      ],
+      [
+        68,
+        73,
+        90
+      ],
+      [
+        29,
+        65,
+        118
+      ],
+      [
+        19,
+        26,
+        43
+      ],
+      [
+        2,
+        88,
+        205
+      ],
+      [
+        1,
+        59,
+        166
+      ],
+      [
+        1,
+        41,
+        130
+      ],
+      [
+        2,
+        20,
+        74
+      ]
+    ],
+    "fighter": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        237,
+        238,
+        236
+      ],
+      [
+        215,
+        210,
+        199
+      ],
+      [
+        201,
+        183,
+        167
+      ],
+      [
+        163,
+        163,
+        169
+      ],
+      [
+        179,
+        142,
+        133
+      ],
+      [
+        138,
+        138,
+        144
+      ],
+      [
+        120,
+        123,
+        133
+      ],
+      [
+        110,
+        110,
+        117
+      ],
+      [
+        161,
+        78,
+        55
+      ],
+      [
+        94,
+        90,
+        96
+      ],
+      [
+        199,
+        24,
+        12
+      ],
+      [
+        123,
+        26,
+        21
+      ],
+      [
+        75,
+        74,
+        80
+      ],
+      [
+        64,
+        60,
+        63
+      ],
+      [
+        50,
+        35,
+        36
+      ]
+    ],
+    "bomber": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        220,
+        213,
+        149
+      ],
+      [
+        174,
+        167,
+        95
+      ],
+      [
+        158,
+        149,
+        83
+      ],
+      [
+        135,
+        142,
+        74
+      ],
+      [
+        151,
+        122,
+        59
+      ],
+      [
+        114,
+        120,
+        63
+      ],
+      [
+        102,
+        110,
+        59
+      ],
+      [
+        92,
+        97,
+        50
+      ],
+      [
+        107,
+        87,
+        45
+      ],
+      [
+        148,
+        43,
+        20
+      ],
+      [
+        73,
+        79,
+        46
+      ],
+      [
+        66,
+        63,
+        36
+      ],
+      [
+        56,
+        62,
+        39
+      ],
+      [
+        47,
+        51,
+        33
+      ],
+      [
+        35,
+        36,
+        26
+      ]
+    ],
+    "helicopter": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        233,
+        241,
+        242
+      ],
+      [
+        181,
+        201,
+        217
+      ],
+      [
+        203,
+        168,
+        128
+      ],
+      [
+        131,
+        172,
+        208
+      ],
+      [
+        234,
+        117,
+        28
+      ],
+      [
+        133,
+        138,
+        147
+      ],
+      [
+        97,
+        127,
+        159
+      ],
+      [
+        87,
+        105,
+        128
+      ],
+      [
+        180,
+        65,
+        17
+      ],
+      [
+        134,
+        32,
+        10
+      ],
+      [
+        71,
+        86,
+        109
+      ],
+      [
+        72,
+        62,
+        65
+      ],
+      [
+        50,
+        69,
+        91
+      ],
+      [
+        41,
+        49,
+        62
+      ],
+      [
+        30,
+        29,
+        36
+      ]
+    ],
+    "armoured_plane": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        232,
+        225,
+        202
+      ],
+      [
+        176,
+        167,
+        160
+      ],
+      [
+        161,
+        138,
+        132
+      ],
+      [
+        123,
+        128,
+        142
+      ],
+      [
+        197,
+        95,
+        63
+      ],
+      [
+        108,
+        110,
+        121
+      ],
+      [
+        95,
+        99,
+        112
+      ],
+      [
+        80,
+        81,
+        91
+      ],
+      [
+        208,
+        51,
+        26
+      ],
+      [
+        189,
+        17,
+        10
+      ],
+      [
+        89,
+        61,
+        61
+      ],
+      [
+        113,
+        18,
+        15
+      ],
+      [
+        62,
+        65,
+        74
+      ],
+      [
+        51,
+        52,
+        59
+      ],
+      [
+        35,
+        30,
+        33
+      ]
+    ],
+    "player_shot_blue": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        244,
+        249,
+        254
+      ],
+      [
+        236,
+        242,
+        253
+      ],
+      [
+        236,
+        241,
+        253
+      ],
+      [
+        201,
+        224,
+        252
+      ],
+      [
+        67,
+        177,
+        250
+      ],
+      [
+        5,
+        97,
+        238
+      ],
+      [
+        6,
+        91,
+        227
+      ],
+      [
+        9,
+        90,
+        238
+      ],
+      [
+        6,
+        87,
+        238
+      ],
+      [
+        7,
+        84,
+        237
+      ],
+      [
+        10,
+        81,
+        235
+      ],
+      [
+        7,
+        78,
+        232
+      ],
+      [
+        5,
+        79,
+        208
+      ],
+      [
+        3,
+        68,
+        211
+      ],
+      [
+        3,
+        18,
+        51
+      ]
+    ],
+    "player_shot_orange": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        253,
+        252,
+        250
+      ],
+      [
+        254,
+        250,
+        226
+      ],
+      [
+        254,
+        246,
+        244
+      ],
+      [
+        255,
+        224,
+        110
+      ],
+      [
+        251,
+        137,
+        29
+      ],
+      [
+        238,
+        95,
+        4
+      ],
+      [
+        247,
+        89,
+        11
+      ],
+      [
+        248,
+        84,
+        11
+      ],
+      [
+        244,
+        85,
+        15
+      ],
+      [
+        240,
+        84,
+        7
+      ],
+      [
+        243,
+        81,
+        7
+      ],
+      [
+        233,
+        82,
+        7
+      ],
+      [
+        233,
+        74,
+        4
+      ],
+      [
+        177,
+        43,
+        2
+      ],
+      [
+        26,
+        4,
+        0
+      ]
+    ],
+    "player_shot_green": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        247,
+        254,
+        248
+      ],
+      [
+        242,
+        249,
+        241
+      ],
+      [
+        237,
+        253,
+        239
+      ],
+      [
+        133,
+        244,
+        139
+      ],
+      [
+        21,
+        241,
+        65
+      ],
+      [
+        6,
+        241,
+        47
+      ],
+      [
+        4,
+        242,
+        46
+      ],
+      [
+        4,
+        237,
+        50
+      ],
+      [
+        4,
+        234,
+        47
+      ],
+      [
+        7,
+        228,
+        50
+      ],
+      [
+        5,
+        225,
+        44
+      ],
+      [
+        8,
+        221,
+        53
+      ],
+      [
+        6,
+        216,
+        49
+      ],
+      [
+        8,
+        211,
+        48
+      ],
+      [
+        2,
+        75,
+        7
+      ]
+    ],
+    "enemy_shot_red": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        244,
+        157,
+        150
+      ],
+      [
+        245,
+        117,
+        113
+      ],
+      [
+        243,
+        70,
+        58
+      ],
+      [
+        226,
+        64,
+        66
+      ],
+      [
+        241,
+        40,
+        23
+      ],
+      [
+        253,
+        26,
+        16
+      ],
+      [
+        234,
+        7,
+        7
+      ],
+      [
+        230,
+        0,
+        0
+      ],
+      [
+        150,
+        4,
+        9
+      ],
+      [
+        111,
+        0,
+        1
+      ],
+      [
+        65,
+        0,
+        3
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "enemy_shot_fire": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        253,
+        249,
+        220
+      ],
+      [
+        254,
+        238,
+        141
+      ],
+      [
+        253,
+        225,
+        118
+      ],
+      [
+        252,
+        171,
+        14
+      ],
+      [
+        254,
+        134,
+        10
+      ],
+      [
+        254,
+        121,
+        6
+      ],
+      [
+        242,
+        90,
+        4
+      ],
+      [
+        222,
+        66,
+        6
+      ],
+      [
+        201,
+        36,
+        2
+      ],
+      [
+        173,
+        25,
+        2
+      ],
+      [
+        160,
+        19,
+        3
+      ],
+      [
+        150,
+        21,
+        1
+      ],
+      [
+        138,
+        19,
+        2
+      ],
+      [
+        137,
+        14,
+        2
+      ],
+      [
+        95,
+        8,
+        2
+      ]
+    ],
+    "enemy_shot_pair": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        255,
+        254,
+        253
+      ],
+      [
+        255,
+        250,
+        246
+      ],
+      [
+        255,
+        247,
+        247
+      ],
+      [
+        254,
+        213,
+        157
+      ],
+      [
+        254,
+        81,
+        37
+      ],
+      [
+        210,
+        17,
+        5
+      ],
+      [
+        182,
+        8,
+        3
+      ],
+      [
+        179,
+        4,
+        2
+      ],
+      [
+        165,
+        4,
+        2
+      ],
+      [
+        180,
+        0,
+        1
+      ],
+      [
+        174,
+        2,
+        0
+      ],
+      [
+        153,
+        1,
+        2
+      ],
+      [
+        114,
+        1,
+        2
+      ],
+      [
+        90,
+        2,
+        5
+      ],
+      [
+        57,
+        0,
+        0
+      ]
+    ],
+    "rocket": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        254,
+        254,
+        254
+      ],
+      [
+        223,
+        225,
+        231
+      ],
+      [
+        227,
+        218,
+        210
+      ],
+      [
+        233,
+        205,
+        188
+      ],
+      [
+        214,
+        208,
+        207
+      ],
+      [
+        159,
+        164,
+        181
+      ],
+      [
+        125,
+        144,
+        172
+      ],
+      [
+        133,
+        130,
+        138
+      ],
+      [
+        139,
+        114,
+        123
+      ],
+      [
+        98,
+        113,
+        139
+      ],
+      [
+        145,
+        78,
+        70
+      ],
+      [
+        202,
+        1,
+        0
+      ],
+      [
+        45,
+        28,
+        33
+      ],
+      [
+        32,
+        22,
+        26
+      ],
+      [
+        26,
+        28,
+        34
+      ]
+    ],
+    "explosion_16": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        254,
+        253,
+        244
+      ],
+      [
+        254,
+        228,
+        108
+      ],
+      [
+        253,
+        170,
+        21
+      ],
+      [
+        243,
+        123,
+        16
+      ],
+      [
+        247,
+        95,
+        9
+      ],
+      [
+        235,
+        64,
+        5
+      ],
+      [
+        142,
+        75,
+        47
+      ],
+      [
+        74,
+        65,
+        63
+      ],
+      [
+        200,
+        41,
+        6
+      ],
+      [
+        170,
+        25,
+        4
+      ],
+      [
+        130,
+        22,
+        6
+      ],
+      [
+        119,
+        9,
+        2
+      ],
+      [
+        75,
+        31,
+        24
+      ],
+      [
+        37,
+        30,
+        31
+      ],
+      [
+        75,
+        6,
+        2
+      ]
+    ],
+    "explosion_32": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        254,
+        253,
+        241
+      ],
+      [
+        253,
+        227,
+        108
+      ],
+      [
+        253,
+        174,
+        27
+      ],
+      [
+        245,
+        128,
+        17
+      ],
+      [
+        248,
+        92,
+        8
+      ],
+      [
+        237,
+        65,
+        5
+      ],
+      [
+        149,
+        76,
+        45
+      ],
+      [
+        70,
+        63,
+        64
+      ],
+      [
+        210,
+        41,
+        4
+      ],
+      [
+        167,
+        27,
+        5
+      ],
+      [
+        127,
+        19,
+        5
+      ],
+      [
+        115,
+        9,
+        3
+      ],
+      [
+        69,
+        35,
+        29
+      ],
+      [
+        37,
+        30,
+        31
+      ],
+      [
+        72,
+        6,
+        2
+      ]
+    ],
+    "water": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        227,
+        195,
+        151
+      ],
+      [
+        218,
+        172,
+        114
+      ],
+      [
+        192,
+        179,
+        150
+      ],
+      [
+        52,
+        173,
+        229
+      ],
+      [
+        96,
+        140,
+        153
+      ],
+      [
+        22,
+        129,
+        209
+      ],
+      [
+        11,
+        124,
+        208
+      ],
+      [
+        11,
+        104,
+        195
+      ],
+      [
+        16,
+        89,
+        181
+      ],
+      [
+        10,
+        85,
+        181
+      ],
+      [
+        8,
+        87,
+        182
+      ],
+      [
+        8,
+        73,
+        168
+      ],
+      [
+        4,
+        85,
+        181
+      ],
+      [
+        4,
+        71,
+        169
+      ],
+      [
+        4,
+        63,
+        158
+      ]
+    ],
+    "nature": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        153,
+        167,
+        116
+      ],
+      [
+        118,
+        142,
+        82
+      ],
+      [
+        122,
+        131,
+        86
+      ],
+      [
+        76,
+        130,
+        50
+      ],
+      [
+        130,
+        115,
+        101
+      ],
+      [
+        109,
+        104,
+        84
+      ],
+      [
+        69,
+        115,
+        48
+      ],
+      [
+        47,
+        105,
+        51
+      ],
+      [
+        97,
+        87,
+        77
+      ],
+      [
+        82,
+        72,
+        65
+      ],
+      [
+        47,
+        83,
+        48
+      ],
+      [
+        21,
+        77,
+        49
+      ],
+      [
+        65,
+        57,
+        51
+      ],
+      [
+        23,
+        55,
+        41
+      ],
+      [
+        27,
+        33,
+        30
+      ]
+    ],
+    "structures": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        194,
+        192,
+        183
+      ],
+      [
+        163,
+        160,
+        150
+      ],
+      [
+        152,
+        136,
+        120
+      ],
+      [
+        115,
+        127,
+        126
+      ],
+      [
+        123,
+        108,
+        98
+      ],
+      [
+        100,
+        103,
+        114
+      ],
+      [
+        89,
+        97,
+        108
+      ],
+      [
+        90,
+        85,
+        84
+      ],
+      [
+        76,
+        82,
+        95
+      ],
+      [
+        79,
+        75,
+        78
+      ],
+      [
+        81,
+        60,
+        50
+      ],
+      [
+        57,
+        66,
+        71
+      ],
+      [
+        51,
+        54,
+        58
+      ],
+      [
+        42,
+        42,
+        44
+      ],
+      [
+        25,
+        22,
+        22
+      ]
+    ],
+    "fixed_targets": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        18,
+        25,
+        32
+      ],
+      [
+        39,
+        45,
+        47
+      ],
+      [
+        69,
+        77,
+        76
+      ],
+      [
+        103,
+        112,
+        106
+      ],
+      [
+        153,
+        164,
+        145
+      ],
+      [
+        213,
+        219,
+        181
+      ],
+      [
+        173,
+        67,
+        32
+      ],
+      [
+        245,
+        157,
+        51
+      ],
+      [
+        36,
+        62,
+        28
+      ],
+      [
+        58,
+        85,
+        37
+      ],
+      [
+        90,
+        116,
+        54
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "hud": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        54,
+        82,
+        111
+      ],
+      [
+        221,
+        239,
+        247
+      ],
+      [
+        255,
+        165,
+        50
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "groups": [
+    {
+      "id": "player",
+      "kind": "player",
+      "size": [
+        32,
+        24
+      ],
+      "palette": "player",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 0,
+          "indices_bytes": 768,
+          "fcm_offset": 0,
+          "fcm_bytes": 768,
+          "ncm_offset": 0,
+          "ncm_bytes": 384,
+          "sprite_offset": 0
+        },
+        {
+          "index": 1,
+          "indices_offset": 768,
+          "indices_bytes": 768,
+          "fcm_offset": 768,
+          "fcm_bytes": 768,
+          "ncm_offset": 384,
+          "ncm_bytes": 384,
+          "sprite_offset": 512
+        },
+        {
+          "index": 2,
+          "indices_offset": 1536,
+          "indices_bytes": 768,
+          "fcm_offset": 1536,
+          "fcm_bytes": 768,
+          "ncm_offset": 768,
+          "ncm_bytes": 384,
+          "sprite_offset": 1024
+        },
+        {
+          "index": 3,
+          "indices_offset": 2304,
+          "indices_bytes": 768,
+          "fcm_offset": 2304,
+          "fcm_bytes": 768,
+          "ncm_offset": 1152,
+          "ncm_bytes": 384,
+          "sprite_offset": 1536
+        },
+        {
+          "index": 4,
+          "indices_offset": 3072,
+          "indices_bytes": 768,
+          "fcm_offset": 3072,
+          "fcm_bytes": 768,
+          "ncm_offset": 1536,
+          "ncm_bytes": 384,
+          "sprite_offset": 2048
+        },
+        {
+          "index": 5,
+          "indices_offset": 3840,
+          "indices_bytes": 768,
+          "fcm_offset": 3840,
+          "fcm_bytes": 768,
+          "ncm_offset": 1920,
+          "ncm_bytes": 384,
+          "sprite_offset": 2560
+        }
+      ]
+    },
+    {
+      "id": "fighter",
+      "kind": "enemy",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "fighter",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 4608,
+          "indices_bytes": 256,
+          "fcm_offset": 4608,
+          "fcm_bytes": 256,
+          "ncm_offset": 2304,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 1,
+          "indices_offset": 4864,
+          "indices_bytes": 256,
+          "fcm_offset": 4864,
+          "fcm_bytes": 256,
+          "ncm_offset": 2432,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 2,
+          "indices_offset": 5120,
+          "indices_bytes": 256,
+          "fcm_offset": 5120,
+          "fcm_bytes": 256,
+          "ncm_offset": 2560,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "bomber",
+      "kind": "enemy",
+      "size": [
+        32,
+        32
+      ],
+      "palette": "bomber",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 5376,
+          "indices_bytes": 1024,
+          "fcm_offset": 5376,
+          "fcm_bytes": 1024,
+          "ncm_offset": 2688,
+          "ncm_bytes": 512
+        },
+        {
+          "index": 1,
+          "indices_offset": 6400,
+          "indices_bytes": 1024,
+          "fcm_offset": 6400,
+          "fcm_bytes": 1024,
+          "ncm_offset": 3200,
+          "ncm_bytes": 512
+        },
+        {
+          "index": 2,
+          "indices_offset": 7424,
+          "indices_bytes": 1024,
+          "fcm_offset": 7424,
+          "fcm_bytes": 1024,
+          "ncm_offset": 3712,
+          "ncm_bytes": 512
+        }
+      ]
+    },
+    {
+      "id": "helicopter",
+      "kind": "enemy",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "helicopter",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 8448,
+          "indices_bytes": 256,
+          "fcm_offset": 8448,
+          "fcm_bytes": 256,
+          "ncm_offset": 4224,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 1,
+          "indices_offset": 8704,
+          "indices_bytes": 256,
+          "fcm_offset": 8704,
+          "fcm_bytes": 256,
+          "ncm_offset": 4352,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 2,
+          "indices_offset": 8960,
+          "indices_bytes": 256,
+          "fcm_offset": 8960,
+          "fcm_bytes": 256,
+          "ncm_offset": 4480,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "armoured_plane",
+      "kind": "enemy",
+      "size": [
+        32,
+        32
+      ],
+      "palette": "armoured_plane",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 9216,
+          "indices_bytes": 1024,
+          "fcm_offset": 9216,
+          "fcm_bytes": 1024,
+          "ncm_offset": 4608,
+          "ncm_bytes": 512
+        },
+        {
+          "index": 1,
+          "indices_offset": 10240,
+          "indices_bytes": 1024,
+          "fcm_offset": 10240,
+          "fcm_bytes": 1024,
+          "ncm_offset": 5120,
+          "ncm_bytes": 512
+        },
+        {
+          "index": 2,
+          "indices_offset": 11264,
+          "indices_bytes": 1024,
+          "fcm_offset": 11264,
+          "fcm_bytes": 1024,
+          "ncm_offset": 5632,
+          "ncm_bytes": 512
+        }
+      ]
+    },
+    {
+      "id": "player_shot_blue",
+      "kind": "projectile",
+      "size": [
+        16,
+        8
+      ],
+      "palette": "player_shot_blue",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 12288,
+          "indices_bytes": 128,
+          "fcm_offset": 12288,
+          "fcm_bytes": 128,
+          "ncm_offset": 6144,
+          "ncm_bytes": 64
+        },
+        {
+          "index": 1,
+          "indices_offset": 12416,
+          "indices_bytes": 128,
+          "fcm_offset": 12416,
+          "fcm_bytes": 128,
+          "ncm_offset": 6208,
+          "ncm_bytes": 64
+        }
+      ]
+    },
+    {
+      "id": "player_shot_orange",
+      "kind": "projectile",
+      "size": [
+        16,
+        8
+      ],
+      "palette": "player_shot_orange",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 12544,
+          "indices_bytes": 128,
+          "fcm_offset": 12544,
+          "fcm_bytes": 128,
+          "ncm_offset": 6272,
+          "ncm_bytes": 64
+        },
+        {
+          "index": 1,
+          "indices_offset": 12672,
+          "indices_bytes": 128,
+          "fcm_offset": 12672,
+          "fcm_bytes": 128,
+          "ncm_offset": 6336,
+          "ncm_bytes": 64
+        }
+      ]
+    },
+    {
+      "id": "player_shot_green",
+      "kind": "projectile",
+      "size": [
+        16,
+        8
+      ],
+      "palette": "player_shot_green",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 12800,
+          "indices_bytes": 128,
+          "fcm_offset": 12800,
+          "fcm_bytes": 128,
+          "ncm_offset": 6400,
+          "ncm_bytes": 64
+        },
+        {
+          "index": 1,
+          "indices_offset": 12928,
+          "indices_bytes": 128,
+          "fcm_offset": 12928,
+          "fcm_bytes": 128,
+          "ncm_offset": 6464,
+          "ncm_bytes": 64
+        },
+        {
+          "index": 2,
+          "indices_offset": 13056,
+          "indices_bytes": 128,
+          "fcm_offset": 13056,
+          "fcm_bytes": 128,
+          "ncm_offset": 6528,
+          "ncm_bytes": 64
+        }
+      ]
+    },
+    {
+      "id": "enemy_shot_red",
+      "kind": "projectile",
+      "size": [
+        16,
+        8
+      ],
+      "palette": "enemy_shot_red",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 13184,
+          "indices_bytes": 128,
+          "fcm_offset": 13184,
+          "fcm_bytes": 128,
+          "ncm_offset": 6592,
+          "ncm_bytes": 64
+        }
+      ]
+    },
+    {
+      "id": "enemy_shot_fire",
+      "kind": "projectile",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "enemy_shot_fire",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 13312,
+          "indices_bytes": 256,
+          "fcm_offset": 13312,
+          "fcm_bytes": 256,
+          "ncm_offset": 6656,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "enemy_shot_pair",
+      "kind": "projectile",
+      "size": [
+        16,
+        8
+      ],
+      "palette": "enemy_shot_pair",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 13568,
+          "indices_bytes": 128,
+          "fcm_offset": 13568,
+          "fcm_bytes": 128,
+          "ncm_offset": 6784,
+          "ncm_bytes": 64
+        },
+        {
+          "index": 1,
+          "indices_offset": 13696,
+          "indices_bytes": 128,
+          "fcm_offset": 13696,
+          "fcm_bytes": 128,
+          "ncm_offset": 6848,
+          "ncm_bytes": 64
+        }
+      ]
+    },
+    {
+      "id": "rocket",
+      "kind": "projectile",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "rocket",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 13824,
+          "indices_bytes": 256,
+          "fcm_offset": 13824,
+          "fcm_bytes": 256,
+          "ncm_offset": 6912,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "explosion_16",
+      "kind": "explosion",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "explosion_16",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 14080,
+          "indices_bytes": 256,
+          "fcm_offset": 14080,
+          "fcm_bytes": 256,
+          "ncm_offset": 7040,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 1,
+          "indices_offset": 14336,
+          "indices_bytes": 256,
+          "fcm_offset": 14336,
+          "fcm_bytes": 256,
+          "ncm_offset": 7168,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 2,
+          "indices_offset": 14592,
+          "indices_bytes": 256,
+          "fcm_offset": 14592,
+          "fcm_bytes": 256,
+          "ncm_offset": 7296,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 3,
+          "indices_offset": 14848,
+          "indices_bytes": 256,
+          "fcm_offset": 14848,
+          "fcm_bytes": 256,
+          "ncm_offset": 7424,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 4,
+          "indices_offset": 15104,
+          "indices_bytes": 256,
+          "fcm_offset": 15104,
+          "fcm_bytes": 256,
+          "ncm_offset": 7552,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 5,
+          "indices_offset": 15360,
+          "indices_bytes": 256,
+          "fcm_offset": 15360,
+          "fcm_bytes": 256,
+          "ncm_offset": 7680,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "explosion_32",
+      "kind": "explosion",
+      "size": [
+        32,
+        32
+      ],
+      "palette": "explosion_32",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 15616,
+          "indices_bytes": 1024,
+          "fcm_offset": 15616,
+          "fcm_bytes": 1024,
+          "ncm_offset": 7808,
+          "ncm_bytes": 512
+        },
+        {
+          "index": 1,
+          "indices_offset": 16640,
+          "indices_bytes": 1024,
+          "fcm_offset": 16640,
+          "fcm_bytes": 1024,
+          "ncm_offset": 8320,
+          "ncm_bytes": 512
+        },
+        {
+          "index": 2,
+          "indices_offset": 17664,
+          "indices_bytes": 1024,
+          "fcm_offset": 17664,
+          "fcm_bytes": 1024,
+          "ncm_offset": 8832,
+          "ncm_bytes": 512
+        },
+        {
+          "index": 3,
+          "indices_offset": 18688,
+          "indices_bytes": 1024,
+          "fcm_offset": 18688,
+          "fcm_bytes": 1024,
+          "ncm_offset": 9344,
+          "ncm_bytes": 512
+        },
+        {
+          "index": 4,
+          "indices_offset": 19712,
+          "indices_bytes": 1024,
+          "fcm_offset": 19712,
+          "fcm_bytes": 1024,
+          "ncm_offset": 9856,
+          "ncm_bytes": 512
+        },
+        {
+          "index": 5,
+          "indices_offset": 20736,
+          "indices_bytes": 1024,
+          "fcm_offset": 20736,
+          "fcm_bytes": 1024,
+          "ncm_offset": 10368,
+          "ncm_bytes": 512
+        }
+      ]
+    },
+    {
+      "id": "sea",
+      "kind": "terrain",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "water",
+      "opaque": true,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 21760,
+          "indices_bytes": 256,
+          "fcm_offset": 21760,
+          "fcm_bytes": 256,
+          "ncm_offset": 10880,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 1,
+          "indices_offset": 22016,
+          "indices_bytes": 256,
+          "fcm_offset": 22016,
+          "fcm_bytes": 256,
+          "ncm_offset": 11008,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 2,
+          "indices_offset": 22272,
+          "indices_bytes": 256,
+          "fcm_offset": 22272,
+          "fcm_bytes": 256,
+          "ncm_offset": 11136,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 3,
+          "indices_offset": 22528,
+          "indices_bytes": 256,
+          "fcm_offset": 22528,
+          "fcm_bytes": 256,
+          "ncm_offset": 11264,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 4,
+          "indices_offset": 22784,
+          "indices_bytes": 256,
+          "fcm_offset": 22784,
+          "fcm_bytes": 256,
+          "ncm_offset": 11392,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 5,
+          "indices_offset": 23040,
+          "indices_bytes": 256,
+          "fcm_offset": 23040,
+          "fcm_bytes": 256,
+          "ncm_offset": 11520,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "coast",
+      "kind": "terrain",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "water",
+      "opaque": true,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 23296,
+          "indices_bytes": 256,
+          "fcm_offset": 23296,
+          "fcm_bytes": 256,
+          "ncm_offset": 11648,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 1,
+          "indices_offset": 23552,
+          "indices_bytes": 256,
+          "fcm_offset": 23552,
+          "fcm_bytes": 256,
+          "ncm_offset": 11776,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 2,
+          "indices_offset": 23808,
+          "indices_bytes": 256,
+          "fcm_offset": 23808,
+          "fcm_bytes": 256,
+          "ncm_offset": 11904,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 3,
+          "indices_offset": 24064,
+          "indices_bytes": 256,
+          "fcm_offset": 24064,
+          "fcm_bytes": 256,
+          "ncm_offset": 12032,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 4,
+          "indices_offset": 24320,
+          "indices_bytes": 256,
+          "fcm_offset": 24320,
+          "fcm_bytes": 256,
+          "ncm_offset": 12160,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 5,
+          "indices_offset": 24576,
+          "indices_bytes": 256,
+          "fcm_offset": 24576,
+          "fcm_bytes": 256,
+          "ncm_offset": 12288,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "cliff",
+      "kind": "terrain",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "nature",
+      "opaque": true,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 24832,
+          "indices_bytes": 256,
+          "fcm_offset": 24832,
+          "fcm_bytes": 256,
+          "ncm_offset": 12416,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 1,
+          "indices_offset": 25088,
+          "indices_bytes": 256,
+          "fcm_offset": 25088,
+          "fcm_bytes": 256,
+          "ncm_offset": 12544,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 2,
+          "indices_offset": 25344,
+          "indices_bytes": 256,
+          "fcm_offset": 25344,
+          "fcm_bytes": 256,
+          "ncm_offset": 12672,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 3,
+          "indices_offset": 25600,
+          "indices_bytes": 256,
+          "fcm_offset": 25600,
+          "fcm_bytes": 256,
+          "ncm_offset": 12800,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 4,
+          "indices_offset": 25856,
+          "indices_bytes": 256,
+          "fcm_offset": 25856,
+          "fcm_bytes": 256,
+          "ncm_offset": 12928,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 5,
+          "indices_offset": 26112,
+          "indices_bytes": 256,
+          "fcm_offset": 26112,
+          "fcm_bytes": 256,
+          "ncm_offset": 13056,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "forest",
+      "kind": "terrain",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "nature",
+      "opaque": true,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 26368,
+          "indices_bytes": 256,
+          "fcm_offset": 26368,
+          "fcm_bytes": 256,
+          "ncm_offset": 13184,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 1,
+          "indices_offset": 26624,
+          "indices_bytes": 256,
+          "fcm_offset": 26624,
+          "fcm_bytes": 256,
+          "ncm_offset": 13312,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 2,
+          "indices_offset": 26880,
+          "indices_bytes": 256,
+          "fcm_offset": 26880,
+          "fcm_bytes": 256,
+          "ncm_offset": 13440,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 3,
+          "indices_offset": 27136,
+          "indices_bytes": 256,
+          "fcm_offset": 27136,
+          "fcm_bytes": 256,
+          "ncm_offset": 13568,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 4,
+          "indices_offset": 27392,
+          "indices_bytes": 256,
+          "fcm_offset": 27392,
+          "fcm_bytes": 256,
+          "ncm_offset": 13696,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 5,
+          "indices_offset": 27648,
+          "indices_bytes": 256,
+          "fcm_offset": 27648,
+          "fcm_bytes": 256,
+          "ncm_offset": 13824,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "road",
+      "kind": "terrain",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "structures",
+      "opaque": true,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 27904,
+          "indices_bytes": 256,
+          "fcm_offset": 27904,
+          "fcm_bytes": 256,
+          "ncm_offset": 13952,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 1,
+          "indices_offset": 28160,
+          "indices_bytes": 256,
+          "fcm_offset": 28160,
+          "fcm_bytes": 256,
+          "ncm_offset": 14080,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 2,
+          "indices_offset": 28416,
+          "indices_bytes": 256,
+          "fcm_offset": 28416,
+          "fcm_bytes": 256,
+          "ncm_offset": 14208,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 3,
+          "indices_offset": 28672,
+          "indices_bytes": 256,
+          "fcm_offset": 28672,
+          "fcm_bytes": 256,
+          "ncm_offset": 14336,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 4,
+          "indices_offset": 28928,
+          "indices_bytes": 256,
+          "fcm_offset": 28928,
+          "fcm_bytes": 256,
+          "ncm_offset": 14464,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 5,
+          "indices_offset": 29184,
+          "indices_bytes": 256,
+          "fcm_offset": 29184,
+          "fcm_bytes": 256,
+          "ncm_offset": 14592,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "base",
+      "kind": "terrain",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "structures",
+      "opaque": true,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 29440,
+          "indices_bytes": 256,
+          "fcm_offset": 29440,
+          "fcm_bytes": 256,
+          "ncm_offset": 14720,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 1,
+          "indices_offset": 29696,
+          "indices_bytes": 256,
+          "fcm_offset": 29696,
+          "fcm_bytes": 256,
+          "ncm_offset": 14848,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 2,
+          "indices_offset": 29952,
+          "indices_bytes": 256,
+          "fcm_offset": 29952,
+          "fcm_bytes": 256,
+          "ncm_offset": 14976,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 3,
+          "indices_offset": 30208,
+          "indices_bytes": 256,
+          "fcm_offset": 30208,
+          "fcm_bytes": 256,
+          "ncm_offset": 15104,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 4,
+          "indices_offset": 30464,
+          "indices_bytes": 256,
+          "fcm_offset": 30464,
+          "fcm_bytes": 256,
+          "ncm_offset": 15232,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 5,
+          "indices_offset": 30720,
+          "indices_bytes": 256,
+          "fcm_offset": 30720,
+          "fcm_bytes": 256,
+          "ncm_offset": 15360,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "decoration",
+      "kind": "decoration",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "structures",
+      "opaque": false,
+      "provenance": "reference-board-derived; nearest sampling, inferred black mask, quantized; not original-grid recovery",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 30976,
+          "indices_bytes": 256,
+          "fcm_offset": 30976,
+          "fcm_bytes": 256,
+          "ncm_offset": 15488,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 1,
+          "indices_offset": 31232,
+          "indices_bytes": 256,
+          "fcm_offset": 31232,
+          "fcm_bytes": 256,
+          "ncm_offset": 15616,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 2,
+          "indices_offset": 31488,
+          "indices_bytes": 256,
+          "fcm_offset": 31488,
+          "fcm_bytes": 256,
+          "ncm_offset": 15744,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 3,
+          "indices_offset": 31744,
+          "indices_bytes": 256,
+          "fcm_offset": 31744,
+          "fcm_bytes": 256,
+          "ncm_offset": 15872,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 4,
+          "indices_offset": 32000,
+          "indices_bytes": 256,
+          "fcm_offset": 32000,
+          "fcm_bytes": 256,
+          "ncm_offset": 16000,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 5,
+          "indices_offset": 32256,
+          "indices_bytes": 256,
+          "fcm_offset": 32256,
+          "fcm_bytes": 256,
+          "ncm_offset": 16128,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 6,
+          "indices_offset": 32512,
+          "indices_bytes": 256,
+          "fcm_offset": 32512,
+          "fcm_bytes": 256,
+          "ncm_offset": 16256,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 7,
+          "indices_offset": 32768,
+          "indices_bytes": 256,
+          "fcm_offset": 32768,
+          "fcm_bytes": 256,
+          "ncm_offset": 16384,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 8,
+          "indices_offset": 33024,
+          "indices_bytes": 256,
+          "fcm_offset": 33024,
+          "fcm_bytes": 256,
+          "ncm_offset": 16512,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 9,
+          "indices_offset": 33280,
+          "indices_bytes": 256,
+          "fcm_offset": 33280,
+          "fcm_bytes": 256,
+          "ncm_offset": 16640,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 10,
+          "indices_offset": 33536,
+          "indices_bytes": 256,
+          "fcm_offset": 33536,
+          "fcm_bytes": 256,
+          "ncm_offset": 16768,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 11,
+          "indices_offset": 33792,
+          "indices_bytes": 256,
+          "fcm_offset": 33792,
+          "fcm_bytes": 256,
+          "ncm_offset": 16896,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 12,
+          "indices_offset": 34048,
+          "indices_bytes": 256,
+          "fcm_offset": 34048,
+          "fcm_bytes": 256,
+          "ncm_offset": 17024,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 13,
+          "indices_offset": 34304,
+          "indices_bytes": 256,
+          "fcm_offset": 34304,
+          "fcm_bytes": 256,
+          "ncm_offset": 17152,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 14,
+          "indices_offset": 34560,
+          "indices_bytes": 256,
+          "fcm_offset": 34560,
+          "fcm_bytes": 256,
+          "ncm_offset": 17280,
+          "ncm_bytes": 128
+        },
+        {
+          "index": 15,
+          "indices_offset": 34816,
+          "indices_bytes": 256,
+          "fcm_offset": 34816,
+          "fcm_bytes": 256,
+          "ncm_offset": 17408,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "bunker",
+      "kind": "fixed_target",
+      "size": [
+        32,
+        32
+      ],
+      "palette": "fixed_targets",
+      "provenance": "new code-native pixel design by Codex; upper-left bevel lighting; not extracted from poster",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 35072,
+          "indices_bytes": 1024,
+          "fcm_offset": 35072,
+          "fcm_bytes": 1024,
+          "ncm_offset": 17536,
+          "ncm_bytes": 512
+        }
+      ]
+    },
+    {
+      "id": "bunker_destroyed",
+      "kind": "fixed_target",
+      "size": [
+        32,
+        32
+      ],
+      "palette": "fixed_targets",
+      "provenance": "new code-native pixel design by Codex; upper-left bevel lighting; not extracted from poster",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 36096,
+          "indices_bytes": 1024,
+          "fcm_offset": 36096,
+          "fcm_bytes": 1024,
+          "ncm_offset": 18048,
+          "ncm_bytes": 512
+        }
+      ]
+    },
+    {
+      "id": "flak",
+      "kind": "fixed_target",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "fixed_targets",
+      "provenance": "new code-native pixel design by Codex; upper-left bevel lighting; not extracted from poster",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 37120,
+          "indices_bytes": 256,
+          "fcm_offset": 37120,
+          "fcm_bytes": 256,
+          "ncm_offset": 18560,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "flak_destroyed",
+      "kind": "fixed_target",
+      "size": [
+        16,
+        16
+      ],
+      "palette": "fixed_targets",
+      "provenance": "new code-native pixel design by Codex; upper-left bevel lighting; not extracted from poster",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 37376,
+          "indices_bytes": 256,
+          "fcm_offset": 37376,
+          "fcm_bytes": 256,
+          "ncm_offset": 18688,
+          "ncm_bytes": 128
+        }
+      ]
+    },
+    {
+      "id": "hud_digits",
+      "kind": "hud",
+      "size": [
+        8,
+        8
+      ],
+      "palette": "hud",
+      "provenance": "new manually specified pixel patterns by Codex",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 37632,
+          "indices_bytes": 64,
+          "fcm_offset": 37632,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 1,
+          "indices_offset": 37696,
+          "indices_bytes": 64,
+          "fcm_offset": 37696,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 2,
+          "indices_offset": 37760,
+          "indices_bytes": 64,
+          "fcm_offset": 37760,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 3,
+          "indices_offset": 37824,
+          "indices_bytes": 64,
+          "fcm_offset": 37824,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 4,
+          "indices_offset": 37888,
+          "indices_bytes": 64,
+          "fcm_offset": 37888,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 5,
+          "indices_offset": 37952,
+          "indices_bytes": 64,
+          "fcm_offset": 37952,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 6,
+          "indices_offset": 38016,
+          "indices_bytes": 64,
+          "fcm_offset": 38016,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 7,
+          "indices_offset": 38080,
+          "indices_bytes": 64,
+          "fcm_offset": 38080,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 8,
+          "indices_offset": 38144,
+          "indices_bytes": 64,
+          "fcm_offset": 38144,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 9,
+          "indices_offset": 38208,
+          "indices_bytes": 64,
+          "fcm_offset": 38208,
+          "fcm_bytes": 64
+        }
+      ]
+    },
+    {
+      "id": "hud_icons",
+      "kind": "hud",
+      "size": [
+        8,
+        8
+      ],
+      "palette": "hud",
+      "provenance": "new manually specified pixel patterns by Codex",
+      "frames": [
+        {
+          "index": 0,
+          "indices_offset": 38272,
+          "indices_bytes": 64,
+          "fcm_offset": 38272,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 1,
+          "indices_offset": 38336,
+          "indices_bytes": 64,
+          "fcm_offset": 38336,
+          "fcm_bytes": 64
+        },
+        {
+          "index": 2,
+          "indices_offset": 38400,
+          "indices_bytes": 64,
+          "fcm_offset": 38400,
+          "fcm_bytes": 64
+        }
+      ]
+    }
+  ],
+  "rrb_frames": [
+    {
+      "group": "fighter",
+      "frame": 0,
+      "base": 1,
+      "w": 1,
+      "h": 2,
+      "palette": "fighter"
+    },
+    {
+      "group": "fighter",
+      "frame": 1,
+      "base": 4,
+      "w": 1,
+      "h": 2,
+      "palette": "fighter"
+    },
+    {
+      "group": "fighter",
+      "frame": 2,
+      "base": 7,
+      "w": 1,
+      "h": 2,
+      "palette": "fighter"
+    },
+    {
+      "group": "bomber",
+      "frame": 0,
+      "base": 10,
+      "w": 2,
+      "h": 4,
+      "palette": "bomber"
+    },
+    {
+      "group": "bomber",
+      "frame": 1,
+      "base": 20,
+      "w": 2,
+      "h": 4,
+      "palette": "bomber"
+    },
+    {
+      "group": "bomber",
+      "frame": 2,
+      "base": 30,
+      "w": 2,
+      "h": 4,
+      "palette": "bomber"
+    },
+    {
+      "group": "helicopter",
+      "frame": 0,
+      "base": 40,
+      "w": 1,
+      "h": 2,
+      "palette": "helicopter"
+    },
+    {
+      "group": "helicopter",
+      "frame": 1,
+      "base": 43,
+      "w": 1,
+      "h": 2,
+      "palette": "helicopter"
+    },
+    {
+      "group": "helicopter",
+      "frame": 2,
+      "base": 46,
+      "w": 1,
+      "h": 2,
+      "palette": "helicopter"
+    },
+    {
+      "group": "armoured_plane",
+      "frame": 0,
+      "base": 49,
+      "w": 2,
+      "h": 4,
+      "palette": "armoured_plane"
+    },
+    {
+      "group": "armoured_plane",
+      "frame": 1,
+      "base": 59,
+      "w": 2,
+      "h": 4,
+      "palette": "armoured_plane"
+    },
+    {
+      "group": "armoured_plane",
+      "frame": 2,
+      "base": 69,
+      "w": 2,
+      "h": 4,
+      "palette": "armoured_plane"
+    },
+    {
+      "group": "player_shot_blue",
+      "frame": 0,
+      "base": 79,
+      "w": 1,
+      "h": 1,
+      "palette": "player_shot_blue"
+    },
+    {
+      "group": "player_shot_blue",
+      "frame": 1,
+      "base": 81,
+      "w": 1,
+      "h": 1,
+      "palette": "player_shot_blue"
+    },
+    {
+      "group": "player_shot_orange",
+      "frame": 0,
+      "base": 83,
+      "w": 1,
+      "h": 1,
+      "palette": "player_shot_orange"
+    },
+    {
+      "group": "player_shot_orange",
+      "frame": 1,
+      "base": 85,
+      "w": 1,
+      "h": 1,
+      "palette": "player_shot_orange"
+    },
+    {
+      "group": "player_shot_green",
+      "frame": 0,
+      "base": 87,
+      "w": 1,
+      "h": 1,
+      "palette": "player_shot_green"
+    },
+    {
+      "group": "player_shot_green",
+      "frame": 1,
+      "base": 89,
+      "w": 1,
+      "h": 1,
+      "palette": "player_shot_green"
+    },
+    {
+      "group": "player_shot_green",
+      "frame": 2,
+      "base": 91,
+      "w": 1,
+      "h": 1,
+      "palette": "player_shot_green"
+    },
+    {
+      "group": "enemy_shot_red",
+      "frame": 0,
+      "base": 93,
+      "w": 1,
+      "h": 1,
+      "palette": "enemy_shot_red"
+    },
+    {
+      "group": "enemy_shot_fire",
+      "frame": 0,
+      "base": 95,
+      "w": 1,
+      "h": 2,
+      "palette": "enemy_shot_fire"
+    },
+    {
+      "group": "enemy_shot_pair",
+      "frame": 0,
+      "base": 98,
+      "w": 1,
+      "h": 1,
+      "palette": "enemy_shot_pair"
+    },
+    {
+      "group": "enemy_shot_pair",
+      "frame": 1,
+      "base": 100,
+      "w": 1,
+      "h": 1,
+      "palette": "enemy_shot_pair"
+    },
+    {
+      "group": "rocket",
+      "frame": 0,
+      "base": 102,
+      "w": 1,
+      "h": 2,
+      "palette": "rocket"
+    },
+    {
+      "group": "explosion_16",
+      "frame": 0,
+      "base": 105,
+      "w": 1,
+      "h": 2,
+      "palette": "explosion_16"
+    },
+    {
+      "group": "explosion_16",
+      "frame": 1,
+      "base": 108,
+      "w": 1,
+      "h": 2,
+      "palette": "explosion_16"
+    },
+    {
+      "group": "explosion_16",
+      "frame": 2,
+      "base": 111,
+      "w": 1,
+      "h": 2,
+      "palette": "explosion_16"
+    },
+    {
+      "group": "explosion_16",
+      "frame": 3,
+      "base": 114,
+      "w": 1,
+      "h": 2,
+      "palette": "explosion_16"
+    },
+    {
+      "group": "explosion_16",
+      "frame": 4,
+      "base": 117,
+      "w": 1,
+      "h": 2,
+      "palette": "explosion_16"
+    },
+    {
+      "group": "explosion_16",
+      "frame": 5,
+      "base": 120,
+      "w": 1,
+      "h": 2,
+      "palette": "explosion_16"
+    },
+    {
+      "group": "explosion_32",
+      "frame": 0,
+      "base": 123,
+      "w": 2,
+      "h": 4,
+      "palette": "explosion_32"
+    },
+    {
+      "group": "explosion_32",
+      "frame": 1,
+      "base": 133,
+      "w": 2,
+      "h": 4,
+      "palette": "explosion_32"
+    },
+    {
+      "group": "explosion_32",
+      "frame": 2,
+      "base": 143,
+      "w": 2,
+      "h": 4,
+      "palette": "explosion_32"
+    },
+    {
+      "group": "explosion_32",
+      "frame": 3,
+      "base": 153,
+      "w": 2,
+      "h": 4,
+      "palette": "explosion_32"
+    },
+    {
+      "group": "explosion_32",
+      "frame": 4,
+      "base": 163,
+      "w": 2,
+      "h": 4,
+      "palette": "explosion_32"
+    },
+    {
+      "group": "explosion_32",
+      "frame": 5,
+      "base": 173,
+      "w": 2,
+      "h": 4,
+      "palette": "explosion_32"
+    }
+  ],
+  "runtime_budget": {
+    "all_rrb_glyphs": 183,
+    "stage1_limit": 256,
+    "all_frames_fit_stage1": true,
+    "automatic_integration": false
+  },
+  "palette_offsets": {
+    "player": 0,
+    "fighter": 48,
+    "bomber": 96,
+    "helicopter": 144,
+    "armoured_plane": 192,
+    "player_shot_blue": 240,
+    "player_shot_orange": 288,
+    "player_shot_green": 336,
+    "enemy_shot_red": 384,
+    "enemy_shot_fire": 432,
+    "enemy_shot_pair": 480,
+    "rocket": 528,
+    "explosion_16": 576,
+    "explosion_32": 624,
+    "water": 672,
+    "nature": 720,
+    "structures": 768,
+    "fixed_targets": 816,
+    "hud": 864
+  },
+  "landscape": {
+    "unique_tiles": 62,
+    "palettes": [
+      "water",
+      "nature",
+      "structures",
+      "fixed_targets"
+    ],
+    "tile_size": 16,
+    "map_width": 336,
+    "map_height": 512,
+    "current_stage1_direct_import": false
+  },
+  "fixed_target_pairs": [
+    [
+      "bunker",
+      "bunker_destroyed"
+    ],
+    [
+      "flak",
+      "flak_destroyed"
+    ]
+  ],
+  "files": {
+    "armoured_plane.png": {
+      "bytes": 2608,
+      "sha256": "d307eefd50a9e895b3f8477f661b0aa436e6c1be165a12c4cd87bec0837213d2"
+    },
+    "base.png": {
+      "bytes": 1928,
+      "sha256": "0e79a053985dd791e80b4ea8742f4b2460553b2c57b00984eb48562624e96aa2"
+    },
+    "bomber.png": {
+      "bytes": 3179,
+      "sha256": "ce40f1d84b9e0fa701755f49fa6fcf9d744de4c989bbc0323cbf38e24a1d6351"
+    },
+    "bunker.png": {
+      "bytes": 240,
+      "sha256": "4b1e1c377121762dfc8b1efa6184a904521850dd5a7b6d679411314bbb1e04b1"
+    },
+    "bunker_destroyed.png": {
+      "bytes": 278,
+      "sha256": "d44be2f117ae6d9526a35b3f783b8f2da5bbd29c3cb6558f716486509c912b62"
+    },
+    "cliff.png": {
+      "bytes": 2075,
+      "sha256": "26be1e2a4dca053d2b459b73f3bc361931902abad800bcb01432acd8e14d018b"
+    },
+    "coast.png": {
+      "bytes": 1694,
+      "sha256": "f475ea7e55fb122782bc1ec569c152e348c061638ac114a7e945a2a08c64ba21"
+    },
+    "decoration.png": {
+      "bytes": 5012,
+      "sha256": "9850280edf71916c1dce08c5fb41c6b5c8c324f18dbb4b0c599027f61027a082"
+    },
+    "enemy_shot_fire.png": {
+      "bytes": 250,
+      "sha256": "d4d5b3a194a91977192fd6b434bc76ef88ad68a769289306ecab332c393e628f"
+    },
+    "enemy_shot_pair.png": {
+      "bytes": 210,
+      "sha256": "b4a8dc74fa963f895506958fc4e3b508acef2f0c21512b9e7dba494eed2f2548"
+    },
+    "enemy_shot_red.png": {
+      "bytes": 132,
+      "sha256": "4cb1ee6f54b2439110c20a575f0c4704e1400e976a3324daa48a51073b524482"
+    },
+    "explosion_16.png": {
+      "bytes": 1684,
+      "sha256": "e87a9529b40450104477cac5c574f172ac53cbcab942e5d4298026368b37b843"
+    },
+    "explosion_32.png": {
+      "bytes": 5212,
+      "sha256": "eb53d500f56ed3e08ab4444ac222d26442bbb29ab94e255027d6cb10ed988158"
+    },
+    "fighter.png": {
+      "bytes": 982,
+      "sha256": "a49e3d3ea9be2efda6a8aafe8f7e87408300e45b79a4538cd90a4ade1269676c"
+    },
+    "flak.png": {
+      "bytes": 206,
+      "sha256": "5915f8228f396701f22e6f9c426e9f4c469edecb703356d7e0d0adf286bb6177"
+    },
+    "flak_destroyed.png": {
+      "bytes": 174,
+      "sha256": "5fd7644decc009d90d5609295cfdc140ce48236dce6da8d87036f364de56d857"
+    },
+    "forest.png": {
+      "bytes": 2149,
+      "sha256": "72e2056b9f44cdc05320be686bb389ba6a27706648f6173bc0b79d5178d0bbae"
+    },
+    "frames.fcm.bin": {
+      "bytes": 38464,
+      "sha256": "afc6b65b1056b5888935e7811beea258415870b6d15943dbf4a81c0748c8a7d0"
+    },
+    "frames.indices.bin": {
+      "bytes": 38464,
+      "sha256": "69a462c41957300cf0964f42a35bdde27104e1fc9417b8e8901e790f037514a3"
+    },
+    "frames.ncm.bin": {
+      "bytes": 18816,
+      "sha256": "5efd6732304a97bb87203866ce5e482358910103db4b8f129deaf5b3cb5597d1"
+    },
+    "helicopter.png": {
+      "bytes": 673,
+      "sha256": "c00e3e764e1579458a923298d0170cad467abe1aa8f0c88fcb57fbafb4da45a4"
+    },
+    "hud_digits.png": {
+      "bytes": 206,
+      "sha256": "5709c6be4b982aa879d9a388bc01918ab5ab33836a076d785d077ec8e66cdf12"
+    },
+    "hud_icons.png": {
+      "bytes": 162,
+      "sha256": "c409b972a976c1fdee76f2e10f8358cf7663816d6b1c1124f2c1634a62c1657c"
+    },
+    "indexed-source.json": {
+      "bytes": 113113,
+      "sha256": "19e0977cd9ec359a9e82e7fd6138a713234ecd90b2debab45e974ac131303b2f"
+    },
+    "level-example.json": {
+      "bytes": 14476,
+      "sha256": "842af05a03306981433158c2bcec39d37335fa7deb82cdbfd1617a631e363dda"
+    },
+    "level-example.map16.bin": {
+      "bytes": 1344,
+      "sha256": "e82e836982f034446444667cd451e44007b31931391d629100dee620c464d214"
+    },
+    "level-example.palette.bin": {
+      "bytes": 672,
+      "sha256": "88d202dc9af7407b477bbbfe7746993588d0a8c6974d7330cd3d59f57c4daa0b"
+    },
+    "level-example.png": {
+      "bytes": 78332,
+      "sha256": "c2f7a990f1061b81258cf0071b979091b935697bf79f926cf28df17d51435ce4"
+    },
+    "palettes.palregs.bin": {
+      "bytes": 912,
+      "sha256": "66200f871d363f3950a209639459a4ca01208cfeed25a0514187ed1be4c85c3f"
+    },
+    "palettes.rgb": {
+      "bytes": 912,
+      "sha256": "50b4d0595ecb20df8977a03c85e061864aa6885ec47c674736c8de5feda68f36"
+    },
+    "player.png": {
+      "bytes": 2588,
+      "sha256": "80c9faeb011672b1cc966ce04850f91eff52fc49be3ac1b379150d4435b0e505"
+    },
+    "player.sprite.bin": {
+      "bytes": 3072,
+      "sha256": "0c9e2174bd185ccaef7c13f23ecc789976debf7efd35c73a263ca7565232a020"
+    },
+    "player_shot_blue.png": {
+      "bytes": 208,
+      "sha256": "48c26802e83c2acbdaaa2ad3cef3a232602c5ac5837c2883a21cb9bc68f53e05"
+    },
+    "player_shot_green.png": {
+      "bytes": 271,
+      "sha256": "cc5a9bc90a3884778a53252afea6089abbd32fa4b4423e3c02c3dee0bb02a4a0"
+    },
+    "player_shot_orange.png": {
+      "bytes": 237,
+      "sha256": "36ae262635f337919ecd2023225b3c4adbf9875539064b92305eda283a6176fc"
+    },
+    "preview-additions.png": {
+      "bytes": 12156,
+      "sha256": "395abb43a951a7262a764adac6009fce66c24b2e34a3ac137a4df4e2c47e851a"
+    },
+    "preview-aircraft.png": {
+      "bytes": 24892,
+      "sha256": "ab1bcc1f760a66abd861ce1bdce2e79b826a0d00c1aa1b79107a8ad4bd8efee7"
+    },
+    "preview-all.png": {
+      "bytes": 100115,
+      "sha256": "96f8ee1ac584b9bdc57232fd74b5069511eb89b0c6ba5bc2616194db32b2f5fc"
+    },
+    "road.png": {
+      "bytes": 1851,
+      "sha256": "531c7b525d31d16de0d780dfb84a20c5e900c06d8c0fbd1b4d81f65b85e30f44"
+    },
+    "rocket.png": {
+      "bytes": 208,
+      "sha256": "92bd347def69e8c8ba868fe252d5954cc446ef6ec140f53b5d47fb8643ceca6b"
+    },
+    "rrb-pixies.bin": {
+      "bytes": 11712,
+      "sha256": "cf3d0125d16e5e03f55ac8a31c49263de532ef412ebb7986e0ce9644cb2212cf"
+    },
+    "sea.png": {
+      "bytes": 2147,
+      "sha256": "de05293157d4a6dfe428eccc307cb250c1cd81efa87a64599d99dc3632247fab"
+    },
+    "terrain-sheet.png": {
+      "bytes": 17489,
+      "sha256": "3b272a644d7dae2f86c7893f271eee08ecb6caf89be41d14e4fd38afe66ce33c"
+    },
+    "terrain.ncm.bin": {
+      "bytes": 7936,
+      "sha256": "8964f0314959bbfa02b597b92ce78eef7ee9c4e38e48aed78ad0c9adf41ad2e0"
+    }
+  }
+}
