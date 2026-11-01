@@ -1,0 +1,104 @@
+{
+  "palette": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      54,
+      82,
+      111
+    ],
+    [
+      221,
+      239,
+      247
+    ],
+    [
+      255,
+      165,
+      50
+    ],
+    [
+      14,
+      18,
+      30
+    ],
+    [
+      150,
+      160,
+      178
+    ],
+    [
+      60,
+      205,
+      90
+    ],
+    [
+      245,
+      215,
+      40
+    ],
+    [
+      230,
+      50,
+      40
+    ],
+    [
+      36,
+      42,
+      58
+    ],
+    [
+      160,
+      245,
+      175
+    ],
+    [
+      20,
+      120,
+      55
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ]
+  ],
+  "allowed_hud_indices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10
+  ],
+  "size": [
+    16,
+    16
+  ],
+  "life_source": "source/player-reference.png, first 32x24 frame; alpha crop, nearest-neighbour fit 14x14, nearest allowed HUD RGB",
+  "source_sha256": "49206a42df7cd7ed0cd342b57e28893f25dc151dcd5a04b4af8082d896052a8e",
+  "player_source_commit": "ea3d8458033c2db342eec3b93f099bae3cf2e6d7",
+  "exit_source": "New native pixel drawing inspired by a green emergency-exit sign; no claim of standardized safety signage.",
+  "hardware_tested": false
+}

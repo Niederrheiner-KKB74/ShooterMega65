@@ -519,6 +519,106 @@
       "id": 103,
       "name": "bunker_1_1",
       "palette": "fixed_targets"
+    },
+    {
+      "id": 104,
+      "name": "rocks",
+      "palette": "nature"
+    },
+    {
+      "id": 105,
+      "name": "water_rocks",
+      "palette": "water"
+    },
+    {
+      "id": 106,
+      "name": "meadow",
+      "palette": "nature"
+    },
+    {
+      "id": 107,
+      "name": "sand",
+      "palette": "nature"
+    },
+    {
+      "id": 108,
+      "name": "radar_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 109,
+      "name": "radar_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 110,
+      "name": "radar_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 111,
+      "name": "radar_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 112,
+      "name": "fuel_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 113,
+      "name": "fuel_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 114,
+      "name": "fuel_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 115,
+      "name": "fuel_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 116,
+      "name": "crates_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 117,
+      "name": "crates_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 118,
+      "name": "crates_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 119,
+      "name": "crates_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 120,
+      "name": "runway_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 121,
+      "name": "runway_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 122,
+      "name": "runway_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 123,
+      "name": "runway_1_1",
+      "palette": "structures"
     }
   ]
 }

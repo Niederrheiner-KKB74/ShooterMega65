@@ -330,7 +330,7 @@
       ]
     ]
   },
-  "tile_count": 104,
+  "tile_count": 124,
   "provenance": "New deterministic native pixel tiles and transitions; existing fixed_targets palette retained for tanks.",
   "hardware_tested": false
 }

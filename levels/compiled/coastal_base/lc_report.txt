@@ -1,4 +1,4 @@
 level Operation Kuestenwald: 375 map rows (6000 px, 240 s at 0.5 px/frame)
-metatiles 85, different rows 179/256, glyphs 208
-events 35, formations 5, paths 5 (137 bytes)
-LCGFX 13508 bytes, LCDAT 4896 bytes (max. 16384 each)
+metatiles 110, different rows 247/256, glyphs 248
+events 63, formations 5, paths 5 (137 bytes)
+LCGFX 16068 bytes, LCDAT 6623 bytes (max. 16384 each)

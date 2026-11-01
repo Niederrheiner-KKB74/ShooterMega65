@@ -107,7 +107,9 @@ def main():
         elif kind=='helipad':
             d.rectangle((2,2,29,29),outline=9,width=2);d.line((11,9,11,22),fill=10,width=2);d.line((21,9,21,22),fill=10,width=2);d.line((11,15,21,15),fill=10,width=2)
         else:
-            d.line((0,0,31,0),fill=13);d.line((0,0,0,31),fill=13);d.line((31,0,31,31),fill=11);d.line((0,31,31,31),fill=11)
+            # Subtle expansion joints; avoid a dominant checkerboard courtyard.
+            d.line((0,0,31,0),fill=8);d.line((0,0,0,31),fill=8)
+            for x,y in ((7,9),(24,21),(12,26)):d.point((x,y),fill=8)
         for yy in range(2):
             for xx in range(2):add(f'{kind}_{xx}_{yy}',p.crop((xx*16,yy*16,xx*16+16,yy*16+16)),'structures')
     for orient in ('h','v'):
@@ -134,32 +136,80 @@ def main():
     d.rectangle((7,12,24,18),fill=1);d.line((7,11,24,11),fill=6);d.rectangle((12,24,20,31),fill=2)
     for yy in range(2):
         for xx in range(2):add(f'bunker_{xx}_{yy}',bunker.crop((xx*16,yy*16,xx*16+16,yy*16+16)),'fixed_targets')
+    # Additional authored landmarks reuse the existing two terrain palettes.
+    for kind in ('rocks','water_rocks','meadow','sand'):
+        p=Image.new('L',(16,16),2 if kind=='water_rocks' else 6) if kind in ('water_rocks','sand') else grass((16,16))
+        d=ImageDraw.Draw(p)
+        if kind in ('rocks','water_rocks'):
+            for x,y in ((2,7),(9,2)):
+                d.polygon([(x,y+3),(x+2,y),(x+5,y+1),(x+6,y+5),(x+2,y+6)],fill=11)
+                d.polygon([(x,y+3),(x+2,y),(x+5,y+1),(x+3,y+3)],fill=15)
+                if kind=='water_rocks':d.line((x,y+7,min(15,x+6),y+7),fill=4)
+        elif kind=='meadow':
+            for x,y in ((3,3),(11,8),(5,13)):d.point((x,y),fill=7);d.point((x+1,y),fill=13)
+        else:
+            for x,y in ((2,4),(8,11),(13,3)):d.line((x,y,x+1,y),fill=7)
+        add(kind,p,'nature' if kind!='water_rocks' else 'water')
+    for kind in ('radar','fuel','crates','runway'):
+        p=Image.new('L',(32,32),12);d=ImageDraw.Draw(p)
+        if kind=='radar':
+            d.rectangle((5,21,27,28),fill=11);d.rectangle((7,20,25,25),fill=8)
+            d.line((16,10,16,22),fill=10,width=2)
+            d.ellipse((5,3,26,16),fill=6,outline=13);d.arc((7,4,24,15),0,180,fill=8,width=2)
+            d.line((6,4,25,15),fill=13);d.line((16,10,22,1),fill=10)
+        elif kind=='fuel':
+            for x in (2,17):
+                d.rectangle((x,7,x+12,26),fill=11);d.rectangle((x,5,x+10,23),fill=8)
+                d.ellipse((x,2,x+10,8),fill=13,outline=10)
+                d.line((x+2,10,x+2,21),fill=10);d.line((x,17,x+10,17),fill=14)
+        elif kind=='crates':
+            for x,y in ((2,3),(17,3),(9,18)):
+                d.rectangle((x,y,x+11,y+11),fill=11);d.rectangle((x,y,x+9,y+9),fill=9)
+                d.line((x,y,x+9,y),fill=10);d.line((x,y,x+9,y+9),fill=6)
+        else:
+            d.rectangle((3,0,28,31),fill=6);d.line((3,0,3,31),fill=10);d.line((28,0,28,31),fill=10)
+            d.rectangle((14,3,16,13),fill=10);d.rectangle((14,20,16,30),fill=10)
+        for yy in range(2):
+            for xx in range(2):add(f'{kind}_{xx}_{yy}',p.crop((xx*16,yy*16,xx*16+16,yy*16+16)),'structures')
     # Guaranteed opaque road-compatible spawn surface, useful for checkpoints.
     assert len(tiles)<=126, len(tiles)
     rows=[]
     def shore(r):
-        if r<96:return 5+[0,0,1,1,2,2,1,1][(r//8)%8]
+        if r<96:return [6,6,5,4,3,3,4,5,7,8,8,7,6,5,4,5][(r//6)%16]
         if r<120:return max(-2,5-(r-96)//3)
         return -2
     def land(c,r):
         # Width-limited river; bridge deck is applied afterward.
         if 210<=r<=217:return False
+        # Offshore islands, sheltered bays and two woodland ponds.
+        if 24<=r<=46 and 1<=c<=3:return abs(c-2)+abs(r-35)/7<2
+        if 66<=r<=82 and 2<=c<=4:return abs(c-3)+abs(r-74)/5<2
+        if 124<=r<=139 and 3<=c<=6:return abs(c-4.5)+abs(r-131)/4>=2.5
+        if 150<=r<=161 and 17<=c<=19:return abs(c-18)+abs(r-155)/4>=1.8
         return c>=shore(r)
     for r in range(375):
         row=[]
         for c in range(21):
             # Image top corresponds to r+1; TL/TR/BL/BR signs in map coordinates.
             mask=int(land(c,r+1))|int(land(c+1,r+1))<<1|int(land(c,r))<<2|int(land(c+1,r))<<3
-            if mask==0:name='sea'+str((c+r)%3)
+            if mask==0:name='sea'+str(c%3)
             elif mask==15:
-                dense=120<=r<184 or (r<280 and c>8 and (c+r//12)%4!=0)
-                name='forest'+str((c+r)%6) if dense else 'grass'+str((c+r)%3)
+                dense=120<=r<184 or (r<280 and c>8 and (c+r//12)%4!=0) or (184<=r<280 and c<7 and (r//16)%3!=0)
+                name='forest'+str((c%2)*3+(c+r)%3) if dense else 'grass'+str((c+r)%3)
             else:name='coast'+str(mask)
             row.append(names[name])
         rows.append(row)
     for centre in (110,154):
         for r in range(centre-2,centre+3):
             for c in range(12,16):rows[r][c]=names['grass'+str((r+c)%3)]
+    # Small authored patches rather than independently randomized tiles.
+    for r in range(12,96):
+        if r%12 in (3,4):
+            rows[r][1]=names['water_rocks']
+            c=shore(r)+2;rows[r][c]=names['sand'];rows[r][c+1]=names['rocks']
+    for centre,c in ((112,8),(144,10),(172,6),(202,17),(258,5)):
+        for r in range(centre,centre+4):
+            for x in range(c,c+3):rows[r][x]=names['meadow' if (r+x)%2 else 'grass1']
     def block(name,c,r):
         # Top source half goes at map row r+1 (map starts at bottom).
         for yy in range(2):
@@ -177,7 +227,7 @@ def main():
     block('road12',17,254);block('road7',13,254)
     block('road10',15,254)
     # Forest outposts and checkpoint: clearings are intentional, not random tiles.
-    block('depot',17,150);block('depot',9,194);block('hangar',17,226)
+    block('depot',17,146);block('depot',9,194);block('hangar',17,226)
     block('checkpoint',13,230);block('bunker',7,238)
     # Base courtyard: repeating concrete with an aligned road through the gate.
     for r in range(282,374,2):
@@ -193,6 +243,15 @@ def main():
     # Cross-road and top exit inside the base, clear of placed buildings.
     for c in range(3,20,2):block('road10',c,338)
     block('road15',13,338)
+    # Base has distinct compounds: supply yard, fuel farm, radar, runway.
+    for r in (292,294,296,298,300,302,304,306,308,310):block('runway',3,r)
+    for c,r,kind in ((6,292,'crates'),(8,302,'crates'),(17,310,'fuel'),(17,312,'fuel'),
+                     (5,324,'radar'),(9,346,'fuel'),(17,358,'radar'),(7,366,'crates')):block(kind,c,r)
+    for r in (300,324,348,360):
+        block('hangar',9,r);block('crates',17,r+2)
+    for r in (314,362):
+        for c in range(3,20,2):block('road10',c,r)
+        block('road15',13,r)
     # Safe events with first contact delayed until beyond the initially visible rows.
     paths={
       'coast_swoop':[['move',48,0,1.5],['move',48,1,1.25],['fire'],['move',96,0,2],['end']],
@@ -202,18 +261,28 @@ def main():
       'armour_push':[['move',90,0,.75],['fire'],['move',127,0,1.5],['end']],
     }
     forms={
-      'scouts':dict(enemy='fighter',count=4,path='coast_swoop',delay=20,x=40,y=-24),
-      'forest_fighters':dict(enemy='fighter',count=5,path='forest_snake',delay=20,x=142,y=-24),
-      'helis':dict(enemy='helicopter',count=3,path='heli_patrol',delay=30,x=185,y=-24),
-      'bombers':dict(enemy='bomber',count=3,path='bomber_pass',delay=40,x=144,y=-40),
-      'armoured':dict(enemy='armoured',count=3,path='armour_push',delay=44,x=144,y=-40),
+      'scouts':dict(enemy='fighter',count=6,path='coast_swoop',delay=18,x=40,y=-24),
+      'forest_fighters':dict(enemy='fighter',count=7,path='forest_snake',delay=18,x=142,y=-24),
+      'helis':dict(enemy='helicopter',count=5,path='heli_patrol',delay=24,x=185,y=-24),
+      'bombers':dict(enemy='bomber',count=4,path='bomber_pass',delay=30,x=144,y=-40),
+      'armoured':dict(enemy='armoured',count=4,path='armour_push',delay=30,x=144,y=-40),
     }
     waves=[(20,'scouts'),(34,'scouts'),(48,'forest_fighters'),(62,'scouts'),(76,'bombers'),(90,'scouts'),
            (106,'forest_fighters'),(120,'helis'),(134,'forest_fighters'),(148,'scouts'),(162,'bombers'),(176,'helis'),
            (198,'scouts'),(212,'bombers'),(226,'forest_fighters'),(240,'armoured'),(254,'helis'),(268,'bombers'),
            (288,'forest_fighters'),(302,'armoured'),(316,'helis'),(330,'bombers'),(344,'armoured'),(358,'forest_fighters')]
+    # Three escalating acts; long enough shop approach to let every air path exit.
+    waves=[]
+    cycles=[('scouts','scouts','forest_fighters','bombers'),
+            ('forest_fighters','helis','scouts','bombers'),
+            ('forest_fighters','armoured','helis','bombers','scouts')]
+    for start,stop,step,cycle in ((17,94,8,cycles[0]),(97,174,7,cycles[1]),(198,353,7,cycles[2])):
+        for i,r in enumerate(range(start,stop,step)):waves.append((r,cycle[i%len(cycle)]))
     events=[dict(row=r,type='formation',formation=f,mirror=bool(i%2)) for i,(r,f) in enumerate(waves)]
-    for r,direction in [(110,'west'),(154,'south'),(194,'east'),(224,'south'),(250,'west'),(294,'south'),(322,'south'),(350,'east')]:
+    # Keep at most 8 tanks between shop clears: random north turns can retain them.
+    ground_rows=[40,64,88,110,130,148,160,168,204,224,244,264,286,308,328,346]
+    for i,r in enumerate(ground_rows):
+        direction=('west','south','east','south')[i%4]
         events.append(dict(row=r,type='ground',enemy='tank',x=13*16-16,dir=direction))
     events += [dict(row=188,type='shop',id='mid'),dict(row=368,type='shop',id='end'),dict(row=375,type='end')]
     events.sort(key=lambda e:e['row'])
@@ -232,7 +301,7 @@ def main():
             _,period,n=best;packed.append(dict(repeat=n,rows=rows[r:r+period]));r+=period*n
         else:packed.append(rows[r]);r+=1
     level=dict(format='shootermega65-level-1',name='Operation Kuestenwald',tileset='assets/art/coastal-base/generated',scroll_speed=.5,map=packed,paths=paths,formations=forms,events=events,
-               design_notes=dict(sections=cfg['sections'],nominal_seconds=240,first_contact_row=20,ground_spawn_surface='road / land',boss='none; unsupported in Stage 3a'))
+               design_notes=dict(sections=cfg['sections'],nominal_seconds=240,first_contact_row=17,ground_spawn_surface='road / land',boss='none',revision='denser waves and authored terrain landmarks; playtest required'))
     text=json.dumps(level,indent=2)
     text=re.sub(r'\[\n(?:\s+\d+,?\n){21}\s*\]',lambda m:json.dumps(json.loads(m.group(0))),text)
     (ROOT/'levels/coastal_base.json').write_text(text+'\n')
