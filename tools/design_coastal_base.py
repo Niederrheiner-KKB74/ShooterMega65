@@ -17,7 +17,7 @@ def ncm(p):
 
 
 def rgba(p,pal):
-    im=Image.new('RGBA',p.size);im.putdata([tuple(pal[i])+(255,) for i in p.getdata()]);return im
+    im=Image.new('RGBA',p.size);im.putdata([tuple(pal[i])+(255,) for i in p.tobytes()]);return im
 
 
 def grass(size,variant=0,military=False):
@@ -25,7 +25,7 @@ def grass(size,variant=0,military=False):
     values=[]
     for y in range(size[1]):
         for x in range(size[0]):
-            q=(x*17+y*29+variant*11)%53;v=8 if q<4 else 10 if q<8 else 9
+            q=(x*17+y*29+variant*11)%53;v=8 if q<2 else 10 if q<4 else 9
             values.append(v-5 if military else v)
     im.putdata(values);return im
 
@@ -171,45 +171,69 @@ def main():
             d.rectangle((14,3,16,13),fill=10);d.rectangle((14,20,16,30),fill=10)
         for yy in range(2):
             for xx in range(2):add(f'{kind}_{xx}_{yy}',p.crop((xx*16,yy*16,xx*16+16,yy*16+16)),'structures')
-    # Guaranteed opaque road-compatible spawn surface, useful for checkpoints.
-    assert len(tiles)<=126, len(tiles)
+    # Nine-slice roofs: corner/edge/centre pieces form much larger buildings.
+    # Two roof materials share MIL; no new palette banks.
+    for style in ('steel','brick'):
+        plain=Image.new('L',(16,16),12 if style=='steel' else 14);pd=ImageDraw.Draw(plain)
+        for y in range(3,16,5):pd.line((0,y,15,y),fill=6 if style=='steel' else 11)
+        add(f'complex_{style}_plain',plain,'structures')
+        for ty in range(3):
+            for tx in range(3):
+                p=Image.new('L',(16,16),12 if style=='steel' else 14);d=ImageDraw.Draw(p)
+                for y in range(3,16,5):d.line((0,y,15,y),fill=6 if style=='steel' else 11)
+                if tx==0:d.rectangle((0,0,2,15),fill=13);d.line((3,0,3,15),fill=8)
+                if tx==2:d.rectangle((13,0,15,15),fill=11);d.line((12,0,12,15),fill=6)
+                if ty==0:d.rectangle((0,0,15,2),fill=13);d.line((0,3,15,3),fill=10)
+                if ty==2:
+                    d.rectangle((0,12,15,15),fill=11);d.line((0,12,15,12),fill=8)
+                    if tx==1:
+                        d.rectangle((3,12,12,15),fill=6)
+                        for x in (4,7,10):d.line((x,13,x,15),fill=8)
+                if tx==ty==1:
+                    d.rectangle((3,4,12,11),fill=11);d.rectangle((3,4,11,9),fill=8)
+                    d.line((4,5,10,5),fill=10);d.line((4,7,10,7),fill=6)
+                add(f'complex_{style}_{tx}_{ty}',p,'structures')
     rows=[]
     def shore(r):
-        if r<96:return [6,6,5,4,3,3,4,5,7,8,8,7,6,5,4,5][(r//6)%16]
-        if r<120:return max(-2,5-(r-96)//3)
+        if r<100:return 5.4+2.7*math.sin(r*.073)+.9*math.sin(r*.23+.6)+.35*math.sin(r*.51)
+        if r<124:return (5.4+2.7*math.sin(100*.073)+.9*math.sin(100*.23+.6)+.35*math.sin(100*.51))*(124-r)/24-2*(r-100)/24
         return -2
     def land(c,r):
         # Width-limited river; bridge deck is applied afterward.
         if 210<=r<=217:return False
         # Offshore islands, sheltered bays and two woodland ponds.
-        if 24<=r<=46 and 1<=c<=3:return abs(c-2)+abs(r-35)/7<2
-        if 66<=r<=82 and 2<=c<=4:return abs(c-3)+abs(r-74)/5<2
-        if 124<=r<=139 and 3<=c<=6:return abs(c-4.5)+abs(r-131)/4>=2.5
-        if 150<=r<=161 and 17<=c<=19:return abs(c-18)+abs(r-155)/4>=1.8
-        return c>=shore(r)
+        if ((c-4.5)/2.5)**2+((r-132)/7.5)**2<1:return False
+        if ((c-18)/1.5)**2+((r-157)/6)**2<1:return False
+        islands=((c-1.8)/2.1)**2+((r-23)/3.2)**2<1 or ((c-2.6)/1.7)**2+((r-77)/2.7)**2<1
+        return c>=shore(r) or islands
+    clearings=[(10,35,3.5,7),(13,62,4,8),(10,102,4.5,10),
+               (12,124,4,9),(7,149,3.7,10),(16,174,3,7),
+               (6,195,3.5,9),(17,231,2.5,7),(6,259,4,10)]
     for r in range(375):
         row=[]
         for c in range(21):
             # Image top corresponds to r+1; TL/TR/BL/BR signs in map coordinates.
             mask=int(land(c,r+1))|int(land(c+1,r+1))<<1|int(land(c,r))<<2|int(land(c+1,r))<<3
-            if mask==0:name='sea'+str(c%3)
+            if mask==0:name='sea'+str(c%2)
             elif mask==15:
-                dense=120<=r<184 or (r<280 and c>8 and (c+r//12)%4!=0) or (184<=r<280 and c<7 and (r//16)%3!=0)
-                name='forest'+str((c%2)*3+(c+r)%3) if dense else 'grass'+str((c+r)%3)
+                gr=(r//4)*4
+                grove=math.sin(c*.76+gr*.062)+.7*math.sin(gr*.18-c*.4)
+                clearing=any(((c-cx)/rx)**2+((r-cy)/ry)**2<1 for cx,cy,rx,ry in clearings)
+                dense=r<280 and c>shore(r)+.7 and grove>-.65 and not clearing
+                name='forest'+str((c%2)*3+(c%3)) if dense else 'grass0'
             else:name='coast'+str(mask)
             row.append(names[name])
         rows.append(row)
-    for centre in (110,154):
-        for r in range(centre-2,centre+3):
-            for c in range(12,16):rows[r][c]=names['grass'+str((r+c)%3)]
-    # Small authored patches rather than independently randomized tiles.
-    for r in range(12,96):
-        if r%12 in (3,4):
-            rows[r][1]=names['water_rocks']
-            c=shore(r)+2;rows[r][c]=names['sand'];rows[r][c+1]=names['rocks']
-    for centre,c in ((112,8),(144,10),(172,6),(202,17),(258,5)):
-        for r in range(centre,centre+4):
-            for x in range(c,c+3):rows[r][x]=names['meadow' if (r+x)%2 else 'grass1']
+    # Only put rocks fully in the intended terrain; avoid square sand patches.
+    for r in (15,16,47,48,69,70,91,92):
+        for c in (1,3,9):
+            old=tiles[rows[r][c]]['name']
+            if old.startswith('sea'):rows[r][c]=names['water_rocks']
+            elif old.startswith('grass'):rows[r][c]=names['rocks']
+    for cx,cy,rx,ry in clearings:
+        for r in range(max(0,cy-2),min(280,cy+3)):
+            for c in range(max(1,int(cx)-1),min(21,int(cx)+2)):
+                if tiles[rows[r][c]]['name'].startswith('grass'):rows[r][c]=names['meadow']
     def block(name,c,r):
         # Top source half goes at map row r+1 (map starts at bottom).
         for yy in range(2):
@@ -236,22 +260,39 @@ def main():
     for c in range(3,20):rows[281][c]=names['fence_h']
     block('checkpoint',13,280)
     for r in range(282,375):rows[r][2]=names['fence_v'];rows[r][20]=names['fence_v']
-    for r in (296,320,344,364):
-        for c in (5,9,17):block('hangar' if (c+r)%3 else 'depot',c,r)
-    for r in (306,334,356):block('helipad',6,r)
-    block('bunker',9,288);block('bunker',17,332);block('bunker',9,368)
-    # Cross-road and top exit inside the base, clear of placed buildings.
-    for c in range(3,20,2):block('road10',c,338)
-    block('road15',13,338)
-    # Base has distinct compounds: supply yard, fuel farm, radar, runway.
-    for r in (292,294,296,298,300,302,304,306,308,310):block('runway',3,r)
-    for c,r,kind in ((6,292,'crates'),(8,302,'crates'),(17,310,'fuel'),(17,312,'fuel'),
-                     (5,324,'radar'),(9,346,'fuel'),(17,358,'radar'),(7,366,'crates')):block(kind,c,r)
-    for r in (300,324,348,360):
-        block('hangar',9,r);block('crates',17,r+2)
-    for r in (314,362):
+    complexes=[]
+    def complex(style,c,r,w,h):
+        assert w>=3 and h>=3
+        complexes.append(dict(style=style,column=c,row=r,width=w,height=h))
+        for y in range(h):
+            for x in range(w):
+                tx=0 if x==0 else 2 if x==w-1 else 1
+                ty=0 if y==0 else 2 if y==h-1 else 1
+                name=f'complex_{style}_plain' if tx==ty==1 and (x+2*y)%4 else f'complex_{style}_{tx}_{ty}'
+                rows[r+h-1-y][c+x]=names[name]
+    # Distinct large compounds, with repeated modules and service yards between.
+    complex('steel',4,286,8,7)       # 128x112 maintenance hall
+    complex('brick',16,286,4,11)     # 64x176 administration wing
+    complex('steel',5,304,7,6)
+    complex('steel',9,310,3,4)       # connected L-shaped workshop
+    complex('brick',4,320,8,9)       # 128x144 warehouse
+    complex('steel',16,320,4,7)
+    complex('brick',4,344,4,9)
+    complex('steel',8,344,4,6)       # adjoining mixed-material complex
+    complex('brick',16,344,4,10)
+    complex('steel',5,362,7,9)       # command complex with radar in front
+    for r in range(298,312,2):block('runway',3,r)
+    for c,r,kind in ((10,296,'crates'),(17,304,'fuel'),(17,306,'fuel'),
+                     (5,332,'helipad'),(9,332,'crates'),(17,332,'radar'),
+                     (5,356,'radar'),(9,356,'helipad'),(17,362,'fuel'),(17,366,'crates')):block(kind,c,r)
+    for r in (300,316,338,358):
         for c in range(3,20,2):block('road10',c,r)
         block('road15',13,r)
+    # Export only referenced tiles: local IDs are regenerated with the level.
+    used=sorted({t for row in rows for t in row});remap={old:new for new,old in enumerate(used)}
+    tiles=[tiles[t] for t in used];rows=[[remap[t] for t in row] for row in rows]
+    # GFX includes a 196-byte header/palettes, so 16KB permits only 126 tiles.
+    assert len(tiles)<=126, f'{len(tiles)} tiles exceed the GFX load-buffer budget'
     # Safe events with first contact delayed until beyond the initially visible rows.
     paths={
       'coast_swoop':[['move',48,0,1.5],['move',48,1,1.25],['fire'],['move',96,0,2],['end']],
@@ -267,10 +308,6 @@ def main():
       'bombers':dict(enemy='bomber',count=4,path='bomber_pass',delay=30,x=144,y=-40),
       'armoured':dict(enemy='armoured',count=4,path='armour_push',delay=30,x=144,y=-40),
     }
-    waves=[(20,'scouts'),(34,'scouts'),(48,'forest_fighters'),(62,'scouts'),(76,'bombers'),(90,'scouts'),
-           (106,'forest_fighters'),(120,'helis'),(134,'forest_fighters'),(148,'scouts'),(162,'bombers'),(176,'helis'),
-           (198,'scouts'),(212,'bombers'),(226,'forest_fighters'),(240,'armoured'),(254,'helis'),(268,'bombers'),
-           (288,'forest_fighters'),(302,'armoured'),(316,'helis'),(330,'bombers'),(344,'armoured'),(358,'forest_fighters')]
     # Three escalating acts; long enough shop approach to let every air path exit.
     waves=[]
     cycles=[('scouts','scouts','forest_fighters','bombers'),
@@ -316,7 +353,7 @@ def main():
     atlas.save(OUT/'terrain-sheet.png');(OUT/'terrain.ncm.bin').write_bytes(terrain)
     (OUT/'level-example.json').write_text(json.dumps(dict(tiles=meta),indent=2)+'\n')
     (OUT/'indexed-source.json').write_text(json.dumps(tile_sources,indent=2)+'\n')
-    manifest=dict(schema=1,palettes=palettes,tile_count=len(tiles),provenance='New deterministic native pixel tiles and transitions; existing fixed_targets palette retained for tanks.',hardware_tested=False)
+    manifest=dict(schema=1,palettes=palettes,tile_count=len(tiles),complexes=complexes,clearings=clearings,provenance='New deterministic native pixel tiles, smooth coast field and modular large building complexes; fixed_targets palette retained for tanks.',hardware_tested=False)
     (OUT/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     # Clean map and readable four-column overview, each section starts at its bottom.
     clean=Image.new('RGBA',(336,375*16))
@@ -328,6 +365,13 @@ def main():
         crop=clean.crop((0,(374-s['end'])*16,336,(375-s['start'])*16)).convert('RGB')
         overview.paste(crop,(i*354+8,50));draw.text((i*354+8,8),f"{i+1}. {s['name']}",fill='white');draw.text((i*354+8,26),f"rows {s['start']}..{s['end']} / START BELOW",fill=(170,190,210))
     overview.save(OUT/'level-overview.png')
+    details=Image.new('RGB',(664,460),(18,24,32));dd=ImageDraw.Draw(details)
+    for i,(label,row) in enumerate([('Kueste / Bucht',39),('Wald / grosse Lichtung',115),('Basis / Lagerhallen',319),('Basis / Werkstatt in L-Form',303)]):
+        x=8+(i%2)*328;y=8+(i//2)*226
+        dd.text((x,y),label,fill='white')
+        top=(375-row)*16-200
+        details.paste(clean.crop((16,top,336,top+200)).convert('RGB'),(x,y+18))
+    details.save(OUT/'landscape-detail.png')
     print(f'{len(tiles)} tiles, {len(set(tuple(row) for row in rows))} distinct rows, {len(events)} events, nominal 240s')
 
 

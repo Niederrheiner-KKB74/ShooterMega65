@@ -1,0 +1,104 @@
+{
+  "palette": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      254,
+      254,
+      254
+    ],
+    [
+      223,
+      225,
+      231
+    ],
+    [
+      227,
+      218,
+      210
+    ],
+    [
+      233,
+      205,
+      188
+    ],
+    [
+      214,
+      208,
+      207
+    ],
+    [
+      159,
+      164,
+      181
+    ],
+    [
+      125,
+      144,
+      172
+    ],
+    [
+      133,
+      130,
+      138
+    ],
+    [
+      139,
+      114,
+      123
+    ],
+    [
+      98,
+      113,
+      139
+    ],
+    [
+      145,
+      78,
+      70
+    ],
+    [
+      202,
+      1,
+      0
+    ],
+    [
+      45,
+      28,
+      33
+    ],
+    [
+      32,
+      22,
+      26
+    ],
+    [
+      26,
+      28,
+      34
+    ]
+  ],
+  "source": "assets/art/spec-v2/generated/indexed-source.json, rocket frame 0 at 29b67a2591a025770fe40225c31311537634f7f4",
+  "source_pixel_sha256": "bac889c5a43f935acdbe746c1c52d703d3507c1c66f7f975549d07b7a6f6f771",
+  "transform": "clockwise 45 degrees about (7.5,7.5), inverse nearest-neighbour index sampling, transparent outside 16x16",
+  "static_views": true,
+  "integrated": false,
+  "hardware_tested": false,
+  "files": {
+    "indexed-source.json": "0eca82363b7d0cef720ac702e7eb95ca1cb75d55913ef56014c64f3c68098be1",
+    "palette.palregs.bin": "76234c6cea5348c32cea99a5484b874b02453395df75280aaed952620f333f4a",
+    "palette.rgb": "959d88e9bf794a8ddfbf536f73f7d760c832a1dc29bcdc874194cc4905635693",
+    "preview.png": "5990da5a6fcb93783687123efc4290b80cb8f684cd3ab21fee938a2d800547f4",
+    "rocket-views.inc": "f92e90e6c3dad656f43e8ce887077aa4a7b17e9726499fc15a7d185a969a3ff0",
+    "rocket-views.png": "c46477332c659b7f4de1183a5447297e9882b25ddbb4e23a54b9971021f1ac06",
+    "rocket.fcm.bin": "96011d8c484db4021311399196e50107202d0345af6e12961cda954901d035e5",
+    "rocket.indices.bin": "4f8055eca6c2cc92ccd18ec45117b86efa885cb0d0a924d8cb825810367f9f34",
+    "rocket.ncm.bin": "ce79da50fbee763ab7c145d580bec541e8a507cc651d29a3847c2acfe85614cb",
+    "rocket.rrb.bin": "55440228c482205dcff7c2eebccc0b3dcd27d1e055199c8746d808f7bfc471b8",
+    "rocket_right45.png": "cc9959c79702651d45ceb9bb99a9723cd20dc155de88adf844d5fb027001102f",
+    "rocket_up.png": "92bd347def69e8c8ba868fe252d5954cc446ef6ec140f53b5d47fb8643ceca6b"
+  }
+}
