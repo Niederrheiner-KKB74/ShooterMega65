@@ -40,6 +40,7 @@ def main():
     ap.add_argument('--kickass')
     ap.add_argument('--out', default=str(ROOT / 'build'))
     ap.add_argument('--allow-other-kickass', action='store_true')
+    ap.add_argument('--level', help='build this level JSON as L1 instead of the default test level')
     a = ap.parse_args()
     out = Path(a.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -50,7 +51,8 @@ def main():
 
     import_art.main(ROOT / 'build/gen')        # artwork v2 (assets/art/spec-v2)
     level_files = []
-    for name, src in LEVELS:
+    selected_levels = [('L1', a.level)] if a.level else LEVELS
+    for name, src in selected_levels:
         try:
             gfx, dat, report = build_level.build(ROOT / src, out / 'levels', name)
         except build_level.LevelError as e:
@@ -89,4 +91,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 

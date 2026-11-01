@@ -36,15 +36,28 @@ def main():
             assert rrb[(base-1)*64:base*64]==bytes(64) and rrb[(base+h//8)*64:(base+h//8+1)*64]==bytes(64)
             decoded=decode(rrb[base*64:(base+h//8)*64],16,h,16)
             assert decoded==b''.join(p[y*w+col*16:y*w+(col+1)*16] for y in range(h))
-        glyph=cfg['glyphs'][desc['label']];gx,gy=desc['glyph_origin'];scale=desc['glyph_scale']
-        for yy,row in enumerate(glyph):
-            for xx,v in enumerate(row):
-                for sy in range(scale):
-                    for sx in range(scale):assert p[(gy+yy*scale+sy)*w+gx+xx*scale+sx]==(2 if v=='1' else 4),desc['id']
+        if desc['design']=='gold_coin':
+            glyph=cfg['glyphs']['$'];gx,gy=desc['glyph_origin'];scale=desc['glyph_scale']
+            for yy,row in enumerate(glyph):
+                for xx,v in enumerate(row):
+                    if v=='1':
+                        for sy in range(scale):
+                            for sx in range(scale):assert p[(gy+yy*scale+sy)*w+gx+xx*scale+sx]==3,desc['id']
+            assert 4 not in p, 'coins must have no dark rectangular label panel'
+            x0,y0,x1,y1=desc['body_box'];assert x1-x0==y1-y0
+            alpha=im.getchannel('A').crop((x0,y0,x1+1,y1+1))
+            assert alpha.tobytes()==alpha.transpose(Image.Transpose.FLIP_LEFT_RIGHT).tobytes()
+            assert alpha.tobytes()==alpha.transpose(Image.Transpose.FLIP_TOP_BOTTOM).tobytes()
+            assert alpha.getpixel((0,0))==0
+        else:
+            assert desc['design']=='medieval_shield' and desc['label'] is None
+            assert desc['glyph_origin']==[None,None]
+            assert sum(1 for x in range(w) if p[15*w+x])==1, 'shield needs pointed lower tip'
+            assert p[6*w+7]==2 and p[10*w+7]==2, 'heraldic cross missing'
         if desc['label']=='$':sizes.append((w,h,(desc['body_box'][2]-desc['body_box'][0]+1)*(desc['body_box'][3]-desc['body_box'][1]+1)))
         assert desc['palette_byte']==0xcf
     assert len(used)<=15 and len({s[:2] for s in sizes})==3 and sizes[0][2]<sizes[1][2]<sizes[2][2]
-    print(f'PASS: S and three distinct dollar capsule sizes; exact label glyphs, {len(used)} shared colours, alpha, FCM/NCM/RRB round trips and guards.')
+    print(f'PASS: pointed medieval shield without S; 3 circular coins with embossed dollar glyphs; {len(used)} shared colours; exact FCM/NCM/RRB and guards.')
 
 
 if __name__=='__main__':main()

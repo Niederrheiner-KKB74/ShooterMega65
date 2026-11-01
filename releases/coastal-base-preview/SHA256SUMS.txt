@@ -1,0 +1,2 @@
+a0fdbabbfc985bbe8ebcda6c09448ebbeface17f1bf48daaa6e1a9cfce561b3f  SHOOTER.PRG
+00d112dbce5fc5a81805cad9c877f4527cc3c9144c3ceb952da9ca7d6f293d3e  SHOOTER65.D81
