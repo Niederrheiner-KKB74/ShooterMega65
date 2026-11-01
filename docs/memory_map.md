@@ -145,3 +145,20 @@ and the existing per-type palette remap. See `docs/ENEMY_VIEWS_AND_OPACITY.md`.
 | 4 | `$D460` | copy of SID 2 |
 
 All four are silenced on the way back to BASIC.
+
+## Offline title / game-over and Level-1 boss assets
+
+The new assets are not loaded by this stage and add no runtime address or
+allocation. Title: 384 unique 16x8 glyphs / 24576 bytes, plus separate local map
+and palette data; bottom three glyph rows are reserved for dynamic text.
+Game-over banner: 55 glyphs / 3520 bytes at 256x64. The 320x200 full-screen
+alternative has 500 glyphs / 32000 bytes and must not be loaded into a banner-sized
+region. Each screen uses one local 16-entry palette; choose/restore the hardware
+bank and background colour during later screen integration.
+
+Boss: 96x64 body plus component art, 137 guarded glyphs / 8768 bytes; one 48-byte
+palette gives 8816 bytes of glyph/palette data, below the 9KB artwork budget.
+Local bases must be relocated and source palette indices mapped during later
+import. Four turret IDs are damage parts; four rotor instances are visual-only
+and reuse three frames. No new fixed palette bank is assumed. Future engine
+integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1_BOSS.md`.

@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "provenance": "Scene layers generated using built-in image_gen from current aircraft references; deterministic nearest-neighbour/native palette conversion and custom pixel typography. Not hand-drawn originals.",
+  "generated_sources": {
+    "aircraft-reference.png": "6e4ec228f98c45ab25d80ecd1648e14e4b18aec8d6945cb23a3d0793f750660b",
+    "game-over-scene.png": "f79ae4f8db9a5b1fdc3fd0a8e8b4adc9d0d38d71a0c57007c5876118bf872278",
+    "title-scene.png": "e71d7afb8f1d4c54113526c01070aa68dd0c3a3929121375cd2b241e5dbbfeb7"
+  },
+  "game_over_fullscreen_alternative": true,
+  "runtime_game_over": "game-over-banner",
+  "integrated": false,
+  "hardware_tested": false,
+  "files": {
+    "game-over-banner-preview.png": {
+      "bytes": 6230,
+      "sha256": "d66e7291c6015af9d9dd871970bb1a980f380dfdb4df2388d727f1fe282a76ed"
+    },
+    "game-over-banner.json": {
+      "bytes": 37731,
+      "sha256": "f96d1576a741b97763d71f5fff94a37b47ed7a55357f392ede57c1dc553ce604"
+    },
+    "game-over-banner.map16.bin": {
+      "bytes": 256,
+      "sha256": "0311b9f3810c200c2863dcb7b30a1be2bbc6a5babea751b5e1c3a0c4f8a53eef"
+    },
+    "game-over-banner.ncm.bin": {
+      "bytes": 3520,
+      "sha256": "42a476018624d950d79163987da4a00f9284098199e63c7c1c960abb94f34214"
+    },
+    "game-over-banner.palette-map.bin": {
+      "bytes": 128,
+      "sha256": "38723a2e5e8a17aa7950dc008209944e898f69a7bd10a23c839d341e935fd5ca"
+    },
+    "game-over-banner.palette.palregs.bin": {
+      "bytes": 48,
+      "sha256": "63c6d30071be41b58a60c2d1ee9f66ae07c58ea57b2d0dcd1693384ef13ed6e1"
+    },
+    "game-over-banner.palette.rgb": {
+      "bytes": 48,
+      "sha256": "1a45caef33377cf30e7f48f26a0364abb02928ebc394213be0e898a5e53f9ddd"
+    },
+    "game-over-banner.png": {
+      "bytes": 2170,
+      "sha256": "6c1466897acf1bd8c1ceab8164f4d362b504089ba7d3c5c25c009c49dd37332e"
+    },
+    "game-over-full-preview.png": {
+      "bytes": 27980,
+      "sha256": "3620674ed8a86b7030f6cd6672692a463f3174cd8ee27fbef0caeae31dc5cc68"
+    },
+    "game-over-full.json": {
+      "bytes": 142822,
+      "sha256": "d5293fe08d077624fbd2fe464e198805371b69e11be2b8cdd1ccd68feb5d614b"
+    },
+    "game-over-full.map16.bin": {
+      "bytes": 1000,
+      "sha256": "01850cc600f9bbc068e39a85d216c63fa575cca4b1b1be0a67197d341648741d"
+    },
+    "game-over-full.ncm.bin": {
+      "bytes": 32000,
+      "sha256": "5ea37be454b8bbc28feb2695eb4c7633a83521e078f015cf1513d63e0b2d1c8e"
+    },
+    "game-over-full.palette-map.bin": {
+      "bytes": 500,
+      "sha256": "e6304a473c65ecd0ccffbd2f5925a8f51c44b11f59b66cfcc055e4bb911b8fa0"
+    },
+    "game-over-full.palette.palregs.bin": {
+      "bytes": 48,
+      "sha256": "2f5e53bed732832a42861aae4cb08009be2aa0fc7961f90f6ac23ec9cd4be353"
+    },
+    "game-over-full.palette.rgb": {
+      "bytes": 48,
+      "sha256": "bbabdaf79c48e1c181bafa8a2ac8a30e947421543d50cfa7b4ba6c97104a7596"
+    },
+    "game-over-full.png": {
+      "bytes": 17219,
+      "sha256": "8a71f83a261a9db1768a55b8c42dec5c3a1658180dcd7505ac0e4fc339de90d8"
+    },
+    "title-preview.png": {
+      "bytes": 24753,
+      "sha256": "5c207b19d337498a37c1046cae9ec7cc3dd1246f5123ef719a578941284a1b48"
+    },
+    "title.json": {
+      "bytes": 142713,
+      "sha256": "f7720d3eec59bcd5c6163ce2b8cd64c0feced1a6897f2c32b8a5a206569ece9d"
+    },
+    "title.map16.bin": {
+      "bytes": 1000,
+      "sha256": "48809cac39928a3387bee93b176d09507eaaca0b2452cdc14a5b437a132fbddd"
+    },
+    "title.ncm.bin": {
+      "bytes": 24576,
+      "sha256": "f20e6922765668cdb8f67b09104927b0ee6a2ca29e988ddbff3a7b284cfc63ce"
+    },
+    "title.palette-map.bin": {
+      "bytes": 500,
+      "sha256": "e6304a473c65ecd0ccffbd2f5925a8f51c44b11f59b66cfcc055e4bb911b8fa0"
+    },
+    "title.palette.palregs.bin": {
+      "bytes": 48,
+      "sha256": "2f5e53bed732832a42861aae4cb08009be2aa0fc7961f90f6ac23ec9cd4be353"
+    },
+    "title.palette.rgb": {
+      "bytes": 48,
+      "sha256": "bbabdaf79c48e1c181bafa8a2ac8a30e947421543d50cfa7b4ba6c97104a7596"
+    },
+    "title.png": {
+      "bytes": 13405,
+      "sha256": "c22a9ea5bab768c792b5c06efb8af8cfb5c055fc013760c3ebf54ffd3b806ebb"
+    }
+  }
+}

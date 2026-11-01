@@ -1,0 +1,193 @@
+{
+  "body": "body",
+  "body_size": [
+    96,
+    64
+  ],
+  "palette": "boss",
+  "turrets": [
+    {
+      "id": "turret_nw",
+      "offset": [
+        30,
+        8
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "south": "turret_nw_south",
+      "southeast": "turret_nw_southeast",
+      "destroyed": "turret_nw_destroyed",
+      "hit_rect": [
+        30,
+        8,
+        16,
+        16
+      ],
+      "independently_destructible": true
+    },
+    {
+      "id": "turret_ne",
+      "offset": [
+        50,
+        8
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "south": "turret_ne_south",
+      "southeast": "turret_ne_southeast",
+      "destroyed": "turret_ne_destroyed",
+      "hit_rect": [
+        50,
+        8,
+        16,
+        16
+      ],
+      "independently_destructible": true
+    },
+    {
+      "id": "turret_sw",
+      "offset": [
+        30,
+        40
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "south": "turret_sw_south",
+      "southeast": "turret_sw_southeast",
+      "destroyed": "turret_sw_destroyed",
+      "hit_rect": [
+        30,
+        40,
+        16,
+        16
+      ],
+      "independently_destructible": true
+    },
+    {
+      "id": "turret_se",
+      "offset": [
+        50,
+        40
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "south": "turret_se_south",
+      "southeast": "turret_se_southeast",
+      "destroyed": "turret_se_destroyed",
+      "hit_rect": [
+        50,
+        40,
+        16,
+        16
+      ],
+      "independently_destructible": true
+    }
+  ],
+  "rotors": [
+    {
+      "id": "rotor_nw",
+      "offset": [
+        0,
+        0
+      ],
+      "phase_offset": 0,
+      "role": "visual_only",
+      "destructible": false,
+      "collidable": false
+    },
+    {
+      "id": "rotor_ne",
+      "offset": [
+        64,
+        0
+      ],
+      "phase_offset": 1,
+      "role": "visual_only",
+      "destructible": false,
+      "collidable": false
+    },
+    {
+      "id": "rotor_sw",
+      "offset": [
+        0,
+        32
+      ],
+      "phase_offset": 2,
+      "role": "visual_only",
+      "destructible": false,
+      "collidable": false
+    },
+    {
+      "id": "rotor_se",
+      "offset": [
+        64,
+        32
+      ],
+      "phase_offset": 0,
+      "role": "visual_only",
+      "destructible": false,
+      "collidable": false
+    }
+  ],
+  "core": {
+    "offset": [
+      32,
+      16
+    ],
+    "size": [
+      32,
+      32
+    ],
+    "hit_rect": [
+      40,
+      24,
+      16,
+      16
+    ],
+    "exposed_overlay": "core_exposed"
+  },
+  "mechanic": {
+    "initial_state": "turrets_active",
+    "body_invulnerable_until": [
+      "turret_nw",
+      "turret_ne",
+      "turret_sw",
+      "turret_se"
+    ],
+    "all_required_turrets_destroyed_state": "body_vulnerable",
+    "defeat_condition": "body_hp_reaches_zero_after_turrets",
+    "hit_points": "configured by game, not prescribed by artwork",
+    "implementation": "art placement/state specification only; no runtime boss logic supplied"
+  },
+  "draw_order": [
+    "body",
+    "rotors",
+    "exposed_core_if_unlocked",
+    "turrets",
+    "optional_muzzle"
+  ],
+  "rotor_frames": [
+    "rotor_0",
+    "rotor_1",
+    "rotor_2"
+  ],
+  "muzzle": {
+    "frames": [
+      "muzzle_0",
+      "muzzle_1"
+    ],
+    "south_offset_from_turret": [
+      0,
+      15
+    ],
+    "note": "Optional effect may extend beyond body bounds; rotate with gun direction."
+  }
+}
