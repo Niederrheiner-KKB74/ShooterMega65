@@ -99,7 +99,7 @@ objects_init:
 game_restart:
     jsr objects_init
     jsr hud_reset
-    jmp player_reset
+    jmp player_new_game
 
 // Find a free slot in [X, ob_end). Returns carry clear + X = slot, or carry set.
 alloc_slot:

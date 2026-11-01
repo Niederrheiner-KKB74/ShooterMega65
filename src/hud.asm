@@ -1,12 +1,14 @@
 // ----------------------------------------------------------------------------
-// HUD: score (6 BCD digits) and shield bar at the top of the screen.
+// HUD: score (6 BCD digits), lives and shield bar at the top of the screen.
 //
 // Both boxes are pixie objects with fixed screen positions (fine scrolling moves
-// the text rows, the pixie y offset compensates). Their 7 glyphs live in the pixie
-// glyph area (HUD_GLYPH + 2*k, k = 0..6, each followed by a blank guard) and are
-// rebuilt in a bank-0 buffer and copied only when the score or the shield changes.
+// the text rows, the pixie y offset compensates). Their 8 glyphs live in the pixie
+// glyph area (HUD_GLYPH + 2*k, k = 0..7, each followed by a blank guard) and are
+// rebuilt in a bank-0 buffer and copied only when score, lives or shield change.
+// Score box: columns 0-2 = 6 digits, column 3 = plane icon + lives digit.
+// Shield box: columns 4-7.
 // ----------------------------------------------------------------------------
-.label hud_dirty = $59      // bit 0 score, bit 1 shield
+.label hud_dirty = $59      // bit 0 score + lives, bit 1 shield
 .label hp_src    = $5a      // 16 bit
 .label hp_dst    = $5c      // 16 bit
 .label hud_ptr   = $60      // 32 bit
@@ -15,6 +17,8 @@
 .const HUD_Y       = 2
 .const HUD_SCORE_X = 4
 .const HUD_SHIELD_X = 320 - 64 - 4
+.const HUD_COLS     = 8
+.const SHIELD_BUF   = 4*64      // shield box in hud_buf
 
 hud_reset:
     lda #0
@@ -22,6 +26,12 @@ hud_reset:
     sta score_bcd+1
     sta score_bcd+2
     lda #3
+    sta hud_dirty
+    rts
+
+hud_score_changed:
+    lda hud_dirty
+    ora #1
     sta hud_dirty
     rts
 
@@ -63,7 +73,7 @@ hud_update:
     jsr hud_render_shield
 !:  lda #0
     sta hud_dirty
-    // copy 7 glyphs to bank 5
+    // copy the glyphs to bank 5
     lda #(PIXIE_ADDR >> 16)
     sta hud_ptr+2
     lda #0
@@ -87,15 +97,27 @@ hud_update:
     cpy #64
     bne !-
     inx
-    cpx #7
+    cpx #HUD_COLS
     bne !col-
     ldz #0
     rts
 
 hud_render_score:
+    ldx #63                     // column 3: plane icon, lives digit drawn below
+!:  lda hud_lives_tpl,x
+    sta hud_buf+3*64,x
+    dex
+    bpl !-
     ldx #0
 !digit:
-    txa
+    cpx #6                      // digit 6 = lives (0-9)
+    bne !+
+    lda pl_lives
+    cmp #10
+    bcc !got+
+    lda #9
+    bne !got+
+!:  txa
     lsr
     tay
     lda score_bcd,y
@@ -143,7 +165,7 @@ hud_render_score:
     cpy #32
     bne !row-
     inx
-    cpx #6
+    cpx #7
     bne !digit-
     ldz #0
     rts
@@ -151,7 +173,7 @@ hud_render_score:
 hud_render_shield:
     ldx #0
 !:  lda hud_template,x
-    sta hud_buf+192,x
+    sta hud_buf+SHIELD_BUF,x
     inx
     bne !-
     // colour by level: high / medium / low
@@ -191,18 +213,18 @@ hud_render_shield:
     and #1
     bne !odd+
     .for (var r = 2; r < 6; r++) {
-        lda hud_buf+192+r*8,x
+        lda hud_buf+SHIELD_BUF+r*8,x
         and #$f0
         ora hs_lo
-        sta hud_buf+192+r*8,x
+        sta hud_buf+SHIELD_BUF+r*8,x
     }
     jmp !next+
 !odd:
     .for (var r = 2; r < 6; r++) {
-        lda hud_buf+192+r*8,x
+        lda hud_buf+SHIELD_BUF+r*8,x
         and #$0f
         ora hs_hi
-        sta hud_buf+192+r*8,x
+        sta hud_buf+SHIELD_BUF+r*8,x
     }
 !next:
     inc hs_px
@@ -241,15 +263,16 @@ hs_px: .byte 0
 hs_n:  .byte 0
 
 .align $100
-hud_buf:      .fill 7*64, 0          // 3 score glyphs, 4 shield glyphs
+hud_buf:      .fill HUD_COLS*64, 0   // 4 score/lives glyphs, 4 shield glyphs
 hud_digits:   .import binary "../build/gen/hud.bin", 0, 320
-hud_template: .import binary "../build/gen/hud.bin", 320, 256
+hud_lives_tpl:.import binary "../build/gen/hud.bin", 320, 64
+hud_template: .import binary "../build/gen/hud.bin", 384, 256
 digit_src_lo: .fill 10, <(hud_digits + i*32)
 digit_src_hi: .fill 10, >(hud_digits + i*32)
-digit_dst_lo: .fill 6, <(hud_buf + (i>>1)*64 + (i&1)*4)
-digit_dst_hi: .fill 6, >(hud_buf + (i>>1)*64 + (i&1)*4)
-hud_src_lo:   .fill 7, <(hud_buf + i*64)
-hud_src_hi:   .fill 7, >(hud_buf + i*64)
-hud_dst_lo:   .fill 7, <(((PIXIE_ADDR & $ffff) + (HUD_GLYPH + 2*i)*64))
-hud_dst_hi:   .fill 7, >(((PIXIE_ADDR & $ffff) + (HUD_GLYPH + 2*i)*64))
-.errorif ((HUD_GLYPH + 14) * 64 > $4000), "HUD glyphs outside the pixie area"
+digit_dst_lo: .fill 7, <(hud_buf + (i>>1)*64 + ((i&1) | (i==6 ? 1 : 0))*4)   // digit 6 = lives (column 3, right half)
+digit_dst_hi: .fill 7, >(hud_buf + (i>>1)*64 + ((i&1) | (i==6 ? 1 : 0))*4)
+hud_src_lo:   .fill HUD_COLS, <(hud_buf + i*64)
+hud_src_hi:   .fill HUD_COLS, >(hud_buf + i*64)
+hud_dst_lo:   .fill HUD_COLS, <(((PIXIE_ADDR & $ffff) + (HUD_GLYPH + 2*i)*64))
+hud_dst_hi:   .fill HUD_COLS, >(((PIXIE_ADDR & $ffff) + (HUD_GLYPH + 2*i)*64))
+.errorif ((HUD_GLYPH + 2*HUD_COLS) * 64 > $4000), "HUD glyphs outside the pixie area"

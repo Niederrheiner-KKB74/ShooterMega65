@@ -10,6 +10,7 @@
 .label pl_state  = $56    // 0 = flying, 1 = destroyed (waiting for restart)
 .label pl_timer  = $57
 .label pl_frame  = $58    // sprite frame pair 0..5
+.label pl_lives  = $67    // lives left including the current one
 
 .const PL_W     = 32
 .const PL_H     = 24
@@ -20,7 +21,8 @@
 .const SPR_XOFS = 24      // VIC-II sprite coordinates of the playfield's top left pixel
 .const SPR_YOFS = 50
 .const INV_FRAMES = 50    // 1 s invulnerable after a hit
-.const RESTART_FRAMES = 150
+.const RESTART_FRAMES = 150    // 3 s after being destroyed
+.const START_LIVES = 3
 // player hit box relative to pl_x/pl_y (the plane is narrower than its 32x24 canvas)
 .label PL_HIT_CX = 16
 .label PL_HIT_CY = 12
@@ -47,11 +49,18 @@ player_init:
     sta VIC_SPRMCM
     sta VIC_SPR0COL             // in 16-colour mode: transparent colour index
     sta VIC_SPR1COL
-player_reset:
+// new game: three lives, then the first plane
+player_new_game:
+    lda #START_LIVES
+    sta pl_lives
+    jsr hud_score_changed       // the lives counter is part of the score box
+// a new plane: full shield, centre bottom, briefly invulnerable
+player_spawn:
     lda #0
     sta pl_cd
-    sta pl_frame
     sta pl_state
+    lda #PLAYER_STRAIGHT
+    sta pl_frame
     lda #INV_FRAMES
     sta pl_inv
     lda #SHIELD_MAX
@@ -68,15 +77,17 @@ player_reset:
 player_move:
     lda pl_state
     beq !alive+
-    dec pl_timer                // destroyed: wait, then start a new game
+    dec pl_timer                // destroyed: wait, then the next plane or a new game
     bne !+
+    lda pl_lives
+    bne player_spawn
     jmp game_restart
 !:  rts
 !alive:
     lda pl_inv
     beq !+
     dec pl_inv
-!:  // sprite frame: 3 = banking left, 5 = right, otherwise 0-2 (exhaust animation)
+!:  // sprite frame: 3 = banking left, 5 = right, otherwise PLAYER_STRAIGHT
     lda joy
     and #(JOY_LEFT | JOY_RIGHT)
     cmp #JOY_LEFT
@@ -87,13 +98,7 @@ player_move:
     bne !+
     lda #5
     bne !set+
-!:  lda frame_lo
-    lsr
-    lsr
-    and #3
-    cmp #3
-    bne !set+
-    lda #1
+!:  lda #PLAYER_STRAIGHT
 !set:
     sta pl_frame
     lda joy
@@ -212,6 +217,8 @@ player_damage:
     rts
 
 player_destroyed:
+    dec pl_lives
+    jsr hud_score_changed
     lda #1
     sta pl_state
     lda #RESTART_FRAMES
