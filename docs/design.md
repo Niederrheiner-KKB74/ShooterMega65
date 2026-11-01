@@ -220,8 +220,8 @@ Original plan:
   row every `tempo` frames, the next row decoded two frames earlier with a hard restart (gate off, ADSR 0) for new
   notes; wave tables, arpeggios, vibrato (step = semitone × depth / 8 / speed, computed at note start), pulse sweep.
   Effects: fixed voice and priority per effect. Pieces: level music (loops), shop music while the shop is open,
-  game-over jingle, level-clear fanfare at the `end` event, each followed by the level music. SID clock assumed
-  1 MHz (`SID_CLOCK` in `build_music.py`); the tuning is checked on hardware.
+  game-over jingle, level-clear fanfare at the `end` event, each followed by the level music. SID clock
+  1 MHz (`SID_CLOCK` in `build_music.py`), confirmed on hardware (440 Hz test tone).
 - **Decided 01.11.2026:** music on one SID (3 voices), sound effects on another. Music is written as JSON text
   (`docs/music_json.md`, tracker-like: instruments, patterns, one order list per voice), converted at build
   time and played by our own 50 Hz player. By default SIDs 1/2 are panned slightly right and 3/4 slightly left.
@@ -286,6 +286,7 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Stage 4 (special weapons) confirmed on hardware |
 | 01.11.2026 | Missile in 8 flight directions (45° view from PR #11); revised coastal level (PR #11) |
 | 01.11.2026 | Stage 4b confirmed on hardware; music composed by Claude instead of PR #12 (owner's choice) |
+| 01.11.2026 | Stage 5 (music, effects) confirmed on hardware; the SID tuning (1 MHz) is right |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)

@@ -28,8 +28,8 @@ Design details: `docs/design.md` §10, music format: `docs/music_json.md`.
 | XEMU audio recording (SDL disk driver) of all pieces: sound in both channels, no clipping, structure visible (breakdown quieter, loop) | ✔ |
 | XEMU: game with shop: level music → shop music → level music, effects audible, RRB overflow 0 | ✔ |
 | XEMU: full level with sound, both shops, level end with fanfare, into the second pass (frame 16,805), RRB overflow 0 | ✔ |
-| XEMU tuning: test tone 435.3 Hz (expected 440 at a 1 MHz SID clock) – XEMU is not authoritative for audio | open on hardware |
-| **Real MEGA65** | **open – please test** |
+| XEMU tuning: test tone 435.3 Hz (expected 440 at a 1 MHz SID clock) – XEMU is not authoritative for audio | hardware ✔ |
+| Real MEGA65 | ✔ all checklist items confirmed by the owner (01.11.2026), incl. tuning; `stage5-stable` |
 
 ## Hardware test checklist
 1. `LOAD "MUSICTEST",8` / `RUN`: the level music starts. Keys 2, 3, 4: shop music, game-over jingle, level-clear
