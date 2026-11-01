@@ -65,6 +65,36 @@ time in every 8-pixel row it touches. Many small objects are therefore cheaper t
 - **HUD icons 8×8** (7 px wide plus one free column) in the HUD palette (bank 12): bomb and invulnerability
   (shield with a glow). Placeholders are in `tools/import_art.py` (`HUD_BOMB`, `HUD_INVULN`).
 
+## Boss (next stage)
+The boss is a pixie object like the enemies, only bigger, and consists of parts that are destroyed one by one.
+- **Main body**: at most **128×80 pixels** (multiples of 16 wide, 8 high), top-down view, flying or driving
+  downwards (nose/front at the bottom). One frame plus, if wanted, a second "damaged" frame of the same size.
+- **Parts**: 2–4 turrets or engines, each **16×16 or 32×32**, placed on the body. For every part: an intact and a
+  destroyed view. Turrets that aim at the player: one view pointing down (south) and one diagonal (south-east);
+  the other directions are made by rotation and mirroring, as for the aircraft.
+- Optional effects: muzzle flash 16×16, 2–3 frames.
+- **Colours**: at most **two 15-colour palettes** for the whole boss (body and parts), plus transparency
+  (index 0). Index 0 inside the hull is see-through, so the hull must be closed.
+- **Size budget**: all boss graphics together at most **9 KB** (about 140 glyphs of 16×8 pixels): for example a
+  128×80 body in two frames is 2 × 8 columns × 11 = 176 glyphs, which is too much; 112×64 in two frames
+  (2 × 7 × 9 = 126) or 128×80 in one frame plus parts fits. Empty columns cost nothing extra; empty rows inside a
+  column do.
+- In the same form as the other aircraft: indexed pixel rows (JSON) + palette, PNG previews, a placement list
+  (offset of each part relative to the body's top left corner).
+
+## Title screen and game-over screen (next stage)
+- **Title screen**: full screen **320×200**, drawn in tiles of **16×8 pixels**. Each tile uses one of at most
+  **four 15-colour palettes** (index 0 = background colour), so the picture can have up to 60 colours, but
+  neighbouring areas with different palettes must meet on the 16×8 grid. Identical tiles are stored once, so
+  calm areas (sky, plain background) are cheap: at most about **500 different tiles** (32 KB).
+  Leave room for text that the game writes itself: a **320×24 band at the bottom** for "PRESS FIRE" and the high
+  score, drawn with the shop font. The game title may be part of the picture.
+- **Game-over screen**: an overlay like the shop: a **banner of 256×64 pixels** (16 tiles × 8 rows of 16×8) in the
+  middle of the paused game screen, one 15-colour palette, at most **100 different tiles**. "GAME OVER", the score
+  and "PRESS FIRE" are drawn by the game with the shop font; the banner provides frame and decoration.
+- Delivery as for the landscape: indexed PNG plus JSON with palette(s) and, for the title, the palette number of
+  every 16×8 tile.
+
 ## Working with ChatGPT
 - Ask for *"pixel art, top-down view, flat colours, no anti-aliasing, limited palette of 15 colours, on a
   transparent background, each sprite exactly 16×16 pixels (shown enlarged 8×)"*.
