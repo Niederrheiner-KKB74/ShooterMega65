@@ -16,7 +16,8 @@ example level (level-example.json + terrain.ncm.bin). Writes into build/gen/:
 
 Palette banks (text palette 0): 0 C64 colours, 1-4 landscape, 5-8 air enemies,
 9 player shot, 10 red enemy shot, 11 fire shot, 12 HUD + bonus + placeholder tank,
-13 rocket, 14 small explosion, 15 big explosion. All 15 banks are in use; groups that
+13 rocket, 14 small explosion, 15 big explosion. The tank (assets/art/ground-vehicles, PR #6)
+uses the fixed_targets landscape palette (bank 4), as delivered. All 15 banks are in use; groups that
 have to share a bank later (e.g. the orange/green weapon shots) are merged by
 merge_bank(): above 15 colours it reduces them (median cut) and remaps every pixel.
 """
@@ -51,8 +52,10 @@ HUD_PAL = [(0, 0, 0), (54, 82, 111), (221, 239, 247), (255, 165, 50),     # 1-3 
            (36, 42, 58),        # 9 bar empty
            (160, 245, 175),     # 10 bonus light
            (20, 120, 55),       # 11 bonus dark
-           (16, 16, 24), (60, 70, 30), (100, 110, 50), (150, 160, 80)]  # 12-15 placeholder tank
-TANK_REMAP = {1: 12, 6: 13, 7: 14, 8: 15}
+           (0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
+TANKS = ROOT / 'assets/art/ground-vehicles/generated'
+TANK_DIRS = ('north', 'east', 'south', 'west')       # engine direction 0-3
+TANK_PHASES = 4
 SHIELD_MAX = 48                 # bar length in pixels
 BAR_X0 = 11                     # first bar pixel inside the 64 px shield box
 
@@ -230,8 +233,14 @@ def main(out):
         add(f'EX16_{n}', *grp('explosion_16', n))
     for n in range(6):
         add(f'EX32_{n}', *grp('explosion_32', n))
-    tank = np.vectorize(lambda v: TANK_REMAP.get(int(v), 0))(dict(ph.FRAMES)['TANK']).astype(np.uint8)
-    add('TANK', tank, HUD_BANK)
+    tank_rgb = (TANKS / 'palette.rgb').read_bytes()
+    assert [list(tank_rgb[i:i + 3]) for i in range(0, 48, 3)] == manifest['palettes']['fixed_targets'], \
+        'tank artwork must use the fixed_targets palette (bank 4)'
+    tanks = {(t['direction'], t['phase']): np.frombuffer(bytes.fromhex(''.join(t['rows'])), np.uint8).reshape(16, 16)
+             for t in json.loads((TANKS / 'indexed-source.json').read_text())}
+    for d in TANK_DIRS:
+        for n in range(TANK_PHASES):
+            frames.append((f'TANK_{d[0].upper()}{n}', tanks[d, n].copy(), LAND['fixed_targets'], (8, 8, 6, 6)))
     add('BONUS', bonus_item(hud), HUD_BANK)
 
     glyphs = [bytes(64)]
@@ -292,7 +301,8 @@ def main(out):
              f'.const MAP_ROWS={map_rows}', f'.const MAP_COLS={BG_COLS}',
              f'.const TILE_GLYPHS={ntiles * 2}', f'.const PIXIE_GLYPHS={len(glyphs)}',
              '.const PLAYER_FRAMES=6   // 3 left, 4 normal, 5 right (0-2 are unused alternative drawings)',
-             f'.const PLAYER_STRAIGHT={PLAYER_STRAIGHT}', f'.const AIR_ANIM_FRAMES={AIR_FRAMES}', f'.const SHIELD_MAX={SHIELD_MAX}', f'.const BAR_X0={BAR_X0}',
+             f'.const PLAYER_STRAIGHT={PLAYER_STRAIGHT}', f'.const AIR_ANIM_FRAMES={AIR_FRAMES}',
+             f'.const TANK_PHASES={TANK_PHASES}', f'.const SHIELD_MAX={SHIELD_MAX}', f'.const BAR_X0={BAR_X0}',
              f'.const HUD_GLYPH={table[names["HUD_SCORE"]]["base"]}',
              f'.const PAL_HUD=${(HUD_BANK << 4) | 15:02x}']
     for name, i in names.items():

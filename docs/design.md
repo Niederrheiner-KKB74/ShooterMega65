@@ -140,12 +140,19 @@ are unchanged. See `docs/stage1-aircraft.md` for validation and remaining tests.
   | helicopter (16×16, formation of 6) | 2 | 12 | 150 | red shot (6) |
   | bomber (32×32, formation of 3) | 5 | 20 | 300 | fire shot (10) |
   | armoured plane (32×32, formation of 3) | 8 | 24 | 500 | fire shot (10), always drops a bonus |
-  | tank (placeholder art) | 2 | – (ground) | 200 | rocket (14) |
+  | tank (16×16, 4 directions, animated tracks) | 3 | – (ground) | 200 | rocket (14) |
 
 - **Shield** (decided 01.11.2026): the player has `SHIELD_MAX = 48` shield points instead of dying on the first
   contact. Contact with an enemy plane or an enemy shot costs the kind's damage; the plane is destroyed (no points).
-  After a hit the player is invulnerable for 1 s. At 0 the plane explodes; after 3 s a new game starts
-  (no lives yet, see §15).
+  After a hit the player is invulnerable for 1 s. At 0 the plane explodes. **Three lives** (decided 01.11.2026):
+  after 3 s the next plane starts with a full shield; after the last one a new game starts.
+- **Tanks** (artwork PR #6) drive on the ground in four directions at 0.5 px/frame relative to the landscape,
+  turn at the playfield edges and at random, and advance their track phase every 5 frames
+  (frame = `FR_TANK_N0 + direction·4 + phase`, palette bank 4 shared with the fixed targets).
+- **Animation frames**: the three frames per aircraft in artwork v2 are different drawings, not phases of one
+  design (they share only 3–25 % of their pixels), so cycling them made the objects jump. Until matching
+  phases exist, one frame per aircraft is shown (player: 'normal', left/right when banking). The importer
+  warns about such frame sets.
 - **Bonus items** refill the shield (+16, plus 250 points). They are dropped when a whole formation was shot down
   (per-formation kill counter) and always by armoured planes. Placeholder graphic until real artwork exists.
 - Collisions use bounding boxes from the visible pixels of every frame (`frame_hit_*` tables made by the
@@ -234,11 +241,12 @@ so `RUN` works again after an exit.
 | 01.11.2026 | HUD also shows a shield bar; the player has shield hit points, damage depends on the enemy kind |
 | 01.11.2026 | Shield refills come from bonus items left by certain enemies or completed formations |
 | 01.11.2026 | Artwork v2 (PR #4) adopted; Stage 1 and Stage 1-aircraft confirmed on hardware |
+| 01.11.2026 | Three lives, every new life starts with a full shield |
+| 01.11.2026 | Animated four-direction tank (PR #6) adopted |
 
 ## 15. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 2. What should the special weapon be (screen bomb, laser, shield …), and how many uses should there be per life or level?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
-4. Lives: should there be several lives (the HUD artwork has a plane icon), and does a new life start with a full shield?
 5. Are the damage values and points in §6 a good starting point?
 

@@ -10,7 +10,7 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
 ## Status
 - **Stage 1** (engine prototype) and **Stage 1-aircraft**: confirmed on real hardware (01.11.2026),
   `stage1-stable` / `stage1-aircraft-stable`.
-- **Stage 2** (branch `stage2`): artwork v2, HUD with score and shield bar, shield/damage, bonus items.
+- **Stage 2** (branch `stage2`): artwork v2 and animated tanks, HUD with score, lives and shield bar, shield/damage, three lives, bonus items.
   Smoke-tested in XEMU; **waiting for the real-hardware test**. See [docs/stage2.md](docs/stage2.md).
 
 ## Build
@@ -19,8 +19,6 @@ Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`
 python3 tools/build.py --kickass /path/to/KickAss65CE02-5.25.jar
 ```
 The output is `build/SHOOTER.PRG` and `build/SHOOTER65.D81` (`LOAD "SHOOTER",8` / `RUN`).
-The normal build selects the new aircraft. `--placeholder-art` retains the old artwork
-for comparison. `python3 tools/check_aircraft_integration.py` checks the normal build.
 
 Controls: joystick in port 2 (fire = shoot). D toggles the raster time display. Press X or RUN/STOP to go back to BASIC.
 
@@ -28,7 +26,7 @@ Controls: joystick in port 2 (fire = shoot). D toggles the raster time display. 
 - [Technical design and roadmap](docs/design.md)
 - [Memory map](docs/memory_map.md)
 - [Artwork specification](docs/artwork_spec.md)
-- [Aircraft integration, build evidence and hardware checklist](docs/stage1-aircraft.md)
+- [Stage 2 notes and hardware checklist](docs/stage2.md)
 - [Working rules](CLAUDE.md)
 
 ## Layout

@@ -34,8 +34,8 @@
 .const BONUS_SHIELD = 16          // shield points per bonus item
 
 //                    fighter      bomber        heli       armoured       tank       red  fire  rocket bonus
-kind_frame: .byte FR_FIGHTER0, FR_BOMBER0, FR_HELI0, FR_ARMOURED0, FR_TANK, FR_ESHOT_RED, FR_ESHOT_FIRE, FR_ROCKET, FR_BONUS
-kind_hp:    .byte 1,  5,  2,  8,  2
+kind_frame: .byte FR_FIGHTER0, FR_BOMBER0, FR_HELI0, FR_ARMOURED0, FR_TANK_N0, FR_ESHOT_RED, FR_ESHOT_FIRE, FR_ROCKET, FR_BONUS
+kind_hp:    .byte 1,  5,  2,  8,  3
 kind_dmg:   .byte 12, 20, 12, 24, 0,  6, 10, 14, 0    // shield points lost on contact
 kind_pts_lo:.byte $00,$00,$50,$00,$00                 // BCD points
 kind_pts_hi:.byte $01,$03,$01,$05,$02                 // fighter 100, bomber 300, heli 150, armoured 500, tank 200
@@ -250,11 +250,14 @@ spawn_update:
     jsr init_slot
     ldy #K_TANK
     jsr set_kind
-    jsr random
-    and #2
-    sec
-    sbc #1                      // +1 or -1
-    sta obj_b,x
+    jsr random                  // start driving east, south or west (north would stay above the screen)
+    and #3
+    bne !+
+    lda #2
+!:  sta obj_b,x
+    lda #0
+    sta obj_wave,x              // track phase
+    jsr tank_frame
 !no_tank:
     rts
 
@@ -583,43 +586,100 @@ maybe_fire:
 !no:
     rts
 
+// Tanks drive on the ground (moving with the landscape) in one of four directions:
+// obj_b = direction 0 north, 1 east, 2 south, 3 west; obj_wave = track phase 0-3.
+// 0.5 px/frame relative to the ground; the tracks advance every 5 frames while driving.
 upd_tank:
     lda scroll_delta
     jsr move_down
     lda obj_type,x
-    beq !gone+
-    inc obj_t,x
+    bne !+
+    rts
+!:  inc obj_t,x
     lda obj_t,x
-    and #3
-    bne !fire+
-    // x += b, bounce between 8 and 290
+    and #1
+    beq !moved+
     lda obj_b,x
-    bmi !l+
-    inc obj_xl,x
+    bne !+
+    sec                         // north
+    lda obj_yl,x
+    sbc #1
+    sta obj_yl,x
+    lda obj_yh,x
+    sbc #0
+    sta obj_yh,x
+    jmp !moved+
+!:  cmp #2
+    bne !+
+    lda #1                      // south
+    jsr move_down
+    lda obj_type,x
+    bne !moved+
+    rts
+!:  cmp #1
+    bne !west+
+    inc obj_xl,x                // east
     bne !+
     inc obj_xh,x
 !:  lda obj_xh,x
-    beq !fire+
+    beq !moved+
     lda obj_xl,x
     cmp #<290
-    bcc !fire+
-    lda #$ff
+    bcc !moved+
+    lda #3                      // right edge: turn west
     sta obj_b,x
-    bne !fire+
-!l: lda obj_xl,x
+    bne !moved+
+!west:
+    lda obj_xl,x
     bne !+
     dec obj_xh,x
 !:  dec obj_xl,x
     lda obj_xh,x
-    bne !fire+
+    bne !moved+
     lda obj_xl,x
     cmp #8
-    bcs !fire+
-    lda #1
+    bcs !moved+
+    lda #1                      // left edge: turn east
     sta obj_b,x
-!fire:
+!moved:
+    // occasionally choose a new direction (never north above the screen top)
+    jsr random
+    cmp #2
+    bcs !anim+
+    jsr random
+    and #3
+    bne !+
+    ldy obj_yh,x
+    bmi !anim+
+!:  sta obj_b,x
+!anim:
+    // track phase every 5 frames
+    lda obj_t,x
+    ldy #0
+!div:
+    cmp #5
+    bcc !+
+    sbc #5
+    bcs !div-
+!:  cmp #0
+    bne !+
+    lda obj_wave,x
+    clc
+    adc #1
+    and #TANK_PHASES-1
+    sta obj_wave,x
+!:  jsr tank_frame
     jmp maybe_fire
-!gone:
+
+// frame = FR_TANK_N0 + direction * 4 + phase
+tank_frame:
+    lda obj_b,x
+    asl
+    asl
+    clc
+    adc obj_wave,x
+    adc #FR_TANK_N0
+    sta obj_fr,x
     rts
 
 upd_eshot:
