@@ -17,607 +17,617 @@
     },
     {
       "id": 3,
-      "name": "grass1",
-      "palette": "nature"
-    },
-    {
-      "id": 4,
-      "name": "sea2",
-      "palette": "water"
-    },
-    {
-      "id": 5,
-      "name": "grass2",
-      "palette": "nature"
-    },
-    {
-      "id": 6,
       "name": "forest0",
       "palette": "nature"
     },
     {
-      "id": 7,
+      "id": 4,
       "name": "forest1",
       "palette": "nature"
     },
     {
-      "id": 8,
+      "id": 5,
       "name": "forest2",
       "palette": "nature"
     },
     {
-      "id": 9,
+      "id": 6,
       "name": "forest3",
       "palette": "nature"
     },
     {
-      "id": 10,
+      "id": 7,
       "name": "forest4",
       "palette": "nature"
     },
     {
-      "id": 11,
+      "id": 8,
       "name": "forest5",
       "palette": "nature"
     },
     {
-      "id": 12,
+      "id": 9,
       "name": "coast1",
       "palette": "water"
     },
     {
-      "id": 13,
+      "id": 10,
       "name": "coast2",
       "palette": "water"
     },
     {
-      "id": 14,
+      "id": 11,
       "name": "coast3",
       "palette": "water"
     },
     {
-      "id": 15,
+      "id": 12,
       "name": "coast4",
       "palette": "water"
     },
     {
-      "id": 16,
+      "id": 13,
       "name": "coast5",
       "palette": "water"
     },
     {
-      "id": 17,
-      "name": "coast6",
-      "palette": "water"
-    },
-    {
-      "id": 18,
+      "id": 14,
       "name": "coast7",
       "palette": "water"
     },
     {
-      "id": 19,
+      "id": 15,
       "name": "coast8",
       "palette": "water"
     },
     {
-      "id": 20,
-      "name": "coast9",
-      "palette": "water"
-    },
-    {
-      "id": 21,
+      "id": 16,
       "name": "coast10",
       "palette": "water"
     },
     {
-      "id": 22,
+      "id": 17,
       "name": "coast11",
       "palette": "water"
     },
     {
-      "id": 23,
+      "id": 18,
       "name": "coast12",
       "palette": "water"
     },
     {
-      "id": 24,
+      "id": 19,
       "name": "coast13",
       "palette": "water"
     },
     {
-      "id": 25,
+      "id": 20,
       "name": "coast14",
       "palette": "water"
     },
     {
-      "id": 26,
+      "id": 21,
       "name": "road5_0_0",
       "palette": "structures"
     },
     {
-      "id": 27,
+      "id": 22,
       "name": "road5_1_0",
       "palette": "structures"
     },
     {
-      "id": 28,
+      "id": 23,
       "name": "road5_0_1",
       "palette": "structures"
     },
     {
-      "id": 29,
+      "id": 24,
       "name": "road5_1_1",
       "palette": "structures"
     },
     {
-      "id": 30,
+      "id": 25,
       "name": "road10_0_0",
       "palette": "structures"
     },
     {
-      "id": 31,
+      "id": 26,
       "name": "road10_1_0",
       "palette": "structures"
     },
     {
-      "id": 32,
+      "id": 27,
       "name": "road10_0_1",
       "palette": "structures"
     },
     {
-      "id": 33,
+      "id": 28,
       "name": "road10_1_1",
       "palette": "structures"
     },
     {
-      "id": 34,
-      "name": "road3_0_0",
-      "palette": "structures"
-    },
-    {
-      "id": 35,
-      "name": "road3_1_0",
-      "palette": "structures"
-    },
-    {
-      "id": 36,
-      "name": "road3_0_1",
-      "palette": "structures"
-    },
-    {
-      "id": 37,
-      "name": "road3_1_1",
-      "palette": "structures"
-    },
-    {
-      "id": 38,
-      "name": "road6_0_0",
-      "palette": "structures"
-    },
-    {
-      "id": 39,
-      "name": "road6_1_0",
-      "palette": "structures"
-    },
-    {
-      "id": 40,
-      "name": "road6_0_1",
-      "palette": "structures"
-    },
-    {
-      "id": 41,
-      "name": "road6_1_1",
-      "palette": "structures"
-    },
-    {
-      "id": 42,
+      "id": 29,
       "name": "road9_0_0",
       "palette": "structures"
     },
     {
-      "id": 43,
+      "id": 30,
       "name": "road9_1_0",
       "palette": "structures"
     },
     {
-      "id": 44,
+      "id": 31,
       "name": "road9_0_1",
       "palette": "structures"
     },
     {
-      "id": 45,
+      "id": 32,
       "name": "road9_1_1",
       "palette": "structures"
     },
     {
-      "id": 46,
+      "id": 33,
       "name": "road12_0_0",
       "palette": "structures"
     },
     {
-      "id": 47,
+      "id": 34,
       "name": "road12_1_0",
       "palette": "structures"
     },
     {
-      "id": 48,
+      "id": 35,
       "name": "road12_0_1",
       "palette": "structures"
     },
     {
-      "id": 49,
+      "id": 36,
       "name": "road12_1_1",
       "palette": "structures"
     },
     {
-      "id": 50,
+      "id": 37,
       "name": "road7_0_0",
       "palette": "structures"
     },
     {
-      "id": 51,
+      "id": 38,
       "name": "road7_1_0",
       "palette": "structures"
     },
     {
-      "id": 52,
+      "id": 39,
       "name": "road7_0_1",
       "palette": "structures"
     },
     {
-      "id": 53,
+      "id": 40,
       "name": "road7_1_1",
       "palette": "structures"
     },
     {
-      "id": 54,
+      "id": 41,
       "name": "road15_0_0",
       "palette": "structures"
     },
     {
-      "id": 55,
+      "id": 42,
       "name": "road15_1_0",
       "palette": "structures"
     },
     {
-      "id": 56,
+      "id": 43,
       "name": "road15_0_1",
       "palette": "structures"
     },
     {
-      "id": 57,
+      "id": 44,
       "name": "road15_1_1",
       "palette": "structures"
     },
     {
-      "id": 58,
+      "id": 45,
       "name": "road1_0_0",
       "palette": "structures"
     },
     {
-      "id": 59,
+      "id": 46,
       "name": "road1_1_0",
       "palette": "structures"
     },
     {
-      "id": 60,
+      "id": 47,
       "name": "road1_0_1",
       "palette": "structures"
     },
     {
-      "id": 61,
+      "id": 48,
       "name": "road1_1_1",
       "palette": "structures"
     },
     {
-      "id": 62,
-      "name": "road4_0_0",
-      "palette": "structures"
-    },
-    {
-      "id": 63,
-      "name": "road4_1_0",
-      "palette": "structures"
-    },
-    {
-      "id": 64,
-      "name": "road4_0_1",
-      "palette": "structures"
-    },
-    {
-      "id": 65,
-      "name": "road4_1_1",
-      "palette": "structures"
-    },
-    {
-      "id": 66,
+      "id": 49,
       "name": "bridge_0_0",
       "palette": "structures"
     },
     {
-      "id": 67,
+      "id": 50,
       "name": "bridge_1_0",
       "palette": "structures"
     },
     {
-      "id": 68,
+      "id": 51,
       "name": "bridge_0_1",
       "palette": "structures"
     },
     {
-      "id": 69,
+      "id": 52,
       "name": "bridge_1_1",
       "palette": "structures"
     },
     {
-      "id": 70,
+      "id": 53,
       "name": "bridge_enter_0_0",
       "palette": "structures"
     },
     {
-      "id": 71,
+      "id": 54,
       "name": "bridge_enter_1_0",
       "palette": "structures"
     },
     {
-      "id": 72,
+      "id": 55,
       "name": "bridge_enter_0_1",
       "palette": "structures"
     },
     {
-      "id": 73,
+      "id": 56,
       "name": "bridge_enter_1_1",
       "palette": "structures"
     },
     {
-      "id": 74,
+      "id": 57,
       "name": "bridge_exit_0_0",
       "palette": "structures"
     },
     {
-      "id": 75,
+      "id": 58,
       "name": "bridge_exit_1_0",
       "palette": "structures"
     },
     {
-      "id": 76,
+      "id": 59,
       "name": "bridge_exit_0_1",
       "palette": "structures"
     },
     {
-      "id": 77,
+      "id": 60,
       "name": "bridge_exit_1_1",
       "palette": "structures"
     },
     {
-      "id": 78,
+      "id": 61,
       "name": "hangar_0_0",
       "palette": "structures"
     },
     {
-      "id": 79,
+      "id": 62,
       "name": "hangar_1_0",
       "palette": "structures"
     },
     {
-      "id": 80,
+      "id": 63,
       "name": "hangar_0_1",
       "palette": "structures"
     },
     {
-      "id": 81,
+      "id": 64,
       "name": "hangar_1_1",
       "palette": "structures"
     },
     {
-      "id": 82,
+      "id": 65,
       "name": "depot_0_0",
       "palette": "structures"
     },
     {
-      "id": 83,
+      "id": 66,
       "name": "depot_1_0",
       "palette": "structures"
     },
     {
-      "id": 84,
+      "id": 67,
       "name": "depot_0_1",
       "palette": "structures"
     },
     {
-      "id": 85,
+      "id": 68,
       "name": "depot_1_1",
       "palette": "structures"
     },
     {
-      "id": 86,
+      "id": 69,
       "name": "helipad_0_0",
       "palette": "structures"
     },
     {
-      "id": 87,
+      "id": 70,
       "name": "helipad_1_0",
       "palette": "structures"
     },
     {
-      "id": 88,
+      "id": 71,
       "name": "helipad_0_1",
       "palette": "structures"
     },
     {
-      "id": 89,
+      "id": 72,
       "name": "helipad_1_1",
       "palette": "structures"
     },
     {
-      "id": 90,
+      "id": 73,
       "name": "concrete_0_0",
       "palette": "structures"
     },
     {
-      "id": 91,
+      "id": 74,
       "name": "concrete_1_0",
       "palette": "structures"
     },
     {
-      "id": 92,
+      "id": 75,
       "name": "concrete_0_1",
       "palette": "structures"
     },
     {
-      "id": 93,
+      "id": 76,
       "name": "concrete_1_1",
       "palette": "structures"
     },
     {
-      "id": 94,
+      "id": 77,
       "name": "fence_h",
       "palette": "structures"
     },
     {
-      "id": 95,
+      "id": 78,
       "name": "fence_v",
       "palette": "structures"
     },
     {
-      "id": 96,
+      "id": 79,
       "name": "checkpoint_0_0",
       "palette": "structures"
     },
     {
-      "id": 97,
+      "id": 80,
       "name": "checkpoint_1_0",
       "palette": "structures"
     },
     {
-      "id": 98,
+      "id": 81,
       "name": "checkpoint_0_1",
       "palette": "structures"
     },
     {
-      "id": 99,
+      "id": 82,
       "name": "checkpoint_1_1",
       "palette": "structures"
     },
     {
-      "id": 100,
+      "id": 83,
       "name": "bunker_0_0",
       "palette": "fixed_targets"
     },
     {
-      "id": 101,
+      "id": 84,
       "name": "bunker_1_0",
       "palette": "fixed_targets"
     },
     {
-      "id": 102,
+      "id": 85,
       "name": "bunker_0_1",
       "palette": "fixed_targets"
     },
     {
-      "id": 103,
+      "id": 86,
       "name": "bunker_1_1",
       "palette": "fixed_targets"
     },
     {
-      "id": 104,
+      "id": 87,
       "name": "rocks",
       "palette": "nature"
     },
     {
-      "id": 105,
+      "id": 88,
       "name": "water_rocks",
       "palette": "water"
     },
     {
-      "id": 106,
+      "id": 89,
       "name": "meadow",
       "palette": "nature"
     },
     {
-      "id": 107,
-      "name": "sand",
-      "palette": "nature"
-    },
-    {
-      "id": 108,
+      "id": 90,
       "name": "radar_0_0",
       "palette": "structures"
     },
     {
-      "id": 109,
+      "id": 91,
       "name": "radar_1_0",
       "palette": "structures"
     },
     {
-      "id": 110,
+      "id": 92,
       "name": "radar_0_1",
       "palette": "structures"
     },
     {
-      "id": 111,
+      "id": 93,
       "name": "radar_1_1",
       "palette": "structures"
     },
     {
-      "id": 112,
+      "id": 94,
       "name": "fuel_0_0",
       "palette": "structures"
     },
     {
-      "id": 113,
+      "id": 95,
       "name": "fuel_1_0",
       "palette": "structures"
     },
     {
-      "id": 114,
+      "id": 96,
       "name": "fuel_0_1",
       "palette": "structures"
     },
     {
-      "id": 115,
+      "id": 97,
       "name": "fuel_1_1",
       "palette": "structures"
     },
     {
-      "id": 116,
+      "id": 98,
       "name": "crates_0_0",
       "palette": "structures"
     },
     {
-      "id": 117,
+      "id": 99,
       "name": "crates_1_0",
       "palette": "structures"
     },
     {
-      "id": 118,
+      "id": 100,
       "name": "crates_0_1",
       "palette": "structures"
     },
     {
-      "id": 119,
+      "id": 101,
       "name": "crates_1_1",
       "palette": "structures"
     },
     {
-      "id": 120,
+      "id": 102,
       "name": "runway_0_0",
       "palette": "structures"
     },
     {
-      "id": 121,
+      "id": 103,
       "name": "runway_1_0",
       "palette": "structures"
     },
     {
-      "id": 122,
+      "id": 104,
       "name": "runway_0_1",
       "palette": "structures"
     },
     {
-      "id": 123,
+      "id": 105,
       "name": "runway_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 106,
+      "name": "complex_steel_plain",
+      "palette": "structures"
+    },
+    {
+      "id": 107,
+      "name": "complex_steel_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 108,
+      "name": "complex_steel_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 109,
+      "name": "complex_steel_2_0",
+      "palette": "structures"
+    },
+    {
+      "id": 110,
+      "name": "complex_steel_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 111,
+      "name": "complex_steel_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 112,
+      "name": "complex_steel_2_1",
+      "palette": "structures"
+    },
+    {
+      "id": 113,
+      "name": "complex_steel_0_2",
+      "palette": "structures"
+    },
+    {
+      "id": 114,
+      "name": "complex_steel_1_2",
+      "palette": "structures"
+    },
+    {
+      "id": 115,
+      "name": "complex_steel_2_2",
+      "palette": "structures"
+    },
+    {
+      "id": 116,
+      "name": "complex_brick_plain",
+      "palette": "structures"
+    },
+    {
+      "id": 117,
+      "name": "complex_brick_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 118,
+      "name": "complex_brick_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 119,
+      "name": "complex_brick_2_0",
+      "palette": "structures"
+    },
+    {
+      "id": 120,
+      "name": "complex_brick_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 121,
+      "name": "complex_brick_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 122,
+      "name": "complex_brick_2_1",
+      "palette": "structures"
+    },
+    {
+      "id": 123,
+      "name": "complex_brick_0_2",
+      "palette": "structures"
+    },
+    {
+      "id": 124,
+      "name": "complex_brick_1_2",
+      "palette": "structures"
+    },
+    {
+      "id": 125,
+      "name": "complex_brick_2_2",
       "palette": "structures"
     }
   ]

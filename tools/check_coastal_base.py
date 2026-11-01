@@ -16,12 +16,25 @@ def main():
     assert len(set(tuple(r) for r in rows))<=256
     gfx=(BUILD/'LCGFX').read_bytes();dat=(BUILD/'LCDAT').read_bytes()
     assert len(gfx)<=16384 and len(dat)<=16384 and gfx[:2]==b'SG' and dat[:2]==b'SL'
-    assert struct.unpack_from('<H',gfx,2)[0]==248 and len(gfx)==4+192+124*128
+    ntiles=(len(gfx)-196)//128
+    assert 0<ntiles<=126
+    assert struct.unpack_from('<H',gfx,2)[0]==ntiles*2 and len(gfx)==4+192+ntiles*128
     header=struct.unpack_from('<2sBBHHHHHHHHB',dat)
     _,version,nmeta,nrows,om,od,orr,oe,of,op,speed,ndict=header
     assert version==1 and nrows==375 and speed==128 and ndict<=256
     manifest=json.loads((BASE/'manifest.json').read_text());metadata=json.loads((BASE/'level-example.json').read_text())['tiles']
-    assert len(manifest['palettes'])==4 and len(metadata)==124
+    assert len(manifest['palettes'])==4 and len(metadata)==ntiles
+    assert len(manifest['complexes'])==10
+    assert max(c['width'] for c in manifest['complexes'])>=8
+    assert max(c['height'] for c in manifest['complexes'])>=11
+    # Forest must have substantial open areas, not just a few decorative holes.
+    forest=sum(metadata[t]['name'].startswith('forest') for row in rows[96:184] for t in row[1:])
+    coverage=forest/(88*20)
+    assert .15<coverage<.65, coverage
+    for complex in manifest['complexes']:
+        for r in range(complex['row'],complex['row']+complex['height']):
+            for c in range(complex['column'],complex['column']+complex['width']):
+                assert metadata[rows[r][c]]['name'].startswith('complex_')
     original=json.loads((ROOT/'assets/art/spec-v2/generated/manifest.json').read_text())
     assert manifest['palettes']['fixed_targets']==original['palettes']['fixed_targets'], 'shared tank palette changed'
     reverse={1:'water',2:'nature',3:'structures',4:'fixed_targets'}
@@ -32,7 +45,7 @@ def main():
         pals[bank]=[tuple(build_level.swap(chunk[ch*16+i]) for ch in range(3)) for i in range(16)]
         assert [list(c) for c in pals[bank]]==manifest['palettes'][reverse[bank]]
     image=Image.new('RGBA',(336,6000));terrain=gfx[196:];tile_pixels=[]
-    for t in range(124):
+    for t in range(ntiles):
         values=[]
         for y in range(16):
             for x in range(16):

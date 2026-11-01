@@ -330,7 +330,135 @@
       ]
     ]
   },
-  "tile_count": 124,
-  "provenance": "New deterministic native pixel tiles and transitions; existing fixed_targets palette retained for tanks.",
+  "tile_count": 126,
+  "complexes": [
+    {
+      "style": "steel",
+      "column": 4,
+      "row": 286,
+      "width": 8,
+      "height": 7
+    },
+    {
+      "style": "brick",
+      "column": 16,
+      "row": 286,
+      "width": 4,
+      "height": 11
+    },
+    {
+      "style": "steel",
+      "column": 5,
+      "row": 304,
+      "width": 7,
+      "height": 6
+    },
+    {
+      "style": "steel",
+      "column": 9,
+      "row": 310,
+      "width": 3,
+      "height": 4
+    },
+    {
+      "style": "brick",
+      "column": 4,
+      "row": 320,
+      "width": 8,
+      "height": 9
+    },
+    {
+      "style": "steel",
+      "column": 16,
+      "row": 320,
+      "width": 4,
+      "height": 7
+    },
+    {
+      "style": "brick",
+      "column": 4,
+      "row": 344,
+      "width": 4,
+      "height": 9
+    },
+    {
+      "style": "steel",
+      "column": 8,
+      "row": 344,
+      "width": 4,
+      "height": 6
+    },
+    {
+      "style": "brick",
+      "column": 16,
+      "row": 344,
+      "width": 4,
+      "height": 10
+    },
+    {
+      "style": "steel",
+      "column": 5,
+      "row": 362,
+      "width": 7,
+      "height": 9
+    }
+  ],
+  "clearings": [
+    [
+      10,
+      35,
+      3.5,
+      7
+    ],
+    [
+      13,
+      62,
+      4,
+      8
+    ],
+    [
+      10,
+      102,
+      4.5,
+      10
+    ],
+    [
+      12,
+      124,
+      4,
+      9
+    ],
+    [
+      7,
+      149,
+      3.7,
+      10
+    ],
+    [
+      16,
+      174,
+      3,
+      7
+    ],
+    [
+      6,
+      195,
+      3.5,
+      9
+    ],
+    [
+      17,
+      231,
+      2.5,
+      7
+    ],
+    [
+      6,
+      259,
+      4,
+      10
+    ]
+  ],
+  "provenance": "New deterministic native pixel tiles, smooth coast field and modular large building complexes; fixed_targets palette retained for tanks.",
   "hardware_tested": false
 }

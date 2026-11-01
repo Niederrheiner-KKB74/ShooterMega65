@@ -107,12 +107,18 @@ reduces colours (`merge_bank`). Sprite palette (set 1) entries `$00–$1F`: play
 ## Coastal-base level (default since Stage 3b)
 
 `levels/coastal_base.json` is the default 375-row level. The denser scenery
-revision has 124 tiles using 248 glyphs (15872 bytes) at `$40000–$43DFF`.
-The 16068-byte GFX payload and 6623-byte DAT payload each fit
-the existing 16KB level buffer; DAT occupies `$50000–$519DE`. Fixed-target palette
+revision has 126 tiles using 252 glyphs (16128 bytes) at `$40000–$43EFF`.
+The 16324-byte GFX payload and 6566-byte DAT payload each fit
+the existing 16KB level buffer; DAT occupies `$50000–$519A5`. The GFX header/palettes
+leave room for at most 126 tiles, not 128; only 60 bytes remain in the file budget. Fixed-target palette
 bank 4 stays RGB-identical because moving tanks share it. Shield/coin artwork
 reuses HUD/bonus bank 12. No memory regions or zero-page variables are added.
 The verified Stage-3b candidate PRG ends at `$9D60` (exclusive); pixie allocation
 is 265 of 512 glyphs. The shop uses 148 glyphs / 9476 bytes including its header,
 within its existing 255-glyph/load-buffer limit. See `docs/COASTAL_BASE_LEVEL.md` for build evidence and
 remaining emulator/hardware tests.
+
+The additional clockwise-45-degree rocket view is a standalone asset in
+`assets/art/rocket-directions/`, not appended to runtime pixies. It retains the
+rocket palette (bank 13); its local RRB bases require relocation on later import.
+It allocates no runtime memory and does not change projectile movement.

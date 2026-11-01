@@ -355,3 +355,16 @@ with 7–8 rows between waves and quiet shop approaches. New scenery includes
 islands, woodland ponds, rocks, supply areas, radar and a runway. All fixed
 structures remain decoration. See `docs/COASTAL_BASE_LEVEL.md` for budgets and
 validation; the denser schedule still requires a full gameplay/hardware pass.
+
+## Natural terrain and large base complexes
+
+The next coastal-base artwork pass uses a smooth multi-frequency coastline,
+compact islands, nine broad clearings and less noisy grass. Ten building wings
+use reusable steel/brick roof modules, including an L-shaped workshop and halls
+up to 128 pixels wide. Used tiles are pruned and locally renumbered; import the
+tileset and level together. The denser wave schedule and runtime logic are unchanged.
+The actual 16KB GFX budget allows 126 tiles including the header/palettes.
+
+`assets/art/rocket-directions/` supplies original and clockwise-45-degree static
+views of the game projectile with exactly the existing rocket palette. These
+are optional standalone assets, not animation frames or a new homing mechanic.
