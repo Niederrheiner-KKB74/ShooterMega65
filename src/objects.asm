@@ -34,17 +34,18 @@
 .const K_CASH2    = 10
 .const K_CASH3    = 11
 
-.const BONUS_SHIELD = 16          // shield points per bonus item
+.const BONUS_SHIELD = (SHIELD_MAX * 20 + 50) / 100   // S capsule refills 20 % of the shield
+.const S_CHANCE     = 38          // S capsule chance per enemy shot down (38/256 = 15 %)
 
 //                    fighter      bomber        heli       armoured       tank       red  fire  rocket bonus
 kind_frame: .byte FR_FIGHTER0, FR_BOMBER0, FR_HELI0, FR_ARMOURED0, FR_TANK_N0, FR_ESHOT_RED, FR_ESHOT_FIRE, FR_ROCKET
             .byte FR_CAP_S, FR_CAP_D1, FR_CAP_D2, FR_CAP_D3
-kind_hp:    .byte 1,  5,  2,  8,  3
+kind_hp:    .byte 1,  6,  2, 10,  3                   // hit points (player shots do pl_power damage)
 kind_dmg:   .byte 12, 20, 12, 24, 0,  6, 10, 14, 0    // shield points lost on contact
 kind_pts_lo:.byte $00,$00,$50,$00,$00                 // BCD points
 kind_pts_hi:.byte $01,$03,$01,$05,$02                 // fighter 100, bomber 300, heli 150, armoured 500, tank 200
 kind_big:   .byte 0,  1,  0,  1,  0                   // 32x32 explosion
-kind_drop:  .byte 0, K_CASH2, 0, K_CASH3, K_CASH1     // capsule left behind (formation complete: K_BONUS)
+kind_drop:  .byte K_CASH1, K_CASH2, K_CASH1, K_CASH3, K_CASH1   // $ capsule: whole formation / every tank
 cash_value: .byte $10, $25, $50                       // BCD credits of the small / medium / large $ capsule
 kind_shot:  .byte K_SHOT_RED, K_SHOT_FIRE, K_SHOT_RED, K_SHOT_FIRE, K_ROCKET
 kind_fire:  .byte 3,  5,  3,  6,  2                   // firing chance per frame (n/256)
@@ -352,33 +353,46 @@ se_frame: .byte 0
 // ---------------------------------------------------------------- destroying objects
 // Object X is destroyed: points (if ko_flags bit 0), formation bonus, explosion.
 // X is preserved.
+// Capsules (only when shot down by the player):
+//   tank                      -> $ capsule (kind_drop)
+//   last plane of a formation -> $ capsule, size by plane kind (kind_drop)
+//   any other enemy           -> S capsule with S_CHANCE
 kill_obj:
     stx ko_i
     lda #0
     sta ko_drop
-    ldy obj_kind,x
-    lda kind_drop,y
-    sta ko_drop
     lda ko_flags
     and #1
     beq !nopts+
+    ldy obj_kind,x
     lda kind_pts_hi,y
     tax
     lda kind_pts_lo,y
     jsr score_add
     ldx ko_i
-    // formation complete?
+    ldy obj_kind,x
     lda obj_type,x
+    cmp #T_TANK
+    beq !cash+
     cmp #T_AIR
     bne !nopts+
-    ldy obj_wave,x
+    ldy obj_wave,x              // formation complete?
     lda wave_kills,y
     clc
     adc #1
     sta wave_kills,y
     cmp wave_count,y
+    bne !chance+
+    ldy obj_kind,x
+!cash:
+    lda kind_drop,y
+    sta ko_drop
     bne !nopts+
-    lda #K_BONUS                // whole formation shot down: shield capsule
+!chance:
+    jsr random
+    cmp #S_CHANCE
+    bcs !nopts+
+    lda #K_BONUS
     sta ko_drop
 !nopts:
     // centre of the object
@@ -833,11 +847,13 @@ collide_shots:
 !:  // hit: the shot disappears, the target loses one hit point
     lda #T_NONE
     sta obj_type,x
-    lda obj_hp,y
+    lda obj_hp,y                // weapon damage (upgradable in the shops)
     sec
-    sbc #1
+    sbc pl_power
     sta obj_hp,y
-    bne !nexts+
+    beq !+
+    bcs !nexts+
+!:
     tya
     tax
     lda #1                      // destroyed by the player: points

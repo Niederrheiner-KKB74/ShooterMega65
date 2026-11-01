@@ -43,7 +43,7 @@ python3 tools/build.py --kickass /path/to/KickAss65CE02-5.25.jar
 | XEMU after the hardware feedback: steady sprites, lives (3 → 2, full shield, score kept), tanks in all directions | ✔ |
 | XEMU with PR #7: player flame animation, credits box, "$" capsule collected (+50), RRB overflow 0 | ✔ |
 | XEMU: RUN → X → `READY.` → RUN → X → `READY.` | ✔ |
-| **Real MEGA65** | **open – please test** |
+| **Real MEGA65** | ✔ all checklist items confirmed by the owner (01.11.2026), `stage2-stable` |
 
 ## Hardware test checklist
 1. The HUD stays still at the top while the landscape scrolls; no jitter and no garbage next to the boxes.

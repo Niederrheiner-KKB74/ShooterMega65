@@ -1,7 +1,7 @@
 # ShooterMega65 – Technical Design
 
-Status: Stage 2 (01.11.2026): artwork v2, HUD, shield and bonus items. Assembled and XEMU smoke-tested;
-hardware test pending. Stage 1 and Stage 1-aircraft were confirmed on real hardware by the owner on 01.11.2026.
+Status: Stage 2 confirmed on real hardware by the owner on 01.11.2026 (`stage2-stable`). Stage 3 (branch `stage3`)
+in progress: capsule/weapon rules, level files (see `docs/level_format.md`).
 Items marked **(decision)** need the
 project owner's confirmation. Items marked **(HW)** have to be checked on real
 MEGA65 hardware, because XEMU is not authoritative for them (see Vyper rule 19).
@@ -153,12 +153,14 @@ are unchanged. See `docs/stage1-aircraft.md` for validation and remaining tests.
   the objects jump. PR #7 replaced them with real effect loops (exhaust flames, helicopter rotor; everything else
   pixel-identical). The player cycles frames 0-2 every 4 frames when flying straight (3/5 when banking), enemies
   cycle their 3 phases every 4 frames. The importer warns if a frame set turns into unrelated drawings again.
-- **Bonus capsules** (artwork PR #7, palette bank 12):
-  - "S" capsule (16×16): +16 shield and 250 points; dropped when a whole formation was shot down
-    (per-formation kill counter).
-  - "$" capsules, three sizes, add **credits** (shown in the middle of the HUD, 4 digits, max. 9999):
-    small 16×16 = 10 (tanks), medium 16×24 = 25 (bombers), large 32×32 = 50 (armoured planes).
-    What credits buy is still open (§15).
+- **Bonus capsules** (artwork PR #7, palette bank 12; rules decided 01.11.2026):
+  - "S" capsule (16×16): refills **20 % of the shield** (+250 points). Appears **at random** (15 %) when an enemy is shot down.
+  - "$" capsules, three sizes, add **credits** (HUD centre, 4 digits, max. 9999): small 10, medium 25, large 50.
+    Dropped by **every tank** (small) and by the **last plane of a completed formation**: fighters/helicopters
+    small, bombers medium, armoured planes large.
+  - Credits are spent in **shops in the middle and at the end of every level**: extra lives and weapon upgrades.
+- **Enemy hit points vs. weapon level**: every player shot does `pl_power` damage (1 at the start, raised by
+  weapon upgrades in the shops). Hit points: fighter 1, helicopter 2, tank 3, bomber 6, armoured plane 10.
   Capsules drift down slowly and are collected by flying over them.
 - Collisions use bounding boxes from the visible pixels of every frame (`frame_hit_*` tables made by the
   importer) with 16-bit signed differences: player shots against air enemies and tanks, and the player
@@ -250,12 +252,15 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Three lives, every new life starts with a full shield |
 | 01.11.2026 | Animated four-direction tank (PR #6) adopted |
 | 01.11.2026 | Real flame/rotor animations and bonus capsules S / $ in three sizes (PR #7) adopted; credits counter in the HUD |
+| 01.11.2026 | Stage 2 confirmed on hardware |
+| 01.11.2026 | Shops in the middle and at the end of every level (extra lives, weapon upgrades); enemies have hit points, weapon upgrades raise the damage |
+| 01.11.2026 | S capsule: 20 % shield, random drop; $ capsule: completed formation or single ground enemy |
+| 01.11.2026 | Levels are stored in separate files, not in the program (format proposal: `docs/level_format.md`) |
 
 ## 15. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 2. What should the special weapon be (screen bomb, laser, shield …), and how many uses should there be per life or level?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
 5. Are the damage values and points in §6 a good starting point?
-6. What are the credits for (shop between levels, weapon upgrades, extra lives …), and are the capsule values
-   (10 / 25 / 50) and the enemies that drop them right? Should the shield capsule also come in sizes?
+6. Level editor, shop presentation and level length: see `docs/level_format.md` §2.6.
 

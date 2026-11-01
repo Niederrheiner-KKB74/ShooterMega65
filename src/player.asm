@@ -12,6 +12,7 @@
 .label pl_frame  = $58    // sprite frame pair 0..5
 .label pl_lives  = $67    // lives left including the current one
 .label pl_anim   = $70    // exhaust animation counter 0-11
+.label pl_power  = $71    // damage per player shot (weapon level, upgraded in the shops)
 
 .const PL_W     = 32
 .const PL_H     = 24
@@ -54,6 +55,8 @@ player_init:
 player_new_game:
     lda #START_LIVES
     sta pl_lives
+    lda #1
+    sta pl_power
     jsr hud_score_changed       // the lives counter is part of the score box
 // a new plane: full shield, centre bottom, briefly invulnerable
 player_spawn:
