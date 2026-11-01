@@ -23,6 +23,7 @@ import import_art     # noqa: E402
 import build_level    # noqa: E402
 import make_shop      # noqa: E402
 import build_music    # noqa: E402
+import make_screens   # noqa: E402
 
 LEVELS = [('L1', 'levels/coastal_base.json')]   # (file prefix on the disk, source)
 
@@ -44,6 +45,7 @@ def main():
     ap.add_argument('--allow-other-kickass', action='store_true')
     ap.add_argument('--level', help='build this level JSON as L1 instead of the default test level')
     ap.add_argument('--test-credits', action='store_true', help='test build: start with 999 credits (shop tests)')
+    ap.add_argument('--define', action='append', default=[], help='test build: extra KickAssembler symbol (e.g. BOSS_TEST)')
     a = ap.parse_args()
     out = Path(a.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -61,6 +63,10 @@ def main():
         sys.exit(f'music: {e}')
     music = (ROOT / 'build/gen/MUSIC').read_bytes()
     pixies = (ROOT / 'build/gen/PIXIES').read_bytes()
+    print('\n'.join(make_screens.main(ROOT / 'build/gen')))  # title + game-over banner (Stage 7)
+    title = (ROOT / 'build/gen/TITLE').read_bytes()
+    gover = (ROOT / 'build/gen/GOVER').read_bytes()
+    boss = (ROOT / 'build/gen/L1BOSS').read_bytes()
     level_files = []
     selected_levels = [('L1', a.level)] if a.level else LEVELS
     for name, src in selected_levels:
@@ -70,12 +76,16 @@ def main():
             sys.exit(f'{src}: {e}')
         print('\n'.join(report))
         level_files += [(name + 'GFX', gfx, d81.SEQ), (name + 'DAT', dat, d81.SEQ)]
+        if name == 'L1':
+            if len(dat) + len(boss) > 0x4000:     # both share the 16 KB level buffer
+                sys.exit(f'{name}DAT ({len(dat)}) + {name}BOSS ({len(boss)}) exceed the 16 KB level buffer')
+            level_files.append((name + 'BOSS', boss, d81.SEQ))
     prg = out / f'{PRG_NAME}.PRG'
     out.mkdir(parents=True, exist_ok=True)
     # A failed assembly must not leave a previous build looking current.
     prg.unlink(missing_ok=True)
     (out / 'SHOOTER65.D81').unlink(missing_ok=True)
-    defines = ['-define', 'TEST_CREDITS'] if a.test_credits else []
+    defines = (['-define', 'TEST_CREDITS'] if a.test_credits else []) + [x for d in a.define for x in ('-define', d)]
     run = subprocess.run(['java', '-jar', str(jar), str(ROOT / 'src/main.asm'), '-o', str(prg),
                           '-symbolfile', '-odir', str(out), '-showmem'] + defines,
                          cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -98,7 +108,7 @@ def main():
     if run2.returncode or 'Error' in run2.stdout:
         print(run2.stdout)
         sys.exit('assembly of MUSICTEST failed')
-    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ), ('PIXIES', pixies, d81.SEQ)] + level_files
+    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ), ('PIXIES', pixies, d81.SEQ), ('TITLE', title, d81.SEQ), ('GOVER', gover, d81.SEQ)] + level_files
     image = d81.build_disk(files)
     for fname, payload, _ in files:
         if d81.read_file(image, fname) != payload:

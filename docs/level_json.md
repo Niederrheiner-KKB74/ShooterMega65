@@ -109,7 +109,7 @@ Wird eine Formation komplett abgeschossen, lässt der letzte Gegner eine $-Kapse
 | `ground` | `enemy`: `tank`, `x` (0–304), `dir`: `north`/`east`/`south`/`west` | Panzer am oberen Rand absetzen |
 | `speed` | `value` (Pixel pro Frame, 0–4) | Scrollgeschwindigkeit ändern (0 = Stillstand, z. B. für den Boss) |
 | `shop` | `id`: `mid` oder `end` | Spiel hält an, „ENTERING SHOP“, dann Shop-Overlay. Alle Gegner, Schüsse und Kapseln auf dem Bildschirm verschwinden dabei. Deshalb in eine ruhige Stelle setzen und keine anderen Ereignisse in dieselbe Zeile legen (sie würden sofort wieder entfernt) |
-| `boss` | `id` | Endgegner (folgt) |
+| `boss` | – | Endgegner (Level 1: Quadrocopter). Er erscheint, sobald keine Flugzeuge mehr im Bild sind (höchstens 5 s später); das Scrollen hält bis zu seiner Zerstörung an. Davor einige Zeilen ohne Formationen lassen, danach den Shop `end` |
 | `end` | – | Levelende (vorerst: Level beginnt von vorn) |
 
 Fehlt `end`, setzt der Konverter es an das Kartenende.

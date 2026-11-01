@@ -59,6 +59,8 @@ HUD_PAL = [(0, 0, 0), (54, 82, 111), (221, 239, 247), (255, 165, 50),     # 1-3 
 HUD_BOMB = ['....3.3.', '.....3..', '...55...', '..5555..', '.555555.', '.525555.', '.555555.', '..5555..']
 HUD_INVULN = ['7777777.', '7222227.', '7222227.', '7222227.', '.72227..', '.72227..', '..727...', '...7....']
 ROCKET_VIEWS = ROOT / 'assets/art/rocket-directions/generated'
+BOSS = ROOT / 'assets/art/boss-level1/generated'
+BOSS_BANK = 5                # boss palette replaces the fighter palette while the boss is on screen
 TANKS = ROOT / 'assets/art/ground-vehicles/generated'
 TANK_DIRS = ('north', 'east', 'south', 'west')       # engine direction 0-3
 TANK_PHASES = 4
@@ -283,6 +285,38 @@ def main(out):
         base = len(glyphs)
         glyphs += [bytes(64)] * (2 * w)
         table.append(dict(name=name, base=base, w=w, h=1, pal=(HUD_BANK << 4) | 15, hit=(8, 4, 1, 1)))
+    # ------------------------------------------------------------ level-1 boss (PR #14), file L1BOSS
+    # The boss glyphs are swapped in over the fighter + bomber frames while the boss is on screen (no
+    # fighters or bombers then). Their frame table entries point to that place already.
+    names_now = {t['name']: t for t in table}
+    swap0 = names_now['FIGHTER_0_0']['base'] - 1             # the blank guard before the first fighter column
+    swap_end = names_now['HELI_0_0']['base'] - 1             # first glyph after the bomber frames
+    boss_src = {f['id']: np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
+                for f in json.loads((BOSS / 'indexed-source.json').read_text())}
+    boss_frames = [('BOSS_BODY', 'body'), ('BOSS_CORE', 'core_exposed')] + \
+        [(f'BOSS_ROTOR{n}', f'rotor_{n}') for n in range(3)] + \
+        [(f'BOSS_T{k}_{v}', f'turret_{t}_{src}') for k, t in enumerate(('nw', 'ne', 'sw', 'se'))
+         for v, src in (('S', 'south'), ('SE', 'southeast'), ('SW', 'southeast'), ('X', 'destroyed'))] + \
+        [('BOSS_MUZZLE0', 'muzzle_0'), ('BOSS_MUZZLE1', 'muzzle_1')]
+    bglyphs = [bytes(64)]
+    for name, sid in boss_frames:
+        a = boss_src[sid]
+        if name.endswith('_SW'):
+            a = a[:, ::-1]                                    # south-west = mirrored south-east
+        h, w = a.shape[0] // 8, a.shape[1] // 16
+        base = swap0 + len(bglyphs)
+        for c in range(w):
+            for i in range(h):
+                bglyphs.append(ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
+            bglyphs.append(bytes(64))
+        table.append(dict(name=name, base=base, w=w, h=h, pal=(BOSS_BANK << 4) | 15, hit=hitbox(a)))
+    assert swap0 + len(bglyphs) <= swap_end, f'boss glyphs ({len(bglyphs)}) exceed the fighter/bomber area ({swap_end - swap0})'
+    bpal = (BOSS / 'palette.rgb').read_bytes()
+    bpal = [tuple(bpal[i:i + 3]) for i in range(0, 48, 3)]
+    (out / 'L1BOSS').write_bytes(b''.join(bglyphs) + bytes(ph.swap(c[ch]) for ch in range(3) for c in bpal))
+    boss_consts = [f'.const BOSS_SWAP_GLYPH={swap0}', f'.const BOSS_GLYPHS={len(bglyphs)}',
+                   f'.const BOSS_FILE_BYTES={len(bglyphs) * 64 + 48}', f'.const BOSS_BANK={BOSS_BANK}']
+    report.append(f'boss: {len(bglyphs)} glyphs swapped in at glyph {swap0} (room {swap_end - swap0})')
     assert len(glyphs) <= PIXIE_MAX, f'pixie glyph area ({PIXIE_MAX} glyphs) exceeded: {len(glyphs)}'
     # The complete glyph image (blank guards included) is a file on the disk (PIXIES), loaded to PIXIE_ADDR.
     (out / 'PIXIES').write_bytes(b''.join(glyphs))
@@ -361,6 +395,7 @@ def main(out):
              f'.const TANK_PHASES={TANK_PHASES}', f'.const SHIELD_MAX={SHIELD_MAX}', f'.const BAR_X0={BAR_X0}',
              f'.const HUD_GLYPH={table[names["HUD_SCORE"]]["base"]}',
              f'.const PAL_HUD=${(HUD_BANK << 4) | 15:02x}']
+    lines += boss_consts
     for name, i in names.items():
         lines.append(f'.const FR_{name}={i}')
     for alias, name in air_extra:

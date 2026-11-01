@@ -963,6 +963,10 @@
       "mirror": true
     },
     {
+      "row": 358,
+      "type": "boss"
+    },
+    {
       "row": 368,
       "type": "shop",
       "id": "end"
@@ -998,7 +1002,7 @@
     "nominal_seconds": 240,
     "first_contact_row": 17,
     "ground_spawn_surface": "road / land",
-    "boss": "none",
+    "boss": "quadrotor at row 358 (Stage 7)",
     "revision": "denser waves and authored terrain landmarks; playtest required",
     "paths_revision": "Claude, Stage 6b: helicopters, bombers and armoured planes fly curves (owner request); paths edited in this file, the generator script still has the old paths"
   }

@@ -1,4 +1,4 @@
-# ShooterMega65
+# Shooter65 (repository ShooterMega65)
 
 A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
 
@@ -29,6 +29,8 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
   `PIXIES`, quieter music, debounced shop fire, fewer shield capsules, curved paths for all aircraft. Confirmed on real hardware
   (01.11.2026), `stage6-stable`.
   See [docs/stage6.md](docs/stage6.md).
+- **Stage 7** (branch `stage7`): title screen "Shooter65", level-1 boss, game-over banner and high score,
+  title and boss music (PR #14 artwork). XEMU-tested, hardware test pending. See [docs/stage7.md](docs/stage7.md).
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.
@@ -51,8 +53,9 @@ Controls: joystick in port 2 (fire = shoot), space = bomb, S = invulnerability (
 
 ## Layout
 ```
-src/       engine sources (main, video, scroll, pixie, objects, player, hud, shop, level, system, hw, layout)
-tools/     build.py, import_art.py (artwork importer), build_level.py (JSON → level files), make_shop.py,
+src/       engine sources (main, video, scroll, pixie, objects, player, hud, shop, special, sound, boss, screens,
+           level, system, hw, layout)
+tools/     build.py, make_screens.py (title, game over), import_art.py (artwork importer), build_level.py (JSON → level files), make_shop.py,
            build_music.py (JSON → MUSIC), compose_music.py (score of the four pieces), d81.py
 levels/    level descriptions (JSON)
 music/     music pieces and sound effects (JSON)

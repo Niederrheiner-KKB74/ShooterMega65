@@ -103,10 +103,13 @@ load_seq:
     sta ld_dst+1
     lda #(LEVEL_BUF >> 16)
     sta ld_dst+2
+    lda #0
+    sta ld_dst+3
     lda #>LEVEL_MAX
     sta ld_maxhi
     pla
-// same, destination ld_dst (bank 0-15, must not cross a 64 KB boundary), at most ld_maxhi * 256 bytes
+// same, destination ld_dst (low 16 bits, bank 0-15, megabyte: 0 chip RAM / $80 attic RAM; must not
+// cross a 64 KB boundary), at most ld_maxhi * 256 bytes
 load_seq_to:
     sta ld_name
     stx ld_name+1
@@ -121,6 +124,8 @@ load_seq_to:
     sta job_ldflush+DMA_DST+1
     lda ld_dst+2
     sta job_ldflush+DMA_DST+2
+    lda ld_dst+3
+    sta job_ldflush+DMA_DSTMB
     lda #2
     ldx ld_device
     ldy #2
@@ -246,7 +251,7 @@ ld_len:    .byte 0
 ld_x:      .byte 0
 ld_st:     .byte 0
 ld_total:  .word 0
-ld_dst:    .fill 3, 0
+ld_dst:    .fill 4, 0
 ld_maxhi:  .byte 0
 name_gfx:  .text "L1GFX,S,R"
 name_gfx_end:
@@ -523,7 +528,12 @@ ev_run:
     sta lev_evp
     lda lev_offev+1
     sta lev_evp+1
-!:  rts                         // EV_BOSS: later stage
+    rts
+!:  cmp #EV_BOSS
+    bne !+
+    lda #1                      // boss.asm takes over when the sky is clear
+    sta boss_req
+!:  rts
 
 ev_ground:
     lda ev_p+1

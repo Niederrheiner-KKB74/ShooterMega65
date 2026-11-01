@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
 // Sound (Stage 5): music player and sound effects, data from the file MUSIC
-// (tools/build_music.py, format: docs/music_json.md), loaded to MUSIC_ADDR (bank 5).
+// (tools/build_music.py, format: docs/music_json.md), loaded to MUSIC_ADDR (bank 0, $A000).
 //
 // Music: SID 1 ($D400), mirrored to SID 3 ($D440) so it sounds from the middle
 // (by default SIDs 1/2 are panned slightly right, 3/4 slightly left).
@@ -18,9 +18,8 @@
 .const SID_S  = $d420           // effects
 .const SID_S2 = $d460
 
-.errorif (MUSIC_ADDR < RING_ADDR + 3 * $100 && MUSIC_ADDR + MUSIC_BYTES > RING_ADDR), "music data overlaps the ring sprites"
-.errorif (MUSIC_ADDR + MUSIC_BYTES > SPRITE_ADDR), "music data overlaps the player sprites"
-.errorif ((MUSIC_ADDR >> 16) != 5), "music data must be in bank 5"
+.errorif ((MUSIC_ADDR >> 16) != 0 || MUSIC_ADDR + MUSIC_BYTES > $c000), "music data must be in bank 0 below $C000"
+.errorif (prg_end > MUSIC_ADDR), "the program has grown into the music data at MUSIC_ADDR"
 
 // ---------------------------------------------------------------- loading (KERNAL)
 // file MUSIC: copied as a whole to MUSIC_ADDR. Carry set = failed (message printed).

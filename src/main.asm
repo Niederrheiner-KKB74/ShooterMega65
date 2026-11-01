@@ -12,6 +12,7 @@
 #import "../build/gen/assets.inc"
 #import "../build/gen/shop_const.inc"
 #import "../build/gen/music_const.inc"
+#import "../build/gen/screens_const.inc"
 
 // ---------------------------------------------------------------- zero page
 .const ZP = $02
@@ -57,6 +58,10 @@ start:
     jsr pixies_load                    // all pixie glyphs, straight into the pixie area
     bcs !fail+
     jsr level_load                     // level files from disk, still with the KERNAL (level.asm)
+    bcs !fail+
+    jsr boss_load                      // boss glyphs to the end of the level buffer (boss.asm)
+    bcs !fail+
+    jsr screens_load                   // title and game-over banner: attic RAM or title directly (screens.asm)
     bcc !+
 !fail:
     rts                                // failed: message printed, back to BASIC
@@ -81,24 +86,23 @@ start:
     jsr video_init
     jsr assets_init
     jsr level_init
-    jsr scroll_init
-    jsr objects_init
-    jsr shop_reset
+    lda #0                             // no boss (the files were just loaded: nothing to swap back)
+    sta boss_state
+    sta boss_req
+    sta game_over_req
+    sta title_seen
     jsr sound_init
-    lda #MUS_LEVEL1
-    jsr music_play
-    jsr hud_reset
-    jsr player_init
     lda #$a7
     sta seed
 
 #if MUSIC_TEST
-    jmp music_test                     // test build: keys 1-4 play the pieces, X = BASIC
+    jsr buffers_init
+    lda #MUS_LEVEL1
+    jsr music_play
+    jmp music_test                     // test build: keys 1-6 play the pieces, T = 440 Hz, X = BASIC
 #endif
-    // build the first frame into buffer A, show it, then run the loop
-    lda #0
-    sta back
-    jsr build_frame
+    jsr title_run                      // title screen (screens.asm), then a new game
+    jsr game_new
 
 main_loop:
     jsr wait_vblank
@@ -126,6 +130,11 @@ main_loop:
     lda shop_req                       // shop event reached: paused shop overlay
     beq !+
     jsr shop_run
+!:  lda game_over_req                  // last plane lost: game over, title, new game
+    beq !+
+    jsr game_over_run
+    jsr title_run
+    jsr game_new
 !:  jmp main_loop
 
 #if MUSIC_TEST
@@ -176,6 +185,7 @@ music_test:
 build_frame:
     jsr scroll_copy_rows               // background rows (DMA) + reset row fill levels
     jsr spawn_update
+    jsr boss_update
     jsr objects_update
     jsr collide_shots
     jsr collide_player
@@ -219,6 +229,8 @@ random:
 #import "shop.asm"
 #import "special.asm"
 #import "sound.asm"
+#import "boss.asm"
+#import "screens.asm"
 
 // file PIXIES: the complete pixie glyph area image (tools/import_art.py), loaded to PIXIE_ADDR
 pixies_load:

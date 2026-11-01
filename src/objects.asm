@@ -21,6 +21,7 @@
 .const T_EXPL  = 5
 .const T_BONUS = 6
 .const T_MISSILE = 7             // player's homing missile (special.asm)
+.const T_BOSS    = 8             // boss turret or core (boss.asm)
 
 .const K_FIGHTER  = 0
 .const K_BOMBER   = 1
@@ -116,6 +117,7 @@ objects_init:
 
 game_restart:
     jsr objects_init
+    jsr boss_reset
     jsr shop_reset
     jsr hud_reset
     jmp player_new_game
@@ -172,6 +174,11 @@ spawn_update:
 
 // object X fires its weapon: shot appears at its centre, aimed horizontally at the player
 spawn_eshot:
+    ldy obj_kind,x
+    lda kind_shot,y
+// same with shot kind A
+spawn_eshot_a:
+    sta es_kind
     ldy obj_fr,x
     clc
     lda obj_xl,x
@@ -194,9 +201,6 @@ spawn_eshot:
     lda obj_yh,x
     adc #0
     sta sp_y+1
-    ldy obj_kind,x
-    lda kind_shot,y
-    sta es_kind
     stx ob_i
     ldx #SHOT_FIRST
     lda #SHOT_END
@@ -424,7 +428,7 @@ upd_call:
     rts
 
 upd_tab:
-    .word upd_pshot, upd_air, upd_tank, upd_eshot, upd_expl, upd_bonus, upd_missile
+    .word upd_pshot, upd_air, upd_tank, upd_eshot, upd_expl, upd_bonus, upd_missile, upd_boss
 
 free_x:
     lda #T_NONE
@@ -842,7 +846,11 @@ collide_shots:
     beq !test+
     cmp #T_TANK
     beq !test+
-    jmp !nexte+
+    cmp #T_BOSS                 // boss turret or core, while it can be hit
+    bne !+
+    lda obj_b,y
+    bne !test+
+!:  jmp !nexte+
 !test:
     // compare the shot centre (x+8, y+4) with the target's visible rectangle
     sty cs_e
@@ -913,7 +921,12 @@ collide_shots:
 !:
     tya
     tax
-    lda #1                      // destroyed by the player: points
+    lda obj_type,x
+    cmp #T_BOSS
+    bne !+
+    jsr boss_part_down          // boss parts stay (destroyed view) or end the boss
+    jmp !nexts+
+!:  lda #1                      // destroyed by the player: points
     sta ko_flags
     jsr kill_obj
     jmp !nexts+
@@ -1091,6 +1104,7 @@ collide_player:
 
 // ---------------------------------------------------------------- drawing
 objects_draw:
+    jsr boss_draw               // boss body and rotors under everything else
     ldx #0
 !:  lda obj_type,x
     beq !next+

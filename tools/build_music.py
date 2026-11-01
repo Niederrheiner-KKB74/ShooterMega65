@@ -2,7 +2,7 @@
 """Music and sound effects: JSON (docs/music_json.md) -> file MUSIC for the D81 + build/gen/music_const.inc.
 
 All pieces of MUSIC_PIECES and the effects of music/sfx.json are packed into one file. The game loads it
-to MUSIC_ADDR (bank 5); every address inside the data is the low 16 bits of an address in that bank.
+to MUSIC_ADDR (bank 0); every address inside the data is the low 16 bits of an address in that bank.
 
 File:      'SM', piece count, sfx count, piece header addresses (2 bytes each), sfx record addresses (2 each)
 Piece:     0 tempo, 1 volume, 2 cutoff low 3 bits, 3 cutoff high 8 bits, 4 resonance << 4, 5 filter mode bits,
@@ -22,9 +22,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MUSIC_PIECES = ['level1', 'shop', 'game_over', 'level_clear']       # order = MUS_* constants
-MUSIC_ADDR = 0x5E000
-MUSIC_MAX = 0x1000
+MUSIC_PIECES = ['level1', 'shop', 'game_over', 'level_clear', 'boss', 'title']       # order = MUS_* constants
+MUSIC_ADDR = 0x0A000          # bank 0 behind the program (Stage 7; was $5E000 with 4 KB)
+MUSIC_MAX = 0x2000
 SID_CLOCK = 1_000_000            # MEGA65 SID clock as emulated by XEMU (check the tuning on hardware: A-4 = 440 Hz)
 WAVES = {'triangle': 0x10, 'saw': 0x20, 'pulse': 0x40, 'noise': 0x80}
 FILTER_MODES = {'lowpass': 0x10, 'bandpass': 0x20, 'highpass': 0x40}

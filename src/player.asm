@@ -24,7 +24,11 @@
 .const SPR_YOFS = 50
 .const INV_FRAMES = 50    // 1 s invulnerable after a hit
 .const RESTART_FRAMES = 150    // 3 s after being destroyed
+#if ONE_LIFE
+.const START_LIVES = 1          // test build (build.py --define ONE_LIFE)
+#else
 .const START_LIVES = 3
+#endif
 // player hit box relative to pl_x/pl_y (the plane is narrower than its 32x24 canvas)
 .label PL_HIT_CX = 16
 .label PL_HIT_CY = 12
@@ -93,7 +97,10 @@ player_move:
     bne !+
     lda pl_lives
     bne player_spawn
-    jmp game_restart
+    lda #1                      // last plane: the main loop shows the game over (screens.asm)
+    sta game_over_req
+    sta pl_timer
+    rts
 !:  rts
 !alive:
     lda pl_inv

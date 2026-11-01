@@ -322,7 +322,7 @@ def main():
     for i,r in enumerate(ground_rows):
         direction=('west','south','east','south')[i%4]
         events.append(dict(row=r,type='ground',enemy='tank',x=13*16-16,dir=direction))
-    events += [dict(row=188,type='shop',id='mid'),dict(row=368,type='shop',id='end'),dict(row=375,type='end')]
+    events += [dict(row=188,type='shop',id='mid'),dict(row=358,type='boss'),dict(row=368,type='shop',id='end'),dict(row=375,type='end')]
     events.sort(key=lambda e:e['row'])
     # Compact adjacent repeated map blocks when present; retain designer row order.
     packed=[];r=0

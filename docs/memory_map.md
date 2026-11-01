@@ -1,4 +1,4 @@
-# Memory map (Stage 6)
+# Memory map (Stage 7)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -23,6 +23,7 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 | `$71` | player weapon damage (`pl_power`) |
 | `$72–$75` | 32-bit pointer into the level data |
 | `$76–$79` | 32-bit pointer into the music data (`sound.asm`) |
+| `$7A–$7D` | 32-bit source pointer of the title / banner routines (`screens.asm`) |
 
 Shop state (`bomb_count`, `inv_count`, `has_missile`, cursor and dialog variables) lives in bank 0 in `shop.asm`,
 not in the zero page.
@@ -37,7 +38,7 @@ not in the zero page.
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
-| `< $C000` | assembler guard: the PRG must end below `$C000` |
+| `$A000–$BFFF` | music and sound effects from the file `MUSIC` (Stage 7: 4,519 of 8,192 bytes); the PRG must end below `$A000` (guard in `sound.asm`) |
 
 ## Banks 4/5 (chip RAM)
 
@@ -46,12 +47,14 @@ not in the zero page.
 | `$40000–$43FFF` | 16 KB | landscape NCM glyphs, char `$1000`+ (max. 256 per level: tile offsets in the map are bytes; `build_level.py` allows 128 tiles; the coastal level uses 208 glyphs) |
 | `$44000–$467FF` | 10 KB | shop glyphs from the file `SHOP`, char `$1100`+ (160 reserved, 148 used). Guarded in `shop.asm` |
 | `$46800–$4FFFF` | 38 KB | pixie NCM glyphs, char `$11A0`+ (max. 608, Stage 6 uses 535): loaded at start from the file `PIXIES` (complete image incl. blank guards) straight into this area. Frame bases in `frames.inc` are absolute character numbers. HUD glyphs at `HUD_GLYPH + 2k`, rebuilt at run time |
-| `$50000–$53FFF` | 16 KB | load buffer: first `SHOP` (glyphs → `$44000`), `MUSIC` (→ `$5E000`) (`PIXIES` goes straight to `$46800`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths), which stays here for the whole level |
+| `$50000–$53FFF` | 16 KB | load buffer (at the end: `L1BOSS`, 9,584 bytes, swapped with the fighter/bomber glyphs during the boss fight): first `SHOP` (glyphs → `$44000`), `MUSIC` (→ `$5E000`) (`PIXIES` goes straight to `$46800`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths), which stays here for the whole level |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |
 | `$58000–$5AA7F` | 64×170 | ring buffer, screen part (32 slots stored twice) |
 | `$5B000–$5DA7F` | 64×170 | ring buffer, colour part |
-| `$5E000–$5EFFF` | 4 KB | music and sound effects from the file `MUSIC` (Stage 5: 2,859 bytes used) |
+| `$56000–$5C7FF` | 26 KB | **while the title is shown**: title glyphs, map, palette (`TITLE`); overlaps screen B and the ring, which are rebuilt for every game |
+| `$58000–$5966F` | 5.6 KB | **while the game-over banner is shown**: banner glyphs, map, palette (`GOVER`), in the ring (the game is paused) |
+| `$5E000–$5EFFF` | 4 KB | free (music moved to bank 0 in Stage 7) |
 | `$5F000–$5FBFF` | | player sprites, 6 frame pairs (left/right half 256 bytes each) |
 | `$5FC00–$5FEFF` | | invulnerability ring, sprites 2–4 (256 bytes each, `special.asm`) |
 | `$5FF00–$5FFFF` | | free |
@@ -162,3 +165,17 @@ Local bases must be relocated and source palette indices mapped during later
 import. Four turret IDs are damage parts; four rotor instances are visual-only
 and reuse three frames. No new fixed palette bank is assumed. Future engine
 integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1_BOSS.md`.
+
+## Attic RAM (`$8000000`, MEGA65 R3 and later)
+
+| Address | Use |
+|---|---|
+| `$8000000` | title screen data (`TITLE`, 26 KB), copied to `$56000` for the title |
+| `$8010000` | game-over banner data (`GOVER`, 5.6 KB), copied to `$58000` for the banner |
+
+Detected at start (two patterns written by DMA and read back). Without attic RAM the title is loaded straight to
+`$56000` and shown only once.
+
+## Files on the D81 (Stage 7)
+
+`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1BOSS` (SEQ).

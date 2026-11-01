@@ -96,7 +96,11 @@ bomb_fire:
     ldx #GROUND_FIRST
 !obj:
     lda obj_type,x
-    cmp #T_AIR
+    cmp #T_BOSS
+    bne !+
+    jsr boss_bomb_part          // boss parts lose hit points instead
+    jmp !next+
+!:  cmp #T_AIR
     beq !enemy+
     cmp #T_TANK
     bne !next+
@@ -127,6 +131,13 @@ bomb_fire:
 // object X: carry clear if it is an enemy that is (at least partly) on the screen
 enemy_visible:
     lda obj_type,x
+    cmp #T_BOSS
+    bne !nb+
+    lda obj_b,x                 // boss part: only while it can be hit
+    beq !no+
+    clc
+    rts
+!nb:
     cmp #T_AIR
     bne !+
     lda obj_dly,x               // formation member still waiting above the screen
@@ -207,6 +218,8 @@ pick_target:
 !:  lda obj_type,x
     cmp #T_AIR
     beq !test+
+    cmp #T_BOSS
+    beq !test+
     cmp #T_TANK
     bne !next+
 !test:
@@ -236,6 +249,8 @@ upd_missile:
 !:  ldy obj_a,x                 // target still there?
     lda obj_type,y
     cmp #T_AIR
+    beq !chk+
+    cmp #T_BOSS
     beq !chk+
     cmp #T_TANK
     bne !new+

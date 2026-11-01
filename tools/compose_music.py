@@ -333,7 +333,69 @@ def level_clear():
     build('Level Clear', 6, MUSIC_VOLUME + 1, [lead, harm, low], None, JINGLE_INST, ROOT / 'music/level_clear.json')
 
 
+def boss():
+    """"Quadrotor" – E minor, 150 BPM (tempo 5): 4-bar alarm intro, then a 12-bar loop (A 8 bars, B 4 bars)."""
+    lead, harm, low = Voice(), Voice(), Voice()
+    # intro: tritone siren over a held E minor chord, pulsing bass
+    for _ in range(4):
+        lead.melody([('E5', 4), ('Bb4', 4), ('E5', 4), ('Bb4', 4)], 'lead')
+    for c in ('Em', 'Em', 'Em', 'B'):
+        arps(harm, c, 'hold')
+    for r in ('E2', 'E2', 'E2', 'B1'):
+        bass_drums(low, r, 'bass_only')
+    # A
+    lead.melody([('E5', 2), ('G5', 2), ('B5', 4), ('A5', 2), ('G5', 2), ('F#5', 4),
+                 ('E5', 4), ('G5', 2), ('E5', 2), ('C6', 8),
+                 ('B5', 2), ('A5', 2), ('G5', 2), ('E5', 2), ('A5', 8),
+                 ('F#5', 4), ('A5', 4), ('D#5', 8),
+                 ('E5', 2), ('G5', 2), ('B5', 4), ('E6', 8),
+                 ('D6', 2), ('C6', 2), ('B5', 2), ('G5', 2), ('C6', 8),
+                 ('A5', 4), ('C6', 4), ('F5', 8),
+                 ('D#6', 4), ('F#5', 4), ('B5', 8)], 'lead', True)
+    for c in ('Em', 'C', 'Am', 'B', 'Em', 'C', 'F', 'B'):
+        arps(harm, c, 'push')
+    for i, r in enumerate(('E2', 'C2', 'A1', 'B1', 'E2', 'C2', 'F2', 'B1')):
+        bass_drums(low, r, 'drive_fill' if i == 7 else 'drive')
+    # B: long saw notes, held chords
+    lead.melody([('B5', 16), ('C6', 8), ('B5', 8), ('A5', 8), ('G5', 4), ('A5', 4), ('B5', 8), ('D#6', 8)], 'lead_saw')
+    for c in ('Em', 'C', 'Am', 'B'):
+        arps(harm, c, 'hold')
+    for i, r in enumerate(('E2', 'C2', 'A1', 'B1')):
+        bass_drums(low, r, 'drive_fill' if i == 3 else 'drive')
+    vs = [fix_instruments(v) for v in (lead, harm, low)]
+    build('Quadrotor', 5, MUSIC_VOLUME, vs, 64, LEVEL_INST, ROOT / 'music/boss.json')
+
+
+def title():
+    """"Shooter65 Theme" – D major, heroic, tempo 7: 8 bars with pulsing bass, 8 bars with drums, loops."""
+    lead, harm, low = Voice(), Voice(), Voice()
+    lead.melody([('A4', 4), ('D5', 4), ('F#5', 4), ('A5', 4),
+                 ('B5', 8), ('A5', 4), ('F#5', 4),
+                 ('G5', 6), ('A5', 2), ('B5', 8),
+                 ('A5', 12), ('E5', 4),
+                 ('F#5', 4), ('A5', 4), ('D6', 8),
+                 ('C#6', 6), ('B5', 2), ('A5', 8),
+                 ('B5', 4), ('A5', 4), ('G5', 4), ('F#5', 4),
+                 ('E5', 12), ('-', 4),
+                 ('D5', 4), ('G5', 4), ('B5', 8),
+                 ('C#6', 4), ('B5', 4), ('A5', 8),
+                 ('A5', 4), ('C#6', 4), ('F#5', 8),
+                 ('B5', 6), ('A5', 2), ('F#5', 8),
+                 ('G5', 4), ('B5', 4), ('D6', 8),
+                 ('C#6', 4), ('E6', 4), ('A5', 8),
+                 ('D6', 16),
+                 ('D6', 8), ('A5', 4), ('F#5', 4)], 'lead_saw')
+    chords = ['D', 'Bm', 'G', 'A', 'D', 'F#m', 'G', 'A', 'G', 'A', 'F#m', 'Bm', 'G', 'A', 'D', 'D']
+    roots = ['D2', 'B1', 'G1', 'A1', 'D2', 'F#1', 'G1', 'A1', 'G1', 'A1', 'F#1', 'B1', 'G1', 'A1', 'D2', 'D2']
+    for i, c in enumerate(chords):
+        arps(harm, c, 'hold' if i < 8 else 'push')
+    for i, r in enumerate(roots):
+        bass_drums(low, r, 'bass_only' if i < 8 else ('drive_fill' if i == 15 else 'drive'))
+    vs = [fix_instruments(v) for v in (lead, harm, low)]
+    build('Shooter65 Theme', 7, MUSIC_VOLUME, vs, 0, LEVEL_INST, ROOT / 'music/title.json')
+
+
 if __name__ == '__main__':
     (ROOT / 'music').mkdir(exist_ok=True)
-    level1(); shop(); game_over(); level_clear()
-    print('music/level1.json, shop.json, game_over.json, level_clear.json written')
+    level1(); shop(); game_over(); level_clear(); boss(); title()
+    print('music/level1.json, shop.json, game_over.json, level_clear.json, boss.json, title.json written')

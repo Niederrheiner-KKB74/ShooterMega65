@@ -122,6 +122,10 @@ assets_init:
     // pixie glyphs: loaded from the file PIXIES directly into the pixie area (pixies_load)
     RunDma(job_sprites)
     RunDma(job_ring)
+    rts
+
+// all RRB rows: ring, screen buffers A and B (game start; the title uses screen B and the ring)
+buffers_init:
     ldx #RING_SLOTS*2
     lda #<job_ring_scr
     ldy #>job_ring_scr
@@ -130,21 +134,25 @@ assets_init:
     lda #<job_ring_col
     ldy #>job_ring_col
     jsr dma_replicate
-    ldx #BUF_ROWS
-    lda #<job_scr_a
-    ldy #>job_scr_a
-    jsr dma_replicate
+    jsr buffer_a_init
     ldx #BUF_ROWS
     lda #<job_scr_b
     ldy #>job_scr_b
     jsr dma_replicate
     ldx #BUF_ROWS
-    lda #<job_col_a
-    ldy #>job_col_a
-    jsr dma_replicate
-    ldx #BUF_ROWS
     lda #<job_col_b
     ldy #>job_col_b
+    jmp dma_replicate
+
+// screen buffer A and its colour RAM: empty rows (title screen)
+buffer_a_init:
+    ldx #BUF_ROWS
+    lda #<job_scr_a
+    ldy #>job_scr_a
+    jsr dma_replicate
+    ldx #BUF_ROWS
+    lda #<job_col_a
+    ldy #>job_col_a
     jmp dma_replicate
 
 // Run the DMA job at A/Y (lo/hi) X times, advancing its destination by ROW_BYTES each time.

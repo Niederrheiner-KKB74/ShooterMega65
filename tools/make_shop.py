@@ -252,10 +252,10 @@ def panel_image():
     return img, attr
 
 
-def message_image():
+def message_image(words='ENTERING SHOP'):
     img = np.zeros((MSG_ROWS * 8, MSG_COLS * 16), np.uint8)
     frame(img, thick=2)
-    draw_text(img, 'ENTERING SHOP', img.shape[1] // 2, 8, 5)
+    draw_text(img, words, img.shape[1] // 2, 8, 5)
     return img, np.full((MSG_ROWS, MSG_COLS), 16, np.uint8)
 
 
@@ -290,7 +290,8 @@ def main(out):
                 m[r, c] = index[g]
         return m
 
-    pics = {'panel': panel_image(), 'msg': message_image(), 'dlg': dialog_image()}
+    # 'gover': GAME OVER box in the size of the message box (Stage 7 fallback without attic RAM)
+    pics = {'panel': panel_image(), 'msg': message_image(), 'dlg': dialog_image(), 'gover': message_image('GAME OVER')}
     maps = {k: tokens(img) for k, (img, _) in pics.items()}
     assert all(not (img == 0).any() for img, _ in pics.values()), 'colour 0 in an opaque shop picture'
     if len(glyphs) > 255:

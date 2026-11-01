@@ -216,7 +216,7 @@ Original plan:
 - Music: SID tunes. The MEGA65 has 4 SIDs, so music and sound effects can use separate chips.
 - **Implemented in Stage 5 (`sound.asm`, `tools/build_music.py`, score `tools/compose_music.py`):** music on SID 1
   mirrored to SID 3, effects on SID 2 mirrored to SID 4, so both sound from the middle. All pieces and effects are
-  in the file `MUSIC` (≤ 4 KB) at `$5E000`. Player per frame (called in the vertical blank, also inside the shop):
+  in the file `MUSIC` (≤ 8 KB) at `$A000` in bank 0 (Stage 7; before: 4 KB at `$5E000`). Player per frame (called in the vertical blank, also inside the shop):
   row every `tempo` frames, the next row decoded two frames earlier with a hard restart (gate off, ADSR 0) for new
   notes; wave tables, arpeggios, vibrato (step = semitone × depth / 8 / speed, computed at note start), pulse sweep.
   Effects: fixed voice and priority per effect. Pieces: level music (loops), shop music while the shop is open,
@@ -289,6 +289,7 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Stage 5 (music, effects) confirmed on hardware; the SID tuning (1 MHz) is right |
 | 01.11.2026 | Aircraft views (PR #13); music volume 11 (effects 15); shop fire needs 8 frames release; S capsule 5 % |
 | 01.11.2026 | Curved paths for helicopters, bombers, armoured planes; Stage 6 confirmed on hardware |
+| 01.11.2026 | Game name "Shooter65" (repository keeps its name); PR #14 adopted: title, game-over banner, level-1 boss; boss and title music by Claude |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -357,9 +358,39 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - Column stacks must stay contiguous in memory (the hardware Y offset reads into the glyph above), so identical
   glyphs of different frames cannot be shared.
 
-## 18. Open questions for the owner
+## 18. Boss (Stage 7, `boss.asm`)
+- Level event `boss` (coastal level: row 358, before the end shop) sets `boss_req`. The boss arrives when no
+  aircraft are left on screen (at most 5 s later; the rest are removed): scrolling stops, the boss music starts.
+- Graphics (PR #14, quadrotor 96×64): file `L1BOSS` (149 glyphs + palette, 9,584 bytes), loaded with the level to the
+  end of the 16 KB level buffer (`LnDAT` + `LnBOSS` ≤ 16 KB, checked by `build.py`). At the start of the fight the
+  CPU swaps them with the fighter and bomber glyphs (no fighters or bombers then), the boss palette replaces bank 5;
+  afterwards both are swapped back and `palette_init` restores the bank. The frame table entries of the boss
+  (`FR_BOSS_*`) point to the swapped place already. South-west turret views are mirrored south-east views.
+- Body and the four rotors are drawn by `boss_draw` before all objects; the four turrets and the core are objects of
+  type `T_BOSS` (air slots), so shots, the missile and the bomb (20 damage) work on them. Turrets: 40 hit points,
+  aim south / south-east / south-west at the player, red shots every 1.2–2.5 s, muzzle flash; 1,000 points each.
+  When all four are destroyed the core opens (120 hit points, fire shots every 0.6–1.3 s, faster movement);
+  core destroyed: 5,000 points, 3 s of explosions, glyphs/palette back, scrolling and level music resume.
+- The boss moves sideways (x 24–200, 0.5 px/frame, 1 px in the core phase); touching its body costs 16 shield.
+
+## 19. Title, game over, high score (Stage 7, `screens.asm`, `tools/make_screens.py`)
+- Flow: start → title → game → last plane lost → game-over banner (fire after 1 s, or 5 s) → title → new game.
+- Title (PR #14, 320×200, 399 glyphs incl. texts and 3 digit glyphs, file `TITLE` 26 KB) is shown as background
+  tokens of screen buffer A, its glyphs at `$56000` (screen B and ring are free then). Its palette goes to bank 1,
+  the background colour register to entry `$10`. "PRESS FIRE" blinks by swapping row 22 with a copy without text.
+- Game-over banner (256×64 with "GAME OVER", "SCORE" and "PRESS FIRE" in the PR #14 font, 85 glyphs, file `GOVER`)
+  is laid over the paused game like the shop, its glyphs at `$58000` (ring), palette in bank 13.
+- Score digits are three reserved glyphs per screen, filled at run time from 8×8 digit cells (shop font).
+- Both files are kept in attic RAM (`$8000000`, `$8010000`, all MEGA65 from R3 on) and copied in when needed.
+  Without attic RAM (detected at start) the title is loaded straight to `$56000` and shown once; game over is then
+  a small "GAME OVER" box in the shop style and a new game starts directly.
+- High score: kept in memory while the program runs (not saved to disk yet).
+- New game (`game_new`): all RRB rows, scroll, level events, objects, boss, shop items, HUD, player, level music.
+
+## 20. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
+4. Should the high score be saved on the disk (with initials)?
 5. Are the damage values and points in §6 a good starting point?
 
 ## Coastal-base level ("Operation Küstenwald", PR #8)
