@@ -12,82 +12,146 @@ def rgba(p,pal):
 
 def body(cfg):
     p=Image.new('L',(96,64));d=ImageDraw.Draw(p)
-    # Closed structural arms, not transparent black shading.
+    # Armoured octagonal nacelles, gear rims and load-bearing shoulder joints.
+    # Shadow holes are painted with opaque index 1, never transparent index 0.
     for rotor_part in cfg['rotors']:
         x,y=rotor_part['offset'][0]+16,rotor_part['offset'][1]+16
-        d.line((48,32,x,y),fill=1,width=14);d.line((48,32,x,y),fill=3,width=10)
-        d.line((47,30,x-1,y-2),fill=5,width=3)
-        d.ellipse((x-14,y-14,x+14,y+14),fill=1,outline=4,width=2)
-        d.arc((x-14,y-14,x+14,y+14),180,290,fill=6,width=2)
-        d.ellipse((x-11,y-11,x+11,y+11),fill=2,outline=3)
-        for bx,by in ((x-10,y-10),(x+10,y-10),(x-10,y+10),(x+10,y+10)):d.point((bx,by),fill=12)
-        d.rectangle((x-2,y-2,x+2,y+2),fill=5)
-    outline=[(35,12),(60,12),(69,24),(69,43),(60,54),(35,54),(26,43),(26,24)]
+        d.line((48,32,x,y),fill=1,width=17);d.line((48,32,x,y),fill=3,width=13)
+        d.line((47,29,x-1,y-3),fill=5,width=4)
+        jx,jy=(48+x)//2,(32+y)//2
+        d.ellipse((jx-5,jy-5,jx+5,jy+5),fill=1,outline=6)
+        d.ellipse((jx-3,jy-3,jx+3,jy+3),fill=4);d.point((jx-1,jy-2),fill=7)
+        rim=[(x-9,y-15),(x+8,y-15),(x+15,y-8),(x+15,y+8),(x+8,y+15),(x-9,y+15),(x-15,y+8),(x-15,y-8)]
+        d.polygon(rim,fill=1);d.line(rim+[rim[0]],fill=4,width=2)
+        d.polygon([(x-8,y-14),(x+7,y-14),(x+10,y-11),(x-10,y-11)],fill=5)
+        d.line((x-8,y-14,x+7,y-14),fill=7)
+        d.polygon([(x-14,y-8),(x-11,y-10),(x-11,y+10),(x-14,y+7)],fill=6)
+        d.polygon([(x+12,y-8),(x+14,y-6),(x+14,y+7),(x+11,y+10)],fill=2)
+        d.polygon([(x-9,y+12),(x+8,y+12),(x+6,y+14),(x-7,y+14)],fill=11)
+        d.line((x-7,y+12,x+6,y+12),fill=12)
+        d.ellipse((x-12,y-12,x+12,y+12),fill=1,outline=5)
+        d.ellipse((x-10,y-10,x+10,y+10),fill=2)
+        for angle in range(0,360,45):
+            a=math.radians(angle);xx=x+round(11*math.cos(a));yy=y+round(11*math.sin(a))
+            d.point((xx,yy),fill=6 if angle>=180 else 4)
+        for dx,dy in ((-11,-11),(11,-11),(-11,11),(11,11)):
+            bx,by=x+dx,y+dy;d.rectangle((bx-1,by-1,bx+1,by+1),fill=1);d.point((bx-1,by-1),fill=7);d.point((bx,by),fill=5)
+        d.line((x-5,y-7,x+6,y-7),fill=3);d.line((x-6,y+7,x+5,y+7),fill=3)
+        d.ellipse((x-4,y-4,x+4,y+4),fill=3,outline=4)
+    # Wider angular carapace; layered plates replace the earlier flat green slab.
+    outline=[(38,4),(57,4),(63,10),(65,19),(72,27),(71,43),(62,53),(55,61),(48,63),(40,61),(33,53),(24,43),(23,27),(31,18),(32,10)]
     d.polygon(outline,fill=1)
-    d.polygon([(36,14),(59,14),(66,25),(66,42),(58,51),(37,51),(29,42),(29,25)],fill=4)
-    d.line((36,14,59,14,66,25),fill=6,width=2)
-    d.line((36,14,29,25,29,42),fill=5,width=2)
-    d.polygon([(38,18),(57,18),(62,26),(62,41),(56,47),(39,47),(33,41),(33,26)],fill=8)
-    d.polygon([(40,20),(55,20),(59,27),(59,39),(54,44),(41,44),(36,39),(36,27)],fill=9)
-    # Armoured centre hatch: shut until the four turrets have been destroyed.
-    d.rectangle((40,25,55,40),fill=1);d.rectangle((42,26,53,38),fill=3)
-    d.line((42,26,53,26),fill=6);d.line((48,27,48,38),fill=2)
-    for y in (29,33,37):d.line((43,y,46,y),fill=5);d.line((50,y,52,y),fill=5)
-    for x in (36,58):
-        d.rectangle((x,24,x+1,38),fill=1)
-        for y in (25,29,33):d.point((x,y),fill=12)
-    for x in (31,61):
-        d.rectangle((x,28,x+2,40),fill=2)
-        for y in (29,32,35,38):d.line((x,y,x+2,y),fill=6)
-    d.line((40,21,55,21),fill=10);d.point((38,23),fill=7);d.point((57,23),fill=7)
-    d.polygon([(40,46),(55,46),(51,51),(44,51)],fill=11)
-    d.line((43,47,52,47),fill=12)
-    # Four independently drawn turret beds; actual guns are separate assets.
+    d.polygon([(38,6),(56,6),(61,11),(62,21),(69,28),(68,42),(59,51),(53,58),(48,60),(42,58),(36,51),(27,42),(26,28),(34,20),(35,11)],fill=3)
+    d.line((38,6,56,6,61,11),fill=6,width=2)
+    d.line((38,6,35,11,34,20,26,28,27,41),fill=5,width=2)
+    d.line((69,28,68,42,59,51,53,58),fill=2,width=2)
+    # Rear sensor slit and antennae, scaled like the red armoured aircraft.
+    d.rectangle((42,5,53,9),fill=1);d.line((43,6,52,6),fill=11)
+    d.point((44,6),fill=12);d.point((51,6),fill=12)
+    d.line((40,1,40,5),fill=5);d.point((40,0),fill=11)
+    d.line((55,2,55,5),fill=4);d.point((55,1),fill=7)
+    # Red shoulder plates, bevels and exposed hydraulic pistons.
+    left=[(29,25),(35,21),(39,25),(36,43),(32,48),(27,41)]
+    right=[(58,21),(66,25),(69,40),(64,48),(59,43),(56,26)]
+    d.polygon(left,fill=11);d.line((29,25,35,21,38,25),fill=12)
+    d.polygon(right,fill=11);d.line((58,21,65,25),fill=6)
+    d.line((28,29,28,39),fill=5);d.line((66,29,67,39),fill=2)
+    for x in (30,62):
+        d.rectangle((x,29,x+3,39),fill=1)
+        for y in (30,33,36):d.line((x,y,x+2,y),fill=5);d.point((x,y),fill=6)
+    for x in (35,59):
+        d.line((x,27,x,41),fill=1,width=3);d.line((x-1,28,x-1,38),fill=6)
+        d.rectangle((x-1,39,x+1,42),fill=4)
+    # Two-piece reactor armour, still opaque and closed in stage one.
+    d.polygon([(41,21),(54,21),(59,26),(58,40),(54,45),(41,45),(36,40),(36,26)],fill=1)
+    d.line((41,21,54,21,59,26),fill=6);d.line((41,21,36,26,36,39),fill=5)
+    d.polygon([(41,24),(46,24),(46,40),(42,42),(39,38),(39,27)],fill=4)
+    d.polygon([(49,24),(54,24),(56,28),(55,38),(51,42),(49,40)],fill=3)
+    d.line((41,24,46,24),fill=7);d.line((49,24,54,24),fill=5)
+    for y in (28,32,36):
+        d.line((40,y,44,y),fill=2);d.point((40,y),fill=6)
+        d.line((51,y,54,y),fill=1);d.point((51,y),fill=4)
+    d.line((47,25,47,39),fill=11);d.line((48,25,48,39),fill=1)
+    d.rectangle((45,30,49,33),fill=1);d.line((46,31,48,31),fill=12)
+    d.point((37,25),fill=7);d.point((57,39),fill=5)
+    # Forward keel: angry visor, stacked chin armour and sharp nose.
+    d.polygon([(37,47),(58,47),(56,55),(48,62),(40,55)],fill=2)
+    d.polygon([(39,48),(56,48),(54,54),(48,59),(42,54)],fill=11)
+    d.line((40,48,55,48),fill=6)
+    d.polygon([(41,50),(54,50),(51,53),(44,53)],fill=1)
+    d.line((43,51,46,51),fill=12);d.line((49,51,52,51),fill=12)
+    d.line((44,56,48,60,52,56),fill=5)
+    for x,y in ((28,27),(65,27),(28,42),(65,42),(38,46),(57,46),(44,12),(51,12)):
+        d.point((x,y),fill=7);d.point((x+1,y+1),fill=1)
+    # The four gun sockets remain separate from the detachable gun images.
     for turret_part in cfg['turrets']:
         x,y=turret_part['offset'][0]+8,turret_part['offset'][1]+8
-        d.ellipse((x-7,y-6,x+7,y+6),fill=1,outline=5)
+        d.ellipse((x-7,y-7,x+7,y+7),fill=1,outline=4)
+        d.arc((x-7,y-7,x+7,y+7),180,300,fill=6)
     return p
 
 def rotor(phase):
-    p=Image.new('L',(32,32));d=ImageDraw.Draw(p);angle=math.radians(phase*60)
-    dx=round(11*math.cos(angle));dy=round(11*math.sin(angle));cx=16;cy=16
-    d.line((cx-dx+1,cy-dy+1,cx+dx+1,cy+dy+1),fill=2,width=3)
-    d.line((cx-dx,cy-dy,cx+dx,cy+dy),fill=5,width=3)
-    d.line((cx-dx,cy-dy-1,cx+dx,cy+dy-1),fill=6)
-    d.point((cx-dx,cy-dy),fill=7);d.point((cx+dx,cy+dy),fill=4)
-    d.ellipse((13,13,18,18),fill=3,outline=6);d.rectangle((15,15,16,16),fill=12)
+    p=Image.new('L',(32,32));d=ImageDraw.Draw(p)
+    # Four swept airfoils, not a thin stick; three 30-degree phase steps.
+    blade=[(3,-1),(7,-2),(11,-4),(12,-2),(10,1),(5,2),(3,1)]
+    for arm in range(4):
+        angle=math.radians(phase*30+arm*90);c=math.cos(angle);s=math.sin(angle)
+        points=[(16+round(x*c-y*s),16+round(x*s+y*c)) for x,y in blade]
+        d.polygon([(x+1,y+1) for x,y in points],fill=1)
+        d.polygon(points,fill=4 if arm%2 else 5)
+        d.line(points[:4],fill=6)
+        d.point(points[2],fill=7);d.point(points[3],fill=12)
+    d.ellipse((12,12,19,19),fill=1,outline=6)
+    d.ellipse((14,14,17,17),fill=3);d.point((14,14),fill=7)
+    d.rectangle((15,15,16,16),fill=11)
     return p
 
 def turret(mark,diagonal=False,destroyed=False):
     p=Image.new('L',(16,16));d=ImageDraw.Draw(p)
     d.polygon([(3,1),(12,1),(15,5),(15,11),(11,14),(3,14),(0,10),(0,5)],fill=1)
-    d.ellipse((2,2,13,13),fill=3,outline=6)
+    d.ellipse((2,2,13,13),fill=2,outline=5)
     if destroyed:
-        d.polygon([(3,4),(9,3),(12,7),(10,12),(4,11),(2,8)],fill=2)
-        d.line((4,4,8,7,5,11),fill=1,width=2);d.line((10,5,7,9),fill=5)
-        d.point((6,8),fill=11);d.point((8,7),fill=12);d.rectangle((11,10,13,11),fill=4)
+        d.polygon([(3,3),(10,3),(13,7),(11,12),(4,12),(2,8)],fill=3)
+        d.polygon([(5,4),(9,5),(11,8),(8,11),(4,8)],fill=1)
+        d.line((3,4,7,7,4,11),fill=5);d.line((10,4,8,7,12,10),fill=2)
+        d.rectangle((10,11,13,13),fill=4);d.point((10,11),fill=6)
+        d.line((3,11,2,14),fill=1,width=2);d.point((3,12),fill=5)
+        d.point((6,8),fill=11);d.point((8,7),fill=12);d.point((9,9),fill=11)
     else:
-        d.ellipse((4,3,11,10),fill=9,outline=10)
+        d.polygon([(5,1),(10,1),(13,4),(12,9),(10,11),(4,10),(2,7),(2,4)],fill=1)
+        d.polygon([(5,2),(10,2),(11,4),(11,8),(9,9),(4,8),(3,5)],fill=4)
+        d.line((5,2,10,2,11,4),fill=7);d.line((4,3,3,5,4,8),fill=6)
+        d.rectangle((5,4,10,6),fill=1);d.line((5,5,10,5),fill=11);d.point((6,5),fill=12)
         if diagonal:
             d.line((7,9,12,14),fill=1,width=3);d.line((10,6,15,11),fill=1,width=3)
             d.line((7,9,12,14),fill=6);d.line((10,6,15,11),fill=5)
+            d.point((12,14),fill=1);d.point((15,11),fill=1)
         else:
             for x in (6,10):
                 d.rectangle((x-1,8,x+1,15),fill=1);d.line((x,9,x,14),fill=6 if x==6 else 5)
-        d.rectangle((6,4,9,6),fill=4);d.point((6,4),fill=7)
+                d.line((x-1,10,x+1,10),fill=3);d.line((x-1,13,x+1,13),fill=4)
+                d.point((x,15),fill=1)
+        d.point((2,5),fill=7);d.point((12,8),fill=2)
     # Distinct identification lights per physical turret, including its stump.
     for i in range(mark):d.point((4+i*2,2),fill=12 if not destroyed else 11)
     return p
 
 def damaged_core():
     p=Image.new('L',(32,32));d=ImageDraw.Draw(p)
-    d.polygon([(7,4),(24,4),(29,11),(29,23),(23,29),(8,29),(3,23),(3,11)],fill=1)
-    d.line((7,4,24,4,29,11),fill=5,width=2)
-    d.ellipse((9,9,23,24),fill=2,outline=11)
-    d.ellipse((11,11,21,22),fill=14);d.rectangle((14,13,18,20),fill=15)
-    d.line((6,11,11,13,8,18,12,22,7,27),fill=11)
-    d.line((24,8,21,12,25,18,22,25),fill=12)
-    d.rectangle((6,27,9,28),fill=5);d.rectangle((24,22,26,24),fill=4)
+    d.polygon([(8,4),(23,4),(28,10),(28,23),(23,29),(8,29),(3,23),(3,10)],fill=1)
+    d.line((8,4,23,4,28,10),fill=6)
+    d.polygon([(6,10),(11,8),(9,15),(11,22),(7,26),(4,22)],fill=11)
+    d.polygon([(23,8),(27,11),(26,22),(22,27),(23,19),(21,14)],fill=4)
+    d.line((6,10,9,9,7,14),fill=12);d.line((23,8,26,11),fill=7)
+    d.ellipse((9,9,23,25),fill=2,outline=5)
+    for angle in range(0,360,45):
+        a=math.radians(angle);x=16+round(7*math.cos(a));y=17+round(8*math.sin(a));d.point((x,y),fill=12)
+    d.ellipse((11,11,21,23),fill=14);d.rectangle((14,13,18,21),fill=15)
+    d.line((12,14,20,14),fill=7);d.line((12,19,20,19),fill=3)
+    d.rectangle((15,15,17,18),fill=7)
+    d.line((6,16,9,18,5,24),fill=5);d.line((26,15,23,19,27,25),fill=11)
+    d.rectangle((9,27,13,29),fill=4);d.line((9,27,13,27),fill=6)
+    d.rectangle((20,26,23,29),fill=2);d.point((20,26),fill=12)
     return p
 
 def muzzle(phase):
@@ -168,6 +232,16 @@ def main():
     d.text((600,8),'Alle Tuerme zerstoert: Kern verwundbar',fill='white');enlarged=dead.resize((576,384),Image.Resampling.NEAREST);preview.paste(enlarged,(600,30),enlarged)
     d.text((12,430),f'{len(rrb)//64} guarded glyphs / {len(rrb)} bytes (< 9 KB); one palette; all art standalone.',fill=(180,205,210))
     preview.save(OUT/'preview.png')
+    previous=BASE/'source/previous-assembled.png'
+    if previous.exists():
+        comparison=Image.new('RGB',(820,390),(18,24,32));cd=ImageDraw.Draw(comparison)
+        cd.text((12,8),'Bisheriger Entwurf',fill='white');cd.text((420,8),'Neue schwere Panzerung',fill='white')
+        old=Image.open(previous).convert('RGBA');oldlarge=old.resize((384,256),Image.Resampling.NEAREST)
+        newlarge=composites[0].resize((384,256),Image.Resampling.NEAREST)
+        comparison.paste(oldlarge,(12,30),oldlarge);comparison.paste(newlarge,(420,30),newlarge)
+        comparison.paste(old,(150,310),old);comparison.paste(composites[0],(558,310),composites[0])
+        cd.text((12,292),'1x: 96x64',fill=(180,205,210));cd.text((420,292),'1x: 96x64',fill=(180,205,210))
+        comparison.save(OUT/'comparison.png')
     manifest=dict(schema=1,body_size=[96,64],palette=pal,palette_count=1,frames=len(records),rrb_glyphs=len(rrb)//64,rrb_bytes=len(rrb),budget_bytes=9*1024,
                   integrated=False,hardware_tested=False,provenance=cfg['provenance'])
     manifest['files']={p.name:dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(OUT.iterdir()) if p.is_file() and p.name!='manifest.json'}

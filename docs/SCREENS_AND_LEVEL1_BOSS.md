@@ -154,3 +154,12 @@ Keine Änderungen an Spielcode, Levelablauf oder alten Releases. Boss-Kollision,
 HP-/Turmzustände, Schüsse, Loader, Screen-Umschaltung und Palettenrestaurierung
 muss die kommende Engine-Stufe umsetzen. Deshalb wird kein neuer Spielbuild
 oder ein spielbarer Boss behauptet.
+
+## Detaillierte Boss-Fassung
+
+Der Boss wurde mit kantiger Schwerpanzerung, roten Platten, mechanischen
+Nacellen und vierblättrigen Rotoren überarbeitet. Schwerere Doppelkanonen,
+Sensoroptiken und beschädigte Einzelteile passen zum bisherigen Panzerflugzeug.
+Maße, Teilepositionen, Frame-Layout und 8816-Byte-Grafik-/Palettenbudget bleiben
+unverändert. Nur Palettenindex 11 übernimmt dessen Rot RGB (189,17,10).
+Vorher/Nachher, Integrationsdetails und Prüfung: `docs/BOSS_DETAIL_REVISION.md`.

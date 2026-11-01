@@ -1,0 +1,177 @@
+{
+  "source_commit": "b2f2a30be697a487d5a118039aef9ad2e81d10d0",
+  "frames": [
+    {
+      "id": "body",
+      "width": 96,
+      "height": 64,
+      "indices_offset": 0,
+      "ncm_offset": 0,
+      "fcm_offset": 0,
+      "rrb_base": 1
+    },
+    {
+      "id": "core_exposed",
+      "width": 32,
+      "height": 32,
+      "indices_offset": 6144,
+      "ncm_offset": 3072,
+      "fcm_offset": 6144,
+      "rrb_base": 55
+    },
+    {
+      "id": "rotor_0",
+      "width": 32,
+      "height": 32,
+      "indices_offset": 7168,
+      "ncm_offset": 3584,
+      "fcm_offset": 7168,
+      "rrb_base": 65
+    },
+    {
+      "id": "rotor_1",
+      "width": 32,
+      "height": 32,
+      "indices_offset": 8192,
+      "ncm_offset": 4096,
+      "fcm_offset": 8192,
+      "rrb_base": 75
+    },
+    {
+      "id": "rotor_2",
+      "width": 32,
+      "height": 32,
+      "indices_offset": 9216,
+      "ncm_offset": 4608,
+      "fcm_offset": 9216,
+      "rrb_base": 85
+    },
+    {
+      "id": "turret_nw_south",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 10240,
+      "ncm_offset": 5120,
+      "fcm_offset": 10240,
+      "rrb_base": 95
+    },
+    {
+      "id": "turret_nw_southeast",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 10496,
+      "ncm_offset": 5248,
+      "fcm_offset": 10496,
+      "rrb_base": 98
+    },
+    {
+      "id": "turret_nw_destroyed",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 10752,
+      "ncm_offset": 5376,
+      "fcm_offset": 10752,
+      "rrb_base": 101
+    },
+    {
+      "id": "turret_ne_south",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 11008,
+      "ncm_offset": 5504,
+      "fcm_offset": 11008,
+      "rrb_base": 104
+    },
+    {
+      "id": "turret_ne_southeast",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 11264,
+      "ncm_offset": 5632,
+      "fcm_offset": 11264,
+      "rrb_base": 107
+    },
+    {
+      "id": "turret_ne_destroyed",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 11520,
+      "ncm_offset": 5760,
+      "fcm_offset": 11520,
+      "rrb_base": 110
+    },
+    {
+      "id": "turret_sw_south",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 11776,
+      "ncm_offset": 5888,
+      "fcm_offset": 11776,
+      "rrb_base": 113
+    },
+    {
+      "id": "turret_sw_southeast",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 12032,
+      "ncm_offset": 6016,
+      "fcm_offset": 12032,
+      "rrb_base": 116
+    },
+    {
+      "id": "turret_sw_destroyed",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 12288,
+      "ncm_offset": 6144,
+      "fcm_offset": 12288,
+      "rrb_base": 119
+    },
+    {
+      "id": "turret_se_south",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 12544,
+      "ncm_offset": 6272,
+      "fcm_offset": 12544,
+      "rrb_base": 122
+    },
+    {
+      "id": "turret_se_southeast",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 12800,
+      "ncm_offset": 6400,
+      "fcm_offset": 12800,
+      "rrb_base": 125
+    },
+    {
+      "id": "turret_se_destroyed",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 13056,
+      "ncm_offset": 6528,
+      "fcm_offset": 13056,
+      "rrb_base": 128
+    },
+    {
+      "id": "muzzle_0",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 13312,
+      "ncm_offset": 6656,
+      "fcm_offset": 13312,
+      "rrb_base": 131
+    },
+    {
+      "id": "muzzle_1",
+      "width": 16,
+      "height": 16,
+      "indices_offset": 13568,
+      "ncm_offset": 6784,
+      "fcm_offset": 13568,
+      "rrb_base": 134
+    }
+  ],
+  "rrb_bytes": 8768
+}
