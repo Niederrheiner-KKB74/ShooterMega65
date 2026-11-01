@@ -1,0 +1,367 @@
+{
+  "schema": 1,
+  "frame_size": [
+    16,
+    16
+  ],
+  "frames": [
+    {
+      "direction": "north",
+      "phase": 0,
+      "indices_offset": 0,
+      "ncm_offset": 0,
+      "fcm_offset": 0,
+      "rrb_base": 1,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "north",
+      "phase": 1,
+      "indices_offset": 256,
+      "ncm_offset": 128,
+      "fcm_offset": 256,
+      "rrb_base": 4,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "north",
+      "phase": 2,
+      "indices_offset": 512,
+      "ncm_offset": 256,
+      "fcm_offset": 512,
+      "rrb_base": 7,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "north",
+      "phase": 3,
+      "indices_offset": 768,
+      "ncm_offset": 384,
+      "fcm_offset": 768,
+      "rrb_base": 10,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "east",
+      "phase": 0,
+      "indices_offset": 1024,
+      "ncm_offset": 512,
+      "fcm_offset": 1024,
+      "rrb_base": 13,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "east",
+      "phase": 1,
+      "indices_offset": 1280,
+      "ncm_offset": 640,
+      "fcm_offset": 1280,
+      "rrb_base": 16,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "east",
+      "phase": 2,
+      "indices_offset": 1536,
+      "ncm_offset": 768,
+      "fcm_offset": 1536,
+      "rrb_base": 19,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "east",
+      "phase": 3,
+      "indices_offset": 1792,
+      "ncm_offset": 896,
+      "fcm_offset": 1792,
+      "rrb_base": 22,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "south",
+      "phase": 0,
+      "indices_offset": 2048,
+      "ncm_offset": 1024,
+      "fcm_offset": 2048,
+      "rrb_base": 25,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "south",
+      "phase": 1,
+      "indices_offset": 2304,
+      "ncm_offset": 1152,
+      "fcm_offset": 2304,
+      "rrb_base": 28,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "south",
+      "phase": 2,
+      "indices_offset": 2560,
+      "ncm_offset": 1280,
+      "fcm_offset": 2560,
+      "rrb_base": 31,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "south",
+      "phase": 3,
+      "indices_offset": 2816,
+      "ncm_offset": 1408,
+      "fcm_offset": 2816,
+      "rrb_base": 34,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "west",
+      "phase": 0,
+      "indices_offset": 3072,
+      "ncm_offset": 1536,
+      "fcm_offset": 3072,
+      "rrb_base": 37,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "west",
+      "phase": 1,
+      "indices_offset": 3328,
+      "ncm_offset": 1664,
+      "fcm_offset": 3328,
+      "rrb_base": 40,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "west",
+      "phase": 2,
+      "indices_offset": 3584,
+      "ncm_offset": 1792,
+      "fcm_offset": 3584,
+      "rrb_base": 43,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    },
+    {
+      "direction": "west",
+      "phase": 3,
+      "indices_offset": 3840,
+      "ncm_offset": 1920,
+      "fcm_offset": 3840,
+      "rrb_base": 46,
+      "w": 1,
+      "h": 2,
+      "palette_byte": 79
+    }
+  ],
+  "palette": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      18,
+      25,
+      32
+    ],
+    [
+      39,
+      45,
+      47
+    ],
+    [
+      69,
+      77,
+      76
+    ],
+    [
+      103,
+      112,
+      106
+    ],
+    [
+      153,
+      164,
+      145
+    ],
+    [
+      213,
+      219,
+      181
+    ],
+    [
+      173,
+      67,
+      32
+    ],
+    [
+      245,
+      157,
+      51
+    ],
+    [
+      36,
+      62,
+      28
+    ],
+    [
+      58,
+      85,
+      37
+    ],
+    [
+      90,
+      116,
+      54
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ]
+  ],
+  "shared_palette": "stage2 fixed_targets, text bank 4 ($4f); no extra bank",
+  "provenance": "New code-native pixel art by Codex; not extracted from the reference board.",
+  "source_sha256": "adfe5c5b79c4f33f1c0596d4d1de4c91ebba7c73920dee2c6003cdb5bbbf8328",
+  "source_stage2_commit": "f320c8449e27ca31bd619e259b55de0c96595bdd",
+  "frame_ms": 100,
+  "animation": "0,1,2,3, repeat; freeze phase on stop; barrel follows travel direction",
+  "rrb_glyphs": 49,
+  "hardware_tested": false,
+  "emulator_tested": false,
+  "integrated": false,
+  "files": {
+    "indexed-source.json": {
+      "bytes": 12221,
+      "sha256": "4fed7ce0a60f20e0f7af35530ec3a8b6aa913657fe5f9b2f128b504570021e59"
+    },
+    "palette.palregs.bin": {
+      "bytes": 48,
+      "sha256": "236116fc89e4e1d793d3da6879972fece516cbb8bb7681497a8a19ef00434472"
+    },
+    "palette.rgb": {
+      "bytes": 48,
+      "sha256": "0e26b99c07f236cbf4fed28e82b681469a9f5f91906ad734a9583c62fee1d200"
+    },
+    "preview.png": {
+      "bytes": 11139,
+      "sha256": "a0610e2b10685e6e8645193e55fd4075e5fde3a9529c11879a69a4a81dc71637"
+    },
+    "tank-frames.inc": {
+      "bytes": 587,
+      "sha256": "20bb52ff0e3ad35a3df93ac402c8f54fd6b5cb69757a1ddddbaa1505d91dd4ec"
+    },
+    "tank.fcm.bin": {
+      "bytes": 4096,
+      "sha256": "d2315dfecc80bb4080a4c38a951719e3200f947707fe1f31561e7d98336fc67c"
+    },
+    "tank.indices.bin": {
+      "bytes": 4096,
+      "sha256": "3a7023f31294da5e25aac3999c2aa8e02cdd6e327d8ea63627659d49d6c2d283"
+    },
+    "tank.ncm.bin": {
+      "bytes": 2048,
+      "sha256": "2aac7e3b09b526d5778459d7fca5f4ffa5238c4ec9490637b2e54a1adb9c7ef5"
+    },
+    "tank.rrb.bin": {
+      "bytes": 3136,
+      "sha256": "90760b439d14b053b2c0e7884068c58586ceed51e1c743faee3019413c3a3dc5"
+    },
+    "tank_atlas.png": {
+      "bytes": 1478,
+      "sha256": "db48b9e58ca9e6290a1ebb8faf3d8b6dfee20fc2d15b93331e56f5f6d8bb22f7"
+    },
+    "tank_east.png": {
+      "bytes": 431,
+      "sha256": "4314fd55b22e936adce0ee98b67c623cc317538153e5cccec67a5d9570da55a4"
+    },
+    "tank_east.webp": {
+      "bytes": 1032,
+      "sha256": "57898b15e1fc310b0117b81a43a4ab8d048cce97d6386a07821a910ae99fbcfe"
+    },
+    "tank_north.png": {
+      "bytes": 583,
+      "sha256": "d692eb0de047b305492c8e090feae27ea3100529bf397fb77d3e8f1cf7f28127"
+    },
+    "tank_north.webp": {
+      "bytes": 752,
+      "sha256": "e94fcdf9ae65e28f5e3ae89d547da59b0afa32ae0e152e4e6ebca1944d8324bb"
+    },
+    "tank_south.png": {
+      "bytes": 603,
+      "sha256": "980af9a1335bcccced44f9c7cd10ba818d2ddf2a687e81428a6acb56f051e058"
+    },
+    "tank_south.webp": {
+      "bytes": 768,
+      "sha256": "6ba7002664d8184157f64a598143efcf51576dde293dc5ef49a592be186d1ce2"
+    },
+    "tank_west.png": {
+      "bytes": 432,
+      "sha256": "739f4f40cd97a1b63073bc45dd67d45ee72d9b874c8e2c8aad4843baaf957298"
+    },
+    "tank_west.webp": {
+      "bytes": 1018,
+      "sha256": "1b59207162317d0d5b521785f7e7c3724d849823e9936d16d24a4f49f16b89c0"
+    },
+    "track_mask_east.png": {
+      "bytes": 93,
+      "sha256": "1c461ecf30e3246acc4180472182c6ad5b1307b1363741203f0c46b9b7590e3a"
+    },
+    "track_mask_north.png": {
+      "bytes": 94,
+      "sha256": "c8bf13be58c295dce37fb22a8ed6ca43e714502e2a2de3d43f40ef3d69b65e45"
+    },
+    "track_mask_south.png": {
+      "bytes": 93,
+      "sha256": "9823c8651b1019f4a8230411309d3c245b03c0af649785c9f838faf868147594"
+    },
+    "track_mask_west.png": {
+      "bytes": 95,
+      "sha256": "f9468fdd84aca4af07bdf3bf3fc83fcc2b18cacb388a47c00f236befaa1e18bf"
+    }
+  }
+}

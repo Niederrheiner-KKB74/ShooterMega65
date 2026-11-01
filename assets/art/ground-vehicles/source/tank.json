@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "frame_size": [
+    16,
+    16
+  ],
+  "directions": [
+    "north",
+    "east",
+    "south",
+    "west"
+  ],
+  "phases": 4,
+  "preview_frame_ms": 100,
+  "palette": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      18,
+      25,
+      32
+    ],
+    [
+      39,
+      45,
+      47
+    ],
+    [
+      69,
+      77,
+      76
+    ],
+    [
+      103,
+      112,
+      106
+    ],
+    [
+      153,
+      164,
+      145
+    ],
+    [
+      213,
+      219,
+      181
+    ],
+    [
+      173,
+      67,
+      32
+    ],
+    [
+      245,
+      157,
+      51
+    ],
+    [
+      36,
+      62,
+      28
+    ],
+    [
+      58,
+      85,
+      37
+    ],
+    [
+      90,
+      116,
+      54
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0
+    ]
+  ],
+  "stage2_commit": "f320c8449e27ca31bd619e259b55de0c96595bdd",
+  "palette_source": "assets/art/spec-v2/generated/manifest.json: palettes.fixed_targets; exact Stage-2 bank 4 RGB entries",
+  "provenance": "Native pixel geometry and track pattern in tools/export_tanks.py. Lighting applied in world coordinates after rotating geometry."
+}
