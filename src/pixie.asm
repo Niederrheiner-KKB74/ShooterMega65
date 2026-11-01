@@ -29,12 +29,15 @@
 .label px_need = $2c
 .label px_row  = $2d
 .label px_gl   = $2e      // 16 bit glyph number
+.label px_bhi  = $30      // frame base, high byte
 
 // in: px_x, px_y, px_pal, A = frame number
 pixie_draw:
     tax
     lda frame_base,x
     sta px_base
+    lda frame_base_hi,x
+    sta px_bhi
     lda frame_w,x
     sta px_w
     asl
@@ -173,8 +176,8 @@ emit_fragment:
     lda px_base
     adc px_i
     sta px_gl
-    lda #>PIXIE_CHAR
-    adc #0
+    lda px_bhi
+    adc #>PIXIE_CHAR
     sta px_gl+1
 
     ldz #0

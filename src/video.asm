@@ -99,7 +99,28 @@ palette_init:
 // Copy glyphs and sprites to their final place, initialise all RRB rows.
 assets_init:
     RunDma(job_tiles)
-    RunDma(job_pixies)
+    // pixie glyphs: clear the whole area, then copy the stored (non-blank) glyph runs
+    RunDma(job_pixclear)
+    ldx #0
+!run:
+    lda pixrun_src_lo,x
+    sta job_pixrun+DMA_SRC
+    lda pixrun_src_hi,x
+    sta job_pixrun+DMA_SRC+1
+    lda pixrun_dst_lo,x
+    sta job_pixrun+DMA_DST
+    lda pixrun_dst_hi,x
+    sta job_pixrun+DMA_DST+1
+    lda pixrun_len_lo,x
+    sta job_pixrun+DMA_COUNT
+    lda pixrun_len_hi,x
+    sta job_pixrun+DMA_COUNT+1
+    stx rep_count
+    RunDma(job_pixrun)
+    ldx rep_count
+    inx
+    cpx #PIX_RUNS
+    bne !run-
     RunDma(job_sprites)
     ldx #RING_SLOTS*2
     lda #<job_ring_scr
@@ -217,7 +238,8 @@ show_buffer_b:
 
 // ---------------------------------------------------------------- DMA jobs
 job_tiles:   DmaJob(DMA_CMD_COPY, tile_data, TILE_ADDR, tile_end - tile_data)
-job_pixies:  DmaJob(DMA_CMD_COPY, pixie_data, PIXIE_ADDR, pixie_end - pixie_data)
+job_pixclear: DmaJob(DMA_CMD_FILL, 0, PIXIE_ADDR, PIXIE_MAX * 64)
+job_pixrun:  DmaJob(DMA_CMD_COPY, pixie_data, PIXIE_ADDR, 64)
 job_sprites: DmaJob(DMA_CMD_COPY, sprite_data, SPRITE_ADDR, sprite_end - sprite_data)
 job_ring_scr: DmaJob(DMA_CMD_COPY, row_tpl_scr, RING_SCR, ROW_BYTES)
 job_ring_col: DmaJob(DMA_CMD_COPY, row_tpl_col, RING_COL, ROW_BYTES)

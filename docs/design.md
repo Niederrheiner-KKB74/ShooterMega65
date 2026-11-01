@@ -149,12 +149,17 @@ are unchanged. See `docs/stage1-aircraft.md` for validation and remaining tests.
 - **Tanks** (artwork PR #6) drive on the ground in four directions at 0.5 px/frame relative to the landscape,
   turn at the playfield edges and at random, and advance their track phase every 5 frames
   (frame = `FR_TANK_N0 + direction·4 + phase`, palette bank 4 shared with the fixed targets).
-- **Animation frames**: the three frames per aircraft in artwork v2 are different drawings, not phases of one
-  design (they share only 3–25 % of their pixels), so cycling them made the objects jump. Until matching
-  phases exist, one frame per aircraft is shown (player: 'normal', left/right when banking). The importer
-  warns about such frame sets.
-- **Bonus items** refill the shield (+16, plus 250 points). They are dropped when a whole formation was shot down
-  (per-formation kill counter) and always by armoured planes. Placeholder graphic until real artwork exists.
+- **Animation frames**: the first artwork v2 frames per aircraft were different drawings, not phases, which made
+  the objects jump. PR #7 replaced them with real effect loops (exhaust flames, helicopter rotor; everything else
+  pixel-identical). The player cycles frames 0-2 every 4 frames when flying straight (3/5 when banking), enemies
+  cycle their 3 phases every 4 frames. The importer warns if a frame set turns into unrelated drawings again.
+- **Bonus capsules** (artwork PR #7, palette bank 12):
+  - "S" capsule (16×16): +16 shield and 250 points; dropped when a whole formation was shot down
+    (per-formation kill counter).
+  - "$" capsules, three sizes, add **credits** (shown in the middle of the HUD, 4 digits, max. 9999):
+    small 16×16 = 10 (tanks), medium 16×24 = 25 (bombers), large 32×32 = 50 (armoured planes).
+    What credits buy is still open (§15).
+  Capsules drift down slowly and are collected by flying over them.
 - Collisions use bounding boxes from the visible pixels of every frame (`frame_hit_*` tables made by the
   importer) with 16-bit signed differences: player shots against air enemies and tanks, and the player
   against enemy planes, enemy shots and bonus items.
@@ -177,8 +182,9 @@ are unchanged. See `docs/stage1-aircraft.md` for validation and remaining tests.
 ## 8. HUD
 **Implemented in Stage 2** (`hud.asm`): two pixie boxes at the top, the 6-digit BCD score on the left
 (48×8 px) and the shield box on the right (64×8 px: shield icon and a 48 px bar, green → yellow → red).
-Their 7 glyphs sit in the pixie glyph area; they are rebuilt in bank 0 and copied only when the score or the
-shield changes. Cost: 2 rows × (4 + 5) tokens.
+Since the lives and credits were added there are three boxes: score + lives (64 px, left), credits (48 px, centre),
+shield (64 px, right). Their 11 glyphs sit in the pixie glyph area; they are rebuilt in bank 0 and copied only
+when a value changes. Cost: 2 rows × (5 + 4 + 5) tokens.
 
 **Decided (31.10.2026): option 1, a score strip at the top of the screen.** Fine scrolling moves the whole text area, so a HUD made of plain text chars would scroll too. The options were:
 1. **A pixie strip at a fixed screen y** (recommended). It is 1–2 rows of 20 glyphs drawn from a small dynamic
@@ -243,10 +249,13 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Artwork v2 (PR #4) adopted; Stage 1 and Stage 1-aircraft confirmed on hardware |
 | 01.11.2026 | Three lives, every new life starts with a full shield |
 | 01.11.2026 | Animated four-direction tank (PR #6) adopted |
+| 01.11.2026 | Real flame/rotor animations and bonus capsules S / $ in three sizes (PR #7) adopted; credits counter in the HUD |
 
 ## 15. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 2. What should the special weapon be (screen bomb, laser, shield …), and how many uses should there be per life or level?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
 5. Are the damage values and points in §6 a good starting point?
+6. What are the credits for (shop between levels, weapon upgrades, extra lives …), and are the capsule values
+   (10 / 25 / 50) and the enemies that drop them right? Should the shield capsule also come in sizes?
 

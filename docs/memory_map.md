@@ -17,6 +17,8 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 | `$50–$58` | player (position, fire cooldown, shield, invulnerability, state, timer, sprite frame) |
 | `$59–$66` | HUD (dirty flags, pointers, 32-bit glyph pointer, score BCD `$64–$66`) |
 | `$67` | lives |
+| `$68–$69` | credits (BCD, 4 digits) |
+| `$70` | player exhaust animation counter |
 | `$6A–$6F` | collision centres |
 
 ## Bank 0
@@ -27,7 +29,7 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 | `$2020–$4407` | code and tables: sprite pointer table, HUD work buffer (7×64), HUD digits/template, exit save area, sine table, frame tables |
 | `$4500–$4F7F` | map (64 glyph rows × 21) and map colours |
 | `$4F80–$6E7F` | landscape glyph staging (124 glyphs) |
-| `…` | pixie glyph staging (184 glyphs incl. the 16 HUD glyphs); exact addresses in `build/main.sym` |
+| `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
 | `< $C000` | assembler guard: the PRG must end below `$C000` |
@@ -36,8 +38,9 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 
 | Address | Size | Use |
 |---|---|---|
-| `$40000–$4FFFF` | 64 KB | landscape NCM glyphs, char `$1000`+ (Stage 2 uses 124) |
-| `$50000–$53FFF` | 16 KB | pixie NCM glyphs, char `$1400`+ (Stage 2 uses 184 of 256); glyph `$1400` = blank; HUD glyphs at `HUD_GLYPH + 2k`, k = 0..7 |
+| `$40000–$47FFF` | 32 KB | landscape NCM glyphs, char `$1000`+ (max. 512; tile offsets in the map are bytes, so 256 per level; Stage 2 uses 124) |
+| `$48000–$4FFFF` | 32 KB | pixie NCM glyphs, char `$1200`+ (max. 512, 16-bit frame bases; Stage 2 uses 259); glyph `$1200` = blank; HUD glyphs at `HUD_GLYPH + 2k`, k = 0..10. The area is cleared by DMA at start and only the non-blank glyph runs are copied from the PRG |
+| `$50000–$53FFF` | 16 KB | free |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |
 | `$58000–$5AA7F` | 64×170 | ring buffer, screen part (32 slots stored twice) |
@@ -83,7 +86,7 @@ All registers above, palette 0 and palette 1 entries 0–31 are saved at start a
 | 1 | landscape: water | 9 | player shot |
 | 2 | landscape: nature | 10 | red enemy shot |
 | 3 | landscape: structures | 11 | fire shot |
-| 4 | landscape: fixed targets; tanks | 12 | HUD, bonus item |
+| 4 | landscape: fixed targets; tanks | 12 | HUD, bonus capsules |
 | 5 | fighter | 13 | rocket |
 | 6 | bomber | 14 | small explosion |
 | 7 | helicopter | 15 | big explosion |

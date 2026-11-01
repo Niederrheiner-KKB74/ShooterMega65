@@ -11,6 +11,7 @@
 .label pl_timer  = $57
 .label pl_frame  = $58    // sprite frame pair 0..5
 .label pl_lives  = $67    // lives left including the current one
+.label pl_anim   = $70    // exhaust animation counter 0-11
 
 .const PL_W     = 32
 .const PL_H     = 24
@@ -98,7 +99,14 @@ player_move:
     bne !+
     lda #5
     bne !set+
-!:  lda #PLAYER_STRAIGHT
+!:  inc pl_anim                 // straight: exhaust animation, frames 0-2, 4 frames each
+    lda pl_anim
+    cmp #12
+    bcc !+
+    lda #0
+    sta pl_anim
+!:  lsr
+    lsr
 !set:
     sta pl_frame
     lda joy

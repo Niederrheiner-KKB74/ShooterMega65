@@ -6,22 +6,27 @@
 // glyph area (HUD_GLYPH + 2*k, k = 0..7, each followed by a blank guard) and are
 // rebuilt in a bank-0 buffer and copied only when score, lives or shield change.
 // Score box: columns 0-2 = 6 digits, column 3 = plane icon + lives digit.
-// Shield box: columns 4-7.
+// Credits box: columns 4-6 = '$' icon + 4 digits. Shield box: columns 7-10.
 // ----------------------------------------------------------------------------
 .label hud_dirty = $59      // bit 0 score + lives, bit 1 shield
 .label hp_src    = $5a      // 16 bit
 .label hp_dst    = $5c      // 16 bit
 .label hud_ptr   = $60      // 32 bit
 .label score_bcd = $64      // 3 bytes, most significant first (6 digits)
+.label credit_bcd = $68     // 2 bytes, most significant first (4 digits, max. 9999)
 
 .const HUD_Y       = 2
 .const HUD_SCORE_X = 4
 .const HUD_SHIELD_X = 320 - 64 - 4
-.const HUD_COLS     = 8
-.const SHIELD_BUF   = 4*64      // shield box in hud_buf
+.const HUD_CREDITS_X = (320 - 48) / 2
+.const HUD_COLS     = 11
+.const CREDITS_BUF  = 4*64      // credits box in hud_buf
+.const SHIELD_BUF   = 7*64      // shield box in hud_buf
 
 hud_reset:
     lda #0
+    sta credit_bcd
+    sta credit_bcd+1
     sta score_bcd
     sta score_bcd+1
     sta score_bcd+2
@@ -40,6 +45,22 @@ hud_shield_changed:
     ora #2
     sta hud_dirty
     rts
+
+// add A (BCD, 0-99) credits, saturating at 9999
+credits_add:
+    sed
+    clc
+    adc credit_bcd+1
+    sta credit_bcd+1
+    lda credit_bcd
+    adc #0
+    sta credit_bcd
+    cld
+    bcc !+
+    lda #$99
+    sta credit_bcd
+    sta credit_bcd+1
+!:  jmp hud_score_changed
 
 // add A (low BCD byte) + X (high BCD byte) points
 score_add:
@@ -108,9 +129,29 @@ hud_render_score:
     sta hud_buf+3*64,x
     dex
     bpl !-
+    ldx #191                    // credits box template
+!:  lda hud_credits_tpl,x
+    sta hud_buf+CREDITS_BUF,x
+    dex
+    cpx #$ff
+    bne !-
     ldx #0
 !digit:
-    cpx #6                      // digit 6 = lives (0-9)
+    cpx #7                      // digits 7-10 = credits
+    bcc !+
+    txa
+    sec
+    sbc #7
+    lsr
+    tay
+    lda credit_bcd,y
+    bcs !low+
+    lsr
+    lsr
+    lsr
+    lsr
+    bpl !got+
+!:  cpx #6                      // digit 6 = lives (0-9)
     bne !+
     lda pl_lives
     cmp #10
@@ -165,7 +206,7 @@ hud_render_score:
     cpy #32
     bne !row-
     inx
-    cpx #7
+    cpx #11
     bne !digit-
     ldz #0
     rts
@@ -250,6 +291,16 @@ hud_draw:
     sta px_y
     lda #0
     sta px_y+1
+    lda #<HUD_CREDITS_X
+    sta px_x
+    lda #>HUD_CREDITS_X
+    sta px_x+1
+    lda #FR_HUD_CREDITS
+    jsr pixie_draw
+    lda #HUD_Y
+    sta px_y
+    lda #0
+    sta px_y+1
     lda #<HUD_SHIELD_X
     sta px_x
     lda #>HUD_SHIELD_X
@@ -266,13 +317,21 @@ hs_n:  .byte 0
 hud_buf:      .fill HUD_COLS*64, 0   // 4 score/lives glyphs, 4 shield glyphs
 hud_digits:   .import binary "../build/gen/hud.bin", 0, 320
 hud_lives_tpl:.import binary "../build/gen/hud.bin", 320, 64
-hud_template: .import binary "../build/gen/hud.bin", 384, 256
+hud_credits_tpl: .import binary "../build/gen/hud.bin", 384, 192
+hud_template: .import binary "../build/gen/hud.bin", 576, 256
 digit_src_lo: .fill 10, <(hud_digits + i*32)
 digit_src_hi: .fill 10, >(hud_digits + i*32)
-digit_dst_lo: .fill 7, <(hud_buf + (i>>1)*64 + ((i&1) | (i==6 ? 1 : 0))*4)   // digit 6 = lives (column 3, right half)
-digit_dst_hi: .fill 7, >(hud_buf + (i>>1)*64 + ((i&1) | (i==6 ? 1 : 0))*4)
+// digits 0-5 score, 6 lives (column 3, right half), 7-10 credits (box pixels 8, 16, 24, 32)
+.function digit_dst(i) {
+    .if (i < 6) .return hud_buf + (i>>1)*64 + (i&1)*4
+    .if (i == 6) .return hud_buf + 3*64 + 4
+    .eval var px = 8 + (i-7)*8
+    .return hud_buf + CREDITS_BUF + (px>>4)*64 + ((px>>3)&1)*4
+}
+digit_dst_lo: .fill 11, <digit_dst(i)
+digit_dst_hi: .fill 11, >digit_dst(i)
 hud_src_lo:   .fill HUD_COLS, <(hud_buf + i*64)
 hud_src_hi:   .fill HUD_COLS, >(hud_buf + i*64)
 hud_dst_lo:   .fill HUD_COLS, <(((PIXIE_ADDR & $ffff) + (HUD_GLYPH + 2*i)*64))
 hud_dst_hi:   .fill HUD_COLS, >(((PIXIE_ADDR & $ffff) + (HUD_GLYPH + 2*i)*64))
-.errorif ((HUD_GLYPH + 2*HUD_COLS) * 64 > $4000), "HUD glyphs outside the pixie area"
+.errorif (HUD_GLYPH + 2*HUD_COLS > PIXIE_MAX), "HUD glyphs outside the pixie area"

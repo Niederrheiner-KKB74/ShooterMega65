@@ -29,18 +29,23 @@
 .const K_SHOT_RED = 5
 .const K_SHOT_FIRE = 6
 .const K_ROCKET   = 7
-.const K_BONUS    = 8
+.const K_BONUS    = 8            // "S" capsule: shield
+.const K_CASH1    = 9            // "$" capsules: credits, three sizes
+.const K_CASH2    = 10
+.const K_CASH3    = 11
 
 .const BONUS_SHIELD = 16          // shield points per bonus item
 
 //                    fighter      bomber        heli       armoured       tank       red  fire  rocket bonus
-kind_frame: .byte FR_FIGHTER0, FR_BOMBER0, FR_HELI0, FR_ARMOURED0, FR_TANK_N0, FR_ESHOT_RED, FR_ESHOT_FIRE, FR_ROCKET, FR_BONUS
+kind_frame: .byte FR_FIGHTER0, FR_BOMBER0, FR_HELI0, FR_ARMOURED0, FR_TANK_N0, FR_ESHOT_RED, FR_ESHOT_FIRE, FR_ROCKET
+            .byte FR_CAP_S, FR_CAP_D1, FR_CAP_D2, FR_CAP_D3
 kind_hp:    .byte 1,  5,  2,  8,  3
 kind_dmg:   .byte 12, 20, 12, 24, 0,  6, 10, 14, 0    // shield points lost on contact
 kind_pts_lo:.byte $00,$00,$50,$00,$00                 // BCD points
 kind_pts_hi:.byte $01,$03,$01,$05,$02                 // fighter 100, bomber 300, heli 150, armoured 500, tank 200
 kind_big:   .byte 0,  1,  0,  1,  0                   // 32x32 explosion
-kind_drop:  .byte 0,  0,  0,  1,  0                   // always leaves a bonus item
+kind_drop:  .byte 0, K_CASH2, 0, K_CASH3, K_CASH1     // capsule left behind (formation complete: K_BONUS)
+cash_value: .byte $10, $25, $50                       // BCD credits of the small / medium / large $ capsule
 kind_shot:  .byte K_SHOT_RED, K_SHOT_FIRE, K_SHOT_RED, K_SHOT_FIRE, K_ROCKET
 kind_fire:  .byte 3,  5,  3,  6,  2                   // firing chance per frame (n/256)
 shot_speed: .byte 2,  3,  3                           // red, fire, rocket (px/frame)
@@ -373,7 +378,7 @@ kill_obj:
     sta wave_kills,y
     cmp wave_count,y
     bne !nopts+
-    lda #1
+    lda #K_BONUS                // whole formation shot down: shield capsule
     sta ko_drop
 !nopts:
     // centre of the object
@@ -430,19 +435,30 @@ kill_obj:
     sta obj_type,x
     lda #0
     sta obj_t,x
-    // bonus item at the centre
-    lda ko_drop
-    beq !done+
+    // capsule centred on the destroyed object
+    ldy ko_drop
+    bne !+
+    jmp !done+
+!:  ldx kind_frame,y
+    lda frame_w,x               // half width = w * 8
+    asl
+    asl
+    asl
+    sta tmp
+    lda frame_h,x               // half height = h * 4
+    asl
+    asl
+    sta tmp+1
     sec
     lda oc_x
-    sbc #8
+    sbc tmp
     sta sp_x
     lda oc_x+1
     sbc #0
     sta sp_x+1
     sec
     lda oc_y
-    sbc #8
+    sbc tmp+1
     sta sp_y
     lda oc_y+1
     sbc #0
@@ -454,7 +470,7 @@ kill_obj:
     bcs !done+
     lda #T_BONUS
     jsr init_slot
-    ldy #K_BONUS
+    ldy ko_drop
     jsr set_kind
 !done:
     ldx ko_i
@@ -521,7 +537,7 @@ move_down:
 upd_air:
     inc obj_t,x
     lda obj_t,x
-    and #7
+    and #3                      // flame / rotor phase every 4 frames
     bne !anim_done+
     inc obj_fr,x
     lda obj_base,x
@@ -919,7 +935,9 @@ collide_player:
     sbc obj_xh,x
     sta tmp+1
     jsr hit_axis
-    bcs !next+
+    bcc !+
+    jmp !next+
+!:
     ldy obj_fr,x
     lda frame_hit_cy,y
     sta hit_centre
@@ -935,23 +953,36 @@ collide_player:
     sbc obj_yh,x
     sta tmp+1
     jsr hit_axis
-    bcs !next+
+    bcc !+
+    jmp !next+
+!:
     // contact
     lda obj_type,x
     cmp #T_BONUS
     bne !harm+
     jsr free_x
     stx cs_s
-    ldx #$02                    // 250 points
+    lda obj_kind,x
+    cmp #K_BONUS
+    bne !cash+
+    ldx #$02                    // shield capsule: 250 points + shield
     lda #$50
     jsr score_add
     lda #BONUS_SHIELD
     jsr player_heal
     ldx cs_s
     jmp !next+
+!cash:
+    tay
+    lda cash_value-K_CASH1,y
+    jsr credits_add
+    ldx cs_s
+    jmp !next+
 !harm:
     ldy pl_inv                  // invulnerable: no damage, nothing destroyed
-    bne !next+
+    beq !+
+    jmp !next+
+!:
     ldy obj_kind,x
     lda kind_dmg,y
     pha
@@ -970,7 +1001,9 @@ collide_player:
     jsr player_damage
     ldx cs_s
     lda pl_state
-    beq !next+
+    bne !+
+    jmp !next+
+!:
     rts                         // destroyed: stop testing
 !next:
     inx
