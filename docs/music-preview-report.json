@@ -1,0 +1,52 @@
+{
+  "sample_rate": 22050,
+  "channels": 1,
+  "pcm_bits": 16,
+  "renderer": "Approximate synthesis, not a SID emulator. No filter or analog quirks modeled.",
+  "tracks": {
+    "level1": {
+      "samples": 2032128,
+      "seconds": 92.16,
+      "peak": 0.662859622728144,
+      "rms": 0.19780683509831354,
+      "sha256": "b3c5597bfa1824b70b1730cebf0db5f2df3140eef67cf506da1e3b0bd52ae23a",
+      "loop_seam": {
+        "samples": 176400,
+        "seconds": 8.0,
+        "peak": 0.6473032659332455,
+        "rms": 0.19882761236525806,
+        "sha256": "6fa1c02859e5669bfd31fac027e95afe8f2254c549cbece985155d28317fff00"
+      },
+      "boundary_jump": 0.0
+    },
+    "shop": {
+      "samples": 677376,
+      "seconds": 30.72,
+      "peak": 0.36729930847947345,
+      "rms": 0.06994402706013035,
+      "sha256": "3e52822bd2b666d4a4cf57678f140f0fadf7416a66f20ddd606e2c137d30497b",
+      "loop_seam": {
+        "samples": 176400,
+        "seconds": 8.0,
+        "peak": 0.36729930847947345,
+        "rms": 0.07071114062837397,
+        "sha256": "f7ef49ca89007c8382910515adc96335182ebb149a6b33a1ce9dc62e05f19fa4"
+      },
+      "boundary_jump": 0.0
+    },
+    "game_over": {
+      "samples": 127008,
+      "seconds": 5.76,
+      "peak": 0.5671950027010909,
+      "rms": 0.1321500267559128,
+      "sha256": "e073c2122bcc12cc2673ba2d6df149cf32ae4e61710a087335293e1d954602fe"
+    },
+    "level_clear": {
+      "samples": 105840,
+      "seconds": 4.8,
+      "peak": 0.5649237380446632,
+      "rms": 0.1361643579934609,
+      "sha256": "418b3e45a6f69a67868ff23d5b9eb122faff3cdfd5694b084148118356197a08"
+    }
+  }
+}

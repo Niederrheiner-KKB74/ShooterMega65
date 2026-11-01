@@ -373,3 +373,13 @@ The actual 16KB GFX budget allows 126 tiles including the header/palettes.
 `assets/art/rocket-directions/` supplies original and clockwise-45-degree static
 views of the game projectile with exactly the existing rocket palette. These
 are optional standalone assets, not animation frames or a new homing mechanic.
+
+## Stage-4 music source suite
+
+`music/level1.json`, `shop.json`, `game_over.json` and `level_clear.json` are
+original three-voice scores conforming to `docs/music_json.md`. Loop lengths
+are 92.16s and 30.72s at PAL 50Hz; the one-shot jingles are 5.76s and 4.80s.
+The independent validator, reproducible score generator and approximate WAV
+preview renderer are documented in `docs/MUSIC_SUITE.md`. No runtime music
+compiler/player is present in this base yet; these sources allocate no memory,
+change no SFX and have not been tested on a SID/MEGA65.

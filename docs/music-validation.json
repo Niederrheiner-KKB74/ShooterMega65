@@ -1,0 +1,42 @@
+{
+  "level1": {
+    "name": "Coastal Assault – Küstenwald",
+    "rows": 768,
+    "tempo": 6,
+    "bpm": 125.0,
+    "seconds": 92.16,
+    "patterns": 36,
+    "instruments": 8,
+    "loop": 0
+  },
+  "shop": {
+    "name": "Safe Harbour – Zwischenstopp",
+    "rows": 192,
+    "tempo": 8,
+    "bpm": 93.75,
+    "seconds": 30.72,
+    "patterns": 9,
+    "instruments": 4,
+    "loop": 0
+  },
+  "game_over": {
+    "name": "Last Flight – Game Over",
+    "rows": 48,
+    "tempo": 6,
+    "bpm": 125.0,
+    "seconds": 5.76,
+    "patterns": 3,
+    "instruments": 4,
+    "loop": null
+  },
+  "level_clear": {
+    "name": "Clear Skies – Level geschafft",
+    "rows": 48,
+    "tempo": 5,
+    "bpm": 150.0,
+    "seconds": 4.8,
+    "patterns": 3,
+    "instruments": 4,
+    "loop": null
+  }
+}
