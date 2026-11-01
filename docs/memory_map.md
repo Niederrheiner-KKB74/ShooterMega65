@@ -1,4 +1,4 @@
-# Memory map (Stage 3b)
+# Memory map (Stage 4)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -52,6 +52,8 @@ not in the zero page.
 | `$5B000–$5DA7F` | 64×170 | ring buffer, colour part |
 | `$5E000–$5EFFF` | | free |
 | `$5F000–$5FBFF` | | player sprites, 6 frame pairs (left/right half 256 bytes each) |
+| `$5FC00–$5FEFF` | | invulnerability ring, sprites 2–4 (256 bytes each, `special.asm`) |
+| `$5FF00–$5FFFF` | | free |
 
 `$20000–$3FFFF` is ROM and is never used for data (Vyper rule 4).
 
@@ -81,7 +83,7 @@ not in the zero page.
 | `$D070` | `$04` | text palette 0, sprite palette 1 |
 | `$D030` | BASIC value, bit 0 cleared, bit 2 set | RAM palette, CRAM2K off |
 
-All registers above, palette 0 and palette 1 entries 0–31 are saved at start and restored on exit.
+All registers above (plus the sprite colour registers `$D029–$D02B`), palette 0 and palette 1 entries 0–79 are saved at start and restored on exit.
 
 ## Palette banks (text palette 0, 16 entries each; made by `tools/import_art.py`)
 
@@ -100,7 +102,7 @@ While the shop is open (Stage 3b), banks 13–15 hold the shop palettes (normal,
 exist then. They are restored from the game palette when the shop closes.
 
 All 16 banks are in use. Further object types must share a bank; the importer merges and, if needed,
-reduces colours (`merge_bank`). Sprite palette (set 1) entries `$00–$1F`: player (sprites 0 and 1).
+reduces colours (`merge_bank`). Sprite palette (set 1) entries `$00–$1F`: player (sprites 0 and 1); `$20–$4F`: invulnerability ring (sprites 2–4), indices 1–6 rotated at run time.
 
 ## Coastal-base level (default since Stage 3b)
 

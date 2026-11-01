@@ -36,6 +36,7 @@
 .const K_CASH3    = 11
 
 .const BONUS_SHIELD = (SHIELD_MAX * 20 + 50) / 100   // S capsule refills 20 % of the shield
+.const BONUS_VY     = 384         // capsule fall speed in 1/256 px per frame (1.5 px; the landscape scrolls 0.5)
 .const S_CHANCE     = 38          // S capsule chance per enemy shot down (38/256 = 15 %)
 
 //                    fighter      bomber        heli       armoured       tank       red  fire  rocket bonus
@@ -751,10 +752,13 @@ upd_expl:
 !free:
     jmp free_x
 
-upd_bonus:                      // drifts down slowly
-    inc obj_t,x
-    lda obj_t,x
-    and #1
+upd_bonus:                      // falls faster than the landscape scrolls (BONUS_VY)
+    clc
+    lda obj_yf,x
+    adc #<BONUS_VY
+    sta obj_yf,x
+    lda #>BONUS_VY
+    adc #0
     jmp move_down
 
 // ---------------------------------------------------------------- collisions

@@ -18,6 +18,9 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
 - **Stage 3b** (branch `stage3`): shop overlay (weapon levels, missile, shield, bomb, extra life), HUD counters
   for bombs and invulnerability, coastal-base level (PR #8) as the default, shop icons (PR #9).
   Confirmed on real hardware (01.11.2026), `stage3b-stable`.
+- **Stage 4** (branch `stage4`): special weapons from the shop: bomb (space), 10 s invulnerability with a
+  shimmering ring (S), homing missile; extra life / exit icons and denser coastal level (PR #10).
+  XEMU-tested, hardware test pending. See [docs/stage4.md](docs/stage4.md).
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.
@@ -26,7 +29,7 @@ python3 tools/build.py --kickass /path/to/KickAss65CE02-5.25.jar
 ```
 The output is `build/SHOOTER.PRG` and `build/SHOOTER65.D81` (`LOAD "SHOOTER",8` / `RUN`).
 
-Controls: joystick in port 2 (fire = shoot). D toggles the raster time display. Press X or RUN/STOP to go back to BASIC.
+Controls: joystick in port 2 (fire = shoot), space = bomb, S = invulnerability (both bought in the shop). D toggles the raster time display. Press X or RUN/STOP to go back to BASIC.
 
 ## Documentation
 - [Technical design and roadmap](docs/design.md)

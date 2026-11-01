@@ -270,6 +270,8 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Coastal-base level and new shield/coin capsules (PR #8) adopted; coastal level is the default |
 | 01.11.2026 | Shop icons (PR #9) adopted for SHOT II–IV, MISSILE, SHIELD, BOMB; tags `stage1-stable`, `stage1-aircraft-stable`, `stage2-stable`, `stage3a-stable` set by the owner |
 | 01.11.2026 | Stage 3b (shop) confirmed on hardware |
+| 01.11.2026 | Space = bomb, S = invulnerability; extra life / exit icons and denser coastal level (PR #10) adopted |
+| 01.11.2026 | Capsules fall at their own speed (1.5 px/frame), not with the landscape |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -307,9 +309,26 @@ so `RUN` works again after an exit.
 The HUD has a fourth box (48 px, x = 168) with a bomb icon + count and an invulnerability icon + count;
 the credits box moved to x = 96. Bought items stay for the whole game; a new game (after the last life) resets them.
 
-## 16. Open questions for the owner
+## 16. Special weapons (Stage 4, `special.asm`)
+Keys (hardware keyboard queue, `system.asm`): **space = bomb**, **S = invulnerability** (decided 01.11.2026).
+Requests while the plane is destroyed or inside the shop are dropped.
+- **Bomb** (`bomb_count`): every enemy that is at least partly on the screen (y −24…199, formation members
+  still waiting above the screen excluded) is destroyed through `kill_obj` with points and capsules, as if shot
+  down. Enemy shots disappear. Flash: landscape banks 1–4 light for 4 frames, then `palette_init`.
+- **Invulnerability** (`inv_count`): 500 frames (10 s) without damage (`player_vulnerable` = hit
+  invulnerability or bought invulnerability; used by `player_damage` and `collide_player`). Cannot be started
+  while running. Shown by a shimmering ring: hardware sprites 2–4 (16-colour, 48×24 ellipse outline behind the
+  plane, glyph data `ring.bin` from `import_art.py` at `$5FC00`). The ring pixels use colour indices 1–6 by angle;
+  `special_vblank` rotates six blue/white colours through sprite palette entries `$21–$26`, `$31–$36`, `$41–$46`
+  every 4 frames. The ring blinks during the last 2 seconds.
+- **Homing missile** (`has_missile`): object type `T_MISSILE` in the shot slots. It starts with the guns when
+  no missile is under way and a visible enemy exists, and picks a random visible enemy (air or tank). Each frame
+  it moves up to 3 px per axis towards the target centre; if the target is gone it picks another one, without
+  any it flies straight up. After 200 frames it disappears. `collide_shots` treats it like a player shot, so it
+  does `pl_power` damage to whatever enemy it touches. Graphic: the rocket frame (pointing up).
+
+## 17. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
-2. What should the special weapon be (screen bomb, laser, shield …), and how many uses should there be per life or level?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
 5. Are the damage values and points in §6 a good starting point?
 
