@@ -94,3 +94,16 @@ All registers above, palette 0 and palette 1 entries 0–31 are saved at start a
 
 All 16 banks are in use. Further object types must share a bank; the importer merges and, if needed,
 reduces colours (`merge_bank`). Sprite palette (set 1) entries `$00–$1F`: player (sprites 0 and 1).
+
+## Coastal-base candidate
+
+`--level levels/coastal_base.json` selects a separate 375-row level without
+changing the default source. Its 104 tiles use 208 glyphs (13312 bytes) at
+`$40000–$433FF`. The 13508-byte GFX payload and 4896-byte DAT payload each fit
+the existing 16KB level buffer; DAT occupies `$50000–$5131F`. Fixed-target palette
+bank 4 stays RGB-identical because moving tanks share it. Shield/coin artwork
+reuses HUD/bonus bank 12. No memory regions or zero-page variables are added.
+The verified candidate PRG still ends at `$9360` (exclusive); pixie allocation
+remains 259 of 512 glyphs. See `docs/COASTAL_BASE_LEVEL.md` for build evidence and
+remaining emulator/hardware tests.
+

@@ -108,7 +108,7 @@
   "designs": [
     {
       "id": "capsule_S",
-      "label": "S",
+      "label": null,
       "size": [
         16,
         16
@@ -117,9 +117,10 @@
         2,
         1,
         13,
-        14
+        15
       ],
-      "glyph_scale": 1
+      "glyph_scale": 1,
+      "design": "medieval_shield"
     },
     {
       "id": "capsule_dollar_small",
@@ -130,11 +131,12 @@
       ],
       "body_box": [
         3,
-        2,
+        3,
         12,
-        13
+        12
       ],
-      "glyph_scale": 1
+      "glyph_scale": 1,
+      "design": "gold_coin"
     },
     {
       "id": "capsule_dollar_medium",
@@ -145,11 +147,12 @@
       ],
       "body_box": [
         1,
-        2,
+        5,
         14,
-        21
+        18
       ],
-      "glyph_scale": 1
+      "glyph_scale": 1,
+      "design": "gold_coin"
     },
     {
       "id": "capsule_dollar_large",
@@ -159,12 +162,14 @@
         32
       ],
       "body_box": [
-        4,
-        2,
-        27,
-        29
+        3,
+        3,
+        28,
+        28
       ],
-      "glyph_scale": 2
+      "glyph_scale": 2,
+      "design": "gold_coin"
     }
-  ]
+  ],
+  "revision": "Heraldic shield instead of S box; three circular gold coin diameters, stable IDs and frame sizes"
 }

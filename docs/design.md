@@ -274,3 +274,13 @@ so `RUN` works again after an exit.
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
 5. Are the damage values and points in §6 a good starting point?
 
+## Coastal-base level design candidate
+
+`levels/coastal_base.json` is a separately selectable coastal → forest → military
+road/bridge → base scenario. `tools/build.py --level` packs it as L1 while leaving
+the original test level as the default. Native transition tiles and the four
+palette budget are documented in `docs/COASTAL_BASE_LEVEL.md`. Bonus graphics now
+show a medieval shield and three gold coin sizes, retaining their IDs and bank 12.
+Level/data checks and assembly passed; no new emulator or hardware acceptance is
+claimed for this candidate.
+
