@@ -409,3 +409,20 @@ These views are standalone assets: full replacement would require 535 of the
 available 512 glyphs, so direction selection and packing optimisation remain future work.
 The large bonus coin is reduced from 26 to 18 visible pixels, giving 10/14/18 sizes.
 See `docs/ENEMY_VIEWS_AND_OPACITY.md` for source provenance, packing and validation.
+
+## Title / game-over artwork and Level-1 boss art
+
+`assets/art/screens/` provides a 320x200 Shooter65 title with a clear 320x24
+engine-text band, a spec-sized 256x64 game-over decoration banner and the requested
+320x200 full-screen game-over alternative. Native screen files are indexed,
+16-colour assets with one local palette, deduplicated NCM tiles and maps.
+The city scenes are generated source art; prompts and deterministic conversion
+are archived. Runtime overlay texts remain separate from banner decoration.
+
+`assets/art/boss-level1/` provides a 96x64 native quadrotor body, four distinct
+independently destructible turret instances (south/SE/destroyed), visual-only
+rotor animation and an exposed-core overlay. Artwork metadata specifies body
+invulnerability until all four turrets are destroyed, then a final body phase;
+HP, movement and implementation are left to the game. All graphics use one
+15-colour palette plus transparency, 137 guarded glyphs / 8768 bytes. No screen
+or boss gameplay integration is claimed. See `docs/SCREENS_AND_LEVEL1_BOSS.md`.

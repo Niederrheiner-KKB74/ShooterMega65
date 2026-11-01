@@ -1,0 +1,239 @@
+{
+  "schema": 1,
+  "body_size": [
+    96,
+    64
+  ],
+  "palette": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      15,
+      22,
+      31
+    ],
+    [
+      29,
+      39,
+      49
+    ],
+    [
+      48,
+      64,
+      74
+    ],
+    [
+      71,
+      89,
+      96
+    ],
+    [
+      104,
+      121,
+      126
+    ],
+    [
+      158,
+      174,
+      174
+    ],
+    [
+      223,
+      231,
+      214
+    ],
+    [
+      45,
+      66,
+      41
+    ],
+    [
+      76,
+      99,
+      53
+    ],
+    [
+      120,
+      140,
+      72
+    ],
+    [
+      189,
+      17,
+      10
+    ],
+    [
+      245,
+      155,
+      42
+    ],
+    [
+      255,
+      225,
+      116
+    ],
+    [
+      30,
+      153,
+      173
+    ],
+    [
+      138,
+      234,
+      228
+    ]
+  ],
+  "palette_count": 1,
+  "frames": 19,
+  "rrb_glyphs": 137,
+  "rrb_bytes": 8768,
+  "budget_bytes": 9216,
+  "integrated": false,
+  "hardware_tested": false,
+  "provenance": "New native indexed pixel drawing by Codex, reworked directly in the editable source geometry; no AI raster resampling.",
+  "files": {
+    "all-turrets-destroyed.png": {
+      "bytes": 2765,
+      "sha256": "b9bbd0a2498596bc27e65f1fe8bddde36c782e8b705ee366d606f5ac0331544b"
+    },
+    "animated-boss.webp": {
+      "bytes": 7098,
+      "sha256": "e2eb7d17b67d0907990ad82189d2bdac076672187eb803922149575540f3a874"
+    },
+    "assembled.png": {
+      "bytes": 3110,
+      "sha256": "ca2bbc6901c93497c992dbb17a8cbfaf4aa248b32e9140316028b4d7646d1b48"
+    },
+    "body.png": {
+      "bytes": 2220,
+      "sha256": "5e9bd410ef3217c866c0bb220c631a246a1b4d17caa90f59c75e38473684c091"
+    },
+    "boss-frames.inc": {
+      "bytes": 953,
+      "sha256": "66987b2c6816ba30c4296c301a99c427e372fc620c0af8436364871f5234581e"
+    },
+    "boss.fcm.bin": {
+      "bytes": 13824,
+      "sha256": "ebfe4ba5444e1d9ed909cd4e6fdd649ca60b8fd37b9cb1990d160fb8e574313a"
+    },
+    "boss.indices.bin": {
+      "bytes": 13824,
+      "sha256": "f22d809ead36549d9beb8adac0176d96729825f29be4e2b39c57f1db803708a7"
+    },
+    "boss.ncm.bin": {
+      "bytes": 6912,
+      "sha256": "72a3b1ee2389812e746780c7b5c2e48d02d6328581a4eb27d06731d7431cd6bb"
+    },
+    "boss.rrb.bin": {
+      "bytes": 8768,
+      "sha256": "ed6ec7309221c3e94e2b2f79eebe7898cecf02ece1edb500b0f770c8b9b1bc21"
+    },
+    "comparison.png": {
+      "bytes": 18498,
+      "sha256": "9f043f92dbf1da77122f9f3d48c4560d781210eb3926153e50aa014c41958b0e"
+    },
+    "core_exposed.png": {
+      "bytes": 672,
+      "sha256": "d4ebce16fd88486c874f84c754b648b5a88b9ec5eb82e55454ee917ac0db7814"
+    },
+    "indexed-source.json": {
+      "bytes": 36476,
+      "sha256": "c1f8baf96373bae504690aeb7cbba570c242318a30daedb8155f7317bc8f0ece"
+    },
+    "muzzle-animation.png": {
+      "bytes": 239,
+      "sha256": "53bd27088aa2e4f4fb9ba64e66b84c6d8664d006b12d50aec55ead8232585c3a"
+    },
+    "muzzle_0.png": {
+      "bytes": 177,
+      "sha256": "867d0b3e8d290575d261f561df508926df28b47f4e9801f958439fbeed27bfad"
+    },
+    "muzzle_1.png": {
+      "bytes": 198,
+      "sha256": "666ecf1fd4c403cfc812bf7fbcc7bfe97bde78a338fbc9d39a5b83003cdcac91"
+    },
+    "palette.palregs.bin": {
+      "bytes": 48,
+      "sha256": "fd8a09f1d4f5c57a35bd874ed163a03fafb06e01a744739878cb36516a278e3f"
+    },
+    "palette.rgb": {
+      "bytes": 48,
+      "sha256": "569bdcf2753bde60167d79769f8e2210b26a2067eca46904864e059f6948d9d5"
+    },
+    "placement.json": {
+      "bytes": 3643,
+      "sha256": "b9a78f517aa1ca99a3404bd523fdb63aa043804f91ab8a67e730a1612ed1f87a"
+    },
+    "preview.png": {
+      "bytes": 17182,
+      "sha256": "2b514c8cc883588aa72c955931b1fbabff5c9ccda16542c95180a9234a0f7861"
+    },
+    "rotor-animation.png": {
+      "bytes": 944,
+      "sha256": "a4f2e6323bc039d9a232a1c0f5084c2ead37d70c480c40e4a256e4d859a3cc47"
+    },
+    "rotor_0.png": {
+      "bytes": 471,
+      "sha256": "beb0470a9c0c02f9948e6625f9d28e61790d920a40b1a0bfcf63afe92dd720ef"
+    },
+    "rotor_1.png": {
+      "bytes": 476,
+      "sha256": "5dfae772dfeaead6602f357d6fd67f9e2a98ea7253a2b63e6c62959d630893a5"
+    },
+    "rotor_2.png": {
+      "bytes": 460,
+      "sha256": "355b9f732bcfde3bee5bc5afe49460377accbfb53940677160ddc8a8f306f8bd"
+    },
+    "turret_ne_destroyed.png": {
+      "bytes": 335,
+      "sha256": "7ab8611efdcdb580d5313b91a508060eb4a0a1c0dff2507f42217972d70a25ce"
+    },
+    "turret_ne_south.png": {
+      "bytes": 381,
+      "sha256": "b763c02b34458bea5aa7178611c09af0ac87894d4c087e7b6e0db51bdcc0a5d0"
+    },
+    "turret_ne_southeast.png": {
+      "bytes": 336,
+      "sha256": "78daa2c6e0c2c71973341ac71a71cde7e83290324cf8d6724d3d735a7b0c6b16"
+    },
+    "turret_nw_destroyed.png": {
+      "bytes": 332,
+      "sha256": "97cce27e7ce78a1bb536bd58cae3a445663c3263422d96023dff05e4d2a5fd88"
+    },
+    "turret_nw_south.png": {
+      "bytes": 368,
+      "sha256": "999d4e56cf53328bea329c4d784fb7206e2cb94bde4c3f04645562f83ac2d528"
+    },
+    "turret_nw_southeast.png": {
+      "bytes": 324,
+      "sha256": "1da9a229ca22f308c551d373548018f03887478240ad27d4f9a83c54c570dffb"
+    },
+    "turret_se_destroyed.png": {
+      "bytes": 329,
+      "sha256": "387f232771ebb7a75d6cdf73b44a524a2f7cbbdd744ec4162ff7ca1d88ed3c23"
+    },
+    "turret_se_south.png": {
+      "bytes": 368,
+      "sha256": "1012bc451fe422bb64ccc431365ffb0e31d5b71c837d512134f8ab16b1242ddc"
+    },
+    "turret_se_southeast.png": {
+      "bytes": 322,
+      "sha256": "067cfea5deafabe1cfc31884974b4d6a855540b0df7af05a5ad0d8ff181ebff4"
+    },
+    "turret_sw_destroyed.png": {
+      "bytes": 329,
+      "sha256": "78b6a9e8b9e5b137c2d322f411546229a54ce5649ec04092d63f5ee65fefdfec"
+    },
+    "turret_sw_south.png": {
+      "bytes": 370,
+      "sha256": "9f25d75cbeff76f1d6f7797966fc1d2065f800ce0fd8d4dd99ba205fcc243d11"
+    },
+    "turret_sw_southeast.png": {
+      "bytes": 324,
+      "sha256": "cd656214f9c31c9bbc4b02bfc4130c0d0f3c3f5f42af4003f587dad8766351b7"
+    }
+  }
+}
