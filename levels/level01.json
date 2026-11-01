@@ -1,0 +1,1428 @@
+{
+ "format": "shootermega65-level-1",
+ "name": "Level 1 (test)",
+ "tileset": "assets/art/spec-v2/generated",
+ "scroll_speed": 0.5,
+ "map": [
+  {
+   "repeat": 12,
+   "rows": [
+    [
+     1,
+     4,
+     1,
+     4,
+     1,
+     4,
+     7,
+     22,
+     19,
+     22,
+     19,
+     22,
+     19,
+     22,
+     26,
+     27,
+     19,
+     22,
+     19,
+     22,
+     19
+    ],
+    [
+     0,
+     3,
+     0,
+     3,
+     0,
+     3,
+     6,
+     21,
+     18,
+     21,
+     18,
+     21,
+     18,
+     21,
+     26,
+     27,
+     18,
+     21,
+     18,
+     21,
+     18
+    ],
+    [
+     5,
+     2,
+     5,
+     2,
+     5,
+     2,
+     11,
+     20,
+     23,
+     20,
+     23,
+     20,
+     23,
+     20,
+     26,
+     27,
+     23,
+     20,
+     23,
+     20,
+     23
+    ],
+    [
+     4,
+     1,
+     4,
+     1,
+     4,
+     1,
+     10,
+     19,
+     22,
+     19,
+     22,
+     19,
+     22,
+     19,
+     26,
+     27,
+     22,
+     19,
+     22,
+     19,
+     22
+    ],
+    [
+     3,
+     0,
+     3,
+     0,
+     3,
+     0,
+     9,
+     18,
+     21,
+     18,
+     21,
+     18,
+     21,
+     18,
+     26,
+     27,
+     21,
+     18,
+     21,
+     18,
+     21
+    ],
+    [
+     2,
+     5,
+     2,
+     5,
+     2,
+     5,
+     8,
+     23,
+     20,
+     23,
+     20,
+     23,
+     20,
+     23,
+     26,
+     27,
+     20,
+     58,
+     59,
+     23,
+     20
+    ],
+    [
+     1,
+     4,
+     1,
+     4,
+     1,
+     4,
+     7,
+     22,
+     19,
+     22,
+     19,
+     22,
+     19,
+     22,
+     26,
+     27,
+     19,
+     56,
+     57,
+     22,
+     19
+    ],
+    [
+     0,
+     3,
+     0,
+     3,
+     0,
+     3,
+     6,
+     21,
+     18,
+     21,
+     18,
+     21,
+     18,
+     21,
+     26,
+     27,
+     18,
+     21,
+     18,
+     21,
+     18
+    ],
+    [
+     5,
+     2,
+     5,
+     2,
+     5,
+     2,
+     11,
+     20,
+     23,
+     20,
+     23,
+     20,
+     23,
+     20,
+     26,
+     27,
+     23,
+     20,
+     23,
+     20,
+     23
+    ],
+    [
+     4,
+     1,
+     4,
+     1,
+     4,
+     1,
+     10,
+     19,
+     22,
+     19,
+     22,
+     19,
+     22,
+     19,
+     26,
+     27,
+     22,
+     19,
+     22,
+     19,
+     22
+    ],
+    [
+     3,
+     0,
+     3,
+     0,
+     3,
+     0,
+     9,
+     18,
+     21,
+     18,
+     21,
+     18,
+     21,
+     18,
+     26,
+     27,
+     21,
+     18,
+     21,
+     18,
+     21
+    ],
+    [
+     2,
+     5,
+     2,
+     5,
+     2,
+     5,
+     8,
+     23,
+     60,
+     23,
+     20,
+     23,
+     20,
+     23,
+     26,
+     27,
+     20,
+     23,
+     20,
+     23,
+     20
+    ],
+    [
+     1,
+     4,
+     1,
+     4,
+     1,
+     4,
+     7,
+     22,
+     19,
+     22,
+     19,
+     22,
+     19,
+     22,
+     26,
+     27,
+     19,
+     22,
+     61,
+     22,
+     19
+    ],
+    [
+     0,
+     3,
+     0,
+     3,
+     0,
+     3,
+     6,
+     21,
+     18,
+     21,
+     18,
+     21,
+     18,
+     21,
+     26,
+     27,
+     18,
+     21,
+     18,
+     21,
+     18
+    ],
+    [
+     5,
+     2,
+     5,
+     2,
+     5,
+     2,
+     11,
+     20,
+     23,
+     20,
+     23,
+     20,
+     23,
+     20,
+     26,
+     27,
+     23,
+     20,
+     23,
+     20,
+     23
+    ],
+    [
+     4,
+     1,
+     4,
+     1,
+     4,
+     1,
+     10,
+     19,
+     22,
+     19,
+     54,
+     55,
+     22,
+     19,
+     26,
+     27,
+     22,
+     19,
+     22,
+     19,
+     22
+    ],
+    [
+     3,
+     0,
+     3,
+     0,
+     3,
+     0,
+     9,
+     18,
+     21,
+     18,
+     52,
+     53,
+     21,
+     18,
+     26,
+     27,
+     21,
+     18,
+     21,
+     18,
+     21
+    ],
+    [
+     2,
+     5,
+     2,
+     5,
+     2,
+     5,
+     8,
+     23,
+     20,
+     23,
+     20,
+     23,
+     20,
+     23,
+     26,
+     27,
+     20,
+     23,
+     20,
+     23,
+     20
+    ],
+    [
+     1,
+     4,
+     1,
+     4,
+     1,
+     4,
+     7,
+     22,
+     19,
+     22,
+     19,
+     22,
+     19,
+     22,
+     26,
+     27,
+     19,
+     22,
+     19,
+     22,
+     19
+    ],
+    [
+     0,
+     3,
+     0,
+     3,
+     0,
+     3,
+     6,
+     21,
+     18,
+     21,
+     18,
+     21,
+     18,
+     21,
+     26,
+     27,
+     18,
+     21,
+     18,
+     21,
+     18
+    ],
+    [
+     5,
+     2,
+     5,
+     2,
+     5,
+     2,
+     11,
+     20,
+     23,
+     20,
+     23,
+     34,
+     35,
+     30,
+     26,
+     27,
+     23,
+     20,
+     23,
+     20,
+     23
+    ],
+    [
+     4,
+     1,
+     4,
+     1,
+     4,
+     1,
+     10,
+     19,
+     22,
+     19,
+     22,
+     33,
+     34,
+     35,
+     26,
+     27,
+     22,
+     19,
+     22,
+     19,
+     22
+    ],
+    [
+     3,
+     0,
+     3,
+     0,
+     3,
+     0,
+     9,
+     18,
+     21,
+     18,
+     21,
+     32,
+     33,
+     34,
+     26,
+     27,
+     21,
+     18,
+     21,
+     18,
+     21
+    ],
+    [
+     2,
+     5,
+     2,
+     5,
+     2,
+     5,
+     8,
+     23,
+     20,
+     23,
+     20,
+     23,
+     20,
+     23,
+     26,
+     27,
+     20,
+     23,
+     20,
+     23,
+     20
+    ],
+    [
+     1,
+     4,
+     1,
+     4,
+     1,
+     4,
+     7,
+     22,
+     19,
+     22,
+     19,
+     22,
+     19,
+     22,
+     26,
+     27,
+     19,
+     22,
+     19,
+     22,
+     19
+    ],
+    [
+     0,
+     3,
+     0,
+     3,
+     0,
+     3,
+     6,
+     21,
+     18,
+     21,
+     18,
+     21,
+     18,
+     21,
+     26,
+     27,
+     18,
+     21,
+     18,
+     21,
+     18
+    ],
+    [
+     5,
+     2,
+     5,
+     2,
+     5,
+     2,
+     11,
+     20,
+     23,
+     20,
+     23,
+     20,
+     23,
+     20,
+     26,
+     27,
+     23,
+     20,
+     23,
+     20,
+     23
+    ],
+    [
+     4,
+     1,
+     4,
+     1,
+     4,
+     1,
+     10,
+     19,
+     22,
+     19,
+     22,
+     19,
+     22,
+     19,
+     26,
+     27,
+     22,
+     19,
+     22,
+     19,
+     22
+    ],
+    [
+     3,
+     0,
+     3,
+     0,
+     3,
+     0,
+     9,
+     18,
+     21,
+     18,
+     21,
+     18,
+     21,
+     18,
+     26,
+     27,
+     21,
+     18,
+     21,
+     18,
+     21
+    ],
+    [
+     2,
+     5,
+     2,
+     5,
+     2,
+     5,
+     8,
+     23,
+     20,
+     23,
+     20,
+     23,
+     20,
+     23,
+     26,
+     27,
+     20,
+     23,
+     20,
+     23,
+     20
+    ],
+    [
+     1,
+     4,
+     1,
+     4,
+     1,
+     4,
+     7,
+     22,
+     19,
+     22,
+     19,
+     22,
+     19,
+     22,
+     26,
+     27,
+     19,
+     22,
+     19,
+     22,
+     19
+    ],
+    [
+     0,
+     3,
+     0,
+     3,
+     0,
+     3,
+     6,
+     21,
+     18,
+     21,
+     18,
+     21,
+     18,
+     21,
+     26,
+     27,
+     18,
+     21,
+     18,
+     21,
+     18
+    ]
+   ]
+  }
+ ],
+ "paths": {
+  "snake": [
+   [
+    "sine",
+    48,
+    128,
+    3,
+    1
+   ],
+   [
+    "end"
+   ]
+  ],
+  "snake_fast": [
+   [
+    "sine",
+    32,
+    64,
+    4,
+    1.5
+   ],
+   [
+    "end"
+   ]
+  ],
+  "dive": [
+   [
+    "move",
+    48,
+    0,
+    1.5
+   ],
+   [
+    "aim",
+    40,
+    1
+   ],
+   [
+    "fire"
+   ],
+   [
+    "move",
+    127,
+    0,
+    2.5
+   ],
+   [
+    "end"
+   ]
+  ],
+  "swoop": [
+   [
+    "move",
+    40,
+    0,
+    2
+   ],
+   [
+    "move",
+    24,
+    1,
+    1.5
+   ],
+   [
+    "move",
+    24,
+    2,
+    0.5
+   ],
+   [
+    "fire"
+   ],
+   [
+    "move",
+    60,
+    2,
+    -0.25
+   ],
+   [
+    "end"
+   ]
+  ],
+  "zigzag": [
+   [
+    "loop",
+    4
+   ],
+   [
+    "move",
+    24,
+    1.5,
+    1
+   ],
+   [
+    "move",
+    24,
+    -1.5,
+    1
+   ],
+   [
+    "endloop"
+   ],
+   [
+    "end"
+   ]
+  ],
+  "bomber": [
+   [
+    "loop",
+    3
+   ],
+   [
+    "move",
+    60,
+    0,
+    0.75
+   ],
+   [
+    "fire"
+   ],
+   [
+    "endloop"
+   ],
+   [
+    "move",
+    127,
+    0,
+    1
+   ],
+   [
+    "end"
+   ]
+  ],
+  "hover": [
+   [
+    "move",
+    50,
+    0,
+    1.5
+   ],
+   [
+    "wait",
+    40
+   ],
+   [
+    "fire"
+   ],
+   [
+    "wait",
+    30
+   ],
+   [
+    "aim",
+    60,
+    1.5
+   ],
+   [
+    "move",
+    127,
+    0,
+    2
+   ],
+   [
+    "end"
+   ]
+  ]
+ },
+ "formations": {
+  "fighters_snake": {
+   "enemy": "fighter",
+   "count": 6,
+   "path": "snake",
+   "delay": 20,
+   "x": 120
+  },
+  "fighters_swoop": {
+   "enemy": "fighter",
+   "count": 5,
+   "path": "swoop",
+   "delay": 14,
+   "x": 24
+  },
+  "fighters_dive": {
+   "enemy": "fighter",
+   "count": 4,
+   "path": "dive",
+   "delay": 24,
+   "x": 150
+  },
+  "helis_zigzag": {
+   "enemy": "helicopter",
+   "count": 6,
+   "path": "zigzag",
+   "delay": 18,
+   "x": 100
+  },
+  "helis_hover": {
+   "enemy": "helicopter",
+   "count": 3,
+   "path": "hover",
+   "delay": 30,
+   "x": 200
+  },
+  "bombers": {
+   "enemy": "bomber",
+   "count": 3,
+   "path": "bomber",
+   "delay": 40,
+   "x": 140
+  },
+  "armoured": {
+   "enemy": "armoured",
+   "count": 3,
+   "path": "snake_fast",
+   "delay": 36,
+   "x": 140
+  }
+ },
+ "events": [
+  {
+   "row": 6,
+   "type": "formation",
+   "formation": "fighters_snake",
+   "x": 166
+  },
+  {
+   "row": 9,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 192,
+   "dir": "west"
+  },
+  {
+   "row": 13,
+   "type": "formation",
+   "formation": "helis_zigzag"
+  },
+  {
+   "row": 20,
+   "type": "formation",
+   "formation": "fighters_swoop"
+  },
+  {
+   "row": 23,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 250,
+   "dir": "south"
+  },
+  {
+   "row": 27,
+   "type": "formation",
+   "formation": "bombers",
+   "x": 173
+  },
+  {
+   "row": 36,
+   "type": "formation",
+   "formation": "fighters_dive"
+  },
+  {
+   "row": 39,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 236,
+   "dir": "east"
+  },
+  {
+   "row": 43,
+   "type": "formation",
+   "formation": "helis_hover"
+  },
+  {
+   "row": 50,
+   "type": "formation",
+   "formation": "armoured",
+   "x": 173
+  },
+  {
+   "row": 53,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 260,
+   "dir": "west"
+  },
+  {
+   "row": 59,
+   "type": "formation",
+   "formation": "fighters_swoop"
+  },
+  {
+   "row": 66,
+   "type": "formation",
+   "formation": "fighters_snake",
+   "x": 171
+  },
+  {
+   "row": 69,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 176,
+   "dir": "south"
+  },
+  {
+   "row": 73,
+   "type": "formation",
+   "formation": "helis_zigzag"
+  },
+  {
+   "row": 80,
+   "type": "formation",
+   "formation": "fighters_swoop",
+   "mirror": true
+  },
+  {
+   "row": 83,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 262,
+   "dir": "west"
+  },
+  {
+   "row": 87,
+   "type": "formation",
+   "formation": "bombers",
+   "x": 127
+  },
+  {
+   "row": 96,
+   "type": "formation",
+   "formation": "fighters_dive"
+  },
+  {
+   "row": 99,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 170,
+   "dir": "east"
+  },
+  {
+   "row": 103,
+   "type": "formation",
+   "formation": "helis_hover"
+  },
+  {
+   "row": 110,
+   "type": "formation",
+   "formation": "armoured",
+   "x": 181
+  },
+  {
+   "row": 113,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 278,
+   "dir": "east"
+  },
+  {
+   "row": 119,
+   "type": "formation",
+   "formation": "fighters_swoop",
+   "mirror": true
+  },
+  {
+   "row": 126,
+   "type": "formation",
+   "formation": "fighters_snake",
+   "x": 71
+  },
+  {
+   "row": 129,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 184,
+   "dir": "south"
+  },
+  {
+   "row": 133,
+   "type": "formation",
+   "formation": "helis_zigzag"
+  },
+  {
+   "row": 140,
+   "type": "formation",
+   "formation": "fighters_swoop"
+  },
+  {
+   "row": 143,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 160,
+   "dir": "east"
+  },
+  {
+   "row": 147,
+   "type": "formation",
+   "formation": "bombers",
+   "x": 94
+  },
+  {
+   "row": 156,
+   "type": "formation",
+   "formation": "fighters_dive"
+  },
+  {
+   "row": 159,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 150,
+   "dir": "south"
+  },
+  {
+   "row": 163,
+   "type": "formation",
+   "formation": "helis_hover"
+  },
+  {
+   "row": 170,
+   "type": "formation",
+   "formation": "armoured",
+   "x": 149
+  },
+  {
+   "row": 173,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 214,
+   "dir": "east"
+  },
+  {
+   "row": 179,
+   "type": "formation",
+   "formation": "fighters_swoop"
+  },
+  {
+   "row": 186,
+   "type": "formation",
+   "formation": "fighters_snake",
+   "x": 153
+  },
+  {
+   "row": 189,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 278,
+   "dir": "south"
+  },
+  {
+   "row": 192,
+   "type": "shop",
+   "id": "mid"
+  },
+  {
+   "row": 193,
+   "type": "formation",
+   "formation": "helis_zigzag"
+  },
+  {
+   "row": 200,
+   "type": "formation",
+   "formation": "fighters_swoop",
+   "mirror": true
+  },
+  {
+   "row": 203,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 282,
+   "dir": "south"
+  },
+  {
+   "row": 207,
+   "type": "formation",
+   "formation": "bombers",
+   "x": 161
+  },
+  {
+   "row": 216,
+   "type": "formation",
+   "formation": "fighters_dive"
+  },
+  {
+   "row": 219,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 234,
+   "dir": "west"
+  },
+  {
+   "row": 223,
+   "type": "formation",
+   "formation": "helis_hover"
+  },
+  {
+   "row": 230,
+   "type": "formation",
+   "formation": "armoured",
+   "x": 72
+  },
+  {
+   "row": 233,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 158,
+   "dir": "south"
+  },
+  {
+   "row": 239,
+   "type": "formation",
+   "formation": "fighters_swoop",
+   "mirror": true
+  },
+  {
+   "row": 246,
+   "type": "formation",
+   "formation": "fighters_snake",
+   "x": 145
+  },
+  {
+   "row": 249,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 184,
+   "dir": "west"
+  },
+  {
+   "row": 253,
+   "type": "formation",
+   "formation": "helis_zigzag"
+  },
+  {
+   "row": 260,
+   "type": "formation",
+   "formation": "fighters_swoop"
+  },
+  {
+   "row": 263,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 188,
+   "dir": "south"
+  },
+  {
+   "row": 267,
+   "type": "formation",
+   "formation": "bombers",
+   "x": 104
+  },
+  {
+   "row": 276,
+   "type": "formation",
+   "formation": "fighters_dive"
+  },
+  {
+   "row": 279,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 230,
+   "dir": "south"
+  },
+  {
+   "row": 283,
+   "type": "formation",
+   "formation": "helis_hover"
+  },
+  {
+   "row": 290,
+   "type": "formation",
+   "formation": "armoured",
+   "x": 126
+  },
+  {
+   "row": 293,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 260,
+   "dir": "south"
+  },
+  {
+   "row": 299,
+   "type": "formation",
+   "formation": "fighters_swoop"
+  },
+  {
+   "row": 306,
+   "type": "formation",
+   "formation": "fighters_snake",
+   "x": 106
+  },
+  {
+   "row": 309,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 160,
+   "dir": "east"
+  },
+  {
+   "row": 313,
+   "type": "formation",
+   "formation": "helis_zigzag"
+  },
+  {
+   "row": 320,
+   "type": "formation",
+   "formation": "fighters_swoop",
+   "mirror": true
+  },
+  {
+   "row": 323,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 256,
+   "dir": "west"
+  },
+  {
+   "row": 327,
+   "type": "formation",
+   "formation": "bombers",
+   "x": 170
+  },
+  {
+   "row": 336,
+   "type": "formation",
+   "formation": "fighters_dive"
+  },
+  {
+   "row": 339,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 152,
+   "dir": "east"
+  },
+  {
+   "row": 343,
+   "type": "formation",
+   "formation": "helis_hover"
+  },
+  {
+   "row": 350,
+   "type": "formation",
+   "formation": "armoured",
+   "x": 167
+  },
+  {
+   "row": 353,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 202,
+   "dir": "south"
+  },
+  {
+   "row": 359,
+   "type": "formation",
+   "formation": "fighters_swoop",
+   "mirror": true
+  },
+  {
+   "row": 366,
+   "type": "formation",
+   "formation": "fighters_snake",
+   "x": 120
+  },
+  {
+   "row": 369,
+   "type": "ground",
+   "enemy": "tank",
+   "x": 196,
+   "dir": "east"
+  },
+  {
+   "row": 376,
+   "type": "shop",
+   "id": "end"
+  },
+  {
+   "row": 384,
+   "type": "end"
+  }
+ ]
+}

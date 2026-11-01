@@ -81,6 +81,27 @@ palette_init:
     sta PAL_BLUE,x
     inx
     bne !-
+    ldx #0                      // landscape banks 1-4 from the level file
+!:  txa
+    and #$0f
+    sta tmp
+    txa                         // source: bank b = x>>4 (0-3), R/G/B blocks of 16
+    and #$30
+    sta tmp+1
+    asl                         // bank * 48 = bank*32 + bank*16
+    clc
+    adc tmp+1
+    adc tmp
+    tay
+    lda lev_pal,y
+    sta PAL_RED+$10,x
+    lda lev_pal+16,y
+    sta PAL_GREEN+$10,x
+    lda lev_pal+32,y
+    sta PAL_BLUE+$10,x
+    inx
+    cpx #64
+    bne !-
     lda #$44                    // map palette 1 for editing
     sta VIC_PALSEL
     ldx #31
@@ -98,7 +119,6 @@ palette_init:
 
 // Copy glyphs and sprites to their final place, initialise all RRB rows.
 assets_init:
-    RunDma(job_tiles)
     // pixie glyphs: clear the whole area, then copy the stored (non-blank) glyph runs
     RunDma(job_pixclear)
     ldx #0
@@ -237,7 +257,6 @@ show_buffer_b:
     rts
 
 // ---------------------------------------------------------------- DMA jobs
-job_tiles:   DmaJob(DMA_CMD_COPY, tile_data, TILE_ADDR, tile_end - tile_data)
 job_pixclear: DmaJob(DMA_CMD_FILL, 0, PIXIE_ADDR, PIXIE_MAX * 64)
 job_pixrun:  DmaJob(DMA_CMD_COPY, pixie_data, PIXIE_ADDR, 64)
 job_sprites: DmaJob(DMA_CMD_COPY, sprite_data, SPRITE_ADDR, sprite_end - sprite_data)

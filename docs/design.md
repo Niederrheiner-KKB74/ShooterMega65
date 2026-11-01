@@ -1,7 +1,8 @@
 # ShooterMega65 – Technical Design
 
 Status: Stage 2 confirmed on real hardware by the owner on 01.11.2026 (`stage2-stable`). Stage 3 (branch `stage3`)
-in progress: capsule/weapon rules, level files (see `docs/level_format.md`).
+in progress: capsule/weapon rules, level files (research: `docs/level_format.md`, JSON format for level design:
+`docs/level_json.md`).
 Items marked **(decision)** need the
 project owner's confirmation. Items marked **(HW)** have to be checked on real
 MEGA65 hardware, because XEMU is not authoritative for them (see Vyper rule 19).
@@ -195,6 +196,15 @@ when a value changes. Cost: 2 rows × (5 + 4 + 5) tokens.
 3. A raster split with a second text area. This is the most complex option and risky on hardware.
 
 ## 9. Level data and loading
+**Stage 3a (implemented):** levels are JSON files (`levels/*.json`, format for ChatGPT: `docs/level_json.md`),
+converted by `tools/build_level.py` into two SEQ files per level on the D81: `LnGFX` (landscape glyphs + 4 palettes)
+and `LnDAT` (metatile table, row dictionary, row list, event list sorted by map row, formations, path bytecode).
+`level.asm` loads both with the KERNAL before the game takes over (Vyper loader rules), unpacks the graphics
+and keeps the data at `$50000`. The map, the spawning (formations, tanks, scroll speed) and the enemy movement
+(path interpreter: move/sine/aim/wait/fire/loop/end, mirrored formations) all come from the level data.
+At the `end` event the level currently repeats. Shop and boss events are recognised but have no effect yet.
+
+Original plan:
 - Per level: a tile set (NCM glyphs and up to n palette banks), a map (21 glyph bytes and 21 colour bytes
   per row, or metatiles to save memory), a spawn script (events keyed by map row) and boss data.
 - Loading uses KERNAL SEQ files between levels, following Vyper's loader rules. Files are ZX0-packed, using Vyper Stage 10a2's
@@ -256,11 +266,11 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Shops in the middle and at the end of every level (extra lives, weapon upgrades); enemies have hit points, weapon upgrades raise the damage |
 | 01.11.2026 | S capsule: 20 % shield, random drop; $ capsule: completed formation or single ground enemy |
 | 01.11.2026 | Levels are stored in separate files, not in the program (format proposal: `docs/level_format.md`) |
+| 01.11.2026 | Levels written as JSON text so ChatGPT can create them; shops are an overlay over the game screen; a level lasts about 4 minutes |
 
 ## 15. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 2. What should the special weapon be (screen bomb, laser, shield …), and how many uses should there be per life or level?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
 5. Are the damage values and points in §6 a good starting point?
-6. Level editor, shop presentation and level length: see `docs/level_format.md` §2.6.
 

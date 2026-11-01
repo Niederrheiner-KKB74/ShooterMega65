@@ -83,6 +83,18 @@ obj_b:    .fill MAXOBJ, 0
 obj_hp:   .fill MAXOBJ, 0
 obj_wave: .fill MAXOBJ, 0
 obj_base: .fill MAXOBJ, 0            // first animation frame
+// path interpreter state (air enemies, level.asm): obj_a/obj_b = dx/dy in 1/4 px per frame
+obj_xf:   .fill MAXOBJ, 0            // x/y fractions (1/256 px)
+obj_yf:   .fill MAXOBJ, 0
+obj_pcl:  .fill MAXOBJ, 0            // path position (offset in the level data)
+obj_pch:  .fill MAXOBJ, 0
+obj_cnt:  .fill MAXOBJ, 0            // frames left in the current command
+obj_dly:  .fill MAXOBJ, 0            // start delay inside a formation
+obj_mir:  .fill MAXOBJ, 0            // 1 = mirrored path
+obj_lpn:  .fill MAXOBJ, 0            // loop counter / start
+obj_lpl:  .fill MAXOBJ, 0
+obj_lph:  .fill MAXOBJ, 0
+obj_aim:  .fill MAXOBJ, 0            // != 0: steer towards the player with this speed
 wave_kind:  .byte 0                  // fighter, bomber, helicopter, armoured plane
 wave_seq:   .byte 0                  // formation id 0..3
 wave_kills: .fill 4, 0
@@ -96,10 +108,6 @@ objects_init:
     bpl !-
     sta wave_kind
     sta wave_seq
-    lda #40
-    sta wave_timer
-    lda #20
-    sta tank_timer
     rts
 
 game_restart:
@@ -153,119 +161,9 @@ set_kind:
 !:  rts
 
 // ---------------------------------------------------------------- spawning
+// Spawning is driven by the level's event list (level.asm).
 spawn_update:
-    dec wave_timer
-    beq !+
-    jmp !no_wave+
-!:  lda #170
-    sta wave_timer
-    // a formation snaking down the screen
-    jsr random
-    and #127
-    clc
-    adc #48
-    sta wave_x
-    ldy wave_kind
-    ldx wave_seq
-    lda #0
-    sta wave_kills,x
-    lda wave_size,y
-    sta wave_count,x
-    lda #0
-    sta wave_n
-    lda #<-32
-    sta sp_y
-    lda #>-32
-    sta sp_y+1
-!w: lda #0
-    sta sp_x
-    sta sp_x+1
-    ldx #AIR_FIRST
-    lda #AIR_END
-    sta ob_end
-    jsr alloc_slot
-    bcs !full+
-    lda #T_AIR
-    jsr init_slot
-    ldy wave_kind
-    jsr set_kind
-    lda wave_x
-    sta obj_a,x
-    lda wave_n
-    asl
-    asl
-    asl
-    asl
-    sta obj_b,x                 // phase
-    lda wave_seq
-    sta obj_wave,x
-    sec                         // next plane further up
-    lda sp_y
-    ldy wave_kind
-    sbc wave_gap,y
-    sta sp_y
-    lda sp_y+1
-    sbc #0
-    sta sp_y+1
-    inc wave_n
-    lda wave_n
-    ldy wave_kind
-    cmp wave_size,y
-    bne !w-
-    jmp !next+
-!full:                          // not all planes fitted: the formation cannot be completed
-    ldx wave_seq
-    lda #$ff
-    sta wave_count,x
-!next:
-    lda wave_kind
-    clc
-    adc #1
-    and #3
-    sta wave_kind
-    lda wave_seq
-    clc
-    adc #1
-    and #3
-    sta wave_seq
-!no_wave:
-    dec tank_timer
-    bne !no_tank+
-    lda #90
-    sta tank_timer
-    jsr random
-    sta sp_x                    // x = 16 + random (0..255)
-    lda #0
-    sta sp_x+1
-    clc
-    lda sp_x
-    adc #16
-    sta sp_x
-    bcc !+
-    inc sp_x+1
-!:  lda #<-16
-    sta sp_y
-    lda #>-16
-    sta sp_y+1
-    ldx #GROUND_FIRST
-    lda #GROUND_END
-    sta ob_end
-    jsr alloc_slot
-    bcs !no_tank+
-    lda #T_TANK
-    jsr init_slot
-    ldy #K_TANK
-    jsr set_kind
-    jsr random                  // start driving east, south or west (north would stay above the screen)
-    and #3
-    bne !+
-    lda #2
-!:  sta obj_b,x
-    lda #0
-    sta obj_wave,x              // track phase
-    jsr tank_frame
-!no_tank:
-    rts
+    jmp level_events
 
 // object X fires its weapon: shot appears at its centre, aimed horizontally at the player
 spawn_eshot:
@@ -562,39 +460,125 @@ upd_air:
     lda obj_base,x
     sta obj_fr,x
 !anim_done:
-    lda #1
-    jsr move_down
+    lda obj_dly,x               // formation members wait above the screen
+    beq !+
+    dec obj_dly,x
+    rts
+!:  lda obj_cnt,x
+    bne !+
+    jsr path_fetch
     lda obj_type,x
-    beq !gone+
-    // x = a + 16 + sin[(2t + b) & 255]
-    lda obj_t,x
-    asl
-    clc
-    adc obj_b,x
-    tay
-    lda sin_tab,y
-    sta tmp
-    ldy #0
-    bit tmp
-    bpl !+
-    dey
-!:  sty tmp+1
-    clc
-    lda obj_a,x
-    adc #16
-    sta obj_xl,x
-    lda #0
-    adc #0
-    sta obj_xh,x
+    bne !+
+    rts
+!:  lda obj_cnt,x
+    cmp #255                    // 255 = 'end': keep flying
+    beq !+
+    dec obj_cnt,x
+!:  lda obj_aim,x               // aim: steer towards the player horizontally
+    beq !move+
+    ldy obj_fr,x
     clc
     lda obj_xl,x
+    adc frame_hit_cx,y
+    sta tmp
+    lda obj_xh,x
+    adc #0
+    sta tmp+1
+    clc                         // player centre - object centre
+    lda pl_x
+    adc #PL_HIT_CX
+    sta tmp2
+    lda pl_x+1
+    adc #0
+    sta tmp2+1
+    sec
+    lda tmp2
+    sbc tmp
+    lda tmp2+1
+    sbc tmp+1
+    lda obj_aim,x
+    bcs !+                      // player to the right (or equal)
+    eor #$ff
+    clc
+    adc #1
+!:  sta obj_a,x
+!move:
+    lda obj_a,x
+    jsr vel_split
+    clc
+    lda obj_xf,x
     adc tmp
+    sta obj_xf,x
+    lda obj_xl,x
+    adc tmp+1
     sta obj_xl,x
     lda obj_xh,x
-    adc tmp+1
+    adc tmp2
     sta obj_xh,x
+    lda obj_b,x
+    jsr vel_split
+    clc
+    lda obj_yf,x
+    adc tmp
+    sta obj_yf,x
+    lda obj_yl,x
+    adc tmp+1
+    sta obj_yl,x
+    lda obj_yh,x
+    adc tmp2
+    sta obj_yh,x
+    // leave the playfield: below (y >= 256), far above (y < -96) or sideways
+    bmi !up+
+    beq !+
+    jmp free_x
+!up:
+    cmp #$ff
+    bne !gone+
+    lda obj_yl,x
+    cmp #<-96
+    bcc !gone+
+!:  lda obj_xh,x
+    bmi !left+
+    cmp #2                      // x >= 512
+    bcs !gone+
+    cmp #1
+    bne !ok+
+    lda obj_xl,x
+    cmp #<352                   // x >= 352: right of the screen
+    bcs !gone+
+    bcc !ok+
+!left:
+    cmp #$ff
+    bne !gone+
+    lda obj_xl,x
+    cmp #<-48
+    bcc !gone+
+!ok:
     jmp maybe_fire
 !gone:
+    jmp free_x
+
+// A = velocity (signed, 1/4 px) -> tmp = fraction (A << 6), tmp+1 = whole part (A >> 2), tmp2 = sign
+vel_split:
+    sta tmp+1
+    ldy #0
+    cmp #$80
+    bcc !+
+    dey
+!:  sty tmp2
+    asl
+    asl
+    asl
+    asl
+    asl
+    asl
+    sta tmp
+    lda tmp+1
+    cmp #$80
+    ror
+    cmp #$80
+    ror
+    sta tmp+1
     rts
 
 // fire with the kind's probability while on screen (y 8..150)

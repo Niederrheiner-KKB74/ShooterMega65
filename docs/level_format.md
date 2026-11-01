@@ -159,10 +159,13 @@ Leveldesign erfolgt am PC:
 - Ein Python-Werkzeug `tools/build_level.py` erzeugt daraus die gepackten Dateien und prüft Budgets
   (Glyphen, Paletten, Speicher). Ein Bild des Levels mit eingezeichneten Ereignissen dient zur Kontrolle.
 
-### 2.6 Offene Entscheidungen
-1. **Level-Editor**: Tiled oder lieber Text/JSON, das ChatGPT direkt erzeugen kann?
-2. **Shops**: eigene Bildschirme mit eigener Grafik oder eine Overlay-Auswahl über dem stehenden Level?
-3. **Levellänge**: soll ein Level zum Beispiel 3–5 Minuten dauern?
+### 2.6 Entscheidungen (01.11.2026)
+1. **Leveldesign als Text/JSON**, damit ChatGPT Level erzeugen kann: `docs/level_json.md`.
+2. **Shops als Overlay** über dem Spielbildschirm.
+3. **Levellänge etwa 4 Minuten** (≈ 375 Kartenzeilen).
+
+Umgesetzt in Stage 3a: zwei Dateien pro Level (`LnGFX`, `LnDAT`), noch ungepackt. ZX0 folgt, wenn die
+Dateien größer werden.
 
 ## Quellen
 - [NESdev Wiki: Level compression](https://nesdev.org/wiki/Level_compression): objektbasierte Karten, Metatiles, Chunks, Spaltenvorlagen, RLE/LZ, Auto-Tiling

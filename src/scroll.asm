@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
 // Vertical scrolling
 //
-// The level map is a list of 21-glyph rows, row 0 at the start (bottom).
+// The level map comes from the level file (level.asm), glyph row 0 at the start (bottom).
 // Decoded rows live in a ring of 32 RRB rows that is stored twice (slot k and
 // k+32), so the 26 visible rows are always one contiguous block: each frame
 // a single DMA copies them (screen + colour part) into the back buffer, which
@@ -31,10 +31,10 @@ scroll_advance:
     sta tmp2
     clc
     lda scroll_frac
-    adc #<SCROLL_SPEED
+    adc scroll_spd
     sta scroll_frac
     lda scroll_px
-    adc #>SCROLL_SPEED
+    adc scroll_spd+1
     sta scroll_px
     lda scroll_px+1
     adc #0
@@ -67,61 +67,14 @@ scroll_advance:
 !done:
     rts
 
-// Decode map row tmp (16 bit) into ring slots k and k+32.
+// Decode map row tmp (16 bit) into ring slots k and k+32 (contents from the level data).
 decode_row:
     lda #31
     sec
     sbc tmp
     and #31
     sta dr_slot
-    // source offset = (m & 511) * 21 = m*16 + m*4 + m
-    lda tmp
-    and #<(MAP_ROWS-1)
-    sta tmp2
-    lda tmp+1
-    and #>(MAP_ROWS-1)
-    sta tmp2+1
-    lda tmp2
-    sta dr_acc
-    lda tmp2+1
-    sta dr_acc+1
-    asl tmp2                    // *4
-    rol tmp2+1
-    asl tmp2
-    rol tmp2+1
-    clc
-    lda dr_acc
-    adc tmp2
-    sta dr_acc
-    lda dr_acc+1
-    adc tmp2+1
-    sta dr_acc+1
-    asl tmp2                    // *16
-    rol tmp2+1
-    asl tmp2
-    rol tmp2+1
-    clc
-    lda dr_acc
-    adc tmp2
-    sta dr_acc
-    lda dr_acc+1
-    adc tmp2+1
-    sta dr_acc+1
-    clc
-    lda dr_acc
-    adc #<map_data
-    sta dr_src
-    lda dr_acc+1
-    adc #>map_data
-    sta dr_src+1
-    clc
-    lda dr_acc
-    adc #<mapcol_data
-    sta dr_csrc
-    lda dr_acc+1
-    adc #>mapcol_data
-    sta dr_csrc+1
-
+    jsr level_row               // -> dr_glyph / dr_col
     ldx dr_slot
     jsr dr_write
     lda dr_slot
@@ -147,26 +100,16 @@ dr_write:
     lda #0
     sta scr_ptr+3
     sta col_ptr+3
-    lda dr_src
-    sta dr_rd+1
-    lda dr_src+1
-    sta dr_rd+2
-    lda dr_csrc
-    sta dr_crd+1
-    lda dr_csrc+1
-    sta dr_crd+2
     ldy #0
     ldz #0
 !:  lda #$08                    // colour byte 0: NCM
     sta ((col_ptr)),z
-dr_rd:
-    lda $ffff,y                 // glyph offset within the tile set
+    lda dr_glyph,y              // glyph offset within the tile set
     sta ((scr_ptr)),z
     inz
     lda #>TILE_CHAR
     sta ((scr_ptr)),z
-dr_crd:
-    lda $ffff,y                 // colour byte 1: palette bank << 4 | $0f
+    lda dr_col,y                // colour byte 1: palette bank << 4 | $0f
     sta ((col_ptr)),z
     inz
     iny
@@ -175,9 +118,6 @@ dr_crd:
     rts
 
 dr_slot: .byte 0
-dr_acc:  .word 0
-dr_src:  .word 0
-dr_csrc: .word 0
 
 // Copy the 26 visible rows into the back buffer and prepare the pixie pass.
 scroll_copy_rows:

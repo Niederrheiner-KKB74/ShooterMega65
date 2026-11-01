@@ -20,6 +20,9 @@ sys.path.insert(0, str(ROOT / 'tools'))
 import d81            # noqa: E402
 import make_assets    # noqa: E402
 import import_art     # noqa: E402
+import build_level    # noqa: E402
+
+LEVELS = [('L1', 'levels/level01.json')]   # (file prefix on the disk, source)
 
 KICKASS_SHA256 = '5d8544280dae2d018c79151d8c7b877eca1fb994096e54ca380b26d0cd79f847'
 PRG_NAME = 'SHOOTER'
@@ -39,12 +42,21 @@ def main():
     ap.add_argument('--allow-other-kickass', action='store_true')
     a = ap.parse_args()
     out = Path(a.out).resolve()
+    out.mkdir(parents=True, exist_ok=True)
     jar = find_kickass(a.kickass)
     digest = hashlib.sha256(jar.read_bytes()).hexdigest()
     if digest != KICKASS_SHA256 and not a.allow_other_kickass:
         sys.exit(f'unexpected KickAssembler build {digest}; pass --allow-other-kickass to continue')
 
     import_art.main(ROOT / 'build/gen')        # artwork v2 (assets/art/spec-v2)
+    level_files = []
+    for name, src in LEVELS:
+        try:
+            gfx, dat, report = build_level.build(ROOT / src, out / 'levels', name)
+        except build_level.LevelError as e:
+            sys.exit(f'{src}: {e}')
+        print('\n'.join(report))
+        level_files += [(name + 'GFX', gfx, d81.SEQ), (name + 'DAT', dat, d81.SEQ)]
     prg = out / f'{PRG_NAME}.PRG'
     out.mkdir(parents=True, exist_ok=True)
     # A failed assembly must not leave a previous build looking current.
@@ -64,13 +76,15 @@ def main():
     data = prg.read_bytes()
     if data[:2] != b'\x01\x20':
         sys.exit('PRG must load at $2001')
-    image = d81.build_disk([(PRG_NAME, data, d81.PRG)])
-    if d81.read_file(image, PRG_NAME) != data:
-        sys.exit('D81 verification failed')
+    files = [(PRG_NAME, data, d81.PRG)] + level_files
+    image = d81.build_disk(files)
+    for fname, payload, _ in files:
+        if d81.read_file(image, fname) != payload:
+            sys.exit(f'D81 verification failed: {fname}')
     disk = out / 'SHOOTER65.D81'
     disk.write_bytes(image)
     print(f'{prg.name}: {len(data)} bytes, sha256 {hashlib.sha256(data).hexdigest()[:16]}')
-    print(f'{disk.name}: verified ({PRG_NAME} {len(data)} bytes)')
+    print(f'{disk.name}: verified (' + ', '.join(f'{n} {len(p)}' for n, p, _ in files) + ' bytes)')
 
 
 if __name__ == '__main__':

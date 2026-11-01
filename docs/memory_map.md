@@ -1,4 +1,4 @@
-# Memory map (Stage 2)
+# Memory map (Stage 3)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -20,6 +20,8 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 | `$68–$69` | credits (BCD, 4 digits) |
 | `$70` | player exhaust animation counter |
 | `$6A–$6F` | collision centres |
+| `$71` | player weapon damage (`pl_power`) |
+| `$72–$75` | 32-bit pointer into the level data |
 
 ## Bank 0
 
@@ -27,8 +29,7 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 |---|---|
 | `$2001–$2010` | BASIC stub `BANK 0:SYS 8224` |
 | `$2020–$4407` | code and tables: sprite pointer table, HUD work buffer (7×64), HUD digits/template, exit save area, sine table, frame tables |
-| `$4500–$4F7F` | map (64 glyph rows × 21) and map colours |
-| `$4F80–$6E7F` | landscape glyph staging (124 glyphs) |
+| `…` | level loader buffer (256 bytes), metatile tables (3×256 bytes) |
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
@@ -40,7 +41,7 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 |---|---|---|
 | `$40000–$47FFF` | 32 KB | landscape NCM glyphs, char `$1000`+ (max. 512; tile offsets in the map are bytes, so 256 per level; Stage 2 uses 124) |
 | `$48000–$4FFFF` | 32 KB | pixie NCM glyphs, char `$1200`+ (max. 512, 16-bit frame bases; Stage 2 uses 259); glyph `$1200` = blank; HUD glyphs at `HUD_GLYPH + 2k`, k = 0..10. The area is cleared by DMA at start and only the non-blank glyph runs are copied from the PRG |
-| `$50000–$53FFF` | 16 KB | free |
+| `$50000–$53FFF` | 16 KB | level buffer: `LnGFX` is loaded here first (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths) stays here for the whole level |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |
 | `$58000–$5AA7F` | 64×170 | ring buffer, screen part (32 slots stored twice) |

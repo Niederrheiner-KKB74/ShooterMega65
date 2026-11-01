@@ -32,7 +32,6 @@
 .label backcol      = $36      // colour RAM offset of the back buffer
 .label pend_typos   = $38      // TEXTYPOS for the frame being built
 
-.const SCROLL_SPEED = $0080    // 8.8 pixels per frame (0.5 px = 25 px/s)
 
 // ---------------------------------------------------------------- BASIC stub
 *=$2001
@@ -48,7 +47,10 @@ basic_end:
 
 // ---------------------------------------------------------------- entry
 start:
-    sei
+    jsr level_load                     // level files from disk, still with the KERNAL (level.asm)
+    bcc !+
+    rts                                // failed: message printed, back to BASIC
+!:  sei
     lda #$47                           // VIC-IV I/O personality
     sta VIC_KEY
     lda #$53
@@ -68,6 +70,7 @@ start:
     sta frame_hi
     jsr video_init
     jsr assets_init
+    jsr level_init
     jsr scroll_init
     jsr objects_init
     jsr hud_reset
@@ -146,19 +149,14 @@ random:
 #import "player.asm"
 #import "hud.asm"
 #import "system.asm"
+#import "level.asm"
 
 // ---------------------------------------------------------------- data
-.align $100
-sin_tab:   .fill 256, round(48 * sin(toRadians(i * 360 / 256)))   // signed
 #import "../build/gen/frames.inc"
 #import "../build/gen/pixruns.inc"
 
 code_end:
 .align $100
-map_data:     .import binary "../build/gen/map.bin"
-mapcol_data:  .import binary "../build/gen/mapcol.bin"
-tile_data:    .import binary "../build/gen/tiles.bin"
-tile_end:
 pixie_data:   .import binary "../build/gen/pixies.bin"
 pixie_end:
 .align $100
@@ -171,6 +169,5 @@ prg_end:
 .errorif ((sprite_data & $ff) != 0), "player DMA frames must be page aligned"
 .errorif (sprite_end - sprite_data != PLAYER_FRAMES * $200), "player frame size mismatch"
 .errorif (PIXIE_GLYPHS > PIXIE_MAX), "pixie glyph area ($48000-$4FFFF) exceeded"
-.errorif (TILE_GLYPHS > 256), "tile glyph offsets must fit in a byte"
 .print "code ends at $" + toHexString(code_end) + ", PRG ends at $" + toHexString(prg_end)
 

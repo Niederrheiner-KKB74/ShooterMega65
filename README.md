@@ -12,8 +12,9 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
   `stage1-stable` / `stage1-aircraft-stable`.
 - **Stage 2** (branch `stage2`): artwork v2 and animated tanks, HUD with score, lives, credits and shield bar,
   shield/damage, three lives, capsules. Confirmed on real hardware (01.11.2026), `stage2-stable`.
-- **Stage 3** (branch `stage3`, in progress): capsule and weapon rules, level files.
-  Level storage research and format proposal: [docs/level_format.md](docs/level_format.md).
+- **Stage 3a** (branch `stage3`): capsule and weapon rules; levels as JSON files, converted into level files
+  on the D81 (map, formations, flight paths, ground units). XEMU-tested, hardware test pending.
+  See [docs/stage3.md](docs/stage3.md), level format for ChatGPT: [docs/level_json.md](docs/level_json.md).
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.
@@ -30,12 +31,14 @@ Controls: joystick in port 2 (fire = shoot). D toggles the raster time display. 
 - [Artwork specification](docs/artwork_spec.md)
 - [Stage 2 notes and hardware checklist](docs/stage2.md)
 - [Level data: research and format proposal](docs/level_format.md)
+- [Level JSON format (for level design)](docs/level_json.md)
 - [Working rules](CLAUDE.md)
 
 ## Layout
 ```
 src/       engine sources (main, video, scroll, pixie, objects, player, hud, system, hw, layout)
-tools/     build.py, import_art.py (artwork v2 importer), make_assets.py (placeholders), d81.py
+tools/     build.py, import_art.py (artwork importer), build_level.py (JSON → level files), d81.py
+levels/    level descriptions (JSON)
 docs/      design, memory map, stage notes
 releases/  tested stage builds (PRG + D81)
 ```
