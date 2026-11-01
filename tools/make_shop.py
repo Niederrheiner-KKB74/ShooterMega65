@@ -15,7 +15,7 @@ highlighted), 16 = frame (always normal), 17/18 = YES/NO button of the dialog.
 
 The items and prices are defined here only (ITEMS); the engine gets them from shop.inc.
 Icons: assets/art/shop-upgrades (PR #9, HUD palette, mapped by ICON_HUD_MAP); EXTRA LIFE and EXIT
-are still placeholders drawn here (docs/artwork_spec.md, shop icons).
+are supplied in assets/art/shop (docs/artwork_spec.md, shop icons).
 """
 import json
 import sys
@@ -194,8 +194,10 @@ ICON_MAP_EXIT = dict(ICON_MAP, g=12)
 
 
 def art_icon(name):
-    for ic in json.loads(ICON_ART.read_text()):
-        if ic['id'] == ICON_ART_IDS[name]:
+    source = ROOT / 'assets/art/shop/generated/indexed-source.json' if name in ('life', 'exit') else ICON_ART
+    target = name if name in ('life', 'exit') else ICON_ART_IDS[name]
+    for ic in json.loads(source.read_text()):
+        if ic['id'] == target:
             px = bytes.fromhex(''.join(ic['rows']))
             assert len(px) == 256, f'shop icon {ic["id"]}: not 16x16'
             unknown = set(px) - set(ICON_HUD_MAP)
@@ -205,6 +207,8 @@ def art_icon(name):
 
 
 def icon(name):
+    if name in ('life', 'exit'):
+        return art_icon(name)
     if name in ICON_ART_IDS and ICON_ART.exists():
         return art_icon(name)
     a = np.full((16, 16), 8, np.uint8)

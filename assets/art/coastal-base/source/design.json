@@ -107,5 +107,15 @@
       0
     ]
   ],
-  "provenance": "New code-native terrain and transition tiles; no generated reference-board resampling."
+  "provenance": "New code-native terrain and transition tiles; no generated reference-board resampling.",
+  "revision": "Denser Stage-3b candidate: 44 formations, 240 aircraft, 16 tanks, 124 native tiles",
+  "landmarks": [
+    "offshore islands",
+    "rocky shore",
+    "woodland ponds and clearings",
+    "radar",
+    "fuel depot",
+    "supply crates",
+    "runway"
+  ]
 }

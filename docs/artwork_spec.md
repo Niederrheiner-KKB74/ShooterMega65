@@ -51,7 +51,10 @@ time in every 8-pixel row it touches. Many small objects are therefore cheaper t
 - **Item icons: 16×16 pixels**, one per item: SHOT II, SHOT III, SHOT IV, MISSILE, SHIELD (invulnerability),
   BOMB, EXTRA LIFE, EXIT. **Delivered (PR #9, `assets/art/shop-upgrades`):** SHOT II–IV, BOMB, MISSILE,
   SHIELD, drawn in the HUD palette; `tools/make_shop.py` maps their colours to the shop palette (`ICON_HUD_MAP`).
-  **Still missing: EXTRA LIFE and EXIT** (placeholders). New icons may use the HUD palette colours 1–8 and 10, like PR #9. They sit in the middle of a 64×40 cell, the name above, the price below.
+  **EXTRA LIFE and EXIT:** `assets/art/shop/generated/`, imported by `tools/make_shop.py`.
+  Extra-Life is a nearest-neighbour miniature of the current straight-flight player;
+  Exit is a green running-person/door/arrow pictogram. Both use only HUD colours 1–8 and 10.
+  They sit in the middle of a 64×40 cell, the name above, the price below.
 - All shop graphics share **one 16-colour palette** (index 0 is not usable). Fixed roles: 1 panel background,
   2 outline/text shadow, 3 thick frame, 4 thin cell frame (blinks for the cursor), 5 text, 6 price, 7 frame light
   edge, 8 cell interior. **Icons may use indices 9–15 plus 2, 5, 8** (currently red, orange, yellow, green, cyan,

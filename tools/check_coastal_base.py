@@ -16,12 +16,12 @@ def main():
     assert len(set(tuple(r) for r in rows))<=256
     gfx=(BUILD/'LCGFX').read_bytes();dat=(BUILD/'LCDAT').read_bytes()
     assert len(gfx)<=16384 and len(dat)<=16384 and gfx[:2]==b'SG' and dat[:2]==b'SL'
-    assert struct.unpack_from('<H',gfx,2)[0]==208 and len(gfx)==4+192+104*128
+    assert struct.unpack_from('<H',gfx,2)[0]==248 and len(gfx)==4+192+124*128
     header=struct.unpack_from('<2sBBHHHHHHHHB',dat)
     _,version,nmeta,nrows,om,od,orr,oe,of,op,speed,ndict=header
     assert version==1 and nrows==375 and speed==128 and ndict<=256
     manifest=json.loads((BASE/'manifest.json').read_text());metadata=json.loads((BASE/'level-example.json').read_text())['tiles']
-    assert len(manifest['palettes'])==4 and len(metadata)==104
+    assert len(manifest['palettes'])==4 and len(metadata)==124
     original=json.loads((ROOT/'assets/art/spec-v2/generated/manifest.json').read_text())
     assert manifest['palettes']['fixed_targets']==original['palettes']['fixed_targets'], 'shared tank palette changed'
     reverse={1:'water',2:'nature',3:'structures',4:'fixed_targets'}
@@ -32,7 +32,7 @@ def main():
         pals[bank]=[tuple(build_level.swap(chunk[ch*16+i]) for ch in range(3)) for i in range(16)]
         assert [list(c) for c in pals[bank]]==manifest['palettes'][reverse[bank]]
     image=Image.new('RGBA',(336,6000));terrain=gfx[196:];tile_pixels=[]
-    for t in range(104):
+    for t in range(124):
         values=[]
         for y in range(16):
             for x in range(16):
@@ -53,10 +53,14 @@ def main():
             for c in {(e['x']+16)//16,(e['x']+31)//16}:
                 tile=metadata[rows[e['row']][c]]
                 assert tile['palette']!='water',e
-    assert sum(e['type']=='ground' for e in lv['events'])==8  # even if all survive, <10 slots
+    assert sum(e['type']=='ground' for e in lv['events'])==16
+    ground_count=0
+    for event in lv['events']:
+        if event['type']=='ground':ground_count+=1;assert ground_count<=8
+        if event['type']=='shop':ground_count=0
     waves=[e for e in lv['events'] if e['type']=='formation']
-    assert len(waves)==24 and min(b['row']-a['row'] for a,b in zip(waves,waves[1:]))>=14
-    assert all(lv['formations'][e['formation']]['count']<=5 for e in waves)
+    assert len(waves)==44 and min(b['row']-a['row'] for a,b in zip(waves,waves[1:]))>=7
+    assert all(lv['formations'][e['formation']]['count']<=7 for e in waves)
     # Conservative air-slot occupancy: actual compiled dy/wait bytecode, delayed
     # members, y>=256 removal. Horizontal exits and player kills only reduce it.
     def lifetime(path,start_y):
@@ -78,11 +82,19 @@ def main():
     for event in waves:
         f=lv['formations'][event['formation']];life=lifetime(lv['paths'][f['path']],f.get('y',-32))
         for member in range(f['count']):
-            start=max(0,32*event['row']-400)+member*f['delay']
-            changes.extend([(start,1),(start+life,-1)])
+            # The engine reserves every member immediately, even delayed members.
+            start=max(0,32*event['row']-400)
+            changes.extend([(start,1),(start+member*f['delay']+life,-1)])
     active=peak=0
     for _,delta in sorted(changes):active+=delta;peak=max(peak,active)
-    assert peak<=20
+    assert peak<=16  # four spare air slots for effects / bonus drops
+    for event in lv['events']:
+        if event['type']=='shop':
+            for wave in waves:
+                if wave['row']>=event['row']:continue
+                f=lv['formations'][wave['formation']]
+                life=lifetime(lv['paths'][f['path']],f.get('y',-32))
+                assert (event['row']-wave['row'])*32>life+(f['count']-1)*f['delay']
     assert not any(e['type'] in ('boss','speed') for e in lv['events'])
     assert lv['events'][-1]==dict(row=375,type='end')
     # Road/bridge/checkpoint component must connect forest entry, detour and base.
@@ -101,7 +113,8 @@ def main():
             if p in road and p not in seen:seen.add(p);q.append(p)
     for target in ((13*16+15,372*16+8),(17*16+15,246*16+8),(7*16+8,338*16+15)):
         assert target in seen,('disconnected road',target)
-    print(f'PASS: SG/SL decoded pixel-exactly; {ndict}/256 rows; 4 palettes; files {len(gfx)}/{len(dat)} bytes; road/bridge connected; 8 tanks on land; 24 formations, peak {peak}/20 air slots.')
+    count=sum(lv['formations'][e['formation']]['count'] for e in waves)
+    print(f'PASS: SG/SL pixel-exact; {ndict}/256 rows; 4 palettes; files {len(gfx)}/{len(dat)} bytes; road/bridge connected; 16 tanks on land; 44 formations / {count} aircraft, peak {peak}/20 reserved air slots; shop approach clear.')
 
 
 if __name__=='__main__':main()
