@@ -58,6 +58,7 @@ HUD_PAL = [(0, 0, 0), (54, 82, 111), (221, 239, 247), (255, 165, 50),     # 1-3 
 # placeholder HUD icons (HUD palette indices), 8x8: bomb and invulnerability (shop items, Stage 3b)
 HUD_BOMB = ['....3.3.', '.....3..', '...55...', '..5555..', '.555555.', '.525555.', '.555555.', '..5555..']
 HUD_INVULN = ['7777777.', '7222227.', '7222227.', '7222227.', '.72227..', '.72227..', '..727...', '...7....']
+ROCKET_VIEWS = ROOT / 'assets/art/rocket-directions/generated'
 TANKS = ROOT / 'assets/art/ground-vehicles/generated'
 TANK_DIRS = ('north', 'east', 'south', 'west')       # engine direction 0-3
 TANK_PHASES = 4
@@ -220,6 +221,16 @@ def main(out):
     add('ESHOT_RED', *grp('enemy_shot_red', 0))
     add('ESHOT_FIRE', *grp('enemy_shot_fire', 0))
     add('ROCKET', *grp('rocket', 0))
+    # homing missile, 8 directions (up, then clockwise in 45 degree steps): the upward rocket and the
+    # 45 degree view of PR #11, the others by lossless 90 degree rotations; colours through the rocket remap
+    rbank, rmap = remap['rocket']
+    views = {v['id']: np.frombuffer(bytes.fromhex(''.join(v['rows'])), np.uint8).reshape(16, 16)
+             for v in json.loads((ROCKET_VIEWS / 'indexed-source.json').read_text())}
+    assert (views['rocket_up'] == pix['rocket', 0]).all(), 'rocket views: upward view differs from the game rocket'
+    up, d45 = views['rocket_up'], views['rocket_right45']
+    for n, a in enumerate((up, d45, np.rot90(up, -1), np.rot90(d45, -1), np.rot90(up, 2), np.rot90(d45, 2),
+                           np.rot90(up, 1), np.rot90(d45, 1))):
+        add(f'MS{n}', rmap[np.ascontiguousarray(a)], rbank)
     for n in range(6):
         add(f'EX16_{n}', *grp('explosion_16', n))
     for n in range(6):

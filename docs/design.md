@@ -273,6 +273,7 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Space = bomb, S = invulnerability; extra life / exit icons and denser coastal level (PR #10) adopted |
 | 01.11.2026 | Capsules fall at their own speed (1.5 px/frame), not with the landscape |
 | 01.11.2026 | Stage 4 (special weapons) confirmed on hardware |
+| 01.11.2026 | Missile in 8 flight directions (45° view from PR #11); revised coastal level (PR #11) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -326,7 +327,8 @@ Requests while the plane is destroyed or inside the shop are dropped.
   no missile is under way and a visible enemy exists, and picks a random visible enemy (air or tank). Each frame
   it moves up to 3 px per axis towards the target centre; if the target is gone it picks another one, without
   any it flies straight up. After 200 frames it disappears. `collide_shots` treats it like a player shot, so it
-  does `pl_power` damage to whatever enemy it touches. Graphic: the rocket frame (pointing up).
+  does `pl_power` damage to whatever enemy it touches. Graphic (Stage 4b): 8 frames in the flight direction,
+  made at build time from the upward rocket and a 45° view by 90° rotations (no hardware flipping, see `docs/stage4.md`).
 
 ## 17. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?

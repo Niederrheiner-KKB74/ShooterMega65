@@ -44,7 +44,7 @@ not in the zero page.
 |---|---|---|
 | `$40000–$43FFF` | 16 KB | landscape NCM glyphs, char `$1000`+ (max. 256 per level: tile offsets in the map are bytes; `build_level.py` allows 128 tiles; the coastal level uses 208 glyphs) |
 | `$44000–$47FFF` | 16 KB | shop glyphs from the file `SHOP`, char `$1100`+ (max. 255; 148 used). Guarded in `shop.asm` |
-| `$48000–$4FFFF` | 32 KB | pixie NCM glyphs, char `$1200`+ (max. 512, 16-bit frame bases; Stage 2 uses 259); glyph `$1200` = blank; HUD glyphs at `HUD_GLYPH + 2k`, k = 0..10. The area is cleared by DMA at start and only the non-blank glyph runs are copied from the PRG |
+| `$48000–$4FFFF` | 32 KB | pixie NCM glyphs, char `$1200`+ (max. 512, 16-bit frame bases; Stage 4b uses 289); glyph `$1200` = blank; HUD glyphs at `HUD_GLYPH + 2k`, k = 0..10. The area is cleared by DMA at start and only the non-blank glyph runs are copied from the PRG |
 | `$50000–$53FFF` | 16 KB | load buffer: first `SHOP` (glyphs → `$44000`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths), which stays here for the whole level |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |

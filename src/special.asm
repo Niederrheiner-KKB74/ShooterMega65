@@ -9,6 +9,7 @@
 //   Homing missile:          starts with the guns (fire) when no missile is under way and an
 //                            enemy is visible; steers towards a random visible enemy and does
 //                            pl_power damage (collide_shots treats it like a player shot).
+//                            8 frames FR_MS0..7 (up, then clockwise) follow the flight direction.
 // ----------------------------------------------------------------------------
 // constants: layout.asm (RING_ADDR, INV_*, MS_*, FLASH_FRAMES), objects.asm (T_MISSILE)
 
@@ -177,7 +178,7 @@ missile_try:
     bcs !no+
     lda #T_MISSILE
     jsr init_slot
-    lda #FR_ROCKET
+    lda #FR_MS0
     sta obj_fr,x
     lda ms_target
     sta obj_a,x
@@ -258,6 +259,8 @@ upd_missile:
     bcs !ok+
     jmp free_x
 !ok:
+    lda #FR_MS0                 // pointing up
+    sta obj_fr,x
     rts
 !:  tya
     sta obj_a,x
@@ -292,6 +295,7 @@ upd_missile:
     sta tmp+1
     jsr ms_clamp                // A = step (signed)
     sta tmp
+    sta ms_sx
     clc
     adc obj_xl,x
     sta obj_xl,x
@@ -326,6 +330,7 @@ upd_missile:
     sta tmp+1
     jsr ms_clamp
     sta tmp
+    sta ms_sy
     clc
     adc obj_yl,x
     sta obj_yl,x
@@ -335,7 +340,68 @@ upd_missile:
     lda #$ff
 !:  adc obj_yh,x
     sta obj_yh,x
+    // fall through: frame for the flight direction
+
+// Missile frame from the step (ms_sx, ms_sy): one of 8 directions (45 degree sectors,
+// a component counts when it is at least half the other one). No movement: frame kept.
+ms_dir:
+    lda ms_sx
+    jsr ms_abs
+    sta ms_ax
+    lda ms_sy
+    jsr ms_abs
+    sta ms_ay
+    ldy #1                      // horizontal: 0 left, 1 none, 2 right
+    lda ms_ay
+    lsr                         // ignore x if 2*|x| < |y|  <=> |x| < |y|/2 (rounded down)
+    cmp ms_ax
+    bcs !hz+                    // |y|/2 >= |x|: x is too small... unless both are 0
+    lda ms_sx
+    bmi !l+
+    iny
+    bne !hz+
+!l: dey
+!hz:
+    sty ms_h
+    ldy #1                      // vertical: 0 up, 1 none, 2 down
+    lda ms_ax
+    lsr
+    cmp ms_ay
+    bcs !vt+
+    lda ms_sy
+    bmi !u+
+    iny
+    bne !vt+
+!u: dey
+!vt:
+    lda ms_h                    // table index = h * 3 + v
+    asl
+    adc ms_h
+    sty ms_h
+    adc ms_h
+    tay
+    lda ms_dir_tab,y
+    bmi !keep+
+    clc
+    adc #FR_MS0
+    sta obj_fr,x
+!keep:
     rts
+
+ms_abs:
+    bpl !+
+    eor #$ff
+    clc
+    adc #1
+!:  rts
+
+ms_sx: .byte 0
+ms_sy: .byte 0
+ms_ax: .byte 0
+ms_ay: .byte 0
+ms_h:  .byte 0
+// h (left/none/right) * 3 + v (up/none/down) -> direction 0 up, 1 up-right ... 7 up-left
+ms_dir_tab: .byte 7, 6, 5,   0, $ff, 4,   1, 2, 3
 ms_self: .byte 0
 ms_tgt:  .byte 0
 ms_fr:   .byte 0

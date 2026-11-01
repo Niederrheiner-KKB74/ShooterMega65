@@ -39,3 +39,32 @@ Design details: `docs/design.md` §16.
 6. Capsules fall clearly faster than the landscape and can still be caught.
 7. Shop: EXTRA LIFE and EXIT show their new icons. The denser level runs without slowdown or flicker.
 8. X returns to BASIC; sprites and colours in BASIC look normal afterwards.
+
+---
+
+# Stage 4b – Missile directions, revised coastal level
+
+Release files are in `releases/stage4b/`.
+
+## What is new
+- The homing missile is drawn in its flight direction: 8 frames in 45° steps (`FR_MS0`–`FR_MS7`, up, then
+  clockwise). They come from the upward rocket and the 45° view of PR #11; `import_art.py` makes the other six by
+  lossless 90° rotations, through the rocket palette remap. A step component counts when it is at least half
+  of the other one (`ms_dir` in `special.asm`). Hardware flipping (colour RAM bits 6/7) is not used: vertical
+  flipping together with the pixie Y offset is undocumented, and the 8 frames cost only 24 glyphs.
+- Coastal level revised by ChatGPT (PR #11): natural coast line, forest clearings, large base buildings;
+  126 tiles (the GFX file limit), 242 different rows.
+
+![missile directions](previews/missile_directions.png)
+
+## Verification so far
+| Check | Result |
+|---|---|
+| Assembly, D81 read back; pixies 289 of 512 glyphs; `L1GFX` 16324 bytes | ✔ |
+| XEMU: missile frames follow the flight (memory dump: up-right, down-right, right; screenshot: horizontal missile flying at a fighter) | ✔ |
+| **Real MEGA65** | **open – please test** |
+
+## Hardware test checklist
+1. Buy the missile, fly to one side of the screen and fire: the missile points where it flies (diagonal,
+   sideways, also downwards), changes smoothly when it turns.
+2. The revised landscape (coast, clearings, base buildings) looks right and scrolls smoothly.

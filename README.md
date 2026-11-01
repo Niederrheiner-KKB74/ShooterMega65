@@ -21,6 +21,8 @@ A vertically scrolling shooter for the MEGA65, written in 45GS02 assembly.
 - **Stage 4** (branch `stage4`): special weapons from the shop: bomb (space), 10 s invulnerability with a
   shimmering ring (S), homing missile; extra life / exit icons and denser coastal level (PR #10).
   Confirmed on real hardware (01.11.2026), `stage4-stable`. See [docs/stage4.md](docs/stage4.md).
+- **Stage 4b** (branch `stage4`): missile drawn in 8 flight directions, revised coastal level (PR #11).
+  XEMU-tested, hardware test pending.
 
 ## Build
 Requirements: Python 3 with Pillow and NumPy, Java, and `KickAss65CE02-5.25.jar`.
