@@ -12,7 +12,10 @@
 // Turrets first; when all four are destroyed the core is exposed. Core destroyed:
 // explosions, bonus, glyphs and palette restored, scrolling goes on.
 // ----------------------------------------------------------------------------
-#if BOSS_TEST
+#if BOSS_CORE_TEST
+.const BOSS_HP_TURRET = 4          // test build: turrets fall quickly, full-strength core
+.const BOSS_HP_CORE  = 200
+#elif BOSS_TEST
 .const BOSS_HP_TURRET = 4          // test build (build.py --define BOSS_TEST): quick boss
 .const BOSS_HP_CORE  = 8
 #else
@@ -27,7 +30,12 @@
 .const BOSS_XMAX     = 320 - 96 - 24
 .const BOSS_WAIT     = 250         // at most 5 s waiting for the sky to clear
 .const BOSS_DIE      = 150         // 3 s of explosions
-.const BOSS_BUF      = LEVEL_BUF + LEVEL_MAX - BOSS_FILE_BYTES   // where L1BOSS is loaded
+// Stage 7c: L1BOSS is kept in attic RAM (the level buffer is needed for larger levels). The glyphs are
+// copied by DMA over the fighter and bomber glyphs when the boss arrives, and the saved originals are copied
+// back afterwards. Without attic RAM there is no boss (the level simply goes on).
+.const ATTIC_BOSS    = $8020000    // L1BOSS: glyphs + palette
+.const ATTIC_PXSAVE  = $8030000    // the fighter + bomber glyphs that the boss replaces
+.const BOSS_SWAP_ADDR = PIXIE_ADDR + BOSS_SWAP_GLYPH * 64
 
 // FLASH_BANK, PAL_BOSS_FLASH, FLASH_FRAMES_HIT: layout.asm (used by objects.asm before this file)
 .const BS_OFF = 0
@@ -43,6 +51,7 @@ boss_x:     .word 0
 boss_y:     .word 0
 boss_vx:    .byte 0
 boss_vy:    .byte 0
+boss_t2:    .byte 0                // open core: frames until the next aimed / random shot
 boss_t:     .byte 0
 boss_left:  .byte 0                // turrets still standing
 boss_spd:   .word 0                // scroll speed before the boss
@@ -56,18 +65,30 @@ rotor_ph:  .byte 0, 1, 2, 0
 
 // ============================================================== loading (KERNAL)
 boss_load:
-    lda #<(BOSS_BUF & $ffff)
+    jsr attic_detect            // (screens.asm)
+    lda attic_ok
+    bne !+
+    clc                         // no attic RAM: no boss
+    rts
+!:  lda #<(ATTIC_BOSS & $ffff)
     sta ld_dst
-    lda #>(BOSS_BUF & $ffff)
+    lda #>(ATTIC_BOSS & $ffff)
     sta ld_dst+1
-    lda #(BOSS_BUF >> 16)
+    lda #((ATTIC_BOSS >> 16) & $0f)
     sta ld_dst+2
+    lda #(ATTIC_BOSS >> 20)
+    sta ld_dst+3
     lda #(>BOSS_FILE_BYTES) + 1
     sta ld_maxhi
     lda #<name_boss
     ldx #>name_boss
     ldy #name_boss_end - name_boss
-    jmp load_seq_to
+    jsr load_seq_to
+    bcs !+
+    RunDma(job_boss_pal)        // palette (48 bytes) to bank 0
+    RunDma(job_px_save)         // keep the glyphs the boss will replace (PIXIES is loaded already)
+    clc
+!:  rts
 name_boss: .text "L1BOSS"
 name_boss_end:
 
@@ -96,6 +117,8 @@ boss_update:
     lda #0
     sta boss_req
     sta boss_t
+    lda attic_ok                // no attic RAM: no boss data
+    beq !done+
     lda #BS_WAIT
     sta boss_state
 !done:
@@ -151,7 +174,7 @@ boss_wait:
     lda #0
     sta scroll_spd
     sta scroll_spd+1
-    jsr boss_swap               // boss glyphs in
+    RunDma(job_boss_in)         // boss glyphs in (attic RAM)
     jsr boss_palette
     lda #MUS_BOSS
     jsr music_play
@@ -437,7 +460,7 @@ boss_parts_away:
 bpa_x: .byte 0
 
 boss_restore:
-    jsr boss_swap               // the fighter and bomber glyphs back
+    RunDma(job_boss_out)        // the fighter and bomber glyphs back
     jmp palette_init
 
 // ============================================================== parts (T_BOSS objects)
@@ -454,12 +477,21 @@ upd_boss:
     beq !+
     dec obj_wave,x
 !:  lda obj_b,x
-    beq part_frame              // destroyed: only the frame
-    lda boss_state
+    bne !+
+    jmp part_frame              // destroyed: only the frame
+!:  lda boss_state
     cmp #BS_FIGHT
-    bcc part_frame              // no shots while entering
-    dec obj_t,x
-    bne part_frame
+    bcs !+
+    jmp part_frame              // no shots while entering
+!:
+    lda obj_kind,x
+    cmp #4
+    bne !+
+    jsr core_extra              // open core: aimed and random-angle shots between the fans
+!:  dec obj_t,x
+    beq !+
+    jmp part_frame
+!:
     jsr random                  // next shot: turrets 0.5-1.7 s, faster with fewer left; core 0.7-1.3 s
     and #31
     ldy obj_kind,x
@@ -485,21 +517,129 @@ upd_boss:
     clc
     adc #36
     sta obj_t,x
-    lda #$ff                    // fan of three shots: left, straight down, right
-    sta cf_dx
+    ldy #2                      // fan of three shots: left, straight down, right
 !fan:
+    sty cf_i
     lda #K_SHOT_FIRE
     jsr spawn_eshot_a
     ldy es_slot
     bmi !+
-    lda cf_dx
-    sta obj_a,y                 // shot direction (spawn_eshot_a aimed it at the player)
-!:  inc cf_dx
-    lda cf_dx
-    cmp #2
-    bne !fan-
+    sty tmp
+    ldy cf_i
+    lda fan_dx,y
+    ldy tmp
+    sta obj_a,y
+!:  ldy cf_i
+    dey
+    bpl !fan-
     jmp part_frame
-cf_dx: .byte 0
+cf_i:   .byte 0
+fan_dx: .byte $ec, 0, 20         // -1.25, 0, +1.25 px per frame
+
+// Open core, between the fans (Stage 7c): every 0.4-1 s a red shot, half of them aimed exactly at the
+// player, the others at a random angle (up to 4 px/frame sideways). The player cannot hide at the edges.
+core_extra:
+    dec boss_t2
+    bne !rts+
+    jsr random
+    and #31
+    clc
+    adc #20
+    sta boss_t2
+    lda #K_SHOT_RED
+    jsr spawn_eshot_a           // keeps X
+    ldy es_slot
+    bmi !rts+
+    jsr random
+    bmi !aim+
+    jsr random                  // random angle: -64..+63 (1/16 px)
+    and #$7f
+    sec
+    sbc #64
+    sta obj_a,y
+!rts:
+    rts
+!aim:
+    jmp aim_shot
+
+// shot Y (red, 2 px/frame down): dx so that it flies at the player's centre.
+// dx(1/16 px) = (player x - shot x) * 2 * 16 / (player y - shot y), at most 4 px/frame. Keeps X and Y.
+aim_shot:
+    sty as_y
+    lda obj_yh,y                // only from the visible area
+    bne !rts+
+    clc                         // dy = player centre y - shot centre y (shot 16x16: +8)
+    lda pl_y
+    adc #PL_HIT_CY - 8
+    sec
+    sbc obj_yl,y
+    bcc !rts+                   // player above the shot: keep the default
+    cmp #16
+    bcs !+
+    lda #16
+!:  sta as_dv
+    clc                         // dxpix = player centre x - 8 - shot x (16 bit, signed)
+    lda pl_x
+    adc #PL_HIT_CX - 8
+    sta tmp
+    lda pl_x+1
+    adc #0
+    sta tmp+1
+    sec
+    lda tmp
+    sbc obj_xl,y
+    sta tmp
+    lda tmp+1
+    sbc obj_xh,y
+    sta tmp+1
+    sta as_sg                   // sign
+    bpl !+
+    lda #0                      // |dxpix|
+    sec
+    sbc tmp
+    sta tmp
+    lda #0
+    sbc tmp+1
+    sta tmp+1
+!:  ldy #5                      // * 32
+!:  asl tmp
+    rol tmp+1
+    dey
+    bne !-
+    lda #0                      // tmp = tmp / as_dv (16 / 8 bit)
+    ldy #16
+!:  asl tmp
+    rol tmp+1
+    rol
+    bcs !sub+
+    cmp as_dv
+    bcc !nx+
+!sub:
+    sbc as_dv
+    inc tmp
+!nx:
+    dey
+    bne !-
+    lda tmp+1                   // at most 64 (4 px per frame)
+    bne !max+
+    lda tmp
+    cmp #65
+    bcc !+
+!max:
+    lda #64
+!:  bit as_sg
+    bpl !+
+    eor #$ff
+    clc
+    adc #1
+!:  ldy as_y
+    sta obj_a,y
+!rts:
+    ldy as_y
+    rts
+as_y:  .byte 0
+as_dv: .byte 0
+as_sg: .byte 0
 // frame of part X: turrets aim south / south-east / south-west, destroyed view; core overlay
 part_frame:
     lda obj_kind,x
@@ -610,6 +750,8 @@ boss_part_down:
     bne !+
     lda #BS_CORE                // all turrets down: the core opens
     sta boss_state
+    lda #40
+    sta boss_t2
     ldy #4
     jsr boss_new_part
     lda #SFX_EXPLODE_BIG
@@ -744,82 +886,23 @@ bd_i: .byte 0
 bd_x: .byte 0
 
 // ============================================================== glyphs and palette
-// swap the boss glyphs (BOSS_BUF) with the fighter + bomber glyphs: called once to bring the boss
-// in and once to bring the aircraft back
-boss_swap:
-    lda #<(BOSS_BUF & $ffff)
-    sta scr_ptr
-    lda #>(BOSS_BUF & $ffff)
-    sta scr_ptr+1
-    lda #(BOSS_BUF >> 16)
-    sta scr_ptr+2
-    lda #0
-    sta scr_ptr+3
-    sta col_ptr+3
-    lda #<((PIXIE_ADDR + BOSS_SWAP_GLYPH * 64) & $ffff)
-    sta col_ptr
-    lda #>((PIXIE_ADDR + BOSS_SWAP_GLYPH * 64) & $ffff)
-    sta col_ptr+1
-    lda #((PIXIE_ADDR + BOSS_SWAP_GLYPH * 64) >> 16)
-    sta col_ptr+2
-    lda #<(BOSS_GLYPHS * 64)
-    sta bs_n
-    lda #>(BOSS_GLYPHS * 64)
-    sta bs_n+1
-    ldz #0
-!:  lda ((scr_ptr)),z
-    tax
-    lda ((col_ptr)),z
-    sta ((scr_ptr)),z
-    txa
-    sta ((col_ptr)),z
-    inz
-    bne !+
-    inc scr_ptr+1
-    inc col_ptr+1
-!:  lda bs_n
-    bne !+
-    dec bs_n+1
-!:  dec bs_n
-    lda bs_n
-    ora bs_n+1
-    bne !---
-    ldz #0
-    rts
-bs_n: .word 0
+job_boss_pal: DmaJob(DMA_CMD_COPY, ATTIC_BOSS + BOSS_GLYPHS * 64, boss_pal_buf, 48)
+job_px_save:  DmaJob(DMA_CMD_COPY, BOSS_SWAP_ADDR, ATTIC_PXSAVE, BOSS_GLYPHS * 64)
+job_boss_in:  DmaJob(DMA_CMD_COPY, ATTIC_BOSS, BOSS_SWAP_ADDR, BOSS_GLYPHS * 64)
+job_boss_out: DmaJob(DMA_CMD_COPY, ATTIC_PXSAVE, BOSS_SWAP_ADDR, BOSS_GLYPHS * 64)
+boss_pal_buf: .fill 48, 0
 
-// bank 5 <- boss palette (behind the glyphs in L1BOSS)
+// bank 5 <- boss palette (R, G, B planes of 16), bank 6 <- lightened copy
 boss_palette:
-    lda #<((BOSS_BUF + BOSS_GLYPHS * 64) & $ffff)
-    sta scr_ptr
-    lda #>((BOSS_BUF + BOSS_GLYPHS * 64) & $ffff)
-    sta scr_ptr+1
-    lda #((BOSS_BUF + BOSS_GLYPHS * 64) >> 16)
-    sta scr_ptr+2
-    lda #0
-    sta scr_ptr+3
-    ldz #0
-    ldx #0
-!:  lda ((scr_ptr)),z
+    ldx #15
+!:  lda boss_pal_buf,x
     sta PAL_RED + BOSS_BANK * 16,x
-    inz
-    inx
-    cpx #16
-    bne !-
-    ldx #0
-!:  lda ((scr_ptr)),z
+    lda boss_pal_buf+16,x
     sta PAL_GREEN + BOSS_BANK * 16,x
-    inz
-    inx
-    cpx #16
-    bne !-
-    ldx #0
-!:  lda ((scr_ptr)),z
+    lda boss_pal_buf+32,x
     sta PAL_BLUE + BOSS_BANK * 16,x
-    inz
-    inx
-    cpx #16
-    bne !-
+    dex
+    bpl !-
     ldz #0
     ldx #15                     // lightened copy for the hit flash
 !:  lda boss_flash_pal,x
@@ -832,5 +915,6 @@ boss_palette:
     bpl !-
     rts
 
-.errorif (BOSS_BUF < LEVEL_BUF), "boss file larger than the level buffer"
+.errorif (BOSS_FILE_BYTES > $10000), "L1BOSS larger than its 64 KB attic area"
+.errorif (BOSS_GLYPHS * 64 > $10000), "boss glyph save larger than its 64 KB attic area"
 .errorif ((PIXIE_ADDR + BOSS_SWAP_GLYPH * 64) >> 16 != (PIXIE_ADDR + (BOSS_SWAP_GLYPH + BOSS_GLYPHS) * 64 - 1) >> 16), "boss swap area crosses a bank"

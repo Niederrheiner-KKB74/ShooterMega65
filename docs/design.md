@@ -148,7 +148,11 @@ are unchanged. See `docs/stage1-aircraft.md` for validation and remaining tests.
   After a hit the player is invulnerable for 1 s. At 0 the plane explodes. **Three lives** (decided 01.11.2026):
   after 3 s the next plane starts with a full shield; after the last one a new game starts.
 - **Tanks** (artwork PR #6) drive on the ground in four directions at 0.5 px/frame relative to the landscape,
-  turn at the playfield edges and at random, and advance their track phase every 5 frames
+  turn at the playfield edges and at random, and advance their track phase every 5 frames. Stage 7c: they never
+  drive into water. `decode_row` keeps a 21-bit land mask per decoded glyph row (`land_ring`: palette bank ≠ 1;
+  coast tiles use the water bank and count as water); `is_water` maps a playfield point to map row
+  `(scroll_px + 199 − y) >> 3` and column `(x + 16) >> 4`. A tank turns round when the point just ahead is water
+  and never picks a new direction towards water
   (frame = `FR_TANK_N0 + direction·4 + phase`, palette bank 4 shared with the fixed targets).
 - **Animation frames**: the first artwork v2 frames per aircraft were different drawings, not phases, which made
   the objects jump. PR #7 replaced them with real effect loops (exhaust flames, helicopter rotor; everything else
@@ -293,6 +297,7 @@ so `RUN` works again after an exit.
 | 01.11.2026 | Stage 7 confirmed on hardware |
 | 01.11.2026 | Stage 7b: boss parts flash when hit, wrecks vanish with the body, "PRESS FIRE" shadow kept inside the blinking row; boss harder (70 / 200 hit points, 1–2 px/frame plus bob, faster turret fire, core fires fans of three) |
 | 02.11.2026 | Stage 7b confirmed on hardware |
+| 02.11.2026 | Stage 7c: core fires aimed and random-angle shots; tanks avoid water; new level-1 waves (14 paths, 16 formations: loops, U-turns, side entries, pincers, V groups, hovering helicopters; tanks at varied places, `tools/design_waves_l1.py`); `L1BOSS` moved to attic RAM (no boss without attic RAM) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -364,9 +369,9 @@ Requests while the plane is destroyed or inside the shop are dropped.
 ## 18. Boss (Stage 7, `boss.asm`)
 - Level event `boss` (coastal level: row 358, before the end shop) sets `boss_req`. The boss arrives when no
   aircraft are left on screen (at most 5 s later; the rest are removed): scrolling stops, the boss music starts.
-- Graphics (PR #14, quadrotor 96×64): file `L1BOSS` (149 glyphs + palette, 9,584 bytes), loaded with the level to the
-  end of the 16 KB level buffer (`LnDAT` + `LnBOSS` ≤ 16 KB, checked by `build.py`). At the start of the fight the
-  CPU swaps them with the fighter and bomber glyphs (no fighters or bombers then), the boss palette replaces bank 5;
+- Graphics (PR #14, quadrotor 96×64): file `L1BOSS` (149 glyphs + palette, 9,584 bytes), loaded at start into attic RAM
+  (`$8020000`, Stage 7c; before: end of the level buffer). At start the fighter and bomber glyphs are also copied to
+  attic RAM (`$8030000`). At the start of the fight a DMA copies the boss glyphs over the fighter and bomber glyphs (no fighters or bombers then), the boss palette replaces bank 5;
   afterwards both are swapped back and `palette_init` restores the bank. The frame table entries of the boss
   (`FR_BOSS_*`) point to the swapped place already. South-west turret views are mirrored south-east views.
 - Body and the four rotors are drawn by `boss_draw` before all objects; the four turrets and the core are objects of
@@ -376,6 +381,10 @@ Requests while the plane is destroyed or inside the shop are dropped.
   When all four are destroyed the core opens (200 hit points, a fan of three fire shots left / down / right every
   0.7–1.3 s, faster movement); core destroyed: 5,000 points, 3 s of explosions, glyphs/palette back, scrolling and
   level music resume. Stage 7: 40 / 120 hit points, slower fire; the owner found the boss too easy.
+- Stage 7c (owner: in the core phase the player could hide at the far left or right and win with missiles): the open
+  core also fires a red shot every 0.4–1 s, half of them aimed exactly at the player (dx = Δx·32/Δy, up to
+  4 px/frame sideways), the others at a random angle. Enemy shots now move sideways in 1/16 px per frame
+  (`obj_a`, fraction in `obj_xf`); the fan is −1.25 / 0 / +1.25 px per frame.
 - Hit feedback (Stage 7b): a part that is hit but survives is drawn for 4 frames (`FLASH_FRAMES_HIT`, `obj_a`) with
   palette bank 6, a copy of the boss palette lightened 65 % toward white (`boss_flash_pal`, made by
   `import_art.py`; bank 6 belongs to the bomber, which cannot appear during the fight).

@@ -75,6 +75,7 @@ decode_row:
     and #31
     sta dr_slot
     jsr level_row               // -> dr_glyph / dr_col
+    jsr land_store              // land mask of this row (tanks avoid water)
     ldx dr_slot
     jsr dr_write
     lda dr_slot
@@ -197,3 +198,117 @@ job_frame_col: DmaJob(DMA_CMD_COPY, RING_COL, COLRAM + COLOUR_A, ROW_BYTES * VIS
 
 slot_ofs_lo: .fill RING_SLOTS*2, <(i * ROW_BYTES)
 slot_ofs_hi: .fill RING_SLOTS*2, >(i * ROW_BYTES)
+
+// ---------------------------------------------------------------- terrain (Stage 7c)
+// land_ring: per ring slot 3 bytes, bit c = map column c is land (its palette bank is not the water bank 1;
+// coast tiles use the water bank and count as water).
+land_store:
+    lda dr_slot
+    sta ls_i
+    asl
+    adc ls_i                    // slot * 3 (slot < 32: no carry)
+    sta ls_i
+    tax
+    lda #0
+    sta land_ring,x
+    sta land_ring+1,x
+    sta land_ring+2,x
+    ldy #0
+!:  lda dr_col,y
+    and #$f0
+    cmp #$10
+    beq !next+
+    tya
+    and #7
+    tax
+    lda bit_tab,x
+    sta ls_b
+    tya
+    lsr
+    lsr
+    lsr
+    clc
+    adc ls_i
+    tax
+    lda land_ring,x
+    ora ls_b
+    sta land_ring,x
+!next:
+    iny
+    cpy #BG_TOKENS
+    bne !-
+    rts
+ls_i: .byte 0
+ls_b: .byte 0
+bit_tab: .byte 1, 2, 4, 8, 16, 32, 64, 128
+land_ring: .fill 32 * 3, $ff
+
+// Carry set if the playfield point (ln_x, ln_y; 16 bit) lies on water. Outside the playfield: land.
+// Display row r (top at y = 8r - 8 + fine) shows map row m = (scroll_px >> 3) + 25 - r, so the point lies in
+// map row m = (scroll_px + 199 - y) >> 3, ring slot (31 - m) & 31; map column (x + 16) >> 4.
+// Keeps X.
+is_water:
+    lda ln_y+1
+    bne !land+                  // above the top or far below
+    lda ln_y
+    cmp #200
+    bcs !land+
+    lda ln_x+1
+    cmp #>320
+    bcc !+
+    bne !land+
+    lda ln_x
+    cmp #<320
+    bcs !land+
+!:  clc                         // m low byte = scroll_px + 199 - y (only bits 3-7 are needed)
+    lda scroll_px
+    adc #199
+    sec
+    sbc ln_y
+    lsr
+    lsr
+    lsr
+    eor #31                     // (31 - m) & 31
+    and #31
+    sta ls_i
+    asl
+    adc ls_i
+    sta ls_i                    // slot * 3
+    clc                         // column = (x + 16) >> 4  (0..20)
+    lda ln_x
+    adc #16
+    sta ls_b
+    lda ln_x+1
+    adc #0
+    lsr
+    ror ls_b
+    lsr
+    ror ls_b
+    lsr
+    ror ls_b
+    lsr
+    ror ls_b                    // ls_b = column
+    stx ls_x
+    lda ls_b
+    lsr
+    lsr
+    lsr
+    clc
+    adc ls_i
+    tax
+    lda ls_b
+    and #7
+    tay
+    lda land_ring,x
+    and bit_tab,y
+    ldx ls_x
+    cmp #1                      // A = 0 (water) -> carry clear ... invert below
+    bcs !land+
+    sec
+    rts
+!land:
+    clc
+    rts
+ls_x: .byte 0
+ln_x: .word 0
+ln_y: .word 0

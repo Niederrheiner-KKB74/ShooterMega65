@@ -233,12 +233,14 @@ spawn_eshot_a:
     bmi !left+
     ora tmp
     beq !st+                    // dx = 0
-    lda #1
+    lda #16                     // 1 px per frame (obj_a: 1/16 px)
     bne !st+
 !left:
-    lda #$ff
+    lda #$f0
 !st:
     sta obj_a,x
+    lda #0
+    sta obj_xf,x
 !full:
     ldx ob_i
     rts
@@ -729,7 +731,13 @@ upd_tank:
     lda #1                      // left edge: turn east
     sta obj_b,x
 !moved:
-    // occasionally choose a new direction (never north above the screen top)
+    lda obj_b,x                 // water ahead: turn round (Stage 7c)
+    jsr tank_water
+    bcc !+
+    lda obj_b,x
+    eor #2
+    sta obj_b,x
+!:  // occasionally choose a new direction (never north above the screen top, never towards water)
     jsr random
     cmp #2
     bcs !anim+
@@ -738,7 +746,11 @@ upd_tank:
     bne !+
     ldy obj_yh,x
     bmi !anim+
-!:  sta obj_b,x
+!:  sta tw_d
+    jsr tank_water
+    bcs !anim+
+    lda tw_d
+    sta obj_b,x
 !anim:
     // track phase every 5 frames
     lda obj_t,x
@@ -758,6 +770,34 @@ upd_tank:
 !:  jsr tank_frame
     jmp maybe_fire
 
+// Carry set if the point just ahead of tank X in direction A (0 N, 1 E, 2 S, 3 W) is water. Keeps X.
+tank_water:
+    tay
+    clc
+    lda obj_xl,x
+    adc tw_dx,y
+    sta ln_x
+    lda tw_dx,y                 // sign extension
+    and #$80
+    beq !+
+    lda #$ff
+!:  adc obj_xh,x
+    sta ln_x+1
+    clc
+    lda obj_yl,x
+    adc tw_dy,y
+    sta ln_y
+    lda tw_dy,y
+    and #$80
+    beq !+
+    lda #$ff
+!:  adc obj_yh,x
+    sta ln_y+1
+    jmp is_water
+tw_dx: .byte 8, 17, 8, $fe
+tw_dy: .byte $fe, 8, 17, 8
+tw_d:  .byte 0
+
 // frame = FR_TANK_N0 + direction * 4 + phase
 tank_frame:
     lda obj_b,x
@@ -774,17 +814,39 @@ upd_eshot:
     jsr move_down
     lda obj_type,x
     beq !gone+
-    lda obj_a,x                 // x += dx (-1/0/+1)
+    lda obj_a,x                 // x += dx (signed, 1/16 px per frame; Stage 7c)
     beq !gone+
-    bmi !l+
-    inc obj_xl,x
-    bne !chk+
-    inc obj_xh,x
-    jmp !chk+
-!l: lda obj_xl,x
-    bne !+
-    dec obj_xh,x
-!:  dec obj_xl,x
+    sta tmp
+    ldy #0
+    cmp #$80
+    bcc !+
+    dey
+!:  tya
+    sta tmp+1
+    clc                         // fraction (0..15) + dx
+    lda obj_xf,x
+    adc tmp
+    sta tmp
+    lda tmp+1
+    adc #0
+    sta tmp+1
+    lda tmp
+    and #15
+    sta obj_xf,x
+    ldy #4                      // whole pixels: arithmetic shift right by 4
+!:  lda tmp+1
+    cmp #$80
+    ror tmp+1
+    ror tmp
+    dey
+    bne !-
+    clc
+    lda obj_xl,x
+    adc tmp
+    sta obj_xl,x
+    lda obj_xh,x
+    adc tmp+1
+    sta obj_xh,x
 !chk:
     lda obj_xh,x
     bmi !free+

@@ -76,9 +76,8 @@ def main():
             sys.exit(f'{src}: {e}')
         print('\n'.join(report))
         level_files += [(name + 'GFX', gfx, d81.SEQ), (name + 'DAT', dat, d81.SEQ)]
+        # Stage 7c: L1BOSS lives in attic RAM, LnDAT alone has the 16 KB level buffer (checked by build_level)
         if name == 'L1':
-            if len(dat) + len(boss) > 0x4000:     # both share the 16 KB level buffer
-                sys.exit(f'{name}DAT ({len(dat)}) + {name}BOSS ({len(boss)}) exceed the 16 KB level buffer')
             level_files.append((name + 'BOSS', boss, d81.SEQ))
     prg = out / f'{PRG_NAME}.PRG'
     out.mkdir(parents=True, exist_ok=True)

@@ -81,3 +81,40 @@ Branch `stage7`, on top of the confirmed Stage 7 (`stage7-release`). Release fil
 4. The fight takes clearly longer than in Stage 7 (turrets 70, core 200 hit points). Is the difficulty right?
 5. After the core is destroyed: halfway through the explosions the body **and** the turret wrecks disappear.
 6. Everything else as in the Stage 7 checklist (end shop, next round, game over during the boss fight, title).
+
+# Stage 7c – boss aims, tanks on land, new waves, boss data in attic RAM
+
+Branch `stage7`, on top of the confirmed Stage 7b (`stage7b-release`). Release files are in `releases/stage7c/`.
+
+## What changed
+- **Boss core phase**: besides the fans of three, the core fires a red shot every 0.4–1 s. Half of them are
+  aimed exactly at the player, the others go off at a random angle. Hiding at the far left or right no longer works.
+  Enemy shots can now fly at any angle (sideways speed in 1/16 px per frame).
+- **Tanks** never drive into water (or onto the coast); they turn round in front of it.
+- **New waves for level 1** (`tools/design_waves_l1.py`): 14 flight paths and 16 formations instead of 5. Loops,
+  U-turns, fighters entering from the side, pincers (a formation and its mirror image together), V groups,
+  helicopters that hover and shoot, bombers crossing diagonally, armoured planes that stop and fire. Up to 8 planes
+  per formation, 57 formation events, 23 tanks at varied places. Map, shops and boss are unchanged.
+- **Attic RAM**: the boss data (`L1BOSS`) are now kept in attic RAM and copied in by DMA when the boss arrives; the
+  fighter and bomber glyphs are saved there and copied back afterwards. The 16 KB level buffer is free for level data
+  (the new waves needed it). Without attic RAM there is no boss.
+
+## Verification so far
+| Check | Result |
+|---|---|
+| Assembly; D81 with 10 files read back; `L1DAT` 7,143 bytes | ✔ |
+| XEMU boss test level, player at the far left: core shots with many angles (sideways −64 … +52 in 1/16 px), aimed ones towards the player, the shield drops | ✔ |
+| XEMU: boss graphics and palette from attic RAM correct (screenshot); after the boss the fighter/bomber glyphs are byte-identical to `PIXIES` | ✔ |
+| XEMU without attic RAM (`NO_ATTIC`): the boss event is skipped, the game goes on | ✔ |
+| XEMU: the land mask matches the screenshot water areas; tanks seen in the dumps all on land | ✔ |
+| XEMU default level 78 s after the start with the new waves, RRB overflow 0 | ✔ |
+| Real MEGA65 | open |
+
+## Hardware test checklist
+1. Boss core phase: besides the fans, single red shots at different angles, some aimed at you. Staying at the far
+   left or right edge is no longer safe.
+2. Tanks: none drives into the sea or onto the beach; they turn round in front of the water.
+3. New waves: loops, U-turns, planes from the side, pincers from both sides, V groups, hovering helicopters, diagonal
+   bombers, armoured planes that stop to shoot. Is it fun, too hard, too easy? Any flicker or missing planes?
+4. Boss fight looks as before (graphics and colours), and after it the fighters and bombers look normal again.
+5. Everything else as in the Stage 7 checklist.

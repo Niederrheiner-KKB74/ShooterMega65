@@ -119,5 +119,9 @@ Fehlt `end`, setzt der Konverter es an das Kartenende.
 - Pro 8-Pixel-Bildzeile sind höchstens etwa 30 Gegnerbreiten zu je 16 Pixeln möglich. Formationen nicht alle auf
   derselben Höhe starten lassen.
 - Zwischen zwei großen Formationen etwa 7–10 Zeilen Abstand lassen (4–6 Sekunden).
-- Panzer sollten auf Land abgesetzt werden (`x` über Landtiles). Wasser wird nicht automatisch geprüft.
+- Panzer müssen auf Land abgesetzt werden (`x` über Landtiles). Beim Fahren weichen sie Wasser selbst aus (Stage 7c):
+  Sie drehen vor Wasser um. Küstentiles (Palette `water`) zählen als Wasser.
+- Gegner können auch von der Seite kommen: Startpunkt z. B. `x = -32`, `y = 24` mit einer Bahn nach rechts
+  (erlaubt: x −48 … 351, y bis −96). Zwei Formationen in derselben Zeile, eine davon mit `mirror`, ergeben eine Zange.
+- Level 1: Bahnen, Formationen und Wellen erzeugt `tools/design_waves_l1.py` (Karte, Shops und Boss bleiben).
 - Shop `mid` etwa in der Levelmitte, `end` kurz vor dem Ende, danach `end`.

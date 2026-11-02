@@ -1,4 +1,4 @@
-# Memory map (Stage 7)
+# Memory map (Stage 7c)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -47,7 +47,7 @@ not in the zero page.
 | `$40000–$43FFF` | 16 KB | landscape NCM glyphs, char `$1000`+ (max. 256 per level: tile offsets in the map are bytes; `build_level.py` allows 128 tiles; the coastal level uses 208 glyphs) |
 | `$44000–$467FF` | 10 KB | shop glyphs from the file `SHOP`, char `$1100`+ (160 reserved, 148 used). Guarded in `shop.asm` |
 | `$46800–$4FFFF` | 38 KB | pixie NCM glyphs, char `$11A0`+ (max. 608, Stage 6 uses 535): loaded at start from the file `PIXIES` (complete image incl. blank guards) straight into this area. Frame bases in `frames.inc` are absolute character numbers. HUD glyphs at `HUD_GLYPH + 2k`, rebuilt at run time |
-| `$50000–$53FFF` | 16 KB | load buffer (at the end: `L1BOSS`, 9,584 bytes, swapped with the fighter/bomber glyphs during the boss fight): first `SHOP` (glyphs → `$44000`), `MUSIC` (→ `$5E000`) (`PIXIES` goes straight to `$46800`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths), which stays here for the whole level |
+| `$50000–$53FFF` | 16 KB | load buffer (Stage 7c: `L1BOSS` goes to attic RAM, so `LnDAT` may use all 16 KB): first `SHOP` (glyphs → `$44000`), `MUSIC` (→ `$5E000`) (`PIXIES` goes straight to `$46800`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDAT` (map, events, formations, paths), which stays here for the whole level |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |
 | `$58000–$5AA7F` | 64×170 | ring buffer, screen part (32 slots stored twice) |
@@ -172,9 +172,13 @@ integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1
 |---|---|
 | `$8000000` | title screen data (`TITLE`, 26 KB), copied to `$56000` for the title |
 | `$8010000` | game-over banner data (`GOVER`, 5.6 KB), copied to `$58000` for the banner |
+| `$8020000` | Stage 7c: boss data (`L1BOSS`, 9,584 bytes: 149 glyphs + palette); glyphs copied over the fighter/bomber glyphs (`$46800`) when the boss arrives, palette copied to `boss_pal_buf` at load |
+| `$8030000` | Stage 7c: copy of the fighter/bomber glyphs that the boss replaces (9,536 bytes), saved after `PIXIES` is loaded, copied back after the boss |
+| `$8040000–` | free; planned for more enemy glyphs, formations and level data (Stage 8) |
 
 Detected at start (two patterns written by DMA and read back). Without attic RAM the title is loaded straight to
-`$56000` and shown only once.
+`$56000` and shown only once, and there is no boss (the level simply goes on). Each area is guarded by an
+`.errorif` in its module.
 
 ## Files on the D81 (Stage 7)
 
