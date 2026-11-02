@@ -1,0 +1,11 @@
+{
+  "source_commit": "ebc6227f74e54a6cedb39d35f2f058304a2bb307",
+  "pr_parent": "661c94dfaac1f84dbb2a98f08e2da25b584a8e94",
+  "checker_git_blob": "3bf4dfe390a5f52abea5d868319b6f145e3b26d6",
+  "terrain_git_blob": "163d183568ea7091c0d83eabc2307efb80138e86",
+  "terrain_bytes": 16128,
+  "checker_unmodified": true,
+  "checker_exit_code": 0,
+  "palette_note_reviewed": "Only fixed_targets 12-15 extended; 0-11 unchanged.",
+  "hardware_tested": false
+}

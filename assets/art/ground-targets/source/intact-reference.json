@@ -1,0 +1,1441 @@
+{
+  "source_commit": "ebc6227f74e54a6cedb39d35f2f058304a2bb307",
+  "terrain_git_blob": "163d183568ea7091c0d83eabc2307efb80138e86",
+  "terrain_sha256": "b81b1fd73beb3314a0f2967947fe7c952ab3a511c4c81e7e226377afea5190e2",
+  "palettes": {
+    "water": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        13,
+        54,
+        94
+      ],
+      [
+        18,
+        83,
+        128
+      ],
+      [
+        40,
+        126,
+        168
+      ],
+      [
+        161,
+        207,
+        184
+      ],
+      [
+        146,
+        114,
+        65
+      ],
+      [
+        195,
+        164,
+        99
+      ],
+      [
+        228,
+        202,
+        135
+      ],
+      [
+        32,
+        65,
+        35
+      ],
+      [
+        51,
+        90,
+        42
+      ],
+      [
+        78,
+        116,
+        49
+      ],
+      [
+        20,
+        49,
+        29
+      ],
+      [
+        37,
+        76,
+        37
+      ],
+      [
+        73,
+        106,
+        45
+      ],
+      [
+        78,
+        60,
+        36
+      ],
+      [
+        107,
+        120,
+        112
+      ]
+    ],
+    "nature": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        13,
+        54,
+        94
+      ],
+      [
+        18,
+        83,
+        128
+      ],
+      [
+        40,
+        126,
+        168
+      ],
+      [
+        161,
+        207,
+        184
+      ],
+      [
+        146,
+        114,
+        65
+      ],
+      [
+        195,
+        164,
+        99
+      ],
+      [
+        228,
+        202,
+        135
+      ],
+      [
+        32,
+        65,
+        35
+      ],
+      [
+        51,
+        90,
+        42
+      ],
+      [
+        78,
+        116,
+        49
+      ],
+      [
+        20,
+        49,
+        29
+      ],
+      [
+        37,
+        76,
+        37
+      ],
+      [
+        73,
+        106,
+        45
+      ],
+      [
+        78,
+        60,
+        36
+      ],
+      [
+        107,
+        120,
+        112
+      ]
+    ],
+    "structures": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        18,
+        83,
+        128
+      ],
+      [
+        40,
+        126,
+        168
+      ],
+      [
+        32,
+        65,
+        35
+      ],
+      [
+        51,
+        90,
+        42
+      ],
+      [
+        78,
+        116,
+        49
+      ],
+      [
+        55,
+        62,
+        67
+      ],
+      [
+        76,
+        84,
+        85
+      ],
+      [
+        143,
+        150,
+        139
+      ],
+      [
+        220,
+        193,
+        92
+      ],
+      [
+        208,
+        211,
+        190
+      ],
+      [
+        43,
+        50,
+        53
+      ],
+      [
+        107,
+        115,
+        115
+      ],
+      [
+        158,
+        165,
+        152
+      ],
+      [
+        159,
+        66,
+        46
+      ],
+      [
+        25,
+        35,
+        32
+      ]
+    ],
+    "fixed_targets": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        18,
+        25,
+        32
+      ],
+      [
+        39,
+        45,
+        47
+      ],
+      [
+        69,
+        77,
+        76
+      ],
+      [
+        103,
+        112,
+        106
+      ],
+      [
+        153,
+        164,
+        145
+      ],
+      [
+        213,
+        219,
+        181
+      ],
+      [
+        173,
+        67,
+        32
+      ],
+      [
+        245,
+        157,
+        51
+      ],
+      [
+        36,
+        62,
+        28
+      ],
+      [
+        58,
+        85,
+        37
+      ],
+      [
+        90,
+        116,
+        54
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "tiles": [
+    {
+      "id": 61,
+      "name": "hangar_0_0",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cbdddddddddddddd",
+        "cbdddddddddddddd",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdcbbbbbbbbbbbb",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdcbbbbbbbbbbbb"
+      ]
+    },
+    {
+      "id": 62,
+      "name": "hangar_1_0",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "dddddddddddddbbc",
+        "dddddddddddddbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "bbbbbbbbbbbbcbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "bbbbbbbbbbbbcbbc"
+      ]
+    },
+    {
+      "id": 63,
+      "name": "hangar_0_1",
+      "palette": "structures",
+      "pixels": [
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdcbbbbbbbbbbbb",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdcccccccc66666",
+        "cbdcccccccc66666",
+        "cbdcccccccc66666",
+        "cbbbbbbbbbb66666",
+        "cbbbbbbbbbb66666",
+        "cbbbbbbbbbb66666",
+        "ccccccccccc66666"
+      ]
+    },
+    {
+      "id": 64,
+      "name": "hangar_1_1",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "bbbbbbbbbbbbcbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "666666cccccccbbc",
+        "666666cccccccbbc",
+        "666666cccccccbbc",
+        "666666bbbbbbbbbc",
+        "666666bbbbbbbbbc",
+        "666666bbbbbbbbbc",
+        "666666cccccccccc"
+      ]
+    },
+    {
+      "id": 65,
+      "name": "depot_0_0",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cbdddddddddddddd",
+        "cbdddddddddddddd",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdcbbbbbeeeeeee",
+        "cbdcccccceeeeeee",
+        "cbdcccccceeeeeee",
+        "cbdcccccceeeeeee",
+        "cbdcccccceeeeeee",
+        "cbdcccccceeeeeee",
+        "cbdcccccceeeaaaa",
+        "cbdcbbbbbeeeeeee"
+      ]
+    },
+    {
+      "id": 66,
+      "name": "depot_1_0",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "dddddddddddddbbc",
+        "dddddddddddddbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "eeeeeeebbbbbcbbc",
+        "eeeeeeeccccccbbc",
+        "eeeeeeeccccccbbc",
+        "aeeeeeeccccccbbc",
+        "aeeeeeeccccccbbc",
+        "aeeeeeeccccccbbc",
+        "aaaaeeeccccccbbc",
+        "aeeeeeebbbbbcbbc"
+      ]
+    },
+    {
+      "id": 67,
+      "name": "depot_0_1",
+      "palette": "structures",
+      "pixels": [
+        "cbdcccccceeeeeee",
+        "cbdcccccceeeeeee",
+        "cbdcccccceeeeeee",
+        "cbdcccccceeeeeee",
+        "cbdcccccceeeeeee",
+        "cbdccccccccccccc",
+        "cbdcbbbbbbbbbbbb",
+        "cbdccccccccccccc",
+        "cbdccccccccccccc",
+        "cbdcccccccc66666",
+        "cbdcccccccc66666",
+        "cbdcccccccc66666",
+        "cbbbbbbbbbb66666",
+        "cbbbbbbbbbb66666",
+        "cbbbbbbbbbb66666",
+        "ccccccccccc66666"
+      ]
+    },
+    {
+      "id": 68,
+      "name": "depot_1_1",
+      "palette": "structures",
+      "pixels": [
+        "aeeeeeeccccccbbc",
+        "aeeeeeeccccccbbc",
+        "eeeeeeeccccccbbc",
+        "eeeeeeeccccccbbc",
+        "eeeeeeeccccccbbc",
+        "cccccccccccccbbc",
+        "bbbbbbbbbbbbcbbc",
+        "cccccccccccccbbc",
+        "cccccccccccccbbc",
+        "666666cccccccbbc",
+        "666666cccccccbbc",
+        "666666cccccccbbc",
+        "666666bbbbbbbbbc",
+        "666666bbbbbbbbbc",
+        "666666bbbbbbbbbc",
+        "666666cccccccccc"
+      ]
+    },
+    {
+      "id": 79,
+      "name": "checkpoint_0_0",
+      "palette": "structures",
+      "pixels": [
+        "3444448877777779",
+        "4444448877777779",
+        "4445448877777779",
+        "4444448877777779",
+        "4444448877777777",
+        "4544348877777777",
+        "4444448877777777",
+        "4444448877777777",
+        "4434448877777779",
+        "4444448877777779",
+        "4444448877777779",
+        "3444448877777779",
+        "ddddb48877777777",
+        "ccccb48877777777",
+        "ccccb48877777777",
+        "ccccb48877777777"
+      ]
+    },
+    {
+      "id": 80,
+      "name": "checkpoint_1_0",
+      "palette": "structures",
+      "pixels": [
+        "7777777788444444",
+        "7777777788444444",
+        "7777777788444445",
+        "7777777788444444",
+        "7777777788444444",
+        "7777777788444544",
+        "7777777788444444",
+        "7777777788444444",
+        "7777777788454434",
+        "7777777788444444",
+        "7777777788444444",
+        "7777777788443444",
+        "77777777884ddddb",
+        "77777777884ccccb",
+        "77777777883ccccb",
+        "77777777884ccccb"
+      ]
+    },
+    {
+      "id": 81,
+      "name": "checkpoint_0_1",
+      "palette": "structures",
+      "pixels": [
+        "ccccb48877777777",
+        "ccccb48877777777",
+        "ccccb488aaaaaaaa",
+        "ccccb38877777777",
+        "bbbbb48877777777",
+        "bbbbb48877777777",
+        "5443448877777777",
+        "4444448877777777",
+        "4444448877777779",
+        "4344448877777779",
+        "4444448877777779",
+        "4444548877777779",
+        "4444448877777777",
+        "4444448877777777",
+        "4454438877777777",
+        "4444448877777777"
+      ]
+    },
+    {
+      "id": 82,
+      "name": "checkpoint_1_1",
+      "palette": "structures",
+      "pixels": [
+        "77777777884ccccb",
+        "77777777884ccccb",
+        "aaaaaaaa884ccccb",
+        "77777777884ccccb",
+        "77777777884bbbbb",
+        "77777777884bbbbb",
+        "7777777788443444",
+        "7777777788444444",
+        "7777777788444444",
+        "7777777788344444",
+        "7777777788444444",
+        "7777777788444444",
+        "7777777788444444",
+        "7777777788444444",
+        "7777777788444454",
+        "7777777788444444"
+      ]
+    },
+    {
+      "id": 83,
+      "name": "bunker_0_0",
+      "palette": "fixed_targets",
+      "pixels": [
+        "3333333333333333",
+        "3333333333333333",
+        "3333333333333333",
+        "3333333333333333",
+        "3333333333333333",
+        "3325666666666666",
+        "3325666666666666",
+        "3325444444444444",
+        "3325444444444444",
+        "3325444444444444",
+        "3325444444444444",
+        "3325444666666666",
+        "3325444111111111",
+        "3325444111111111",
+        "3325444111111111",
+        "3325444111111111"
+      ]
+    },
+    {
+      "id": 84,
+      "name": "bunker_1_0",
+      "palette": "fixed_targets",
+      "pixels": [
+        "3333333333333333",
+        "3333333333333333",
+        "3333333333333333",
+        "3333333333333333",
+        "3333333333333333",
+        "6666666666662233",
+        "6666666666662233",
+        "4444444444442233",
+        "4444444444442233",
+        "4444444444442233",
+        "4444444444442233",
+        "6666666664442233",
+        "1111111114442233",
+        "1111111114442233",
+        "1111111114442233",
+        "1111111114442233"
+      ]
+    },
+    {
+      "id": 85,
+      "name": "bunker_0_1",
+      "palette": "fixed_targets",
+      "pixels": [
+        "3325444111111111",
+        "3325444111111111",
+        "3325444111111111",
+        "3325444444444444",
+        "3325444444444444",
+        "3325444444444444",
+        "3325444444444444",
+        "3325444444444444",
+        "3325444444442222",
+        "3322222222222222",
+        "3322222222222222",
+        "3322222222222222",
+        "3333333333332222",
+        "3333333333332222",
+        "3333333333332222",
+        "3333333333332222"
+      ]
+    },
+    {
+      "id": 86,
+      "name": "bunker_1_1",
+      "palette": "fixed_targets",
+      "pixels": [
+        "1111111114442233",
+        "1111111114442233",
+        "1111111114442233",
+        "4444444444442233",
+        "4444444444442233",
+        "4444444444442233",
+        "4444444444442233",
+        "4444444444442233",
+        "2222244444442233",
+        "2222222222222233",
+        "2222222222222233",
+        "2222222222222233",
+        "2222233333333333",
+        "2222233333333333",
+        "2222233333333333",
+        "2222233333333333"
+      ]
+    },
+    {
+      "id": 90,
+      "name": "radar_0_0",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "ccccccccccccdddd",
+        "ccccccdccddd6666",
+        "cccccccdd6666666",
+        "cccccccd6dd66666",
+        "ccccccd6666dd666",
+        "cccccd6666666d66",
+        "cccccd66666666dd",
+        "cccccd6886666666",
+        "cccccd6886666666",
+        "ccccccd688666666",
+        "cccccccd68888666",
+        "ccccccccd6888888",
+        "cccccccccddd6888"
+      ]
+    },
+    {
+      "id": 91,
+      "name": "radar_1_0",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "ccccccaccccccccc",
+        "cccccacccccccccc",
+        "ddddcacccccccccc",
+        "6666addccccccccc",
+        "666a666dcccccccc",
+        "666a6666dccccccc",
+        "66a666666dcccccc",
+        "6a66666666dccccc",
+        "6a66666666dccccc",
+        "ad66666886dccccc",
+        "66d6666886dccccc",
+        "666dd6886dcccccc",
+        "66688dd6dccccccc",
+        "8888886ddccccccc",
+        "8886dddccdcccccc"
+      ]
+    },
+    {
+      "id": 92,
+      "name": "radar_0_1",
+      "palette": "structures",
+      "pixels": [
+        "ccccccccccccdddd",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "ccccccc888888888",
+        "cccccbb888888888",
+        "cccccbb888888888",
+        "cccccbb888888888",
+        "cccccbb888888888",
+        "cccccbb888888888",
+        "cccccbbbbbbbbbbb",
+        "cccccbbbbbbbbbbb",
+        "cccccbbbbbbbbbbb",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 93,
+      "name": "radar_1_1",
+      "palette": "structures",
+      "pixels": [
+        "ddddcccccccccccc",
+        "aacccccccccccccc",
+        "aacccccccccccccc",
+        "aacccccccccccccc",
+        "aa88888888cccccc",
+        "aa88888888bbcccc",
+        "aa88888888bbcccc",
+        "8888888888bbcccc",
+        "8888888888bbcccc",
+        "8888888888bbcccc",
+        "bbbbbbbbbbbbcccc",
+        "bbbbbbbbbbbbcccc",
+        "bbbbbbbbbbbbcccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 94,
+      "name": "fuel_0_0",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccaaaaacccccc",
+        "cccaadddddaacccc",
+        "ccadddddddddaccc",
+        "ccadddddddddaccc",
+        "ccadddddddddaccc",
+        "cc8aadddddaa8bbc",
+        "cc888aaaaa888bbc",
+        "cc88888888888bbc",
+        "cc88a88888888bbc",
+        "cc88a88888888bbc",
+        "cc88a88888888bbc",
+        "cc88a88888888bbc",
+        "cc88a88888888bbc",
+        "cc88a88888888bbc"
+      ]
+    },
+    {
+      "id": 95,
+      "name": "fuel_1_0",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "ccccaaaaaccccccc",
+        "ccaadddddaaccccc",
+        "cadddddddddacccc",
+        "cadddddddddacccc",
+        "cadddddddddacccc",
+        "c8aadddddaa8bbcc",
+        "c888aaaaa888bbcc",
+        "c88888888888bbcc",
+        "c88a88888888bbcc",
+        "c88a88888888bbcc",
+        "c88a88888888bbcc",
+        "c88a88888888bbcc",
+        "c88a88888888bbcc",
+        "c88a88888888bbcc"
+      ]
+    },
+    {
+      "id": 96,
+      "name": "fuel_0_1",
+      "palette": "structures",
+      "pixels": [
+        "cc88a88888888bbc",
+        "cceeeeeeeeeeebbc",
+        "cc88a88888888bbc",
+        "cc88a88888888bbc",
+        "cc88a88888888bbc",
+        "cc88a88888888bbc",
+        "cc88888888888bbc",
+        "cc88888888888bbc",
+        "ccbbbbbbbbbbbbbc",
+        "ccbbbbbbbbbbbbbc",
+        "ccbbbbbbbbbbbbbc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 97,
+      "name": "fuel_1_1",
+      "palette": "structures",
+      "pixels": [
+        "c88a88888888bbcc",
+        "ceeeeeeeeeeebbcc",
+        "c88a88888888bbcc",
+        "c88a88888888bbcc",
+        "c88a88888888bbcc",
+        "c88a88888888bbcc",
+        "c88888888888bbcc",
+        "c88888888888bbcc",
+        "cbbbbbbbbbbbbbcc",
+        "cbbbbbbbbbbbbbcc",
+        "cbbbbbbbbbbbbbcc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 98,
+      "name": "crates_0_0",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cc6aaaaaaaaabbcc",
+        "cc9699999999bbcc",
+        "cc9969999999bbcc",
+        "cc9996999999bbcc",
+        "cc9999699999bbcc",
+        "cc9999969999bbcc",
+        "cc9999996999bbcc",
+        "cc9999999699bbcc",
+        "cc9999999969bbcc",
+        "cc9999999996bbcc",
+        "ccbbbbbbbbbbbbcc",
+        "ccbbbbbbbbbbbbcc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 99,
+      "name": "crates_1_0",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "c6aaaaaaaaabbccc",
+        "c9699999999bbccc",
+        "c9969999999bbccc",
+        "c9996999999bbccc",
+        "c9999699999bbccc",
+        "c9999969999bbccc",
+        "c9999996999bbccc",
+        "c9999999699bbccc",
+        "c9999999969bbccc",
+        "c9999999996bbccc",
+        "cbbbbbbbbbbbbccc",
+        "cbbbbbbbbbbbbccc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 100,
+      "name": "crates_0_1",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "ccccccccc6aaaaaa",
+        "ccccccccc9699999",
+        "ccccccccc9969999",
+        "ccccccccc9996999",
+        "ccccccccc9999699",
+        "ccccccccc9999969",
+        "ccccccccc9999996",
+        "ccccccccc9999999",
+        "ccccccccc9999999",
+        "ccccccccc9999999",
+        "cccccccccbbbbbbb",
+        "cccccccccbbbbbbb",
+        "cccccccccccccccc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 101,
+      "name": "crates_1_1",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "aaabbccccccccccc",
+        "999bbccccccccccc",
+        "999bbccccccccccc",
+        "999bbccccccccccc",
+        "999bbccccccccccc",
+        "999bbccccccccccc",
+        "999bbccccccccccc",
+        "699bbccccccccccc",
+        "969bbccccccccccc",
+        "996bbccccccccccc",
+        "bbbbbccccccccccc",
+        "bbbbbccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 106,
+      "name": "complex_steel_plain",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "6666666666666666",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "6666666666666666",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "6666666666666666",
+        "cccccccccccccccc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 107,
+      "name": "complex_steel_0_0",
+      "palette": "structures",
+      "pixels": [
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "aaaaaaaaaaaaaaaa",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8666666666666",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8666666666666",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc"
+      ]
+    },
+    {
+      "id": 108,
+      "name": "complex_steel_1_0",
+      "palette": "structures",
+      "pixels": [
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "aaaaaaaaaaaaaaaa",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "6666666666666666",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "6666666666666666",
+        "cccccccccccccccc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 109,
+      "name": "complex_steel_2_0",
+      "palette": "structures",
+      "pixels": [
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "aaaaaaaaaaaaaaaa",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "6666666666666bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "6666666666666bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb"
+      ]
+    },
+    {
+      "id": 110,
+      "name": "complex_steel_0_1",
+      "palette": "structures",
+      "pixels": [
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8666666666666",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8666666666666",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8666666666666",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc"
+      ]
+    },
+    {
+      "id": 111,
+      "name": "complex_steel_1_1",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "6666666666666666",
+        "ccc888888888bccc",
+        "ccc8aaaaaaa8bccc",
+        "ccc888888888bccc",
+        "ccc866666668bccc",
+        "666888888888b666",
+        "ccc888888888bccc",
+        "cccbbbbbbbbbbccc",
+        "cccbbbbbbbbbbccc",
+        "cccccccccccccccc",
+        "6666666666666666",
+        "cccccccccccccccc",
+        "cccccccccccccccc"
+      ]
+    },
+    {
+      "id": 112,
+      "name": "complex_steel_2_1",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "6666666666666bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "6666666666666bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "6666666666666bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb"
+      ]
+    },
+    {
+      "id": 113,
+      "name": "complex_steel_0_2",
+      "palette": "structures",
+      "pixels": [
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8666666666666",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8666666666666",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "ddd8cccccccccccc",
+        "8888888888888888",
+        "bbbbbbbbbbbbbbbb",
+        "bbbbbbbbbbbbbbbb",
+        "bbbbbbbbbbbbbbbb"
+      ]
+    },
+    {
+      "id": 114,
+      "name": "complex_steel_1_2",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "6666666666666666",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "6666666666666666",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "cccccccccccccccc",
+        "8886666666666888",
+        "bbb6866866866bbb",
+        "bbb6866866866bbb",
+        "bbb6866866866bbb"
+      ]
+    },
+    {
+      "id": 115,
+      "name": "complex_steel_2_2",
+      "palette": "structures",
+      "pixels": [
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "6666666666666bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "6666666666666bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "cccccccccccc6bbb",
+        "8888888888888888",
+        "bbbbbbbbbbbbbbbb",
+        "bbbbbbbbbbbbbbbb",
+        "bbbbbbbbbbbbbbbb"
+      ]
+    },
+    {
+      "id": 116,
+      "name": "complex_brick_plain",
+      "palette": "structures",
+      "pixels": [
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "bbbbbbbbbbbbbbbb",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "bbbbbbbbbbbbbbbb",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "bbbbbbbbbbbbbbbb",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee"
+      ]
+    },
+    {
+      "id": 117,
+      "name": "complex_brick_0_0",
+      "palette": "structures",
+      "pixels": [
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "aaaaaaaaaaaaaaaa",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8bbbbbbbbbbbb",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8bbbbbbbbbbbb",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee"
+      ]
+    },
+    {
+      "id": 118,
+      "name": "complex_brick_1_0",
+      "palette": "structures",
+      "pixels": [
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "aaaaaaaaaaaaaaaa",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "bbbbbbbbbbbbbbbb",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "bbbbbbbbbbbbbbbb",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee"
+      ]
+    },
+    {
+      "id": 119,
+      "name": "complex_brick_2_0",
+      "palette": "structures",
+      "pixels": [
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "dddddddddddddddd",
+        "aaaaaaaaaaaaaaaa",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "bbbbbbbbbbbb6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "bbbbbbbbbbbb6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb"
+      ]
+    },
+    {
+      "id": 120,
+      "name": "complex_brick_0_1",
+      "palette": "structures",
+      "pixels": [
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8bbbbbbbbbbbb",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8bbbbbbbbbbbb",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8bbbbbbbbbbbb",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee"
+      ]
+    },
+    {
+      "id": 121,
+      "name": "complex_brick_1_1",
+      "palette": "structures",
+      "pixels": [
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "bbbbbbbbbbbbbbbb",
+        "eee888888888beee",
+        "eee8aaaaaaa8beee",
+        "eee888888888beee",
+        "eee866666668beee",
+        "bbb888888888bbbb",
+        "eee888888888beee",
+        "eeebbbbbbbbbbeee",
+        "eeebbbbbbbbbbeee",
+        "eeeeeeeeeeeeeeee",
+        "bbbbbbbbbbbbbbbb",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee"
+      ]
+    },
+    {
+      "id": 122,
+      "name": "complex_brick_2_1",
+      "palette": "structures",
+      "pixels": [
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "bbbbbbbbbbbb6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "bbbbbbbbbbbb6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "bbbbbbbbbbbb6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb"
+      ]
+    },
+    {
+      "id": 123,
+      "name": "complex_brick_0_2",
+      "palette": "structures",
+      "pixels": [
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8bbbbbbbbbbbb",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8bbbbbbbbbbbb",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "ddd8eeeeeeeeeeee",
+        "8888888888888888",
+        "bbbbbbbbbbbbbbbb",
+        "bbbbbbbbbbbbbbbb",
+        "bbbbbbbbbbbbbbbb"
+      ]
+    },
+    {
+      "id": 124,
+      "name": "complex_brick_1_2",
+      "palette": "structures",
+      "pixels": [
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "bbbbbbbbbbbbbbbb",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "bbbbbbbbbbbbbbbb",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeee",
+        "8886666666666888",
+        "bbb6866866866bbb",
+        "bbb6866866866bbb",
+        "bbb6866866866bbb"
+      ]
+    },
+    {
+      "id": 125,
+      "name": "complex_brick_2_2",
+      "palette": "structures",
+      "pixels": [
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "bbbbbbbbbbbb6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "bbbbbbbbbbbb6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "eeeeeeeeeeee6bbb",
+        "8888888888888888",
+        "bbbbbbbbbbbbbbbb",
+        "bbbbbbbbbbbbbbbb",
+        "bbbbbbbbbbbbbbbb"
+      ]
+    }
+  ]
+}
