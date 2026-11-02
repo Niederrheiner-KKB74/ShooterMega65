@@ -39,6 +39,12 @@ Rollen ändern sich nicht. `hall-seams-preview.png` zeigt solche Mischungen.
 
 ## Geschütze und Palette
 
+Detailüberarbeitung: schmale Stahlrohre mit dunklen Mündungen, getrennten
+Rohrmanschetten und Rücklaufhülsen der Doppel-Flak. Wartungsluke, Nieten,
+Panzerungsfugen und rote Kennzeichnung greifen die vorhandenen Panzer auf.
+Größen, vollständige Palette, Sockel, Rohrspitzen, Feuerphasen und Wracks
+bleiben gegenüber der ersten Lieferung unverändert.
+
 Beide Geschütze verwenden `fixed_targets`. Der Sockel wird einmal gezeichnet
 und unverändert unter jeden drehbaren Aufbau gelegt. Acht separat festgelegte
 Geometrieprofile ergeben die Ansichten; kein Bild wird gedreht oder gespiegelt.

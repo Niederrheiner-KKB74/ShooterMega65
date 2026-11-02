@@ -1,2 +1,3 @@
 PASS: 48 opaque tiles; exact 32x32 group rims and all 20 hall-module rims; protected palette 0-11; both stationary bases; all primary/secondary muzzle tips; native previews, exact 4x scaling and checksums.
 PASS: All generated artwork and previews reproduced byte-for-byte on a second generator run.
+PASS: all 16 directional frames revised; entire palettes, dimensions, muzzle coordinates, flashes, wrecks and all destruction tiles unchanged.
