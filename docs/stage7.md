@@ -108,7 +108,7 @@ Branch `stage7`, on top of the confirmed Stage 7b (`stage7b-release`). Release f
 | XEMU without attic RAM (`NO_ATTIC`): the boss event is skipped, the game goes on | ✔ |
 | XEMU: the land mask matches the screenshot water areas; tanks seen in the dumps all on land | ✔ |
 | XEMU default level 78 s after the start with the new waves, RRB overflow 0 | ✔ |
-| Real MEGA65 | open |
+| Real MEGA65 | ✔ confirmed by the owner (02.11.2026), `stage7c-stable`: stable, gameplay "clearly better", "quite challenging" |
 
 ## Hardware test checklist
 1. Boss core phase: besides the fans, single red shots at different angles, some aimed at you. Staying at the far
