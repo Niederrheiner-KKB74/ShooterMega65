@@ -174,14 +174,16 @@ def barrel(p,start,end,width):
     d=ImageDraw.Draw(p);x0,y0=start;x1,y1=end;dx=x1-x0;dy=y1-y0
     # World-space NW highlights; heading profiles are never mirrored images.
     ox,oy=(-1,0) if dx==0 else (0,-1) if dy==0 or dx*dy>0 else (-1,-1)
-    d.line((x0,y0,x1,y1),fill=1,width=width)
-    d.line((x0,y0,x1,y1),fill=4,width=max(1,width-2))
-    d.line((x0+ox,y0+oy,x1+ox,y1+oy),fill=6 if width>=5 else 5)
+    d.line((x0,y0,x1,y1),fill=1,width=3)
+    d.line((x0,y0,x1,y1),fill=5)
+    # Narrow steel tube with a lit NW side, separate breech and muzzle collar.
+    d.line((x0+ox,y0+oy,x1+ox,y1+oy),fill=6)
+    for t,col in ((.18,4),(.38,2),(.78,4)):
+        mx,my=round(x0+dx*t),round(y0+dy*t)
+        if abs(dx)>abs(dy):d.line((mx,my-1,mx,my+1),fill=col)
+        else:d.line((mx-1,my,mx+1,my),fill=col)
+        d.point((mx+ox,my+oy),fill=5)
     d.point(end,fill=1) # visible dark muzzle, never a transparent hole
-    if width>=5:
-        mx,my=round((x0+x1)*.5),round((y0+y1)*.5)
-        if abs(dx)>abs(dy):d.line((mx,my-1,mx,my+1),fill=2)
-        else:d.line((mx-1,my,mx+1,my),fill=2)
 
 def gun(size):
     base=base_gun(size);frames={};muzzles={};masks={}
@@ -189,21 +191,34 @@ def gun(size):
         top=Image.new('L',(size,size));d=ImageDraw.Draw(top)
         if size==16:
             poly,tip=LIGHT[direction];d.polygon(poly,fill=3);upper_bevel(top)
+            d.rectangle((6,6,10,10),fill=2)
+            d.rectangle((6,6,9,9),fill=3);d.line((6,6,9,6),fill=5)
+            d.point((6,7),fill=6);d.point((9,9),fill=1)
+            d.line((6,9,7,9),fill=7) # tank-family red identification mark
+            d.point((9,7),fill=10)
+            # Draw the barrel last so the turret never hides its whole breech.
             barrel(top,(8,8),tip,3)
-            d.rectangle((6,6,9,9),fill=4);d.line((6,6,9,6),fill=6)
-            d.point((6,7),fill=7);d.point((9,9),fill=2)
         else:
             # Explicit double-barrel endpoints per heading; fixed turntable centre.
             dx,dy={'n':(0,-1),'ne':(1,-1),'e':(1,0),'se':(1,1),'s':(0,1),'sw':(-1,1),'w':(-1,0),'nw':(-1,-1)}[direction]
             d.polygon([(12,9),(19,9),(24,14),(23,20),(18,24),(11,22),(8,16)],fill=3)
             upper_bevel(top)
             d.rectangle((11,11,20,19),fill=10);d.line((11,11,20,11),fill=6)
-            for start,end in HEAVY[direction]:barrel(top,start,end,5)
             tip=HEAVY[direction][0][1]
             d.ellipse((12,12,19,19),fill=4,outline=5)
-            d.line((13,13,17,13),fill=6);d.line((13,17,17,17),fill=7)
-            d.point((14,16),fill=14)
-            d.point((15+dx*4,15+dy*4),fill=8)
+            d.rectangle((13,13,17,17),fill=3);d.line((13,13,17,13),fill=6)
+            d.line((14,17,17,17),fill=7)
+            d.rectangle((14,14,16,15),fill=1);d.point((14,14),fill=5)
+            for x,y in ((10,14),(21,15),(12,20),(19,21)):
+                d.point((x,y),fill=6);d.point((x,y+1),fill=2)
+            d.line((10,17,10,19),fill=1);d.line((21,17,21,19),fill=1)
+            for start,end in HEAVY[direction]:
+                sx,sy=start;ex,ey=end
+                # Armoured recoil sleeve stops before the long, narrow tube.
+                bx,by=round(sx+(ex-sx)*.25),round(sy+(ey-sy)*.25)
+                d.line((sx,sy,bx,by),fill=1,width=5)
+                d.line((sx-1,sy-1,bx-1,by-1),fill=4,width=3)
+                barrel(top,start,end,3)
         p=base.copy();mask=top.point(lambda v:255 if v else 0);p.paste(top,mask=mask)
         frames[direction]=rows(p);muzzles[direction]=list(tip)
         masks[direction]=rows(top.point(lambda v:1 if v else 0))
