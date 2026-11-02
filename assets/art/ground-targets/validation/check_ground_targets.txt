@@ -1,0 +1,12 @@
+part A hangar    : inner changed  68%, border changed   0%
+part A depot     : inner changed  66%, border changed   0%
+part A checkpoint: inner changed  61%, border changed   0%
+part A bunker    : inner changed  57%, border changed   0%
+part A radar     : inner changed  63%, border changed   0%
+part A fuel      : inner changed  53%, border changed   0%
+part A crates    : inner changed  62%, border changed   0%
+ground_gun: 9 frames checked
+heavy_gun: 9 frames checked
+destroyed tiles: 48 (max 64)
+NOTE: fixed_targets 12-15: (16, 18, 22), (72, 58, 47), (225, 65, 24), (255, 234, 161)
+OK, no errors
