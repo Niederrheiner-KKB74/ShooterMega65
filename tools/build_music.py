@@ -23,8 +23,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MUSIC_PIECES = ['level1', 'shop', 'game_over', 'level_clear', 'boss', 'title']       # order = MUS_* constants
-MUSIC_ADDR = 0x0A000          # bank 0 behind the program (Stage 7; was $5E000 with 4 KB)
-MUSIC_MAX = 0x2000
+MUSIC_ADDR = 0x0AC00          # bank 0 behind the program (Stage 8: $AC00-$BFFF, 5 KB; Stage 7: $A000; before $5E000)
+MUSIC_MAX = 0xC000 - MUSIC_ADDR
 SID_CLOCK = 1_000_000            # MEGA65 SID clock as emulated by XEMU (check the tuning on hardware: A-4 = 440 Hz)
 WAVES = {'triangle': 0x10, 'saw': 0x20, 'pulse': 0x40, 'noise': 0x80}
 FILTER_MODES = {'lowpass': 0x10, 'bandpass': 0x20, 'highpass': 0x40}
