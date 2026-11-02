@@ -95,6 +95,18 @@ The boss is a pixie object like the enemies, only bigger, and consists of parts 
 - Delivery as for the landscape: indexed PNG plus JSON with palette(s) and, for the title, the palette number of
   every 16×8 tile.
 
+## Destroyable buildings and ground guns (Stage 8)
+Full brief for ChatGPT (German, ready to hand over): `docs/chatgpt_ground_targets.md`; checker:
+`python3 tools/check_ground_targets.py`. In short:
+- **A (required)**: destroyed variants of the 2×2 building groups of the coastal tileset (hangar, depot, checkpoint,
+  bunker, radar, fuel, crates: 28 tiles), same footprint, outer 2 px close to the original, in the intact tile's
+  palette or `fixed_targets`. `structures` is full; `fixed_targets` entries 1–11 stay (tanks), 12–15 may be new.
+  Index 0 is not allowed in landscape tiles.
+- **B (required)**: light ground gun 16×16 in `fixed_targets`: 8 directions drawn one by one (fixed base), 2 muzzle
+  flash frames, wreck, barrel tip per direction.
+- **C/D (optional)**: heavy gun 32×32; destroyed variants of the modular halls. At most 64 new tiles in total.
+- Delivery: `assets/art/ground-targets/generated/ground-targets.json` (hex pixel rows) plus previews; no other files.
+
 ## Working with ChatGPT
 - Ask for *"pixel art, top-down view, flat colours, no anti-aliasing, limited palette of 15 colours, on a
   transparent background, each sprite exactly 16×16 pixels (shown enlarged 8×)"*.
