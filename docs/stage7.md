@@ -71,7 +71,7 @@ Branch `stage7`, on top of the confirmed Stage 7 (`stage7-release`). Release fil
 | XEMU weak boss: turrets destroyed while it is still flying in → the core keeps descending to its fighting height | ✔ |
 | XEMU full-strength boss, player standing still: after 65 s three turrets are left (one at 10 HP), the player loses all three planes → game-over banner, boss removed | ✔ |
 | XEMU default level for 58 s after the start, RRB overflow 0 (also in all boss runs) | ✔ |
-| Real MEGA65 | open |
+| Real MEGA65 | ✔ all checklist items confirmed by the owner (02.11.2026), `stage7b-stable`; balancing "clearly better" |
 
 ## Hardware test checklist
 1. Title: "PRESS FIRE" blinks without any blue remains under the letters.
