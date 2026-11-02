@@ -22,6 +22,7 @@
 .const T_BONUS = 6
 .const T_MISSILE = 7             // player's homing missile (special.asm)
 .const T_BOSS    = 8             // boss turret or core (boss.asm)
+.const T_GUN     = 9             // ground gun (ground.asm, Stage 8)
 
 .const K_FIGHTER  = 0
 .const K_BOMBER   = 1
@@ -371,6 +372,8 @@ kill_obj:
     lda #0
     sta obj_t,x
     // capsule centred on the destroyed object
+// entry for ground targets (ground.asm): ko_drop, oc_x/oc_y, ko_i set
+drop_at_oc:
     ldy ko_drop
     bne !+
     jmp !done+
@@ -434,7 +437,7 @@ upd_call:
     rts
 
 upd_tab:
-    .word upd_pshot, upd_air, upd_tank, upd_eshot, upd_expl, upd_bonus, upd_missile, upd_boss
+    .word upd_pshot, upd_air, upd_tank, upd_eshot, upd_expl, upd_bonus, upd_missile, upd_boss, upd_gun
 
 free_x:
     lda #T_NONE
@@ -454,7 +457,7 @@ upd_pshot:
     cmp #<-16
     bcs !+
     jmp free_x
-!:  rts
+!:  jmp gd_shot                 // damage to buildings below (ground.asm)
 
 // generic "y += n" (n = 0..127) and remove when below the screen
 move_down:
@@ -913,7 +916,10 @@ collide_shots:
     cmp #T_TANK
     beq !test+
     cmp #T_BOSS                 // boss turret or core, while it can be hit
+    beq !alive+
+    cmp #T_GUN                  // ground gun, while it is not a wreck
     bne !+
+!alive:
     lda obj_b,y
     bne !test+
 !:  jmp !nexte+
@@ -996,6 +1002,10 @@ collide_shots:
     cmp #T_BOSS
     bne !+
     jsr boss_part_down          // boss parts stay (destroyed view) or end the boss
+    jmp !nexts+
+!:  cmp #T_GUN
+    bne !+
+    jsr gun_down                // guns stay as wrecks
     jmp !nexts+
 !:  lda #1                      // destroyed by the player: points
     sta ko_flags
@@ -1202,6 +1212,7 @@ objects_draw:
     lda obj_fr,x
     jsr pixie_draw
     ldx ob_i
+    jsr gun_flash_draw          // keeps X
 !next:
     inx
     cpx #MAXOBJ

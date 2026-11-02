@@ -44,6 +44,11 @@ Ordner mit den Landschaftsgrafiken. Er muss `terrain.ncm.bin`, `level-example.js
 und `manifest.json` (Paletten) enthalten. Erlaubte Tile-Nummern sind die `id`s aus `level-example.json`
 (derzeit 0–61). Je Level gibt es höchstens 4 Landschaftspaletten.
 
+### `ground_targets` (Stage 8, optional)
+Ordner mit zerstörbaren Gebäuden und Geschützen (z. B. `assets/art/ground-targets/generated`, PR #15). Tiles mit
+einer zerstörten Variante werden automatisch zu Zielen: Schüsse fliegen darüber hinweg und beschädigen sie, zerstörte
+Gebäude zeigen Trümmer. Ohne diesen Eintrag gibt es keine Geschütze (`flak`, `heavy_flak`).
+
 ### `map`
 Liste von Zeilen, **beginnend mit dem Levelanfang**. Jede Zeile ist eine Liste von 21 Tile-Nummern.
 Wiederholungen lassen sich kompakt schreiben:
@@ -57,7 +62,7 @@ Wiederholungen lassen sich kompakt schreiben:
 
 Grenzen:
 - höchstens **256 verschiedene Zeilen** pro Level. Gleiche Zeilen werden automatisch nur einmal gespeichert.
-- die Datei `LnDAT` darf höchstens **16 KB** groß sein. Jede verschiedene Zeile kostet 21 Byte, jede Kartenzeile
+- die Datei `LnDAT` darf höchstens **10 KB** groß sein (Stage 8). Jede verschiedene Zeile kostet 21 Byte, jede Kartenzeile
   1 Byte, jedes Ereignis 8 Byte. 256 verschiedene Zeilen belegen also 5,4 KB, der Rest reicht für mehrere tausend
   Kartenzeilen. Durch wiederverwendete Zeilen dürfen Level deutlich länger als 256 Zeilen sein.
 
@@ -106,7 +111,7 @@ Wird eine Formation komplett abgeschossen, lässt der letzte Gegner eine $-Kapse
 | `type` | Felder | Wirkung |
 |---|---|---|
 | `formation` | `formation`, optional `x`, `mirror` (true/false) | Formation starten. `mirror` spiegelt Bahn und Startpunkt (von links ↔ von rechts) |
-| `ground` | `enemy`: `tank`, `x` (0–304), `dir`: `north`/`east`/`south`/`west` | Panzer am oberen Rand absetzen |
+| `ground` | `enemy`: `tank`, `flak` (leichtes Geschütz 16×16) oder `heavy_flak` (schweres 32×32), `x` (0–304), bei Panzern `dir`: `north`/`east`/`south`/`west` | Bodengegner am oberen Rand absetzen. Geschütze stehen fest, drehen sich zum Spieler und schießen gezielt |
 | `speed` | `value` (Pixel pro Frame, 0–4) | Scrollgeschwindigkeit ändern (0 = Stillstand, z. B. für den Boss) |
 | `shop` | `id`: `mid` oder `end` | Spiel hält an, „ENTERING SHOP“, dann Shop-Overlay. Alle Gegner, Schüsse und Kapseln auf dem Bildschirm verschwinden dabei. Deshalb in eine ruhige Stelle setzen und keine anderen Ereignisse in dieselbe Zeile legen (sie würden sofort wieder entfernt) |
 | `boss` | – | Endgegner (Level 1: Quadrocopter). Er erscheint, sobald keine Flugzeuge mehr im Bild sind (höchstens 5 s später); das Scrollen hält bis zu seiner Zerstörung an. Davor einige Zeilen ohne Formationen lassen, danach den Shop `end` |

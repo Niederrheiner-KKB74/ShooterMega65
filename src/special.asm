@@ -100,6 +100,12 @@ bomb_fire:
     bne !+
     jsr boss_bomb_part          // boss parts lose hit points instead
     jmp !next+
+!:  cmp #T_GUN                 // ground guns become wrecks
+    bne !+
+    jsr enemy_visible
+    bcs !next+
+    jsr gun_down                // keeps X
+    jmp !next+
 !:  cmp #T_AIR
     beq !enemy+
     cmp #T_TANK
@@ -123,6 +129,7 @@ bomb_fire:
 !:  inx
     cpx #SHOT_END
     bne !--
+    jsr gd_bomb                 // buildings on the screen (ground.asm)
     lda #FLASH_FRAMES
     sta bomb_flash
     lda #SFX_BOMB
@@ -138,6 +145,11 @@ enemy_visible:
     clc
     rts
 !nb:
+    cmp #T_GUN                  // gun: not as a wreck
+    bne !+
+    lda obj_b,x
+    beq !no+
+!:
     cmp #T_AIR
     bne !+
     lda obj_dly,x               // formation member still waiting above the screen
@@ -220,6 +232,8 @@ pick_target:
     beq !test+
     cmp #T_BOSS
     beq !test+
+    cmp #T_GUN
+    beq !test+
     cmp #T_TANK
     bne !next+
 !test:
@@ -251,6 +265,8 @@ upd_missile:
     cmp #T_AIR
     beq !chk+
     cmp #T_BOSS
+    beq !chk+
+    cmp #T_GUN
     beq !chk+
     cmp #T_TANK
     bne !new+

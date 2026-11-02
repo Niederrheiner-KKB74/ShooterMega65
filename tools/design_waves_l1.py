@@ -135,6 +135,12 @@ WAVES = [
 TANK_ROWS = [28, 44, 58, 66, 84, 97, 112, 126, 134, 150, 158, 166, 202, 216, 232, 248, 260, 270, 286, 300,
              316, 330, 344]
 
+# ground guns (Stage 8): (row, kind); x on land, not on a destroyable building (seeded, reproducible)
+GUN_ROWS = [(36, 'flak'), (74, 'flak'), (104, 'flak'), (118, 'flak'), (142, 'flak'), (162, 'heavy_flak'),
+            (200, 'flak'), (210, 'flak'), (226, 'heavy_flak'), (240, 'flak'), (254, 'flak'), (266, 'heavy_flak'),
+            (282, 'flak'), (292, 'heavy_flak'), (306, 'flak'), (318, 'flak'), (326, 'heavy_flak'), (338, 'flak'),
+            (348, 'heavy_flak')]
+
 
 def main():
     lv = json.loads(LEVEL.read_text())
@@ -163,6 +169,18 @@ def main():
             continue
         events.append({'row': row, 'type': 'ground', 'enemy': 'tank', 'x': rnd.choice(cand),
                        'dir': rnd.choice(dirs)})
+    gt = json.loads((ROOT / lv['ground_targets'] / 'ground-targets.json').read_text())
+    by_name = {t['name']: t['id'] for t in tiles}
+    buildings = {by_name[d['of']] for d in gt['destroyed_tiles']}
+    grnd = random.Random(11)
+    for row, kind in GUN_ROWS:
+        w = 32 if kind == 'heavy_flak' else 16
+        cand = [x for x in range(16, 305 - w, 8)
+                if all(rows[r][c] not in water and rows[r][c] not in buildings
+                       for r in range(row, min(row + 4, len(rows)))
+                       for c in {(x + 16) >> 4, (x + 15 + w) >> 4})]
+        if cand:
+            events.append({'row': row, 'type': 'ground', 'enemy': kind, 'x': grnd.choice(cand)})
     order = {'speed': 0, 'formation': 1, 'ground': 2, 'boss': 3, 'shop': 4, 'end': 5}
     events.sort(key=lambda e: (e['row'], order[e['type']]))
     lv['paths'] = PATHS
@@ -174,9 +192,10 @@ def main():
                   if m[1].strip() else '[]', text)
     LEVEL.write_text(text + '\n')
     n_form = sum(e['type'] == 'formation' for e in events)
-    n_tank = sum(e['type'] == 'ground' for e in events)
+    n_tank = sum(e['type'] == 'ground' and e['enemy'] == 'tank' for e in events)
+    n_gun = sum(e['type'] == 'ground' and e['enemy'] != 'tank' for e in events)
     print(f'{LEVEL.name}: {len(PATHS)} paths, {len(FORMATIONS)} formations, {n_form} formation events, '
-          f'{n_tank} tanks')
+          f'{n_tank} tanks, {n_gun} guns')
 
 
 if __name__ == '__main__':

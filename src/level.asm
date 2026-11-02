@@ -55,7 +55,9 @@ level_load:
     ldx #>name_gfx
     ldy #name_gfx_end - name_gfx
     jsr load_seq
-    bcs !fail+
+    bcc !+
+    jmp !fail+
+!:
     RunDma(job_gfxhdr)          // header + palettes to bank 0
     lda lev_gfxhdr
     cmp #$53                    // 'S'
@@ -72,6 +74,10 @@ level_load:
     lsr job_glyphs+DMA_COUNT+1
     ror job_glyphs+DMA_COUNT
     RunDma(job_glyphs)
+    jsr dest_load               // destroyed tiles (ground.asm), through the load buffer
+    bcc !+
+    jmp !fail+
+!:
     lda #<name_dat
     ldx #>name_dat
     ldy #name_dat_end - name_dat
@@ -294,6 +300,8 @@ lev_read:
 .label lev_offform = lev_hdr+14
 .label lev_offptab = lev_hdr+16
 .label lev_speed  = lev_hdr+18
+.label lev_offgt  = lev_hdr+21       // Stage 8: ground-target tables (format 2)
+.label lev_ndest  = lev_hdr+23
 
 level_init:
     // metatile table -> meta_top / meta_bot / meta_col
@@ -314,7 +322,9 @@ level_init:
     inx
     cpx lev_nmeta
     bne !-
+    jsr gd_tables               // destroyable tiles (ground.asm)
 level_restart:
+    jsr gd_reset
     lda lev_speed
     sta scroll_spd
     lda lev_speed+1
@@ -417,11 +427,13 @@ level_row:
     sta dr_glyph,x
     lda meta_col,y
     sta dr_col,x
+    lda #>TILE_CHAR
+    sta dr_hi,x
     jsr lev_inc
     inx
     cpx #BG_TOKENS
     bne !col-
-    rts
+    jmp gd_apply                // destroyed buildings (ground.asm)
 
 // ---------------------------------------------------------------- events
 // Called once per frame: run every event whose row has been reached by the top of the screen.
@@ -506,7 +518,10 @@ ev_run:
     rts
 !:  cmp #EV_SHOP
     bne !+
-    lda ev_p                    // shop overlay comes in a later stage
+#if SKIP_SHOP
+    rts                         // test build (build.py --define SKIP_SHOP): no shops
+#endif
+    lda ev_p                    // 0 mid, 1 end -> shop_req 1 / 2
     clc
     adc #1
     sta shop_req
@@ -536,6 +551,12 @@ ev_run:
 !:  rts
 
 ev_ground:
+    lda ev_p                    // 4 tank, 8 light gun, 9 heavy gun (build_level.py GROUND)
+    cmp #8
+    bcc !tank+
+    sbc #8
+    jmp gun_spawn               // ground.asm
+!tank:
     lda ev_p+1
     sta sp_x
     lda ev_p+2
@@ -843,6 +864,7 @@ fm_dly:     .byte 0
 pf_guard:   .byte 0
 dr_glyph:   .fill BG_TOKENS, 0
 dr_col:     .fill BG_TOKENS, 0
+dr_hi:      .fill BG_TOKENS, 0
 .align $100
 ld_buf:     .fill 256, 0
 meta_top:   .fill 256, 0

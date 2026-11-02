@@ -43,9 +43,12 @@ has_missile: .byte 0
 // new game: nothing bought yet (pl_power is reset by player_new_game)
 shop_reset:
     lda #0
-    sta bomb_count
     sta inv_count
     sta has_missile
+#if TEST_CREDITS
+    lda #9                      // test build (build.py --test-credits): 9 bombs
+#endif
+    sta bomb_count
     jmp special_reset
 
 // ============================================================== loading (KERNAL)

@@ -23,9 +23,14 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[1]
 COLS = 21
 MAX_FILE = 0x4000
+MAX_DAT = 0x2800                 # Stage 8: LnDAT stays at $50000-$527FF (behind it: heavy gun glyphs, PIXIES2)
+MAX_DEST = 48                    # destroyed tiles: 32 at $5E000 (char $1780), 16 in the last 32 pixie glyphs
+DEST_CHARS = (0x1780, 0x13E0)    # $4F800 (PIXIE_CHAR $11A0 + 576); see src/ground.asm
+# destroyable landscape targets (Stage 8): kind = index (hit points, points: src/ground.asm); 2x2 groups by name
+TARGET_KINDS = ['hangar', 'depot', 'checkpoint', 'bunker', 'radar', 'fuel', 'crates', 'hall']
 LAND_BANKS = {'water': 1, 'nature': 2, 'structures': 3, 'fixed_targets': 4}
 ENEMIES = {'fighter': 0, 'bomber': 1, 'helicopter': 2, 'armoured': 3}
-GROUND = {'tank': 4}
+GROUND = {'tank': 4, 'flak': 8, 'heavy_flak': 9}
 DIRS = {'north': 0, 'east': 1, 'south': 2, 'west': 3}
 EV_FORMATION, EV_GROUND, EV_SPEED, EV_SHOP, EV_BOSS, EV_END = 1, 2, 3, 4, 5, 6
 OP_END, OP_LOOP, OP_ENDLOOP, OP_AIM, OP_FIRE, OP_WAIT = 0x80, 0x81, 0x82, 0x83, 0x84, 0x85
@@ -119,6 +124,36 @@ def build(src, outdir, name):
     if ntiles > 128:                 # glyph offsets are bytes; the shop glyphs follow at $44000
         raise LevelError(f'tile set has {ntiles} tiles, maximum 128 (256 glyphs)')
     tile_bank = {t['id']: LAND_BANKS[t['palette']] for t in tiles_meta}
+    tile_by_name = {t['name']: t['id'] for t in tiles_meta}
+
+    # ---------------- destroyable targets (Stage 8, PR #15): destroyed tiles, fixed_targets colours 12-15
+    gt_dest, gt_info = [0xFF] * 128, [0] * 128
+    dest_glyphs, dest_tab = bytearray(), bytearray()
+    gt_path = lv.get('ground_targets')
+    if gt_path:
+        gt = json.loads((ROOT / gt_path / 'ground-targets.json').read_text())
+        if 'fixed_targets' in gt.get('palettes', {}):
+            manifest = dict(manifest, palettes=dict(manifest['palettes'], fixed_targets=gt['palettes']['fixed_targets']))
+        dts = gt['destroyed_tiles']
+        if len(dts) > MAX_DEST:
+            raise LevelError(f'{len(dts)} destroyed tiles, maximum {MAX_DEST}')
+        for k, d in enumerate(dts):
+            t = tile_by_name[d['of']]
+            tname = d['of']
+            if tname.startswith('complex_'):
+                kind, c, r = TARGET_KINDS.index('hall'), 0, 0
+            else:
+                grp, c, r = tname.rsplit('_', 2)
+                kind, c, r = TARGET_KINDS.index(grp), int(c), int(r)
+            gt_dest[t] = k
+            gt_info[t] = (kind << 2) | (r << 1) | c
+            px = [[int(ch, 16) for ch in row] for row in d['pixels']]
+            for half in range(2):
+                for y in range(8):
+                    rr = px[half * 8 + y]
+                    dest_glyphs += bytes(rr[x] | (rr[x + 1] << 4) for x in range(0, 16, 2))
+            char = DEST_CHARS[k // 32] + 2 * (k % 32)
+            dest_tab += bytes((char & 0xFF, char >> 8, (LAND_BANKS[d['palette']] << 4) | 0x0F))
 
     # ---------------- GFX file: palettes of banks 1-4 + all landscape glyphs
     pal = bytearray()
@@ -189,6 +224,8 @@ def build(src, outdir, name):
             x = e['x']
             if not 0 <= x <= 304:
                 raise LevelError(f'{w}: x 0..304')
+            if e['enemy'] != 'tank' and not gt_path:
+                raise LevelError(f'{w}: guns need "ground_targets" (artwork of PR #15)')
             rec = (EV_GROUND, GROUND[e['enemy']], x & 0xFF, x >> 8, DIRS[e.get('dir', 'south')], 0)
         elif typ == 'speed':
             v = round(e['value'] * 256)
@@ -219,22 +256,26 @@ def build(src, outdir, name):
     off_forms = off_events + len(events)
     off_ptab = off_forms + len(forms)
     off_code = off_ptab + 2 * len(paths)
+    code_len = sum(len(p) for p in paths)
+    off_gt = off_code + code_len       # 128 dest indices, 128 info bytes, then 3 bytes per destroyed tile
+    gt_block = bytes(gt_dest) + bytes(gt_info) + bytes(dest_tab)
     ptab, code = bytearray(), bytearray()
     for p in paths:
         ptab += struct.pack('<H', off_code + len(code))
         code += p
-    header = struct.pack('<2sBBHHHHHHHHB', b'SL', 1, len(used), nrows, off_meta, off_dict, off_rows,
-                         off_events, off_forms, off_ptab, speed, len(dict_rows) & 0xFF)
+    header = struct.pack('<2sBBHHHHHHHHBHB', b'SL', 2, len(used), nrows, off_meta, off_dict, off_rows,
+                         off_events, off_forms, off_ptab, speed, len(dict_rows) & 0xFF, off_gt, len(dest_tab) // 3)
     header = header.ljust(hdr_len, b'\0')
-    dat = header + meta + b''.join(bytes(r) for r in dict_rows) + bytes(rowlist) + bytes(events) + bytes(forms) + bytes(ptab) + bytes(code)
-    for fname, data in (('GFX', gfx), ('DAT', dat)):
-        if len(data) > MAX_FILE:
-            raise LevelError(f'{name}{fname} is {len(data)} bytes, maximum {MAX_FILE}')
+    dat = header + meta + b''.join(bytes(r) for r in dict_rows) + bytes(rowlist) + bytes(events) + bytes(forms) + bytes(ptab) + bytes(code) + gt_block
+    for fname, data, mx in (('GFX', gfx, MAX_FILE), ('DAT', dat, MAX_DAT)):
+        if len(data) > mx:
+            raise LevelError(f'{name}{fname} is {len(data)} bytes, maximum {mx}')
 
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     (outdir / f'{name}GFX').write_bytes(gfx)
     (outdir / f'{name}DAT').write_bytes(dat)
+    (outdir / f'{name}DEST').write_bytes(bytes(dest_glyphs))
 
     # ---------------- preview: rebuild the picture from the binary data, mark events
     palette = {}
@@ -266,7 +307,8 @@ def build(src, outdir, name):
               f'{nrows * 16 / (speed / 256 * 50):.0f} s at {speed / 256} px/frame)',
               f'metatiles {len(used)}, different rows {len(dict_rows)}/256, glyphs {ntiles * 2}',
               f'events {len(lv["events"])}, formations {len(form_names)}, paths {len(paths)} ({len(code)} bytes)',
-              f'{name}GFX {len(gfx)} bytes, {name}DAT {len(dat)} bytes (max. {MAX_FILE} each)']
+              f'{name}GFX {len(gfx)} bytes (max. {MAX_FILE}), {name}DAT {len(dat)} bytes (max. {MAX_DAT}), '
+              f'{name}DEST {len(dest_glyphs)} bytes ({len(dest_tab) // 3} destroyed tiles)']
     (outdir / f'{name.lower()}_report.txt').write_text('\n'.join(report) + '\n')
     return gfx, dat, report
 

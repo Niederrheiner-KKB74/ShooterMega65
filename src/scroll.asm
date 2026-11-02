@@ -108,7 +108,7 @@ dr_write:
     lda dr_glyph,y              // glyph offset within the tile set
     sta ((scr_ptr)),z
     inz
-    lda #>TILE_CHAR
+    lda dr_hi,y                 // character high byte (destroyed tiles live elsewhere, ground.asm)
     sta ((scr_ptr)),z
     lda dr_col,y                // colour byte 1: palette bank << 4 | $0f
     sta ((col_ptr)),z

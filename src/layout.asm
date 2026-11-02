@@ -45,7 +45,7 @@
 
 .const TILE_CHAR    = TILE_ADDR / 64     // $1000
 .const PIXIE_CHAR   = PIXIE_ADDR / 64    // $11A0 (frame bases in frames.inc are absolute character numbers)
-.const PIXIE_MAX    = ($050000 - PIXIE_ADDR) / 64   // 608
+.const PIXIE_MAX    = ($04F800 - PIXIE_ADDR) / 64   // 576 (Stage 8: $4F800-$4FFFF holds destroyed landscape tiles)
 .const SPRITE_PTR0  = SPRITE_ADDR / 64
 .const SPRITE_PTR1  = (SPRITE_ADDR + $100) / 64
 

@@ -2,6 +2,7 @@
   "format": "shootermega65-level-1",
   "name": "Operation Kuestenwald",
   "tileset": "assets/art/coastal-base/generated",
+  "ground_targets": "assets/art/ground-targets/generated",
   "scroll_speed": 0.5,
   "map": [
     [0, 2, 0, 2, 0, 15, 20, 1, 5, 6, 4, 8, 3, 7, 5, 1, 4, 8, 3, 7, 5],
@@ -692,6 +693,12 @@
       "mirror": false
     },
     {
+      "row": 36,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 224
+    },
+    {
       "row": 40,
       "type": "formation",
       "formation": "side6",
@@ -763,6 +770,12 @@
       "mirror": true
     },
     {
+      "row": 74,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 264
+    },
+    {
       "row": 79,
       "type": "formation",
       "formation": "uturn6",
@@ -807,6 +820,12 @@
       "mirror": true
     },
     {
+      "row": 104,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 192
+    },
+    {
       "row": 109,
       "type": "formation",
       "formation": "ring5",
@@ -824,6 +843,12 @@
       "type": "formation",
       "formation": "strafe5",
       "mirror": false
+    },
+    {
+      "row": 118,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 272
     },
     {
       "row": 122,
@@ -862,6 +887,12 @@
       "type": "formation",
       "formation": "swoop6",
       "mirror": true
+    },
+    {
+      "row": 142,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 112
     },
     {
       "row": 147,
@@ -918,6 +949,12 @@
       "mirror": true
     },
     {
+      "row": 162,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 56
+    },
+    {
       "row": 166,
       "type": "ground",
       "enemy": "tank",
@@ -942,6 +979,12 @@
       "mirror": true
     },
     {
+      "row": 200,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 272
+    },
+    {
       "row": 202,
       "type": "ground",
       "enemy": "tank",
@@ -953,6 +996,12 @@
       "type": "formation",
       "formation": "sweep3",
       "mirror": false
+    },
+    {
+      "row": 210,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 200
     },
     {
       "row": 212,
@@ -980,6 +1029,12 @@
       "mirror": false
     },
     {
+      "row": 226,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 176
+    },
+    {
       "row": 228,
       "type": "formation",
       "formation": "ring5",
@@ -1005,6 +1060,12 @@
       "mirror": true
     },
     {
+      "row": 240,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 104
+    },
+    {
       "row": 245,
       "type": "formation",
       "formation": "zigzag6",
@@ -1022,6 +1083,12 @@
       "type": "formation",
       "formation": "strafe5",
       "mirror": true
+    },
+    {
+      "row": 254,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 64
     },
     {
       "row": 257,
@@ -1047,6 +1114,12 @@
       "type": "formation",
       "formation": "uturn6",
       "mirror": true
+    },
+    {
+      "row": 266,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 240
     },
     {
       "row": 270,
@@ -1088,6 +1161,12 @@
       "mirror": true
     },
     {
+      "row": 282,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 168
+    },
+    {
       "row": 286,
       "type": "ground",
       "enemy": "tank",
@@ -1099,6 +1178,12 @@
       "type": "formation",
       "formation": "loop6",
       "mirror": true
+    },
+    {
+      "row": 292,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 176
     },
     {
       "row": 297,
@@ -1126,6 +1211,12 @@
       "mirror": true
     },
     {
+      "row": 306,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 24
+    },
+    {
       "row": 313,
       "type": "formation",
       "formation": "sweep3",
@@ -1139,10 +1230,22 @@
       "dir": "west"
     },
     {
+      "row": 318,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 216
+    },
+    {
       "row": 320,
       "type": "formation",
       "formation": "side6",
       "mirror": true
+    },
+    {
+      "row": 326,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 208
     },
     {
       "row": 327,
@@ -1164,6 +1267,12 @@
       "mirror": false
     },
     {
+      "row": 338,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 32
+    },
+    {
       "row": 342,
       "type": "formation",
       "formation": "stop3",
@@ -1181,6 +1290,12 @@
       "enemy": "tank",
       "x": 176,
       "dir": "west"
+    },
+    {
+      "row": 348,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 200
     },
     {
       "row": 358,

@@ -75,10 +75,12 @@ def main():
         except build_level.LevelError as e:
             sys.exit(f'{src}: {e}')
         print('\n'.join(report))
-        level_files += [(name + 'GFX', gfx, d81.SEQ), (name + 'DAT', dat, d81.SEQ)]
+        level_files += [(name + 'GFX', gfx, d81.SEQ), (name + 'DAT', dat, d81.SEQ),
+                        (name + 'DEST', (out / 'levels' / f'{name}DEST').read_bytes(), d81.SEQ)]
         # Stage 7c: L1BOSS lives in attic RAM, LnDAT alone has the 16 KB level buffer (checked by build_level)
         if name == 'L1':
             level_files.append((name + 'BOSS', boss, d81.SEQ))
+    pixies2 = (ROOT / 'build/gen/PIXIES2').read_bytes()  # heavy gun (Stage 8), loaded to $52800
     prg = out / f'{PRG_NAME}.PRG'
     out.mkdir(parents=True, exist_ok=True)
     # A failed assembly must not leave a previous build looking current.
@@ -107,7 +109,7 @@ def main():
     if run2.returncode or 'Error' in run2.stdout:
         print(run2.stdout)
         sys.exit('assembly of MUSICTEST failed')
-    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ), ('PIXIES', pixies, d81.SEQ), ('TITLE', title, d81.SEQ), ('GOVER', gover, d81.SEQ)] + level_files
+    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ), ('PIXIES', pixies, d81.SEQ), ('PIXIES2', pixies2, d81.SEQ), ('TITLE', title, d81.SEQ), ('GOVER', gover, d81.SEQ)] + level_files
     image = d81.build_disk(files)
     for fname, payload, _ in files:
         if d81.read_file(image, fname) != payload:

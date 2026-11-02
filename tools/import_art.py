@@ -76,10 +76,16 @@ AIR_FRAMES = 3
 VIEWS = ROOT / 'assets/art/enemy-views/generated'
 VIEW_DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest']
 VIEW_BANK = ['straight', 'left', 'right']
-PIXIE_MAX = 608              # pixie glyph area $46800-$4FFFF (src/layout.asm)
+PIXIE_MAX = 576              # pixie glyph area $46800-$4F7FF (src/layout.asm); the last 32 glyphs ($4F800-$4FFFF)
+                             # hold destroyed landscape tiles (Stage 8, build_level.py)
 PLAYER_STRAIGHT = 0          # straight flight cycles frames 0-2; 3 = left, 5 = right
 ANIM_MIN_SHARED = 0.6        # report frame sets whose consecutive frames share less than this
 CAPSULES = ROOT / 'assets/art/bonus-capsules/generated'
+GROUND_TARGETS = ROOT / 'assets/art/ground-targets/generated'   # PR #15: guns (destroyed tiles: build_level.py)
+GUN_DIRS = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']          # engine direction 0-7 (as vec_dir)
+PIXIE2_ADDR = 0x52800        # second pixie area (Stage 8): heavy gun, file PIXIES2 (src/layout.asm)
+PIXIE2_MAX = 96
+PIXIE_ADDR = 0x46800
 CAPSULE_FRAMES = [('CAP_S', 'capsule_S'), ('CAP_D1', 'capsule_dollar_small'),
                   ('CAP_D2', 'capsule_dollar_medium'), ('CAP_D3', 'capsule_dollar_large')]
 
@@ -269,6 +275,18 @@ def main(out):
             for c in json.loads((CAPSULES / 'indexed-source.json').read_text())}
     for const, cid in CAPSULE_FRAMES:
         add(const, caps[cid].copy(), HUD_BANK)
+    # ground guns (PR #15), palette fixed_targets (bank 4): light gun 16x16 here; heavy gun 32x32 in PIXIES2
+    gt = json.loads((GROUND_TARGETS / 'ground-targets.json').read_text())
+
+    def gt_frame(rows):
+        return np.array([[int(ch, 16) for ch in r] for r in rows], np.uint8)
+    lg, hg = gt['ground_gun'], gt['heavy_gun']
+    for n, d in enumerate(GUN_DIRS):
+        add(f'GUN{n}', gt_frame(lg['frames'][d]), LAND['fixed_targets'])
+    add('GUN_WRECK', gt_frame(lg['frames']['wreck']), LAND['fixed_targets'])
+    for key, pre in ((lg, 'GUN'), (hg, 'HGUN')):
+        for n in range(2):
+            add(f'{pre}_FLASH{n}', gt_frame(key['frames'][f'flash{n}']), LAND['fixed_targets'])
 
     glyphs = [bytes(64)]
     table = []
@@ -317,6 +335,29 @@ def main(out):
     boss_consts = [f'.const BOSS_SWAP_GLYPH={swap0}', f'.const BOSS_GLYPHS={len(bglyphs)}',
                    f'.const BOSS_FILE_BYTES={len(bglyphs) * 64 + 48}', f'.const BOSS_BANK={BOSS_BANK}']
     report.append(f'boss: {len(bglyphs)} glyphs swapped in at glyph {swap0} (room {swap_end - swap0})')
+    # ------------------------------------------------------------ heavy gun (PR #15), file PIXIES2 at PIXIE2_ADDR
+    p2base = (PIXIE2_ADDR - PIXIE_ADDR) // 64
+    g2 = [bytes(64)]
+    for name, rows in [(f'HGUN{n}', hg['frames'][d]) for n, d in enumerate(GUN_DIRS)] + [('HGUN_WRECK', hg['frames']['wreck'])]:
+        a = gt_frame(rows)
+        h, w = a.shape[0] // 8, a.shape[1] // 16
+        base = p2base + len(g2)
+        for c in range(w):
+            for i in range(h):
+                g2.append(ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
+            g2.append(bytes(64))
+        table.append(dict(name=name, base=base, w=w, h=h, pal=(LAND['fixed_targets'] << 4) | 15, hit=hitbox(a)))
+    assert len(g2) <= PIXIE2_MAX, f'second pixie area ({PIXIE2_MAX} glyphs) exceeded: {len(g2)}'
+    (out / 'PIXIES2').write_bytes(b''.join(g2))
+    report.append(f'pixies2: heavy gun {len(g2)} glyphs of {PIXIE2_MAX}')
+    gun_consts = [f'.const PIXIES2_BYTES={len(g2) * 64}']
+    for key, pre in (('ground_gun', 'gun'), ('heavy_gun', 'hgun')):
+        mz = gt[key]['muzzle']
+        half = gt[key]['size'][0] // 2
+        # muzzle flash (16x16) centred on the barrel tip: offset of its top left corner from the gun's
+        gun_consts.append(f'{pre}_mz_x: .byte ' + ','.join(str((mz[d][0] - 8) & 0xff) for d in GUN_DIRS))
+        gun_consts.append(f'{pre}_mz_y: .byte ' + ','.join(str((mz[d][1] - 8) & 0xff) for d in GUN_DIRS))
+    assert len(table) <= 256, f'{len(table)} frames: frame numbers are bytes'
     assert len(glyphs) <= PIXIE_MAX, f'pixie glyph area ({PIXIE_MAX} glyphs) exceeded: {len(glyphs)}'
     # The complete glyph image (blank guards included) is a file on the disk (PIXIES), loaded to PIXIE_ADDR.
     (out / 'PIXIES').write_bytes(b''.join(glyphs))
@@ -395,7 +436,7 @@ def main(out):
              f'.const TANK_PHASES={TANK_PHASES}', f'.const SHIELD_MAX={SHIELD_MAX}', f'.const BAR_X0={BAR_X0}',
              f'.const HUD_GLYPH={table[names["HUD_SCORE"]]["base"]}',
              f'.const PAL_HUD=${(HUD_BANK << 4) | 15:02x}']
-    lines += boss_consts
+    lines += boss_consts + gun_consts[:1]
     for name, i in names.items():
         lines.append(f'.const FR_{name}={i}')
     for alias, name in air_extra:
@@ -412,6 +453,7 @@ def main(out):
         tl.append(f'{label}: .byte ' + ','.join(str(f(t)) for t in table))
     # boss hit flash (Stage 7b): the boss palette lightened towards white, loaded into bank 6 during the fight
     flash = [tuple(min(255, int(v + (255 - v) * 0.65)) for v in c) for c in bpal]
+    tl += gun_consts[1:]
     tl.append('boss_flash_pal: .byte ' + ','.join(str(ph.swap(c[ch])) for ch in range(3) for c in flash))
     (out / 'frames.inc').write_text('\n'.join(tl) + '\n')
 

@@ -299,6 +299,7 @@ so `RUN` works again after an exit.
 | 02.11.2026 | Stage 7b confirmed on hardware |
 | 02.11.2026 | Stage 7c: core fires aimed and random-angle shots; tanks avoid water; new level-1 waves (14 paths, 16 formations: loops, U-turns, side entries, pincers, V groups, hovering helicopters; tanks at varied places, `tools/design_waves_l1.py`); `L1BOSS` moved to attic RAM (no boss without attic RAM) |
 | 02.11.2026 | Stage 7c confirmed on hardware; tag `stage7b-stable` set by the owner; ChatGPT asked for the Stage 8 ground-target artwork (`docs/chatgpt_ground_targets.md`) |
+| 02.11.2026 | PR #15 (destroyed buildings and halls, light and heavy flak) merged; Stage 8: destroyable buildings and ground guns, music to `$AC00`, `LnDAT` ≤ 10 KB |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -409,7 +410,30 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - High score: kept in memory while the program runs (not saved to disk yet).
 - New game (`game_new`): all RRB rows, scroll, level events, objects, boss, shop items, HUD, player, level music.
 
-## 20. Open questions for the owner
+## 20. Ground targets (Stage 8, `ground.asm`, artwork PR #15)
+- **Buildings** are landscape tiles. `build_level.py` writes per tile whether it has a destroyed variant
+  (`gt_dest`) and which target it belongs to (`gt_info`: kind, row and column inside a 2×2 group) into `LnDAT`
+  (format 2, header offset 21), and the destroyed glyphs into `LnDEST` (48 tiles: 0–31 at `$5E000`, 32–47 in the
+  last 32 pixie glyphs at `$4F800`). Landscape characters are now 16 bit per cell (`dr_hi`).
+- Player shots fly **over** buildings (they still hit aircraft behind them) and damage each tile cell they cross
+  once (cell remembered in the shot's `obj_cnt` / `obj_dly`). Hit points / points: hangar 16 / 500, depot 12 / 400
+  (+ $ capsule), checkpoint 8 / 200, bunker 24 / 800 (+ large $), radar 12 / 600, fuel 10 / 500 (+ small $),
+  crates 4 / 150 (+ S capsule); each hall tile 4 / 50 (halls are destroyed tile by tile). Damage of up to 8
+  buildings is remembered.
+- Destroyed cells in the ring are patched at once (both copies, screen and colour part); cells of rows not decoded
+  yet go to an override list (48 entries, absolute metarow) that `level_row` applies. The next pass of the level
+  shows everything intact again. The bomb destroys every building on the screen.
+- **Guns** (`T_GUN`, ground slots): light flak 16×16 (6 hit points, 300 points) and heavy flak 32×32 (24, 1,000).
+  They move with the landscape, turn one 45° step every 8 frames towards the player and fire aimed red shots
+  only when they point at him (light every 1.2–2.5 s, heavy two shots every 1–2.3 s), with a muzzle flash at the
+  barrel tip. Shot, missile and bomb hit them; destroyed guns stay as wrecks. Level events `ground` with
+  `enemy`: `flak` / `heavy_flak`.
+- Memory: music moved to `$AC00` (5 KB) to give the program room; `LnDAT` is limited to 10 KB
+  (`$50000–$527FF`), the heavy-gun glyphs (`PIXIES2`) follow at `$52800`.
+- Test defines: `GOD_MODE` (no damage), `SKIP_SHOP` (shop events ignored), `BOSS_CORE_TEST`; `--test-credits`
+  also gives 9 bombs.
+
+## 21. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
 4. Should the high score be saved on the disk (with initials)?

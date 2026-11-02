@@ -59,7 +59,9 @@ start:
     bcs !fail+
     jsr level_load                     // level files from disk, still with the KERNAL (level.asm)
     bcs !fail+
-    jsr boss_load                      // boss glyphs to the end of the level buffer (boss.asm)
+    jsr pixies2_load                   // heavy gun glyphs behind LnDAT (ground.asm)
+    bcs !fail+
+    jsr boss_load                      // boss glyphs to attic RAM (boss.asm)
     bcs !fail+
     jsr screens_load                   // title and game-over banner: attic RAM or title directly (screens.asm)
     bcc !+
@@ -230,6 +232,7 @@ random:
 #import "special.asm"
 #import "sound.asm"
 #import "boss.asm"
+#import "ground.asm"
 #import "screens.asm"
 
 // file PIXIES: the complete pixie glyph area image (tools/import_art.py), loaded to PIXIE_ADDR

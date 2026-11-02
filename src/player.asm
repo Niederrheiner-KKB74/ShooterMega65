@@ -222,10 +222,15 @@ fire_shot:
     jsr init_slot
     lda #FR_PSHOT0
     sta obj_fr,x
+    lda #0
+    sta obj_dly,x               // no building cell crossed yet (ground.asm)
 !:  rts
 
 // A = damage. Ignored while invulnerable or destroyed.
 player_damage:
+#if GOD_MODE
+    rts                         // test build (build.py --define GOD_MODE): no damage
+#endif
     ldy pl_state
     bne !no+
     sta tmp
