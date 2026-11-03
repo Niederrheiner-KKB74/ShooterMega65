@@ -263,6 +263,9 @@ boss_fight:
     lda boss_state
     cmp #BS_CORE
     bne !+
+    lda boss_t                  // core phase: 1.5 px/frame (Stage 8c; Stage 7b: 2), extra step every 2nd frame
+    and #1
+    bne !+
     jsr boss_step_x
 !:  lda boss_t                  // vertical bob between BOSS_Y and BOSS_Y + BOSS_BOB
     and #1

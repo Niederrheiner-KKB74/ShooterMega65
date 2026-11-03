@@ -275,7 +275,7 @@ def build(src, outdir, name):
     outdir.mkdir(parents=True, exist_ok=True)
     (outdir / f'{name}GFX').write_bytes(gfx)
     (outdir / f'{name}DAT').write_bytes(dat)
-    (outdir / f'{name}DEST').write_bytes(bytes(dest_glyphs))
+    (outdir / f'{name}DEST').write_bytes(bytes(dest_glyphs) or b'\0')   # never empty (D81 writer, loader)
 
     # ---------------- preview: rebuild the picture from the binary data, mark events
     palette = {}

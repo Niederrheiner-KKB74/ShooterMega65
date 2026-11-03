@@ -151,6 +151,9 @@ read_keys:
     lda #1
     sta inv_req
     rts
+!:  cmp #$43                     // C: test cheat, + 5000 credits (Stage 8c, owner's request)
+    bne !+
+    jmp cheat_credits
 !:  cmp #$44                     // D: toggle the raster time display
     bne !none+
     lda debug_raster
@@ -164,6 +167,21 @@ read_keys:
     rts
 !exit:
     jmp exit_to_basic
+
+// + 5000 credits, at most 9999 (BCD, credit_bcd = thousands/hundreds, then tens/ones)
+cheat_credits:
+    sed
+    clc
+    lda credit_bcd
+    adc #$50
+    cld
+    bcc !+
+    lda #$99
+    sta credit_bcd+1
+!:  sta credit_bcd
+    lda #SFX_SELECT
+    jsr sfx_play
+    jmp hud_score_changed
 
 key_drain:
 !:  lda KEYQUEUE

@@ -303,6 +303,7 @@ so `RUN` works again after an exit.
 | 03.11.2026 | Stage 8 confirmed on hardware (no freeze) |
 | 03.11.2026 | Stage 8b: shot level visible (1 / 2 / 3 bolts, bar), $ capsules 5 / 15 / 30, heavy flak 60 hit points; boss unchanged |
 | 03.11.2026 | Stage 8b confirmed on hardware |
+| 03.11.2026 | Stage 8c: boss core phase 1.5 px/frame (was 2), heavy flak 50 hit points; test cheat C = +5000 credits |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -393,7 +394,7 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - Hit feedback (Stage 7b): a part that is hit but survives is drawn for 4 frames (`FLASH_FRAMES_HIT`, `obj_a`) with
   palette bank 6, a copy of the boss palette lightened 65 % toward white (`boss_flash_pal`, made by
   `import_art.py`; bank 6 belongs to the bomber, which cannot appear during the fight).
-- The boss moves sideways (x 24–200, 1 px/frame, 2 px in the core phase) and bobs up and down (y 20–44,
+- The boss moves sideways (x 24–200, 1 px/frame; core phase 1.5 px/frame since Stage 8c, before 2) and bobs up and down (y 20–44,
   0.5 px/frame); touching its body costs 16 shield. If the core opens while the boss is still flying in, it first
   descends to its fighting height.
 - Halfway through the death explosions the body disappears, together with the turret wrecks (`boss_parts_away`,
@@ -426,8 +427,8 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - Destroyed cells in the ring are patched at once (both copies, screen and colour part); cells of rows not decoded
   yet go to an override list (48 entries, absolute metarow) that `level_row` applies. The next pass of the level
   shows everything intact again. The bomb destroys every building on the screen.
-- **Guns** (`T_GUN`, ground slots): light flak 16×16 (6 hit points, 300 points) and heavy flak 32×32 (60, 1,000;
-  Stage 8: 24). Both use the light gun's muzzle flash (Stage 8b).
+- **Guns** (`T_GUN`, ground slots): light flak 16×16 (6 hit points, 300 points) and heavy flak 32×32 (50, 1,000;
+  Stage 8b: 60, Stage 8: 24). Both use the light gun's muzzle flash (Stage 8b).
   They move with the landscape, turn one 45° step every 8 frames towards the player and fire aimed red shots
   only when they point at him (light every 1.2–2.5 s, heavy two shots every 1–2.3 s), with a muzzle flash at the
   barrel tip. Shot, missile and bomb hit them; destroyed guns stay as wrecks. Level events `ground` with
@@ -445,6 +446,8 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - $ capsules are worth 5 / 15 / 30 credits (Stage 8: 10 / 25 / 50); the S capsule is unchanged. A player standing
   still collects about 65 credits until the mid shop and 210 in the whole level (XEMU).
 - Test defines `SHOT2` / `SHOT3` / `SHOT4`: start with that shot level.
+- Test cheat (Stage 8c, owner's request, in every build): key **C** during the flight adds 5,000 credits (at most
+  9,999), so every shop item can be tried.
 
 ## 22. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?

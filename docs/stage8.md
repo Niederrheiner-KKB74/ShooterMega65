@@ -72,3 +72,28 @@ Branch `stage8`, on top of the confirmed Stage 8 (`stage8-release`). Release fil
 4. Heavy flak takes clearly longer to destroy.
 5. Boss fight as difficult as in Stage 8.
 6. Everything else as in Stage 8.
+
+# Stage 8c – boss core phase slower, heavy flak 50, credit cheat
+
+Branch `stage8`, on top of the confirmed Stage 8b (`stage8b-release`). Release files are in `releases/stage8c/`.
+
+## What changed
+- **Boss core phase**: the boss moves 1.5 px per frame sideways instead of 2 (turret phase unchanged).
+- **Heavy flak**: 50 hit points (Stage 8b: 60).
+- **Cheat for tests**: key **C** during the flight gives 5,000 credits (pressed twice: 9,999, the maximum), with a
+  short sound. It works in the game, not inside the shop screen: press it before the shop.
+
+## Verification so far
+| Check | Result |
+|---|---|
+| Assembly; D81 with 12 files read back | ✔ |
+| XEMU: C once → 5,000 credits, twice → 9,999 | ✔ |
+| XEMU boss test: core phase 90 px in 60 frames (1.5 px/frame), turret phase 1 px/frame | ✔ |
+| XEMU default level 38 s, RRB overflow 0 | ✔ |
+| Real MEGA65 | open |
+
+## Hardware test checklist
+1. Boss core phase: noticeably slower sideways than in Stage 8b, still a challenge.
+2. Heavy flak a little quicker to destroy than in Stage 8b.
+3. Press C during the flight: credits go to 5,000 (twice: 9,999); in the shop everything can be bought.
+4. Everything else as in Stage 8b.

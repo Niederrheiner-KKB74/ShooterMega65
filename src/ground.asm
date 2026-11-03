@@ -24,7 +24,7 @@
 .const GD_DM_N     = 8              // damaged buildings remembered
 .const GK_HALL     = 7
 .const GUN_HP_LIGHT = 6
-.const GUN_HP_HEAVY = 60           // Stage 8b (owner: too easy); Stage 8: 24
+.const GUN_HP_HEAVY = 50           // Stage 8c (owner); Stage 8b: 60, Stage 8: 24
 
 .errorif (DEST1_ADDR + 32 * 128 > $05F000), "destroyed tiles overlap the player sprites at $5F000"
 .errorif (DEST2_ADDR != PIXIE_ADDR + PIXIE_MAX * 64), "destroyed tiles must follow the pixie area"
