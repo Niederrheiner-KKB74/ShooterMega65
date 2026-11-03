@@ -1,0 +1,614 @@
+{
+  "tiles": [
+    {
+      "id": 0,
+      "name": "sand0",
+      "palette": "nature"
+    },
+    {
+      "id": 1,
+      "name": "sand1",
+      "palette": "nature"
+    },
+    {
+      "id": 2,
+      "name": "sand2",
+      "palette": "nature"
+    },
+    {
+      "id": 3,
+      "name": "sand3",
+      "palette": "nature"
+    },
+    {
+      "id": 4,
+      "name": "sand4",
+      "palette": "nature"
+    },
+    {
+      "id": 5,
+      "name": "sand5",
+      "palette": "nature"
+    },
+    {
+      "id": 6,
+      "name": "sand6",
+      "palette": "nature"
+    },
+    {
+      "id": 7,
+      "name": "sand7",
+      "palette": "nature"
+    },
+    {
+      "id": 8,
+      "name": "sand8",
+      "palette": "nature"
+    },
+    {
+      "id": 9,
+      "name": "sand9",
+      "palette": "nature"
+    },
+    {
+      "id": 10,
+      "name": "sand10",
+      "palette": "nature"
+    },
+    {
+      "id": 11,
+      "name": "sand11",
+      "palette": "nature"
+    },
+    {
+      "id": 12,
+      "name": "cliff1",
+      "palette": "nature"
+    },
+    {
+      "id": 13,
+      "name": "bank1",
+      "palette": "water"
+    },
+    {
+      "id": 14,
+      "name": "cliff2",
+      "palette": "nature"
+    },
+    {
+      "id": 15,
+      "name": "bank2",
+      "palette": "water"
+    },
+    {
+      "id": 16,
+      "name": "cliff3",
+      "palette": "nature"
+    },
+    {
+      "id": 17,
+      "name": "bank3",
+      "palette": "water"
+    },
+    {
+      "id": 18,
+      "name": "cliff4",
+      "palette": "nature"
+    },
+    {
+      "id": 19,
+      "name": "bank4",
+      "palette": "water"
+    },
+    {
+      "id": 20,
+      "name": "cliff5",
+      "palette": "nature"
+    },
+    {
+      "id": 21,
+      "name": "bank5",
+      "palette": "water"
+    },
+    {
+      "id": 22,
+      "name": "cliff6",
+      "palette": "nature"
+    },
+    {
+      "id": 23,
+      "name": "bank6",
+      "palette": "water"
+    },
+    {
+      "id": 24,
+      "name": "cliff7",
+      "palette": "nature"
+    },
+    {
+      "id": 25,
+      "name": "bank7",
+      "palette": "water"
+    },
+    {
+      "id": 26,
+      "name": "cliff8",
+      "palette": "nature"
+    },
+    {
+      "id": 27,
+      "name": "bank8",
+      "palette": "water"
+    },
+    {
+      "id": 28,
+      "name": "cliff9",
+      "palette": "nature"
+    },
+    {
+      "id": 29,
+      "name": "bank9",
+      "palette": "water"
+    },
+    {
+      "id": 30,
+      "name": "cliff10",
+      "palette": "nature"
+    },
+    {
+      "id": 31,
+      "name": "bank10",
+      "palette": "water"
+    },
+    {
+      "id": 32,
+      "name": "cliff11",
+      "palette": "nature"
+    },
+    {
+      "id": 33,
+      "name": "bank11",
+      "palette": "water"
+    },
+    {
+      "id": 34,
+      "name": "cliff12",
+      "palette": "nature"
+    },
+    {
+      "id": 35,
+      "name": "bank12",
+      "palette": "water"
+    },
+    {
+      "id": 36,
+      "name": "cliff13",
+      "palette": "nature"
+    },
+    {
+      "id": 37,
+      "name": "bank13",
+      "palette": "water"
+    },
+    {
+      "id": 38,
+      "name": "cliff14",
+      "palette": "nature"
+    },
+    {
+      "id": 39,
+      "name": "bank14",
+      "palette": "water"
+    },
+    {
+      "id": 40,
+      "name": "cliff15",
+      "palette": "nature"
+    },
+    {
+      "id": 41,
+      "name": "bank15",
+      "palette": "water"
+    },
+    {
+      "id": 42,
+      "name": "palm0",
+      "palette": "nature"
+    },
+    {
+      "id": 43,
+      "name": "palm1",
+      "palette": "nature"
+    },
+    {
+      "id": 44,
+      "name": "palm2",
+      "palette": "nature"
+    },
+    {
+      "id": 45,
+      "name": "palm3",
+      "palette": "nature"
+    },
+    {
+      "id": 46,
+      "name": "road1",
+      "palette": "structures"
+    },
+    {
+      "id": 47,
+      "name": "road2",
+      "palette": "structures"
+    },
+    {
+      "id": 48,
+      "name": "road3",
+      "palette": "structures"
+    },
+    {
+      "id": 49,
+      "name": "road4",
+      "palette": "structures"
+    },
+    {
+      "id": 50,
+      "name": "road5",
+      "palette": "structures"
+    },
+    {
+      "id": 51,
+      "name": "road6",
+      "palette": "structures"
+    },
+    {
+      "id": 52,
+      "name": "road7",
+      "palette": "structures"
+    },
+    {
+      "id": 53,
+      "name": "road8",
+      "palette": "structures"
+    },
+    {
+      "id": 54,
+      "name": "road9",
+      "palette": "structures"
+    },
+    {
+      "id": 55,
+      "name": "road10",
+      "palette": "structures"
+    },
+    {
+      "id": 56,
+      "name": "road11",
+      "palette": "structures"
+    },
+    {
+      "id": 57,
+      "name": "road12",
+      "palette": "structures"
+    },
+    {
+      "id": 58,
+      "name": "road13",
+      "palette": "structures"
+    },
+    {
+      "id": 59,
+      "name": "road14",
+      "palette": "structures"
+    },
+    {
+      "id": 60,
+      "name": "road15",
+      "palette": "structures"
+    },
+    {
+      "id": 61,
+      "name": "pipe1",
+      "palette": "structures"
+    },
+    {
+      "id": 62,
+      "name": "pipe2",
+      "palette": "structures"
+    },
+    {
+      "id": 63,
+      "name": "pipe3",
+      "palette": "structures"
+    },
+    {
+      "id": 64,
+      "name": "pipe4",
+      "palette": "structures"
+    },
+    {
+      "id": 65,
+      "name": "pipe5",
+      "palette": "structures"
+    },
+    {
+      "id": 66,
+      "name": "pipe6",
+      "palette": "structures"
+    },
+    {
+      "id": 67,
+      "name": "pipe7",
+      "palette": "structures"
+    },
+    {
+      "id": 68,
+      "name": "pipe8",
+      "palette": "structures"
+    },
+    {
+      "id": 69,
+      "name": "pipe9",
+      "palette": "structures"
+    },
+    {
+      "id": 70,
+      "name": "pipe10",
+      "palette": "structures"
+    },
+    {
+      "id": 71,
+      "name": "pipe11",
+      "palette": "structures"
+    },
+    {
+      "id": 72,
+      "name": "pipe12",
+      "palette": "structures"
+    },
+    {
+      "id": 73,
+      "name": "pipe13",
+      "palette": "structures"
+    },
+    {
+      "id": 74,
+      "name": "pipe14",
+      "palette": "structures"
+    },
+    {
+      "id": 75,
+      "name": "pipe15",
+      "palette": "structures"
+    },
+    {
+      "id": 76,
+      "name": "bridge",
+      "palette": "structures"
+    },
+    {
+      "id": 77,
+      "name": "bridge_end",
+      "palette": "structures"
+    },
+    {
+      "id": 78,
+      "name": "yard",
+      "palette": "structures"
+    },
+    {
+      "id": 79,
+      "name": "fence",
+      "palette": "structures"
+    },
+    {
+      "id": 80,
+      "name": "gravel",
+      "palette": "structures"
+    },
+    {
+      "id": 81,
+      "name": "tent_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 82,
+      "name": "tent_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 83,
+      "name": "tent_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 84,
+      "name": "tent_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 85,
+      "name": "mast_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 86,
+      "name": "mast_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 87,
+      "name": "mast_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 88,
+      "name": "mast_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 89,
+      "name": "command_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 90,
+      "name": "command_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 91,
+      "name": "command_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 92,
+      "name": "command_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 93,
+      "name": "crates_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 94,
+      "name": "crates_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 95,
+      "name": "crates_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 96,
+      "name": "crates_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 97,
+      "name": "oiltank_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 98,
+      "name": "oiltank_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 99,
+      "name": "oiltank_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 100,
+      "name": "oiltank_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 101,
+      "name": "pump_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 102,
+      "name": "pump_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 103,
+      "name": "pump_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 104,
+      "name": "pump_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 105,
+      "name": "workshop_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 106,
+      "name": "workshop_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 107,
+      "name": "workshop_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 108,
+      "name": "workshop_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 109,
+      "name": "loading_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 110,
+      "name": "loading_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 111,
+      "name": "loading_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 112,
+      "name": "loading_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 113,
+      "name": "chimney_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 114,
+      "name": "chimney_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 115,
+      "name": "chimney_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 116,
+      "name": "chimney_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 117,
+      "name": "hall0",
+      "palette": "structures"
+    },
+    {
+      "id": 118,
+      "name": "hall1",
+      "palette": "structures"
+    },
+    {
+      "id": 119,
+      "name": "hall2",
+      "palette": "structures"
+    },
+    {
+      "id": 120,
+      "name": "hall3",
+      "palette": "structures"
+    },
+    {
+      "id": 121,
+      "name": "helipad",
+      "palette": "structures"
+    }
+  ]
+}
