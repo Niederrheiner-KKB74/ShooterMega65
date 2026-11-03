@@ -464,6 +464,9 @@ Requests while the plane is destroyed or inside the shop are dropped.
   per level come from `placement.json` (`boss_place1/2`).
 - Music: the level piece (`MUS_LEVEL1`) lives in a slot behind the shared pieces; level 2 "Desert Heat"
   (E Phrygian dominant). The level-clear fanfare queues "the level music", so the new piece follows it.
+- Palms next to water: `tools/decorate_level2.py` (run after every new level-2 map; fills the 256-row limit).
+- Next artwork (`docs/chatgpt_level2b.md`): land cruiser sideways view (boss area extended to 324 glyphs:
+  fighter, bomber, helicopter and armoured-plane frames), more colour and vegetation in level 2.
 - Title: key **2** starts directly in level 2 (test aid, also in release builds). Test define `START_LEVEL2`,
   `build.py --level2 FILE` builds another JSON as level 2.
 

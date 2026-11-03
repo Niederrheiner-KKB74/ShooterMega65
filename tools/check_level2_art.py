@@ -23,7 +23,8 @@ L1_FIXED = ROOT / 'assets/art/ground-targets/generated/ground-targets.json'
 PALETTES = ('water', 'nature', 'structures', 'fixed_targets')
 MAX_TILES = 128
 MAX_DEST = 48
-BOSS_ROOM = 162                 # glyphs of the fighter + bomber area the boss is copied over
+BOSS_ROOM = 324                 # glyphs of the fighter, bomber, helicopter and armoured-plane area (Stage 9b)
+MAX_ROWS_DELIVERED = 240        # different map rows; room for the palms of tools/decorate_level2.py
 TURRETS = ['nw', 'ne', 'sw', 'se']
 
 errors, notes = [], []
@@ -172,6 +173,12 @@ def check_level():
         err('levels/level2.json: "tileset" must be "assets/art/level2/generated"')
     if lv.get('ground_targets') != 'assets/art/level2/generated':
         err('levels/level2.json: "ground_targets" must be "assets/art/level2/generated"')
+    rows = []
+    for e in lv.get('map', []):
+        rows += [tuple(x) for x in e['rows']] * e['repeat'] if isinstance(e, dict) else [tuple(e)]
+    if len(set(rows)) > MAX_ROWS_DELIVERED:
+        err(f'levels/level2.json: {len(set(rows))} different map rows, at most {MAX_ROWS_DELIVERED} '
+            f'(room for the automatic palms)')
     types = [e.get('type') for e in lv.get('events', [])]
     for t, n in (('shop', 2), ('boss', 1), ('end', 1)):
         if types.count(t) != n:
@@ -233,6 +240,26 @@ def check_boss():
     rot = pl.get('rotors', [])
     if len(rot) > 4:
         err('placement.json: at most 4 "rotors" (animated overlays)')
+    side = pl.get('side')
+    if side is None:
+        err('placement.json: "side" (land cruiser driving sideways, docs/chatgpt_level2b.md) missing')
+        return
+    for n in ('body_side', 'core_exposed_side', 'rotor_side_0', 'rotor_side_1', 'rotor_side_2'):
+        if n not in frames:
+            err(f'boss: frame {n} missing')
+    sb = frames.get('body_side', {})
+    if (sb.get('width'), sb.get('height')) != (64, 96):
+        err(f'boss body_side: {sb.get("width")}x{sb.get("height")}, must be 64x96')
+    if len(side.get('turrets', [])) != 4:
+        err('placement.json side: exactly 4 "turrets"')
+    for t in side.get('turrets', []):
+        ox, oy = t.get('offset', [999, 999])
+        if not (0 <= ox <= 64 - 16 and 0 <= oy <= 96 - 16):
+            err(f'placement.json side: turret {t.get("id")} offset {t.get("offset")} outside the body')
+    if 'offset' not in side.get('core', {}):
+        err('placement.json side: "core" with "offset" missing')
+    if len(side.get('rotors', [])) > 4:
+        err('placement.json side: at most 4 "rotors"')
 
 
 def main():
