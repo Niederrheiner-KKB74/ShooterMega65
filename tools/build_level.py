@@ -140,7 +140,11 @@ def build(src, outdir, name):
         for k, d in enumerate(dts):
             t = tile_by_name[d['of']]
             tname = d['of']
-            if tname.startswith('complex_'):
+            if 'kind' in d:                  # Stage 8d: explicit kind and cell inside the 2x2 group (level 2 artwork)
+                if d['kind'] not in TARGET_KINDS:
+                    raise LevelError(f'destroyed tile {d["name"]}: kind must be one of {TARGET_KINDS}')
+                kind, c, r = TARGET_KINDS.index(d['kind']), d.get('col', 0), d.get('row', 0)
+            elif tname.startswith('complex_'):
                 kind, c, r = TARGET_KINDS.index('hall'), 0, 0
             else:
                 grp, c, r = tname.rsplit('_', 2)

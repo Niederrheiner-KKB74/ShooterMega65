@@ -107,6 +107,12 @@ Full brief for ChatGPT (German, ready to hand over): `docs/chatgpt_ground_target
 - **C/D (optional)**: heavy gun 32×32; destroyed variants of the modular halls. At most 64 new tiles in total.
 - Delivery: `assets/art/ground-targets/generated/ground-targets.json` (hex pixel rows) plus previews; no other files.
 
+## Level 2 (next stage)
+Brief for ChatGPT (German, ready to hand over): `docs/chatgpt_level2.md`; checker: `python3 tools/check_level2_art.py`.
+Theme desert, canyon with river, oasis, oil refinery. Tileset ≤ 128 tiles in four palettes (`water` only for water:
+tanks avoid it; `fixed_targets` exactly the level-1 palette), ≤ 48 destroyed tiles with explicit `kind`, `group`,
+`col`, `row`; map `levels/level2.json` with shops, boss and end; boss in the PR #14 format, ≤ 162 glyphs.
+
 ## Working with ChatGPT
 - Ask for *"pixel art, top-down view, flat colours, no anti-aliasing, limited palette of 15 colours, on a
   transparent background, each sprite exactly 16×16 pixels (shown enlarged 8×)"*.
