@@ -133,7 +133,67 @@ for name in ('yard','fence','gravel'):
         for x,y in ((2,3),(9,5),(13,13),(5,11)):d.point((x,y),fill=4 if name=='yard' else 15)
     add(name,'structures',im)
 
-def ruin(im,seed,rim=2):
+def ruin(im,seed,name=None,rim=2):
+    if name:
+        out=Image.new('L',im.size,9)
+        d=D(out)
+        d.polygon([(5,10),(23,6),(29,16),(27,26),(11,29),(4,21)],fill=13)
+        if name=='tent':
+            d.polygon([(4,22),(10,13),(22,18),(26,25),(14,26)],fill=15)
+            d.polygon([(5,22),(10,15),(15,21),(12,24)],fill=6)
+            d.line((5,20,12,11,18,21,25,22),fill=2,width=2)
+            d.line((6,19,12,12,17,20),fill=7)
+            d.line((21,15,27,10),fill=5,width=2)
+        elif name=='mast':
+            d.rectangle((5,5,11,11),fill=4,outline=2)
+            d.line((8,8,17,16,24,22),fill=2,width=4)
+            d.line((8,7,17,15,24,21),fill=6,width=2)
+            d.arc((15,15,28,27),20,270,fill=7,width=2)
+            d.line((17,23,25,17),fill=4)
+        elif name in ('oiltank','chimney'):
+            d.ellipse((6,10,27,27),fill=14)
+            d.ellipse((5,6,24,23),fill=2,outline=4,width=2)
+            d.arc((6,6,24,22),35,290,fill=6,width=3)
+            d.polygon([(17,7),(25,10),(18,14),(24,16),(15,20),(16,13)],fill=14)
+            d.line((17,8,16,13,19,15,15,20),fill=7)
+            if name=='chimney':d.line((18,16,24,21,28,22),fill=5,width=3)
+            else:d.line((20,17,24,22,27,24),fill=10,width=2)
+        elif name=='pump':
+            d.rectangle((5,12,24,25),fill=4,outline=2)
+            d.line((9,20,17,15,23,23,27,22),fill=2,width=5)
+            d.line((9,19,17,14,23,22,27,21),fill=11,width=2)
+            d.rectangle((12,19,15,24),fill=6)
+            d.line((20,11,25,9),fill=5,width=2)
+        elif name=='crates':
+            for x,y in ((5,8),(18,7),(9,19),(21,20)):
+                d.polygon([(x,y+1),(x+5,y),(x+7,y+4),(x+1,y+6)],fill=10,outline=2)
+                d.line((x+1,y+1,x+5,y),fill=12)
+                d.line((x+1,y+4,x+5,y+1),fill=15)
+            d.line((14,15,19,18),fill=13,width=2)
+        else:
+            d.line((5,23,5,7,25,7,25,15),fill=6,width=3)
+            d.rectangle((7,10,23,24),fill=2)
+            if name=='command':
+                d.rectangle((10,12,21,19),fill=14,outline=4)
+                d.line((11,12,15,16,13,18,19,22),fill=7)
+                d.line((6,24,12,24),fill=5,width=3)
+            elif name=='loading':
+                d.rectangle((7,19,20,26),fill=3,outline=5)
+                d.line((22,10,20,18,27,23),fill=11,width=2)
+                d.line((9,21,17,21),fill=10,width=2)
+            else:
+                d.polygon([(7,9),(21,11),(17,19),(7,16)],fill=5)
+                for y in (10,12,14):d.line((8,y,17,y+2),fill=6)
+                d.line((9,24,22,12),fill=3,width=2)
+            d.line((8,26,17,27),fill=13,width=2)
+        rng=random.Random(seed)
+        for _ in range(12):
+            x,y=rng.randrange(4,28),rng.randrange(4,28)
+            if out.getpixel((x,y)) in (9,13):d.point((x,y),fill=rng.choice((3,5,10,15)))
+        for y in range(32):
+            for x in range(32):
+                if min(x,y,31-x,31-y)<rim:out.putpixel((x,y),im.getpixel((x,y)))
+        return out
     out=im.copy();d=D(out);w,h=im.size;r=random.Random(seed)
     d.polygon([(2,h//3),(w//3,2),(w-4,4),(w-3,h//2),(w-5,h-4),(5,h-3)],fill=13)
     d.polygon([(4,h//2),(w//3,4),(w-6,6),(w-4,h//2),(w-7,h-5),(6,h-5)],fill=14)
@@ -183,7 +243,7 @@ def building(name,kind,seed):
         for x in (7,23):d.rectangle((x,8,x+2,11),fill=6)
         if name=='loading':d.line((22,19,22,27),fill=12,width=2)
         if name=='command':d.rectangle((11,10,19,14),fill=3,outline=6)
-    wreck=ruin(im,seed)
+    wreck=ruin(im,seed,name)
     pairs.append((name,im,wreck))
     for row in range(2):
         for col in range(2):
@@ -217,13 +277,28 @@ for i in range(4):
 im=Image.new('L',(16,16),4);d=D(im);d.rectangle((2,2,13,13),outline=7)
 d.line((5,5,5,10),fill=12);d.line((10,5,10,10),fill=12);d.line((5,7,10,7),fill=12)
 add('helipad','structures',im)
+for i in range(2):
+    im=ground(32+i);d=D(im)
+    d.polygon([(3,5),(10,3),(13,7),(12,11),(5,13),(3,10)],fill=3)
+    d.line((4,6,10,4,12,7),fill=5,width=2)
+    d.polygon([(5,7),(10,5),(11,9),(7,11)],fill=15)
+    d.line((5,12,11,10),fill=2,width=2)
+    d.line((8,5,10,8,8,10),fill=4+i)
+    add(f'vehicle_wreck{i}','nature',im)
+for i in range(2):
+    im=ground(44+i);d=D(im)
+    if i==0:
+        for x in (5,10):d.line((x,0,x,15),fill=11,width=2)
+    else:
+        for y in (5,10):d.line((0,y,15,y),fill=11,width=2)
+    add(f'track{i}','nature',im)
 assert len(tiles)<=128 and len(damaged)<=48
 
 def map_level():
     rows=[]
     for y in range(375):
         # Reuse every terrain row in pairs, keeping the level's row dictionary in budget.
-        band=(y//2)%23
+        band=(y//3)%16
         line=[]
         for x in range(21):
             sand=((x*7+band*3)^(x*band))%13
@@ -259,8 +334,41 @@ def map_level():
                 if meta[rows[y][x]]['palette']=='nature':put(x,y,f'palm{(x+y)%4}')
     def place(name,x,y):
         for row in range(2):
-            for col in range(2):put(x+col,y+1-row,f'{name}_{col}_{row}')
-    for name,x,y in [('crates',5,54),('tent',14,72),('tent',4,205),('mast',15,213),
+            for col in range(2):
+                assert meta[rows[y+1-row][x+col]]['palette']!='water', (name,x,y)
+                put(x+col,y+1-row,f'{name}_{col}_{row}')
+    # Cluster the approach scenery and reuse each composition for several rows.
+    for y in range(10,91):
+        band=y//6
+        for x in range(1,21):
+            if (x-4-band%4)**2+(band%4-1)**2<7 or (x-16+band%3)**2<3:
+                put(x,y,f'sand{6+(x+band)%3}')
+            elif (x+2*band)%11 in (0,1,2):
+                put(x,y,f'sand{3+(x+band)%3}')
+    for y in range(14,85):put(10,y,'track0')
+    for y in (30,60,80):
+        for x in range(6,15):put(x,y,'track1')
+    for y in range(245,278):put(10,y,'track0')
+    for y in (199,246,258,270):
+        for x in range(5,16):put(x,y,'track1')
+    for x,y,i in ((11,23,0),(8,47,1),(12,69,0),(4,198,1),(16,235,0),(11,258,1)):
+        put(x,y,f'vehicle_wreck{i}')
+    for y in range(191,205):
+        for x in (3,4,17,18):put(x,y,f'sand{6+(x+y//4)%3}')
+    for y in range(245,273):
+        for x in (2,3,18,19):
+            if (x+y//5)%4:put(x,y,f'sand{3+(x+y//5)%3}')
+    for name,x,y in [
+        ('tent',6,30),('mast',12,30),('crates',15,30),
+        ('command',5,54),('mast',12,54),('crates',15,54),
+        ('tent',5,80),('crates',8,80),('mast',13,80),
+        ('tent',4,116),('crates',15,116),('pump',15,120),
+        ('tent',3,156),('mast',16,156),('pump',14,160),
+        ('crates',7,205),('tent',16,239),('mast',4,245),
+        ('command',13,260),('crates',16,260),('tent',4,269),
+    ]:
+        place(name,x,y)
+    for name,x,y in [('tent',14,72),('tent',4,205),('mast',15,213),
         ('command',14,239),('crates',6,245),('workshop',7,260),('loading',13,269)]:
         place(name,x,y)
     for y in range(279,347):

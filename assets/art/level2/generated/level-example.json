@@ -609,6 +609,26 @@
       "id": 121,
       "name": "helipad",
       "palette": "structures"
+    },
+    {
+      "id": 122,
+      "name": "vehicle_wreck0",
+      "palette": "nature"
+    },
+    {
+      "id": 123,
+      "name": "vehicle_wreck1",
+      "palette": "nature"
+    },
+    {
+      "id": 124,
+      "name": "track0",
+      "palette": "nature"
+    },
+    {
+      "id": 125,
+      "name": "track1",
+      "palette": "nature"
     }
   ]
 }

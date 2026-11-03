@@ -16,6 +16,14 @@ Werkstatt (`hangar`), Verladestation (`depot`), vier modulare Dachfelder (`hall`
 Der Zwei-Pixel-Rand bleibt bei jeder Gebäudegruppe und jedem Hallenfeld erhalten.
 Brückendecks verwenden `structures`, Wasser und Ufer `water`.
 
+Die Karte verteilt 40 vollständige Gebäudegruppen auf Wüste (10), Canyon (6),
+Oase und Außenposten (12) sowie Raffinerie (12). Hallenfelder zählen separat.
+Zelte behalten Teile ihres Gestänges, Funkmasten ihre geknickte Antenne,
+Tanks ihre aufgerissene Rundwand und Pumpen ihren gebrochenen Förderarm.
+Felsgruppen, Dünenkämme, Pisten und Fahrzeugwracks ergänzen die Anflugroute.
+Gemeinsam genutzte Sandzeilen und gebündelte Gebäude halten die Karte bei
+253 von 256 Zeilenmustern.
+
 Der 96×64-Kettenkreuzer liegt in `assets/art/boss-level2/generated/`. Die vier
 Geschütze haben jeweils zwei aktive Ansichten und ein Wrack. Drei Phasen
 animieren die Ketten. Der offene Motorraum ist ein eigenes Overlay.
