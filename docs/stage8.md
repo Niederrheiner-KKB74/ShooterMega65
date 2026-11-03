@@ -43,3 +43,32 @@ Design details: `docs/design.md` §20.
 7. Please watch for a freeze anywhere in the level (one XEMU run stopped once, see above) and tell me roughly
    where it happened.
 8. Everything else as in the Stage 7 checklists (boss, shops, game over, title).
+
+# Stage 8b – visible shot levels, balancing
+
+Branch `stage8`, on top of the confirmed Stage 8 (`stage8-release`). Release files are in `releases/stage8b/`.
+
+## What changed
+- **Shots show their level**: one bolt without upgrade, two with SHOT II, three with SHOT III, a thick bar with
+  SHOT IV. Every volley is now one object in the middle of the plane, with the damage of the former pair, so the
+  boss fight stays as it is.
+- **Less money**: $ capsules are worth 5 / 15 / 30 credits instead of 10 / 25 / 50 (S capsules unchanged).
+- **Heavy flak** takes 60 hit points instead of 24.
+- The heavy flak now uses the muzzle flash of the light flak (memory for the new shot views).
+
+## Verification so far
+| Check | Result |
+|---|---|
+| Assembly; D81 with 12 files read back; pixie area 573 of 576 glyphs | ✔ |
+| XEMU test builds `SHOT2`–`SHOT4`: one, two, three bolts and the bar, centred on the plane (screenshot) | ✔ |
+| XEMU `GOD_MODE` + weak boss: whole level, boss, into the second round (game frame 12,899), RRB overflow 0 | ✔ |
+| XEMU player standing still: 65 credits at the mid shop, 210 for the whole level | ✔ |
+| Real MEGA65 | open |
+
+## Hardware test checklist
+1. Without upgrade one bolt; after SHOT II two, SHOT III three, SHOT IV a thick bar.
+2. With SHOT II fighters still go down with one hit, bombers and armoured planes need several.
+3. At the first shop you can no longer afford SHOT II and the missile together (unless you play very well).
+4. Heavy flak takes clearly longer to destroy.
+5. Boss fight as difficult as in Stage 8.
+6. Everything else as in Stage 8.

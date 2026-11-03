@@ -206,6 +206,8 @@ missile_try:
     jsr init_slot
     lda #FR_MS0
     sta obj_fr,x
+    lda pl_power                // damage (collide_shots)
+    sta obj_hp,x
     lda ms_target
     sta obj_a,x
     lda #MS_LIFE

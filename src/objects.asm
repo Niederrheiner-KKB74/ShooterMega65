@@ -52,7 +52,7 @@ kind_big:   .byte 0,  1,  0,  1,  0                   // 32x32 explosion
 kind_poses: .byte 8,  3,  8,  3                       // aircraft views: 8 directions / straight-left-right
 kind_dir0:  .byte FR_FIGHTER_DIR0, FR_BOMBER_DIR0, FR_HELI_DIR0, FR_ARMOURED_DIR0   // first view, phase 0
 kind_drop:  .byte K_CASH1, K_CASH2, K_CASH1, K_CASH3, K_CASH1   // $ capsule: whole formation / every tank
-cash_value: .byte $10, $25, $50                       // BCD credits of the small / medium / large $ capsule
+cash_value: .byte $05, $15, $30                       // BCD credits of the small / medium / large $ capsule (Stage 8b; Stage 8: 10/25/50)
 kind_shot:  .byte K_SHOT_RED, K_SHOT_FIRE, K_SHOT_RED, K_SHOT_FIRE, K_ROCKET
 kind_fire:  .byte 3,  5,  3,  6,  2                   // firing chance per frame (n/256)
 shot_speed: .byte 2,  3,  3                           // red, fire, rocket (px/frame)
@@ -981,9 +981,9 @@ collide_shots:
 !:  // hit: the shot disappears, the target loses one hit point
     lda #T_NONE
     sta obj_type,x
-    lda obj_hp,y                // weapon damage (upgradable in the shops)
+    lda obj_hp,y                // damage carried by the shot (shot: 2 x level, missile: level)
     sec
-    sbc pl_power
+    sbc obj_hp,x
     sta obj_hp,y
     beq !kill+
     bcc !kill+

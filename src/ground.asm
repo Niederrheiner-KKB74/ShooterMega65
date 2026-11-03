@@ -24,7 +24,7 @@
 .const GD_DM_N     = 8              // damaged buildings remembered
 .const GK_HALL     = 7
 .const GUN_HP_LIGHT = 6
-.const GUN_HP_HEAVY = 24
+.const GUN_HP_HEAVY = 60           // Stage 8b (owner: too easy); Stage 8: 24
 
 .errorif (DEST1_ADDR + 32 * 128 > $05F000), "destroyed tiles overlap the player sprites at $5F000"
 .errorif (DEST2_ADDR != PIXIE_ADDR + PIXIE_MAX * 64), "destroyed tiles must follow the pixie area"
@@ -358,9 +358,10 @@ gd_hit:
     lda gk_hp,x
     sta dm_hp,y
 !found:
+    ldx gs_x                    // damage carried by the shot
     lda dm_hp,y
     sec
-    sbc pl_power
+    sbc obj_hp,x
     sta dm_hp,y
     beq !kill+
     bcc !kill+
@@ -931,7 +932,7 @@ gun_flash_draw:
     sta tmp
     lda hgun_mz_y,y
     sta tmp+1
-    lda #FR_HGUN_FLASH0
+    lda #FR_GUN_FLASH0          // the light gun's flash (Stage 8b: pixie room for the shot views)
 !go:
     sta gf_fr
     lda obj_wave,x              // two phases

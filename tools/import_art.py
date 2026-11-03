@@ -241,8 +241,23 @@ def main(out):
         assert poses in (VIEW_DIRS, VIEW_BANK), f'{group}: unexpected poses {poses}'
         default = poses.index('south' if poses == VIEW_DIRS else 'straight')
         air_extra += [(f'{const}0', f'{const}_{default}_0'), (f'{const}_DIR0', f'{const}_0_0')]
-    for n in range(2):
-        add(f'PSHOT{n}', *grp('player_shot_blue', n))
+    # player shots (Stage 8b): one object per volley, the number of bolts shows the shot level:
+    # PSHOT1 one bolt, PSHOT2 two, PSHOT3 three, PSHOT4 a thick bar (16x16). Built from the bolt of PR #4.
+    shot, sbank = grp('player_shot_blue', 0)
+    bolt = shot[:7, 6:9]                                    # 3 x 7 pixels
+    for n, xs in ((1, [6]), (2, [2, 10]), (3, [1, 6, 11])):
+        a = np.zeros((8, 16), np.uint8)
+        for x0 in xs:
+            a[:7, x0:x0 + 3] = bolt
+        add(f'PSHOT{n}', a, sbank)
+    bar = np.zeros((16, 16), np.uint8)
+    for y in range(14):                                     # 8 px wide, 14 high: the bolt widened and stretched
+        row = bolt[min(6, y // 2)]
+        bar[y, 4] = row[0]
+        bar[y, 5:11] = row[1]
+        bar[y, 11] = row[2]
+    bar[2:12, 7:9] = bolt[3, 1] if bolt[3, 1] else bolt[2, 1]   # bright core
+    add('PSHOT4', bar, sbank)
     add('ESHOT_RED', *grp('enemy_shot_red', 0))
     add('ESHOT_FIRE', *grp('enemy_shot_fire', 0))
     add('ROCKET', *grp('rocket', 0))
@@ -284,9 +299,8 @@ def main(out):
     for n, d in enumerate(GUN_DIRS):
         add(f'GUN{n}', gt_frame(lg['frames'][d]), LAND['fixed_targets'])
     add('GUN_WRECK', gt_frame(lg['frames']['wreck']), LAND['fixed_targets'])
-    for key, pre in ((lg, 'GUN'), (hg, 'HGUN')):
-        for n in range(2):
-            add(f'{pre}_FLASH{n}', gt_frame(key['frames'][f'flash{n}']), LAND['fixed_targets'])
+    for n in range(2):                                      # muzzle flash, used by both guns (Stage 8b: room for
+        add(f'GUN_FLASH{n}', gt_frame(lg['frames'][f'flash{n}']), LAND['fixed_targets'])   # the shot views)
 
     glyphs = [bytes(64)]
     table = []

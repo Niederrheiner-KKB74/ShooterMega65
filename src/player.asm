@@ -12,7 +12,7 @@
 .label pl_frame  = $58    // sprite frame pair 0..5
 .label pl_lives  = $67    // lives left including the current one
 .label pl_anim   = $70    // exhaust animation counter 0-11
-.label pl_power  = $71    // damage per player shot (weapon level, upgraded in the shops)
+.label pl_power  = $71    // shot level 1-4 (shops); a shot does 2 x level damage, the missile level
 
 .const PL_W     = 32
 .const PL_H     = 24
@@ -68,6 +68,13 @@ player_new_game:
     lda #START_LIVES
     sta pl_lives
     lda #1
+#if SHOT2
+    lda #2                      // test builds (build.py --define SHOT2/SHOT3/SHOT4): start with that shot level
+#elif SHOT3
+    lda #3
+#elif SHOT4
+    lda #4
+#endif
     sta pl_power
     jsr hud_score_changed       // the lives counter is part of the score box
 // a new plane: full shield, centre bottom, briefly invulnerable
@@ -188,9 +195,7 @@ player_move:
     bne !done+
     lda #FIRE_RATE
     sta pl_cd
-    lda #4                      // left gun
-    jsr fire_shot
-    lda #12                     // right gun
+    lda #8                      // one shot object per volley (Stage 8b), centred: its view shows the shot level
     jsr fire_shot
     lda #SFX_SHOT
     jsr sfx_play
@@ -220,11 +225,17 @@ fire_shot:
     bcs !+
     lda #T_PSHOT
     jsr init_slot
-    lda #FR_PSHOT0
+    ldy pl_power                // 1 bolt, 2 bolts, 3 bolts, bar (frames are consecutive)
+    lda pshot_frame-1,y
     sta obj_fr,x
+    tya                         // damage 2 x shot level (as the two shots of Stage 8 together)
+    asl
+    sta obj_hp,x
     lda #0
     sta obj_dly,x               // no building cell crossed yet (ground.asm)
 !:  rts
+
+pshot_frame: .byte FR_PSHOT1, FR_PSHOT2, FR_PSHOT3, FR_PSHOT4
 
 // A = damage. Ignored while invulnerable or destroyed.
 player_damage:

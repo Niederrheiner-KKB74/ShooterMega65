@@ -301,6 +301,7 @@ so `RUN` works again after an exit.
 | 02.11.2026 | Stage 7c confirmed on hardware; tag `stage7b-stable` set by the owner; ChatGPT asked for the Stage 8 ground-target artwork (`docs/chatgpt_ground_targets.md`) |
 | 02.11.2026 | PR #15 (destroyed buildings and halls, light and heavy flak) merged; Stage 8: destroyable buildings and ground guns, music to `$AC00`, `LnDAT` ≤ 10 KB |
 | 03.11.2026 | Stage 8 confirmed on hardware (no freeze) |
+| 03.11.2026 | Stage 8b: shot level visible (1 / 2 / 3 bolts, bar), $ capsules 5 / 15 / 30, heavy flak 60 hit points; boss unchanged |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -424,7 +425,8 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - Destroyed cells in the ring are patched at once (both copies, screen and colour part); cells of rows not decoded
   yet go to an override list (48 entries, absolute metarow) that `level_row` applies. The next pass of the level
   shows everything intact again. The bomb destroys every building on the screen.
-- **Guns** (`T_GUN`, ground slots): light flak 16×16 (6 hit points, 300 points) and heavy flak 32×32 (24, 1,000).
+- **Guns** (`T_GUN`, ground slots): light flak 16×16 (6 hit points, 300 points) and heavy flak 32×32 (60, 1,000;
+  Stage 8: 24). Both use the light gun's muzzle flash (Stage 8b).
   They move with the landscape, turn one 45° step every 8 frames towards the player and fire aimed red shots
   only when they point at him (light every 1.2–2.5 s, heavy two shots every 1–2.3 s), with a muzzle flash at the
   barrel tip. Shot, missile and bomb hit them; destroyed guns stay as wrecks. Level events `ground` with
@@ -434,7 +436,16 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - Test defines: `GOD_MODE` (no damage), `SKIP_SHOP` (shop events ignored), `BOSS_CORE_TEST`; `--test-credits`
   also gives 9 bombs.
 
-## 21. Open questions for the owner
+## 21. Shot levels and economy (Stage 8b)
+- One player shot object per volley (every `FIRE_RATE` = 6 frames), centred on the plane. Its view shows the shot
+  level: one bolt (level 1), two (II), three (III), a thick bar 8×14 (IV) (frames `PSHOT1`–`PSHOT4`, built by
+  `import_art.py` from the bolt of PR #4). The shot carries its damage in `obj_hp`: 2 × level, the same as the two
+  shot objects of Stage 8 together, so the boss fight is unchanged. The missile does `level` damage as before.
+- $ capsules are worth 5 / 15 / 30 credits (Stage 8: 10 / 25 / 50); the S capsule is unchanged. A player standing
+  still collects about 65 credits until the mid shop and 210 in the whole level (XEMU).
+- Test defines `SHOT2` / `SHOT3` / `SHOT4`: start with that shot level.
+
+## 22. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
 4. Should the high score be saved on the disk (with initials)?
