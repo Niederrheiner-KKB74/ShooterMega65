@@ -174,6 +174,8 @@ boss_wait:
     jsr boss_palette
     lda #MUS_BOSS
     jsr music_play
+    lda #0                      // driving down (level 2) / normal view
+    jsr boss_orient
     lda #<BOSS_X0
     sta boss_x
     lda #>BOSS_X0
@@ -255,7 +257,10 @@ boss_enter:
 // move sideways (1 px per frame, 2 in the core phase) and bob up and down (0.5 px per frame);
 // the parts fire in their own update
 boss_fight:
-    jsr boss_step_x
+    lda cur_level               // level 2: the land cruiser drives in the direction of its tracks
+    beq !+
+    jmp cruiser_fight
+!:  jsr boss_step_x
     lda boss_state
     cmp #BS_CORE
     bne !+
@@ -305,7 +310,7 @@ boss_step_x:
     sta boss_x+1
     bne !turn+
     lda boss_x
-    cmp #BOSS_XMAX
+    cmp bo_xmax
     bcc !ok+
 !turn:
     lda boss_vx
@@ -351,9 +356,9 @@ boss_touch:
     lda tmp
     cmp #8
     bcc !no+
-    cmp #88
+    cmp bt_x1                   // 88 (driving down) / 60 (sideways)
     bcs !no+
-    lda pl_y                    // player centre y - boss y in 4..60
+    lda pl_y                    // player centre y - boss y in 4..60 (sideways 4..88)
     clc
     adc #PL_HIT_CY
     sec
@@ -361,12 +366,180 @@ boss_touch:
     bcc !no+
     cmp #4
     bcc !no+
-    cmp #60
+    cmp bt_y1
     bcs !no+
     lda #16
     jmp player_damage
 !no:
     rts
+
+// ---------------------------------------------------------------- land cruiser (level 2, Stage 9b)
+// Drives only along its tracks: down/up in the normal view, sideways in the side view (tracks horizontal).
+// Between the two it stops for 40 frames and turns on the spot (view and part positions change, centre kept).
+// cr_mode 0 drive y (to cr_ty), 1 turn to sideways, 2 drive x (to cr_tx, the player's x), 3 turn to down.
+// 1 px/frame, 1.5 in the core phase.
+cruiser_fight:
+    lda boss_y+1                // core opened while still driving in: keep descending first
+    bne !in+
+    lda boss_y
+    cmp #BOSS_Y
+    bcs !+
+!in:
+    inc boss_y
+    bne !t+
+    inc boss_y+1
+!t: jmp boss_touch
+!:  lda cr_mode
+    cmp #1
+    beq !turn+
+    cmp #3
+    beq !turn+
+    jsr cr_step
+    lda boss_state
+    cmp #BS_CORE
+    bne !t-
+    lda boss_t
+    and #1
+    bne !t-
+    jsr cr_step
+    jmp boss_touch
+!turn:
+    dec cr_t
+    bne !t-
+    lda cr_mode
+    cmp #1
+    bne !tov+
+    clc                         // to sideways: 96x64 -> 64x96, centre kept
+    lda boss_x
+    adc #16
+    sta boss_x
+    sec
+    lda boss_y
+    sbc #16
+    sta boss_y
+    lda #1
+    jsr boss_orient
+    lda #2
+    sta cr_mode
+    sec                         // target: the player's x (boss centre over the player), x 40..216
+    lda pl_x
+    sbc #32 - PL_HIT_CX
+    sta cr_tx
+    lda pl_x+1
+    sbc #0
+    bmi !lo+                    // left of 0
+    bne !hi+                    // 256 and more
+    lda cr_tx
+    cmp #40
+    bcs !+
+!lo:
+    lda #40
+    bne !st+
+!:  cmp #217
+    bcc !st+
+!hi:
+    lda #216
+!st:
+    sta cr_tx
+    jmp boss_touch
+!tov:
+    sec                         // back to driving down: 64x96 -> 96x64
+    lda boss_x
+    sbc #16
+    sta boss_x
+    clc
+    lda boss_y
+    adc #16
+    sta boss_y
+    lda #0
+    jsr boss_orient
+    lda #0
+    sta cr_mode
+    lda cr_ty                   // alternately to y 20 and y 56
+    eor #(BOSS_Y ^ 56)
+    sta cr_ty
+    jmp boss_touch
+
+// one pixel towards the target of the current mode; target reached: stop and turn
+cr_step:
+    lda cr_mode
+    bne !x+
+    lda boss_y
+    cmp cr_ty
+    beq !arr+
+    bcc !dn+
+    dec boss_y
+    rts
+!dn:
+    inc boss_y
+    rts
+!x: lda boss_x
+    cmp cr_tx
+    beq !arr+
+    bcc !rt+
+    dec boss_x
+    rts
+!rt:
+    inc boss_x
+    rts
+!arr:
+    inc cr_mode                 // 0 -> 1, 2 -> 3: turn
+    lda #40
+    sta cr_t
+    rts
+cr_mode: .byte 0
+cr_t:    .byte 0
+cr_tx:   .byte 0
+cr_ty:   .byte 56
+
+// A = orientation (0 normal / driving down, 1 sideways): frames, part positions, body box, x limit
+boss_orient:
+    sta bo_dir
+    tax
+    lda bo_body_tab,x
+    sta bo_body
+    lda bo_core_tab,x
+    sta bo_core
+    lda bo_rotor_tab,x
+    sta bo_rotor
+    lda bt_x1_tab,x
+    sta bt_x1
+    lda bt_y1_tab,x
+    sta bt_y1
+    lda bo_xmax_tab,x
+    sta bo_xmax
+    lda #0
+    sta cr_mode
+    cpx #0
+    beq !+
+    lda #2
+    sta cr_mode
+!:  txa                         // part positions: 22 bytes of boss_place_cur at 22 * A
+    beq !+
+    lda #22
+!:  tax
+    ldy #0
+!:  lda boss_place_cur,x
+    sta part_dx,y
+    inx
+    iny
+    cpy #22
+    bne !-
+    rts
+bo_dir:   .byte 0
+bo_body:  .byte FR_BOSS_BODY
+bo_core:  .byte FR_BOSS_CORE
+bo_rotor: .byte FR_BOSS_ROTOR0
+bt_x1:    .byte 88
+bt_y1:    .byte 60
+bo_xmax:  .byte BOSS_XMAX
+bo_body_tab:  .byte FR_BOSS_BODY, FR_BOSS_BODY_SIDE
+bo_core_tab:  .byte FR_BOSS_CORE, FR_BOSS_CORE_SIDE
+bo_rotor_tab: .byte FR_BOSS_ROTOR0, FR_BOSS_RSIDE0
+bt_x1_tab:    .byte 88, 60
+bt_y1_tab:    .byte 60, 88
+bo_xmax_tab:  .byte BOSS_XMAX, 320 - 64 - 24
+boss_place_cur: .fill 44, 0       // part positions of this level's boss: normal view, side view (level_enter)
 
 // core destroyed: explosions over the body, then everything back to normal
 boss_dying:
@@ -644,7 +817,7 @@ part_frame:
     lda obj_kind,x
     cmp #4
     bne !+
-    lda #FR_BOSS_CORE
+    lda bo_core
     sta obj_fr,x
     rts
 !:  asl
@@ -812,10 +985,10 @@ boss_draw:
     sta px_y
     lda boss_y+1
     sta px_y+1
-    ldy #FR_BOSS_BODY
+    ldy bo_body                 // view of the current orientation (Stage 9b)
     lda frame_pal,y
     sta px_pal
-    lda #FR_BOSS_BODY
+    tya
     jsr pixie_draw
     lda #3
     sta bd_i
@@ -845,7 +1018,7 @@ boss_draw:
     sbc #3
     bcs !-
 !:  clc
-    adc #FR_BOSS_ROTOR0
+    adc bo_rotor
     jsr pixie_draw
     dec bd_i
     bpl !rot-

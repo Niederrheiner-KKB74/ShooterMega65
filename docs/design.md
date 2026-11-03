@@ -465,8 +465,12 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - Music: the level piece (`MUS_LEVEL1`) lives in a slot behind the shared pieces; level 2 "Desert Heat"
   (E Phrygian dominant). The level-clear fanfare queues "the level music", so the new piece follows it.
 - Palms next to water: `tools/decorate_level2.py` (run after every new level-2 map; fills the 256-row limit).
-- Next artwork (`docs/chatgpt_level2b.md`): land cruiser sideways view (boss area extended to 324 glyphs:
-  fighter, bomber, helicopter and armoured-plane frames), more colour and vegetation in level 2.
+- Boss area (Stage 9b, PR #19): 324 glyphs over the fighter, bomber, helicopter and armoured-plane frames (no
+  aircraft during the fight); both bosses 229 glyphs incl. a second view (`BOSS_BODY_SIDE`, `BOSS_CORE_SIDE`,
+  `BOSS_RSIDE0-2`; empty for the quadrotor). `boss_orient` switches frames, part positions (44 bytes per level:
+  normal + side), body box and x limit.
+- Land cruiser (`cruiser_fight`): drives y to 20 / 56, stops 40 frames and turns (centre kept), drives x to the
+  player's position (40..216), stops, turns back. The quadrotor of level 1 keeps flying sideways with the bob.
 - Title: key **2** starts directly in level 2 (test aid, also in release builds). Test define `START_LEVEL2`,
   `build.py --level2 FILE` builds another JSON as level 2.
 

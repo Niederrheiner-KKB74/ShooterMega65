@@ -8,7 +8,11 @@ Design details: `docs/design.md` §22.
   graphics by ChatGPT). 40 destroyable buildings with their own ruins plus refinery hall tiles, 24 tanks,
   20 guns, 74 enemy waves (same aircraft as level 1, denser).
 - **Boss 2**: the land cruiser, with four turrets, animated tracks and an engine room that opens when the
-  turrets are gone. Same behaviour and hit points as the level-1 boss.
+  turrets are gone. Same hit points as the level-1 boss. It drives only along its tracks: down and up, then it
+  stops, turns on the spot (second view with horizontal tracks, PR #19) and drives sideways to the player's
+  position, stops, turns back, and so on (1 px/frame, 1.5 in the core phase).
+- **More colour in level 2** (PR #19): reeds, bushes, grass and palm groves along the water, salt flats, red scree,
+  dark boulders; more green in the palette.
 - **Level change**: after the end shop of level 1 the level-clear fanfare plays and level 2 starts. Score, lives,
   credits and everything bought are kept. After level 2, level 1 comes again.
 - **Music**: new level-2 piece "Desert Heat" (oriental scale).
@@ -26,6 +30,7 @@ Design details: `docs/design.md` §22.
 | XEMU short level 1 → level 2 starts (desert, ruins, tank, armoured planes; screenshot), level-2 music piece set, RRB overflow 0 | ✔ |
 | XEMU full level 1 (weak boss, no shops) → level 2, score and credits kept (game frame 13,199) | ✔ |
 | XEMU level-2 boss: land cruiser with tracks and turrets (screenshot); weak boss destroyed, afterwards the fighter/bomber glyphs identical to `PIXIES` | ✔ |
+| XEMU land cruiser: drives down/up, stops, turns (side view on screen), drives sideways to the player, turns back; with a moving test pilot the weak boss is destroyed and all 229 aircraft glyphs (fighters to armoured planes) are identical to `PIXIES` afterwards | ✔ |
 | XEMU level-1 boss unchanged; without attic RAM (`NO_ATTIC`) level 1 runs | ✔ |
 | Found and fixed in XEMU: a label mix-up made the boss event of level 2 restart the event list endlessly | ✔ |
 | Real MEGA65 | open |
@@ -35,8 +40,9 @@ Design details: `docs/design.md` §22.
 2. Key 2 on the title: the game starts in the desert with the level-2 music.
 3. Level 2: canyon with river and bridges, tanks stay off the water, buildings turn into recognisable ruins, guns,
    oasis, refinery; mid shop and end shop.
-4. Boss 2 (land cruiser): tracks move, turrets aim and fire, engine room opens, explodes; afterwards fighters and
-   bombers look normal.
+4. Boss 2 (land cruiser): drives only along its tracks, stops and turns before it changes between up/down and
+   sideways; tracks move, turrets aim and fire, engine room opens, explodes; afterwards all aircraft (also
+   helicopters and armoured planes) look normal.
 5. Playing level 1 to the end: after the end shop and the fanfare, level 2 starts; score, lives, credits and
    upgrades are kept.
 6. Game over in level 2 → title → new game starts in level 1 (with the level-1 music and boss).

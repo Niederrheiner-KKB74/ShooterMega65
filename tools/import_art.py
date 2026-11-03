@@ -323,12 +323,19 @@ def main(out):
     # fighters or bombers then). Their frame table entries point to that place already.
     names_now = {t['name']: t for t in table}
     swap0 = names_now['FIGHTER_0_0']['base'] - 1             # the blank guard before the first fighter column
-    swap_end = names_now['HELI_0_0']['base'] - 1             # first glyph after the bomber frames
     boss_frames = [('BOSS_BODY', 'body'), ('BOSS_CORE', 'core_exposed')] + \
         [(f'BOSS_ROTOR{n}', f'rotor_{n}') for n in range(3)] + \
         [(f'BOSS_T{k}_{v}', f'turret_{t}_{src}') for k, t in enumerate(('nw', 'ne', 'sw', 'se'))
          for v, src in (('S', 'south'), ('SE', 'southeast'), ('SW', 'southeast'), ('X', 'destroyed'))] + \
-        [('BOSS_MUZZLE0', 'muzzle_0'), ('BOSS_MUZZLE1', 'muzzle_1')]
+        [('BOSS_MUZZLE0', 'muzzle_0'), ('BOSS_MUZZLE1', 'muzzle_1')] + \
+        [('BOSS_BODY_SIDE', 'body_side'), ('BOSS_CORE_SIDE', 'core_exposed_side')] + \
+        [(f'BOSS_RSIDE{n}', f'rotor_side_{n}') for n in range(3)]
+    # Stage 9b: a second view for bosses that drive (level 2: tracks horizontal); bosses without it get empty
+    # frames of the same size. The boss area covers the fighter, bomber, helicopter and armoured-plane frames.
+    side_ids = ('body_side', 'core_exposed_side', 'rotor_side_0', 'rotor_side_1', 'rotor_side_2')
+    side_ref = {f['id']: (f['height'], f['width']) for f in json.loads((BOSS2 / 'indexed-source.json').read_text())
+                if f['id'] in side_ids}
+    swap_end = names_now['PSHOT1']['base'] - 1               # first glyph after the armoured-plane frames
     # Stage 9: one frame layout for every level's boss (the frame table is fixed); each level has its own glyphs,
     # palette and part positions. Smaller frames are padded (top left) to the size of the level-1 frame.
     boss_files, boss_place = {}, {}
@@ -337,6 +344,9 @@ def main(out):
                for f in json.loads((bdir / 'indexed-source.json').read_text())}
         if lvl == 1:
             ref = {sid: a.shape for sid, a in src.items()}
+            ref.update(side_ref)
+        for sid in side_ids:
+            src.setdefault(sid, np.zeros(ref[sid], np.uint8))
         bglyphs = [bytes(64)]
         for name, sid in boss_frames:
             a = src[sid]
@@ -365,11 +375,14 @@ def main(out):
         pl = json.loads((bdir / 'placement.json').read_text())
         tur = pl['turrets']
         rot = pl['rotors']
-        boss_place[lvl] = ([t['offset'][0] for t in tur] + [pl['core']['offset'][0]] +
-                           [t['offset'][1] for t in tur] + [pl['core']['offset'][1]] +
-                           [r['offset'][0] for r in rot] + [r['offset'][1] for r in rot] +
-                           [r.get('phase_offset', 0) for r in rot])
-        assert len(boss_place[lvl]) == 22, f'boss {lvl}: 4 turrets, core and 4 rotors expected'
+        def place(pl):
+            tur, rot = pl['turrets'], pl['rotors']
+            return ([t['offset'][0] for t in tur] + [pl['core']['offset'][0]] +
+                    [t['offset'][1] for t in tur] + [pl['core']['offset'][1]] +
+                    [r['offset'][0] for r in rot] + [r['offset'][1] for r in rot] +
+                    [r.get('phase_offset', 0) for r in rot])
+        boss_place[lvl] = place(pl) + place(pl.get('side', pl))    # driving down / sideways
+        assert len(boss_place[lvl]) == 44, f'boss {lvl}: 4 turrets, core and 4 rotors expected'
         report.append(f'boss {lvl}: {len(bglyphs)} glyphs swapped in at glyph {swap0} (room {swap_end - swap0})')
     assert len(boss_files[1]) == len(boss_files[2])
     boss_consts = [f'.const BOSS_SWAP_GLYPH={swap0}', f'.const BOSS_GLYPHS={len(bglyphs)}',

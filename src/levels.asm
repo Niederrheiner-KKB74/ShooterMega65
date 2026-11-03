@@ -159,7 +159,7 @@ level_enter:
     sta job_boss_in+DMA_SRC+2
     sta job_boss_pal+DMA_SRC+2
     RunDma(job_boss_pal)
-    ldx cur_level               // part positions (part_dx, part_dy, rotor_dx, rotor_dy, rotor_ph: 22 bytes)
+    ldx cur_level               // part positions (part_dx, part_dy, rotor_dx, rotor_dy, rotor_ph: 22 bytes per view)
     ldy #0
     lda le_place_lo,x
     sta le_src+1
@@ -168,10 +168,12 @@ level_enter:
 !:
 le_src:
     lda $ffff,y
-    sta part_dx,y
+    sta boss_place_cur,y
     iny
-    cpy #22
+    cpy #44
     bne !-
+    lda #0
+    jsr boss_orient
     jmp palette_init            // landscape banks 1-4 (and the boss bank back to normal)
 le_place_lo: .byte <boss_place1, <boss_place2
 le_place_hi: .byte >boss_place1, >boss_place2
