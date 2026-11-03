@@ -7,4 +7,4 @@ Rebuild from the sources of the commit that added this folder (branch `stage8`):
 ```
 python3 tools/build.py --kickass /path/to/KickAss65CE02-5.25.jar
 ```
-Notes and hardware checklist: `docs/stage8.md`. Status: assembled and tested in XEMU; hardware test by the owner open. Needs attic RAM for the boss.
+Notes and hardware checklist: `docs/stage8.md`. Status: confirmed on real hardware by the owner (03.11.2026), tag `stage8-stable`. Needs attic RAM for the boss.

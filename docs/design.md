@@ -300,6 +300,7 @@ so `RUN` works again after an exit.
 | 02.11.2026 | Stage 7c: core fires aimed and random-angle shots; tanks avoid water; new level-1 waves (14 paths, 16 formations: loops, U-turns, side entries, pincers, V groups, hovering helicopters; tanks at varied places, `tools/design_waves_l1.py`); `L1BOSS` moved to attic RAM (no boss without attic RAM) |
 | 02.11.2026 | Stage 7c confirmed on hardware; tag `stage7b-stable` set by the owner; ChatGPT asked for the Stage 8 ground-target artwork (`docs/chatgpt_ground_targets.md`) |
 | 02.11.2026 | PR #15 (destroyed buildings and halls, light and heavy flak) merged; Stage 8: destroyable buildings and ground guns, music to `$AC00`, `LnDAT` ≤ 10 KB |
+| 03.11.2026 | Stage 8 confirmed on hardware (no freeze) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)

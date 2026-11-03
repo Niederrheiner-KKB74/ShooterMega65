@@ -28,7 +28,7 @@ Design details: `docs/design.md` §20.
 | XEMU `GOD_MODE` + weak boss: whole level 1 with buildings, guns and boss into the second round (game frame 15,899), RRB overflow 0; 4 more runs with different start times to game frame 9,369 | ✔ |
 | XEMU without attic RAM (`NO_ATTIC`): game runs | ✔ |
 | **Open**: in 1 of 11 long XEMU runs the game stopped at game frame 7,917 (military road, a light gun and armoured planes on screen) in the vblank wait; program code in memory was intact; not reproducible with the same or other input | ? |
-| Real MEGA65 | open |
+| Real MEGA65 | ✔ all checklist items confirmed by the owner (03.11.2026), no freeze on hardware, `stage8-stable` |
 
 ## Hardware test checklist
 1. From the middle of the level (after the mid shop) and in the base: shooting buildings turns them into rubble
