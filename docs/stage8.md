@@ -63,7 +63,7 @@ Branch `stage8`, on top of the confirmed Stage 8 (`stage8-release`). Release fil
 | XEMU test builds `SHOT2`–`SHOT4`: one, two, three bolts and the bar, centred on the plane (screenshot) | ✔ |
 | XEMU `GOD_MODE` + weak boss: whole level, boss, into the second round (game frame 12,899), RRB overflow 0 | ✔ |
 | XEMU player standing still: 65 credits at the mid shop, 210 for the whole level | ✔ |
-| Real MEGA65 | open |
+| Real MEGA65 | ✔ confirmed by the owner (03.11.2026), `stage8b-stable`; balancing good, boss core phase a bit too hard |
 
 ## Hardware test checklist
 1. Without upgrade one bolt; after SHOT II two, SHOT III three, SHOT IV a thick bar.
