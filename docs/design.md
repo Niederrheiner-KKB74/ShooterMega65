@@ -305,6 +305,7 @@ so `RUN` works again after an exit.
 | 03.11.2026 | Stage 8b confirmed on hardware |
 | 03.11.2026 | Stage 8c: boss core phase 1.5 px/frame (was 2), heavy flak 50 hit points; test cheat C = +5000 credits |
 | 03.11.2026 | Stage 8c confirmed on hardware; balancing accepted by the owner |
+| 03.11.2026 | PR #17 and #18 (level 2 tileset, map, ruins, land cruiser) merged; Stage 9: level 2 with level change, own waves, music "Desert Heat", key 2 on the title starts level 2 |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)
@@ -450,7 +451,23 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - Test cheat (Stage 8c, owner's request, in every build): key **C** during the flight adds 5,000 credits (at most
   9,999), so every shop item can be tried.
 
-## 22. Open questions for the owner
+## 22. Several levels (Stage 9, `levels.asm`)
+- Level 2 "Canyon und Raffinerie" (artwork PR #17/#18): desert, canyon with river and bridges, oasis, refinery;
+  land cruiser boss. Waves: `tools/design_waves_l2.py` (paths and formations of level 1, new order, denser).
+- With attic RAM all level files are loaded at start into a 64 KB pack per level (`$8040000 + n·$10000`: GFX, DAT,
+  DEST, music piece); bosses at `$8020000 + n·$40000`. `level_enter` copies a level into place by DMA (landscape
+  glyphs and palettes, destroyed tiles, `LnDAT`, music piece into the slot, boss source, palette and part
+  positions). Without attic RAM only level 1 exists (loaded as before, repeats).
+- The event `end` starts the next level (after the last: level 1). Score, lives, credits, shot level, missile,
+  bombs and shields are kept; scroll, objects, buildings and the boss start fresh.
+- Both bosses share one frame layout (`import_art.py` pads smaller frames to the level-1 sizes); part positions
+  per level come from `placement.json` (`boss_place1/2`).
+- Music: the level piece (`MUS_LEVEL1`) lives in a slot behind the shared pieces; level 2 "Desert Heat"
+  (E Phrygian dominant). The level-clear fanfare queues "the level music", so the new piece follows it.
+- Title: key **2** starts directly in level 2 (test aid, also in release builds). Test define `START_LEVEL2`,
+  `build.py --level2 FILE` builds another JSON as level 2.
+
+## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
 4. Should the high score be saved on the disk (with initials)?

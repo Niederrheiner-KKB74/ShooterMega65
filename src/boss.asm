@@ -64,17 +64,13 @@ rotor_dy:  .byte 0, 0, 32, 32
 rotor_ph:  .byte 0, 1, 2, 0
 
 // ============================================================== loading (KERNAL)
+// called by levels_load (levels.asm) for every level, only with attic RAM: LnBOSS to attic bank bl_bank
 boss_load:
-    jsr attic_detect            // (screens.asm)
-    lda attic_ok
-    bne !+
-    clc                         // no attic RAM: no boss
-    rts
-!:  lda #<(ATTIC_BOSS & $ffff)
+    lda #<(ATTIC_BOSS & $ffff)
     sta ld_dst
     lda #>(ATTIC_BOSS & $ffff)
     sta ld_dst+1
-    lda #((ATTIC_BOSS >> 16) & $0f)
+    lda bl_bank
     sta ld_dst+2
     lda #(ATTIC_BOSS >> 20)
     sta ld_dst+3
@@ -85,10 +81,10 @@ boss_load:
     ldy #name_boss_end - name_boss
     jsr load_seq_to
     bcs !+
-    RunDma(job_boss_pal)        // palette (48 bytes) to bank 0
     RunDma(job_px_save)         // keep the glyphs the boss will replace (PIXIES is loaded already)
-    clc
+    clc                         // (palette: level_enter)
 !:  rts
+bl_bank: .byte (ATTIC_BOSS >> 16) & $0f
 name_boss: .text "L1BOSS"
 name_boss_end:
 

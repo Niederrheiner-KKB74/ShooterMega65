@@ -143,7 +143,12 @@ GUN_ROWS = [(36, 'flak'), (74, 'flak'), (104, 'flak'), (118, 'flak'), (142, 'fla
 
 
 def main():
-    lv = json.loads(LEVEL.read_text())
+    design(LEVEL, WAVES, TANK_ROWS, GUN_ROWS)
+
+
+def design(level, waves, tank_rows, gun_rows):
+    """Rewrite paths, formations and the formation / ground events of the level JSON `level` (Path)."""
+    lv = json.loads(level.read_text())
     tiles = json.loads((ROOT / lv['tileset'] / 'level-example.json').read_text())['tiles']
     water = {t['id'] for t in tiles if t['palette'] == 'water'}
     rows = []
@@ -152,14 +157,14 @@ def main():
 
     rnd = random.Random(7)
     events = [e for e in lv['events'] if e['type'] not in ('formation', 'ground')]
-    for row, group in WAVES:
+    for row, group in waves:
         for name, mirror, x in group:
             ev = {'row': row, 'type': 'formation', 'formation': name, 'mirror': mirror}
             if x is not None:
                 ev['x'] = x
             events.append(ev)
     dirs = ['north', 'east', 'south', 'west']
-    for row in TANK_ROWS:
+    for row in tank_rows:
         # land columns in this row and the next two (the tank appears at the top edge)
         cand = [x for x in range(16, 289, 8)
                 if all(rows[r][c] not in water
@@ -173,7 +178,7 @@ def main():
     by_name = {t['name']: t['id'] for t in tiles}
     buildings = {by_name[d['of']] for d in gt['destroyed_tiles']}
     grnd = random.Random(11)
-    for row, kind in GUN_ROWS:
+    for row, kind in gun_rows:
         w = 32 if kind == 'heavy_flak' else 16
         cand = [x for x in range(16, 305 - w, 8)
                 if all(rows[r][c] not in water and rows[r][c] not in buildings
@@ -190,11 +195,11 @@ def main():
     text = json.dumps(lv, indent=2)          # innermost lists (map rows, path commands) on one line
     text = re.sub(r'\[([^\[\]{}]*)\]', lambda m: '[' + ', '.join(t.strip() for t in m[1].split(',')) + ']'
                   if m[1].strip() else '[]', text)
-    LEVEL.write_text(text + '\n')
+    level.write_text(text + '\n')
     n_form = sum(e['type'] == 'formation' for e in events)
     n_tank = sum(e['type'] == 'ground' and e['enemy'] == 'tank' for e in events)
     n_gun = sum(e['type'] == 'ground' and e['enemy'] != 'tank' for e in events)
-    print(f'{LEVEL.name}: {len(PATHS)} paths, {len(FORMATIONS)} formations, {n_form} formation events, '
+    print(f'{level.name}: {len(PATHS)} paths, {len(FORMATIONS)} formations, {n_form} formation events, '
           f'{n_tank} tanks, {n_gun} guns')
 
 

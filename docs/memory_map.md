@@ -1,4 +1,4 @@
-# Memory map (Stage 8)
+# Memory map (Stage 9)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -38,7 +38,7 @@ not in the zero page.
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
-| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (Stage 8: 4,519 of 5,120 bytes; Stage 7: `$A000`); the PRG must end below `$AC00` (guard in `sound.asm`; Stage 8 PRG ends at `$A260`) |
+| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`) |
 
 ## Banks 4/5 (chip RAM)
 
@@ -176,12 +176,15 @@ integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1
 | `$8010000` | game-over banner data (`GOVER`, 5.6 KB), copied to `$58000` for the banner |
 | `$8020000` | Stage 7c: boss data (`L1BOSS`, 9,584 bytes: 149 glyphs + palette); glyphs copied over the fighter/bomber glyphs (`$46800`) when the boss arrives, palette copied to `boss_pal_buf` at load |
 | `$8030000` | Stage 7c: copy of the fighter/bomber glyphs that the boss replaces (9,536 bytes), saved after `PIXIES` is loaded, copied back after the boss |
-| `$8040000–` | free; planned for more enemy glyphs, formations and level data (Stage 8) |
+| `$8040000–$804FFFF` | Stage 9: level-1 pack: `+$0000` `L1GFX`, `+$4000` `L1DAT`, `+$7000` `L1DEST`, `+$9000` level-1 music piece (copied from the `MUSIC` slot at start) |
+| `$8050000–$805FFFF` | Stage 9: level-2 pack: `L2GFX`, `L2DAT`, `L2DEST`, `MUS2` at the same offsets |
+| `$8060000` | Stage 9: level-2 boss (`L2BOSS`, same layout as `L1BOSS`) |
+| `$8070000–` | free |
 
 Detected at start (two patterns written by DMA and read back). Without attic RAM the title is loaded straight to
 `$56000` and shown only once, and there is no boss (the level simply goes on). Each area is guarded by an
 `.errorif` in its module.
 
-## Files on the D81 (Stage 8)
+## Files on the D81 (Stage 9)
 
-`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS` (SEQ).
+`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS`, `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `MUS2` (SEQ).

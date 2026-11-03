@@ -25,7 +25,7 @@ import make_shop      # noqa: E402
 import build_music    # noqa: E402
 import make_screens   # noqa: E402
 
-LEVELS = [('L1', 'levels/coastal_base.json')]   # (file prefix on the disk, source)
+LEVELS = [('L1', 'levels/coastal_base.json'), ('L2', 'levels/level2.json')]   # (file prefix on the disk, source)
 
 KICKASS_SHA256 = '5d8544280dae2d018c79151d8c7b877eca1fb994096e54ca380b26d0cd79f847'
 PRG_NAME = 'SHOOTER'
@@ -44,6 +44,7 @@ def main():
     ap.add_argument('--out', default=str(ROOT / 'build'))
     ap.add_argument('--allow-other-kickass', action='store_true')
     ap.add_argument('--level', help='build this level JSON as L1 instead of the default test level')
+    ap.add_argument('--level2', help='test build: this level JSON as L2')
     ap.add_argument('--test-credits', action='store_true', help='test build: start with 999 credits (shop tests)')
     ap.add_argument('--define', action='append', default=[], help='test build: extra KickAssembler symbol (e.g. BOSS_TEST)')
     a = ap.parse_args()
@@ -66,9 +67,8 @@ def main():
     print('\n'.join(make_screens.main(ROOT / 'build/gen')))  # title + game-over banner (Stage 7)
     title = (ROOT / 'build/gen/TITLE').read_bytes()
     gover = (ROOT / 'build/gen/GOVER').read_bytes()
-    boss = (ROOT / 'build/gen/L1BOSS').read_bytes()
     level_files = []
-    selected_levels = [('L1', a.level)] if a.level else LEVELS
+    selected_levels = [('L1', a.level or LEVELS[0][1]), ('L2', a.level2 or LEVELS[1][1])]
     for name, src in selected_levels:
         try:
             gfx, dat, report = build_level.build(ROOT / src, out / 'levels', name)
@@ -77,9 +77,9 @@ def main():
         print('\n'.join(report))
         level_files += [(name + 'GFX', gfx, d81.SEQ), (name + 'DAT', dat, d81.SEQ),
                         (name + 'DEST', (out / 'levels' / f'{name}DEST').read_bytes(), d81.SEQ)]
-        # Stage 7c: L1BOSS lives in attic RAM, LnDAT alone has the 16 KB level buffer (checked by build_level)
-        if name == 'L1':
-            level_files.append((name + 'BOSS', boss, d81.SEQ))
+        # LnBOSS lives in attic RAM (Stage 7c/9), LnDAT alone has the level buffer (checked by build_level)
+        level_files.append((name + 'BOSS', (ROOT / f'build/gen/{name}BOSS').read_bytes(), d81.SEQ))
+    level_files.append(('MUS2', (ROOT / 'build/gen/MUS2').read_bytes(), d81.SEQ))   # level-2 music piece (Stage 9)
     pixies2 = (ROOT / 'build/gen/PIXIES2').read_bytes()  # heavy gun (Stage 8), loaded to $52800
     prg = out / f'{PRG_NAME}.PRG'
     out.mkdir(parents=True, exist_ok=True)

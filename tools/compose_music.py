@@ -9,6 +9,7 @@ bass/drum styles per section. Each voice is cut into 64-row patterns; identical 
   shop         "Supply Depot" – F major, ~107 BPM (tempo 7), 16 bars, laid back, loops
   game_over    D minor, 2 bars, falling line, ends
   level_clear  D major fanfare, 3 bars, ends
+  level2       "Desert Heat" (Stage 9) – E Phrygian dominant, 125 BPM (tempo 6), 40 bars, loops to bar 5
 """
 import json
 from pathlib import Path
@@ -257,6 +258,75 @@ def level1():
     build('Coastal Run', 6, MUSIC_VOLUME, vs, 64, LEVEL_INST, ROOT / 'music/level1.json')
 
 
+def level2():
+    """Level 2 (canyon, refinery): E Phrygian dominant (E F G# A B C D), same instruments as level 1."""
+    lead, harm, low = Voice(), Voice(), Voice()
+    # ---- intro (bars 1-4)
+    for c in ('E', 'F', 'E', 'F'):
+        arps(harm, c, 'push')
+    for root in ('E2', 'F2', 'E2', 'F2'):
+        bass_drums(low, root, 'bass_only')
+    lead.rest(48)
+    lead.melody([('B4', 2), ('C5', 2), ('D5', 2), ('E5', 2), ('F5', 4), ('G#5', 4)], 'lead', True)
+    chords = ['E', 'F', 'Dm', 'E', 'Am', 'G', 'F', 'E']
+    roots = ['E2', 'F2', 'D2', 'E2', 'A1', 'G1', 'F1', 'E2']
+    A = [('E5', 4), ('F5', 2), ('G#5', 2), ('A5', 4), ('G#5', 2), ('F5', 2),
+         ('E5', 6), ('F5', 2), ('A5', 4), ('C6', 4),
+         ('B5', 4), ('A5', 2), ('G#5', 2), ('A5', 4), ('F5', 4),
+         ('G#5', 8), ('F5', 4), ('E5', 4),
+         ('A5', 4), ('C6', 2), ('B5', 2), ('A5', 4), ('E5', 4),
+         ('D6', 6), ('C6', 2), ('B5', 4), ('G5', 4),
+         ('A5', 4), ('G#5', 2), ('F5', 2), ('E5', 4), ('D5', 4),
+         ('E5', 8), ('G#5', 4), ('B5', 4)]
+
+    def section_a():
+        lead.melody(A, 'lead', True)
+        for c in chords:
+            arps(harm, c, 'push')
+        for i, r in enumerate(roots):
+            bass_drums(low, r, 'drive_fill' if i == 7 else 'drive')
+    section_a()
+    # ---- A' (bars 13-20): higher, running figures
+    lead.melody([('E6', 2), ('D6', 2), ('C6', 2), ('B5', 2), ('C6', 4), ('G#5', 4),
+                 ('A5', 2), ('C6', 2), ('F6', 4), ('E6', 4), ('C6', 4),
+                 ('D6', 6), ('A5', 2), ('F5', 4), ('A5', 4),
+                 ('G#5', 8), ('B5', 4), ('E6', 4),
+                 ('E6', 4), ('C6', 2), ('A5', 2), ('E6', 8),
+                 ('D6', 2), ('C6', 2), ('B5', 2), ('A5', 2), ('G5', 4), ('B5', 4),
+                 ('C6', 4), ('A5', 2), ('F5', 2), ('A5', 4), ('C6', 4),
+                 ('B5', 4), ('G#5', 4), ('F5', 4), ('E5', 4)], 'lead', True)
+    for c in chords:
+        arps(harm, c, 'push')
+    for i, r in enumerate(roots):
+        bass_drums(low, r, 'drive_fill' if i == 7 else 'drive')
+    # ---- B (bars 21-28): sawtooth lead over held chords
+    lead.melody([('A5', 8), ('C6', 4), ('B5', 4),
+                 ('A5', 8), ('F5', 4), ('C6', 4),
+                 ('B5', 8), ('D6', 4), ('B5', 4),
+                 ('G#5', 12), ('-', 4),
+                 ('E6', 8), ('D6', 4), ('C6', 4),
+                 ('C6', 8), ('A5', 4), ('F5', 4),
+                 ('F5', 4), ('A5', 4), ('D6', 8),
+                 ('B5', 8), ('G#5', 4), ('E5', 4)], 'lead_saw')
+    for c in ('Am', 'F', 'G', 'E', 'Am', 'F', 'Dm', 'E'):
+        arps(harm, c, 'hold')
+    for i, r in enumerate(('A1', 'F1', 'G1', 'E2', 'A1', 'F1', 'D2', 'E2')):
+        bass_drums(low, r, 'drive_fill' if i in (3, 7) else 'drive')
+    # ---- breakdown (bars 29-32)
+    lead.melody([('E5', 4), ('-', 4), ('F5', 4), ('-', 4),
+                 ('G#5', 4), ('-', 4), ('B5', 4), ('-', 4),
+                 ('A5', 16),
+                 ('G#5', 4), ('F5', 4), ('E5', 4), ('D5', 4)], 'lead')
+    for c in ('F', 'E', 'Dm', 'E'):
+        arps(harm, c, 'stab')
+    for r in ('F1', 'E2', 'D2', 'E2'):
+        bass_drums(low, r, 'half')
+    # ---- A'' (bars 33-40), then back to bar 5
+    section_a()
+    vs = [fix_instruments(v) for v in (lead, harm, low)]
+    build('Desert Heat', 6, MUSIC_VOLUME, vs, 64, LEVEL_INST, ROOT / 'music/level2.json')
+
+
 SHOP_INST = {
     'flute':  {'wave': 'triangle', 'attack': 2, 'decay': 9, 'sustain': 10, 'release': 8,
                'vibrato': {'delay': 14, 'speed': 3, 'depth': 3}},
@@ -397,5 +467,5 @@ def title():
 
 if __name__ == '__main__':
     (ROOT / 'music').mkdir(exist_ok=True)
-    level1(); shop(); game_over(); level_clear(); boss(); title()
-    print('music/level1.json, shop.json, game_over.json, level_clear.json, boss.json, title.json written')
+    level1(); shop(); game_over(); level_clear(); boss(); title(); level2()
+    print('music/level1.json, shop.json, game_over.json, level_clear.json, boss.json, title.json, level2.json written')

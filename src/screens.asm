@@ -153,8 +153,22 @@ title_run:
     lda #MUS_TITLE
     jsr music_play
     jsr fire_reset
+    lda #0
+    sta key_2
+#if START_LEVEL2
+    lda #1                      // test build (build.py --define START_LEVEL2): level 2 first
+#endif
+    sta start_level
 !loop:
     jsr shop_frame              // vertical blank, sound, keys, debounced joystick
+    lda key_2                   // key 2: start in level 2 (with attic RAM)
+    beq !+
+    lda attic_ok
+    beq !+
+    lda #1
+    sta start_level
+    bne !go+
+!:
     inc tt_blink
     lda tt_blink
     and #31                     // "PRESS FIRE" blinks
@@ -175,12 +189,14 @@ title_run:
 !:  lda sh_press
     and #$10
     beq !loop-
+!go:
     lda #SFX_SELECT
     jsr sfx_play
     lda #0
     sta VIC_BGCOL
     sta VIC_BORDER
     jmp palette_init
+start_level: .byte 0           // level of the next game (0 = level 1; key 2 on the title: 1)
 tt_row:   .byte 0
 tt_blink: .byte 0
 tt_alt:   .byte 0                // 1 = row 22 without "PRESS FIRE"
@@ -337,7 +353,11 @@ hiscore_update:
 
 // ============================================================== new game
 game_new:
-    jsr buffers_init            // the title used screen B and the ring
+    lda attic_ok                // Stage 9: the level chosen on the title (key 2: level 2) from attic RAM
+    beq !+
+    lda start_level
+    jsr level_enter
+!:  jsr buffers_init            // the title used screen B and the ring
     jsr scroll_init
     jsr level_restart
     jsr objects_init

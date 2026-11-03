@@ -143,6 +143,11 @@ read_keys:
     beq !exit+
     cmp #$20                     // space
     beq !space+
+    cmp #$32                     // 2: on the title screen, start in level 2 (Stage 9, test aid)
+    bne !+
+    sta key_2
+    rts
+!:
     and #$df                     // fold lower case
     cmp #$58                     // X
     beq !exit+
@@ -191,6 +196,7 @@ key_drain:
 !:  rts
 
 special_req: .byte 0
+key_2:       .byte 0             // != 0: key 2 pressed (title_run)
 debug_raster: .byte 0
 saved_sp:   .byte 0
 saved_sph:  .byte 0

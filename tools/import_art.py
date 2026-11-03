@@ -60,6 +60,7 @@ HUD_BOMB = ['....3.3.', '.....3..', '...55...', '..5555..', '.555555.', '.525555
 HUD_INVULN = ['7777777.', '7222227.', '7222227.', '7222227.', '.72227..', '.72227..', '..727...', '...7....']
 ROCKET_VIEWS = ROOT / 'assets/art/rocket-directions/generated'
 BOSS = ROOT / 'assets/art/boss-level1/generated'
+BOSS2 = ROOT / 'assets/art/boss-level2/generated'   # PR #17 (Stage 9)
 BOSS_BANK = 5                # boss palette replaces the fighter palette while the boss is on screen
 TANKS = ROOT / 'assets/art/ground-vehicles/generated'
 TANK_DIRS = ('north', 'east', 'south', 'west')       # engine direction 0-3
@@ -323,32 +324,56 @@ def main(out):
     names_now = {t['name']: t for t in table}
     swap0 = names_now['FIGHTER_0_0']['base'] - 1             # the blank guard before the first fighter column
     swap_end = names_now['HELI_0_0']['base'] - 1             # first glyph after the bomber frames
-    boss_src = {f['id']: np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
-                for f in json.loads((BOSS / 'indexed-source.json').read_text())}
     boss_frames = [('BOSS_BODY', 'body'), ('BOSS_CORE', 'core_exposed')] + \
         [(f'BOSS_ROTOR{n}', f'rotor_{n}') for n in range(3)] + \
         [(f'BOSS_T{k}_{v}', f'turret_{t}_{src}') for k, t in enumerate(('nw', 'ne', 'sw', 'se'))
          for v, src in (('S', 'south'), ('SE', 'southeast'), ('SW', 'southeast'), ('X', 'destroyed'))] + \
         [('BOSS_MUZZLE0', 'muzzle_0'), ('BOSS_MUZZLE1', 'muzzle_1')]
-    bglyphs = [bytes(64)]
-    for name, sid in boss_frames:
-        a = boss_src[sid]
-        if name.endswith('_SW'):
-            a = a[:, ::-1]                                    # south-west = mirrored south-east
-        h, w = a.shape[0] // 8, a.shape[1] // 16
-        base = swap0 + len(bglyphs)
-        for c in range(w):
-            for i in range(h):
-                bglyphs.append(ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
-            bglyphs.append(bytes(64))
-        table.append(dict(name=name, base=base, w=w, h=h, pal=(BOSS_BANK << 4) | 15, hit=hitbox(a)))
-    assert swap0 + len(bglyphs) <= swap_end, f'boss glyphs ({len(bglyphs)}) exceed the fighter/bomber area ({swap_end - swap0})'
-    bpal = (BOSS / 'palette.rgb').read_bytes()
-    bpal = [tuple(bpal[i:i + 3]) for i in range(0, 48, 3)]
-    (out / 'L1BOSS').write_bytes(b''.join(bglyphs) + bytes(ph.swap(c[ch]) for ch in range(3) for c in bpal))
+    # Stage 9: one frame layout for every level's boss (the frame table is fixed); each level has its own glyphs,
+    # palette and part positions. Smaller frames are padded (top left) to the size of the level-1 frame.
+    boss_files, boss_place = {}, {}
+    for lvl, bdir in enumerate((BOSS, BOSS2), 1):
+        src = {f['id']: np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
+               for f in json.loads((bdir / 'indexed-source.json').read_text())}
+        if lvl == 1:
+            ref = {sid: a.shape for sid, a in src.items()}
+        bglyphs = [bytes(64)]
+        for name, sid in boss_frames:
+            a = src[sid]
+            if a.shape != ref[sid]:
+                assert a.shape[0] <= ref[sid][0] and a.shape[1] <= ref[sid][1], f'boss {lvl} {sid} larger than level 1'
+                b = np.zeros(ref[sid], np.uint8)
+                b[:a.shape[0], :a.shape[1]] = a
+                a = b
+            if name.endswith('_SW'):
+                a = a[:, ::-1]                                # south-west = mirrored south-east
+            h, w = a.shape[0] // 8, a.shape[1] // 16
+            base = swap0 + len(bglyphs)
+            for c in range(w):
+                for i in range(h):
+                    bglyphs.append(ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
+                bglyphs.append(bytes(64))
+            if lvl == 1:
+                table.append(dict(name=name, base=base, w=w, h=h, pal=(BOSS_BANK << 4) | 15, hit=hitbox(a)))
+        assert swap0 + len(bglyphs) <= swap_end, f'boss {lvl} glyphs ({len(bglyphs)}) exceed the fighter/bomber area'
+        bpal_raw = (bdir / 'palette.rgb').read_bytes()
+        bp = [tuple(bpal_raw[i:i + 3]) for i in range(0, 48, 3)]
+        if lvl == 1:
+            bpal = bp
+        boss_files[lvl] = b''.join(bglyphs) + bytes(ph.swap(c[ch]) for ch in range(3) for c in bp)
+        (out / f'L{lvl}BOSS').write_bytes(boss_files[lvl])
+        pl = json.loads((bdir / 'placement.json').read_text())
+        tur = pl['turrets']
+        rot = pl['rotors']
+        boss_place[lvl] = ([t['offset'][0] for t in tur] + [pl['core']['offset'][0]] +
+                           [t['offset'][1] for t in tur] + [pl['core']['offset'][1]] +
+                           [r['offset'][0] for r in rot] + [r['offset'][1] for r in rot] +
+                           [r.get('phase_offset', 0) for r in rot])
+        assert len(boss_place[lvl]) == 22, f'boss {lvl}: 4 turrets, core and 4 rotors expected'
+        report.append(f'boss {lvl}: {len(bglyphs)} glyphs swapped in at glyph {swap0} (room {swap_end - swap0})')
+    assert len(boss_files[1]) == len(boss_files[2])
     boss_consts = [f'.const BOSS_SWAP_GLYPH={swap0}', f'.const BOSS_GLYPHS={len(bglyphs)}',
                    f'.const BOSS_FILE_BYTES={len(bglyphs) * 64 + 48}', f'.const BOSS_BANK={BOSS_BANK}']
-    report.append(f'boss: {len(bglyphs)} glyphs swapped in at glyph {swap0} (room {swap_end - swap0})')
     # ------------------------------------------------------------ heavy gun (PR #15), file PIXIES2 at PIXIE2_ADDR
     p2base = (PIXIE2_ADDR - PIXIE_ADDR) // 64
     g2 = [bytes(64)]
@@ -468,6 +493,9 @@ def main(out):
     # boss hit flash (Stage 7b): the boss palette lightened towards white, loaded into bank 6 during the fight
     flash = [tuple(min(255, int(v + (255 - v) * 0.65)) for v in c) for c in bpal]
     tl += gun_consts[1:]
+    # boss part positions per level (Stage 9): part_dx[5], part_dy[5], rotor_dx[4], rotor_dy[4], rotor_ph[4]
+    for lvl in (1, 2):
+        tl.append(f'boss_place{lvl}: .byte ' + ','.join(str(v) for v in boss_place[lvl]))
     tl.append('boss_flash_pal: .byte ' + ','.join(str(ph.swap(c[ch])) for ch in range(3) for c in flash))
     (out / 'frames.inc').write_text('\n'.join(tl) + '\n')
 

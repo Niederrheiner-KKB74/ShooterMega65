@@ -57,11 +57,16 @@ start:
     bcs !fail+
     jsr pixies_load                    // all pixie glyphs, straight into the pixie area
     bcs !fail+
-    jsr level_load                     // level files from disk, still with the KERNAL (level.asm)
+    jsr attic_detect                   // attic RAM? (screens.asm)
+    lda attic_ok
+    beq !direct+
+    jsr levels_load                    // Stage 9: all levels and bosses into attic RAM (levels.asm)
+    jmp !loaded+
+!direct:
+    jsr level_load                     // without attic RAM: level 1 straight into place (level.asm)
+!loaded:
     bcs !fail+
     jsr pixies2_load                   // heavy gun glyphs behind LnDAT (ground.asm)
-    bcs !fail+
-    jsr boss_load                      // boss glyphs to attic RAM (boss.asm)
     bcs !fail+
     jsr screens_load                   // title and game-over banner: attic RAM or title directly (screens.asm)
     bcc !+
@@ -132,6 +137,9 @@ main_loop:
     lda shop_req                       // shop event reached: paused shop overlay
     beq !+
     jsr shop_run
+!:  lda level_next_req                 // level end with attic RAM: the next level (levels.asm)
+    beq !+
+    jsr level_next
 !:  lda game_over_req                  // last plane lost: game over, title, new game
     beq !+
     jsr game_over_run
@@ -233,6 +241,7 @@ random:
 #import "sound.asm"
 #import "boss.asm"
 #import "ground.asm"
+#import "levels.asm"
 #import "screens.asm"
 
 // file PIXIES: the complete pixie glyph area image (tools/import_art.py), loaded to PIXIE_ADDR

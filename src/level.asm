@@ -12,6 +12,7 @@
 // ----------------------------------------------------------------------------
 .const LEVEL_BUF   = $050000
 .const LEVEL_MAX   = $4000
+.const LEVEL_DAT_MAX = $2800    // LnDAT stays at $50000-$527FF (build_level.py MAX_DAT)
 .const SETLFS = $ffba
 .const SETNAM = $ffbd
 .const SETBNK = $ff6b
@@ -532,6 +533,12 @@ ev_run:
     jsr music_play
     lda #MUS_LEVEL1
     jsr music_queue
+    lda attic_ok                // Stage 9: with attic RAM the next level follows (levels.asm, main loop)
+    beq !repeat+                // (named: an anonymous label here would capture "bne !+" above)
+    lda #1
+    sta level_next_req
+    rts
+!repeat:
     clc                         // level end: the map repeats, events start again
     lda lev_base
     adc lev_nrows
