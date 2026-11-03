@@ -304,6 +304,7 @@ so `RUN` works again after an exit.
 | 03.11.2026 | Stage 8b: shot level visible (1 / 2 / 3 bolts, bar), $ capsules 5 / 15 / 30, heavy flak 60 hit points; boss unchanged |
 | 03.11.2026 | Stage 8b confirmed on hardware |
 | 03.11.2026 | Stage 8c: boss core phase 1.5 px/frame (was 2), heavy flak 50 hit points; test cheat C = +5000 credits |
+| 03.11.2026 | Stage 8c confirmed on hardware; balancing accepted by the owner |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
 ## 15. Shop (Stage 3b, `shop.asm`, `tools/make_shop.py`)

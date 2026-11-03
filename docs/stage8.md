@@ -90,7 +90,7 @@ Branch `stage8`, on top of the confirmed Stage 8b (`stage8b-release`). Release f
 | XEMU: C once → 5,000 credits, twice → 9,999 | ✔ |
 | XEMU boss test: core phase 90 px in 60 frames (1.5 px/frame), turret phase 1 px/frame | ✔ |
 | XEMU default level 38 s, RRB overflow 0 | ✔ |
-| Real MEGA65 | open |
+| Real MEGA65 | ✔ confirmed by the owner (03.11.2026), `stage8c-stable`; balancing right in every respect |
 
 ## Hardware test checklist
 1. Boss core phase: noticeably slower sideways than in Stage 8b, still a challenge.
