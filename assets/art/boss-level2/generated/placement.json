@@ -175,5 +175,150 @@
     "exposed_core_if_unlocked",
     "turrets",
     "optional_muzzle"
-  ]
+  ],
+  "side": {
+    "body": "body_side",
+    "body_size": [
+      64,
+      96
+    ],
+    "turrets": [
+      {
+        "id": "turret_nw",
+        "offset": [
+          40,
+          22
+        ],
+        "size": [
+          16,
+          16
+        ],
+        "hit_rect": [
+          40,
+          22,
+          16,
+          16
+        ],
+        "independently_destructible": true,
+        "south": "turret_nw_south",
+        "southeast": "turret_nw_southeast",
+        "destroyed": "turret_nw_destroyed"
+      },
+      {
+        "id": "turret_ne",
+        "offset": [
+          40,
+          58
+        ],
+        "size": [
+          16,
+          16
+        ],
+        "hit_rect": [
+          40,
+          58,
+          16,
+          16
+        ],
+        "independently_destructible": true,
+        "south": "turret_ne_south",
+        "southeast": "turret_ne_southeast",
+        "destroyed": "turret_ne_destroyed"
+      },
+      {
+        "id": "turret_sw",
+        "offset": [
+          8,
+          22
+        ],
+        "size": [
+          16,
+          16
+        ],
+        "hit_rect": [
+          8,
+          22,
+          16,
+          16
+        ],
+        "independently_destructible": true,
+        "south": "turret_sw_south",
+        "southeast": "turret_sw_southeast",
+        "destroyed": "turret_sw_destroyed"
+      },
+      {
+        "id": "turret_se",
+        "offset": [
+          8,
+          58
+        ],
+        "size": [
+          16,
+          16
+        ],
+        "hit_rect": [
+          8,
+          58,
+          16,
+          16
+        ],
+        "independently_destructible": true,
+        "south": "turret_se_south",
+        "southeast": "turret_se_southeast",
+        "destroyed": "turret_se_destroyed"
+      }
+    ],
+    "core": {
+      "offset": [
+        16,
+        32
+      ],
+      "exposed_overlay": "core_exposed_side",
+      "size": [
+        32,
+        32
+      ],
+      "hit_rect": [
+        24,
+        40,
+        16,
+        16
+      ]
+    },
+    "rotors": [
+      {
+        "offset": [
+          0,
+          4
+        ],
+        "phase_offset": 0
+      },
+      {
+        "offset": [
+          32,
+          4
+        ],
+        "phase_offset": 0
+      },
+      {
+        "offset": [
+          0,
+          76
+        ],
+        "phase_offset": 1
+      },
+      {
+        "offset": [
+          32,
+          76
+        ],
+        "phase_offset": 1
+      }
+    ],
+    "rotor_frames": [
+      "rotor_side_0",
+      "rotor_side_1",
+      "rotor_side_2"
+    ]
+  }
 }

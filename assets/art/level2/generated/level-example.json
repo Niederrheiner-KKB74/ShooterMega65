@@ -232,8 +232,8 @@
     },
     {
       "id": 46,
-      "name": "road1",
-      "palette": "structures"
+      "name": "reeds",
+      "palette": "nature"
     },
     {
       "id": 47,
@@ -242,13 +242,13 @@
     },
     {
       "id": 48,
-      "name": "road3",
-      "palette": "structures"
+      "name": "scrub",
+      "palette": "nature"
     },
     {
       "id": 49,
-      "name": "road4",
-      "palette": "structures"
+      "name": "grass",
+      "palette": "nature"
     },
     {
       "id": 50,
@@ -257,13 +257,13 @@
     },
     {
       "id": 51,
-      "name": "road6",
-      "palette": "structures"
+      "name": "palms_cluster",
+      "palette": "nature"
     },
     {
       "id": 52,
-      "name": "road7",
-      "palette": "structures"
+      "name": "salt_flat",
+      "palette": "nature"
     },
     {
       "id": 53,
@@ -272,8 +272,8 @@
     },
     {
       "id": 54,
-      "name": "road9",
-      "palette": "structures"
+      "name": "red_scree",
+      "palette": "nature"
     },
     {
       "id": 55,
@@ -282,8 +282,8 @@
     },
     {
       "id": 56,
-      "name": "road11",
-      "palette": "structures"
+      "name": "shaded_boulders",
+      "palette": "nature"
     },
     {
       "id": 57,
