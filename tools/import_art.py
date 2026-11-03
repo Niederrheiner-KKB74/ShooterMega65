@@ -252,12 +252,12 @@ def main(out):
             a[:7, x0:x0 + 3] = bolt
         add(f'PSHOT{n}', a, sbank)
     bar = np.zeros((16, 16), np.uint8)
-    for y in range(14):                                     # 8 px wide, 14 high: the bolt widened and stretched
+    for y in range(14):                                     # 5 px wide (bolt: 3), 14 high (Stage 9: was 8 wide)
         row = bolt[min(6, y // 2)]
-        bar[y, 4] = row[0]
-        bar[y, 5:11] = row[1]
-        bar[y, 11] = row[2]
-    bar[2:12, 7:9] = bolt[3, 1] if bolt[3, 1] else bolt[2, 1]   # bright core
+        bar[y, 5] = row[0]
+        bar[y, 6:9] = row[1]
+        bar[y, 9] = row[2]
+    bar[2:12, 7] = bolt[3, 1] if bolt[3, 1] else bolt[2, 1]     # bright core
     add('PSHOT4', bar, sbank)
     add('ESHOT_RED', *grp('enemy_shot_red', 0))
     add('ESHOT_FIRE', *grp('enemy_shot_fire', 0))

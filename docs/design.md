@@ -442,7 +442,7 @@ Requests while the plane is destroyed or inside the shop are dropped.
 
 ## 21. Shot levels and economy (Stage 8b)
 - One player shot object per volley (every `FIRE_RATE` = 6 frames), centred on the plane. Its view shows the shot
-  level: one bolt (level 1), two (II), three (III), a thick bar 8×14 (IV) (frames `PSHOT1`–`PSHOT4`, built by
+  level: one bolt (level 1), two (II), three (III), a bar 5×14 (IV; Stage 8b: 8×14) (frames `PSHOT1`–`PSHOT4`, built by
   `import_art.py` from the bolt of PR #4). The shot carries its damage in `obj_hp`: 2 × level, the same as the two
   shot objects of Stage 8 together, so the boss fight is unchanged. The missile does `level` damage as before.
 - $ capsules are worth 5 / 15 / 30 credits (Stage 8: 10 / 25 / 50); the S capsule is unchanged. A player standing

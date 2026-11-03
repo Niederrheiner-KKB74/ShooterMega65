@@ -12,6 +12,7 @@ Design details: `docs/design.md` §22.
 - **Level change**: after the end shop of level 1 the level-clear fanfare plays and level 2 starts. Score, lives,
   credits and everything bought are kept. After level 2, level 1 comes again.
 - **Music**: new level-2 piece "Desert Heat" (oriental scale).
+- **Shot IV**: the bar is narrower (5 px instead of 8; a normal bolt is 3 px).
 - **Title screen: key 2** starts directly in level 2 (to test it without playing level 1).
 - New files on the D81: `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `MUS2`. Loading takes a little longer (everything
   goes into attic RAM at start). Without attic RAM there is only level 1, as before.
@@ -39,4 +40,5 @@ Design details: `docs/design.md` §22.
    upgrades are kept.
 6. Game over in level 2 → title → new game starts in level 1 (with the level-1 music and boss).
 7. Is level 2 a bit harder than level 1, but fair?
-8. Everything else as in Stage 8c.
+8. Shot IV: the bar is narrower than before but clearly wider than a normal bolt.
+9. Everything else as in Stage 8c.
