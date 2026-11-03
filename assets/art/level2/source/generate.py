@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[4]
 OUT = ROOT / 'assets/art/level2/generated'
 BOSS = ROOT / 'assets/art/boss-level2/generated'
 P = {
- 'nature': ['000000','442c26','694032','895439','ab6c43','c08853','d39b5f','dfac70','efc184','f6d49d','985c3d','b9804d','53604a','78804f','98994f','403e34'],
+ 'nature': ['000000','263f2e','623b40','925044','b3714d','cc8d5d','d39b5f','dfac70','f4cf98','b6ca64','527d3c','b9804d','2e5637','598342','819d4c','403e34'],
  'water': ['000000','173940','20535a','277177','398c86','53a49a','82b9a1','c3d3a6','694032','895439','ab6c43','c08853','d39b5f','dfac70','efc184','b9804d'],
  'structures': ['000000','2e2727','49423e','635950','81766a','a69b86','c6bd9c','e9d9a8','277177','dfac70','a45235','d67c40','f2b95e','74533d','452c29','9d7454'],
 }
@@ -294,11 +294,57 @@ for i in range(2):
     add(f'track{i}','nature',im)
 assert len(tiles)<=128 and len(damaged)<=48
 
+def replace_tile(old, name, art):
+    index=ids.pop(old)
+    ids[name]=index
+    tiles[index]=art
+    meta[index]=dict(id=index,name=name,palette='nature')
+
+for old,name,points in (
+    ('road1','reeds',[(4,10),(7,8),(10,11),(12,9)]),
+    ('road3','scrub',[(5,6),(10,10),(7,12)]),
+    ('road4','grass',[(4,5),(11,6),(8,11),(13,12)]),
+    ('road6','palms_cluster',[(5,5),(11,8),(7,11)]),
+):
+    im=ground(71+len(name));d=D(im)
+    for x,y in points:
+        d.ellipse((x-2,y+1,x+3,y+3),fill=11)
+        if name=='reeds':
+            for dx,dy in ((-2,-4),(0,-6),(2,-5)):
+                d.line((x,y,x+dx,y+dy),fill=12)
+                d.point((x+dx,y+dy),fill=9)
+        elif name=='scrub':
+            d.ellipse((x-3,y-3,x+3,y+2),fill=1)
+            d.ellipse((x-3,y-3,x+1,y),fill=10)
+            d.point((x-2,y-2),fill=14)
+        elif name=='grass':
+            d.line((x-2,y-2,x,y,x+2,y-3),fill=13)
+            d.point((x-2,y-2),fill=9)
+        else:
+            d.line((x,y,x-1,y+4),fill=3,width=2)
+            for dx,dy in ((-4,-1),(-3,-3),(0,-4),(4,-2),(3,2),(-1,3)):
+                d.line((x,y,x+dx,y+dy),fill=1,width=2)
+                d.line((x,y,x+dx,y+dy),fill=13)
+            d.point((x,y),fill=9)
+    replace_tile(old,name,im)
+
+for old,name in (('road7','salt_flat'),('road9','red_scree'),('road11','shaded_boulders')):
+    im=ground(80+len(name));d=D(im)
+    if name=='salt_flat':
+        d.polygon([(1,8),(4,4),(9,2),(14,5),(14,10),(10,13),(3,12)],fill=8)
+        d.line((3,9,6,8,8,10,11,8,13,8),fill=6)
+        d.line((7,4,8,7,11,7),fill=7)
+    else:
+        for x,y in ((3,6),(8,10),(12,5)):
+            d.polygon([(x-2,y+1),(x-1,y-2),(x+2,y-3),(x+3,y),(x+1,y+3)],fill=15 if name=='shaded_boulders' else 2)
+            d.polygon([(x-1,y-2),(x+2,y-3),(x+2,y-1),(x-1,y+1)],fill=5 if name=='shaded_boulders' else 4)
+    replace_tile(old,name,im)
+
 def map_level():
     rows=[]
     for y in range(375):
         # Reuse every terrain row in pairs, keeping the level's row dictionary in budget.
-        band=(y//3)%16
+        band=(y//4)%8
         line=[]
         for x in range(21):
             sand=((x*7+band*3)^(x*band))%13
@@ -331,7 +377,7 @@ def map_level():
     for y in range(201,242):
         for x in range(3,18):
             if (x*17+y*13)%19<2 and 1.1<((x-10.5)/5)**2+((y-222)/17)**2<2:
-                if meta[rows[y][x]]['palette']=='nature':put(x,y,f'palm{(x+y)%4}')
+                if meta[rows[y][x]]['palette']=='nature':put(x,y,'sand0')
     def place(name,x,y):
         for row in range(2):
             for col in range(2):
@@ -393,7 +439,92 @@ def map_level():
     # Straight approach to the broad, empty boss apron.
     for y in range(347,366):
         for x in range(3,18):put(x,y,'yard')
+    # Accent clusters sit on dry sand near the water. Use repeated row bands
+    # so a dense shoreline does not consume a new pattern for every sand tile.
+    water = {t['id'] for t in meta if t['palette']=='water'}
+    sand = {ids[f'sand{i}'] for i in range(12)}
+    for y in range(1,374):
+        for x in range(1,20):
+            if rows[y][x] not in sand:
+                continue
+            wet = any(rows[y+dy][x+dx] in water for dx,dy in ((-1,0),(1,0),(0,-1),(0,1)))
+            if wet:
+                group=(x+y//4)%8
+                name=('reeds','reeds','grass','scrub','palms_cluster','palms_cluster','grass','scrub')[group]
+                put(x,y,name)
+            elif y<94 or 192<=y<279:
+                band=y//6
+                if (x+3*band)%19 in (2,3):put(x,y,'salt_flat')
+                elif (x+band*2)%17 in (7,8):put(x,y,'red_scree')
+                elif (x-band)%19==12:put(x,y,'shaded_boulders')
     return rows
+
+def side_boss(frames, turrets):
+    """New west-facing armor, with bevels drawn in screen coordinates."""
+    body=Image.new('L',(64,96));d=D(body)
+    for y in (0,72):
+        d.polygon([(7,y),(57,y),(63,y+5),(63,y+19),(56,y+23),
+                   (7,y+23),(0,y+18),(0,y+6)],fill=1)
+        d.polygon([(7,y+2),(56,y+2),(61,y+6),(61,y+17),(55,y+21),
+                   (7,y+21),(2,y+17),(2,y+7)],fill=2)
+        d.line((2,y+7,7,y+2,56,y+2,61,y+6),fill=7,width=2)
+        d.line((7,y+21,55,y+21,61,y+17),fill=3,width=2)
+    d.polygon([(2,34),(9,22),(20,13),(48,12),(61,24),(63,70),
+               (53,82),(17,84),(8,74),(2,62)],fill=1)
+    d.polygon([(4,34),(11,23),(22,15),(47,14),(59,25),(61,69),
+               (52,80),(18,82),(10,73),(4,61)],fill=5)
+    d.polygon([(11,35),(16,27),(25,20),(45,19),(54,27),(55,66),
+               (48,75),(22,76),(14,69),(10,60)],fill=4)
+    d.line((4,34,11,23,22,15,47,14,58,24),fill=8,width=2)
+    d.line((4,34,4,61,10,73,18,81),fill=7,width=2)
+    d.line((18,81,52,80,60,69,59,26),fill=2,width=2)
+    for y in (24,61):
+        d.rectangle((8,y,22,y+11),fill=3,outline=6)
+        d.rectangle((43,y,55,y+11),fill=3,outline=6)
+        for x in (10,14,46,50):d.line((x,y+2,x,y+9),fill=2)
+    d.polygon([(20,39),(24,33),(42,33),(47,38),(47,57),(41,62),
+               (24,62),(20,56)],fill=2)
+    d.polygon([(22,40),(26,35),(41,35),(45,39),(45,55),(40,60),
+               (26,60),(22,55)],fill=6)
+    d.line((22,54,22,40,26,35,41,35,45,39),fill=8)
+    d.line((23,48,44,48),fill=2,width=2)
+    for y in (39,43,53,57):d.line((29,y,38,y),fill=4)
+    for y in (40,54):d.rectangle((7,y,10,y+3),fill=12,outline=10)
+    for y in range(43,56,4):d.line((12,y,15,y+2),fill=13,width=2)
+    for y in (38,53):
+        d.rectangle((50,y,56,y+6),fill=2,outline=5)
+        d.line((51,y+1,54,y+1),fill=7)
+    for x,y in ((10,32),(9,63),(26,22),(41,21),(25,72),(41,73),(52,29),(52,68)):
+        d.point((x,y),fill=9);d.point((x+1,y+1),fill=2)
+    frames['body_side']=body
+    core=Image.new('L',(32,32));d=D(core)
+    d.polygon([(5,8),(10,4),(23,4),(27,9),(27,23),(23,28),
+               (10,28),(5,24)],fill=1)
+    d.line((5,23,5,8,10,4,23,4,27,9),fill=8,width=2)
+    for y in (9,15,21):
+        d.rectangle((9,y,22,y+3),fill=12,outline=10)
+        d.line((10,y+1,21,y+1),fill=14);d.point((11,y+1),fill=15)
+    d.line((24,10,24,23),fill=6,width=2)
+    frames['core_exposed_side']=core
+    rotor_frames=[]
+    for phase in range(3):
+        im=Image.new('L',(32,16));d=D(im)
+        for x in range(32):
+            i=(x+phase*2)%8
+            top=[3,5,7,6,4,2,2,3][i]
+            bottom=[2,4,6,5,3,2,1,2][i]
+            d.line((x,2,x,7),fill=top);d.line((x,9,x,13),fill=bottom)
+        key=f'rotor_side_{phase}'
+        frames[key]=im;rotor_frames.append(key)
+    # Clockwise orientation: original NW mount moves to the upper right.
+    offsets=((40,22),(40,58),(8,22),(8,58))
+    side_turrets=[dict(t,offset=list(xy),hit_rect=[*xy,16,16]) for t,xy in zip(turrets,offsets)]
+    rotors=[dict(offset=[x,y],phase_offset=phase) for x,y,phase in
+            ((0,4,0),(32,4,0),(0,76,1),(32,76,1))]
+    return dict(body='body_side',body_size=[64,96],turrets=side_turrets,
+                core=dict(offset=[16,32],exposed_overlay='core_exposed_side',
+                          size=[32,32],hit_rect=[24,40,16,16]),
+                rotors=rotors,rotor_frames=rotor_frames)
 
 def make_boss():
     pal=[list(bytes.fromhex(c)) for c in ['000000','191c22','303138','474349','65594e','837362',
@@ -487,20 +618,24 @@ def make_boss():
         rotor_frames=[f'rotor_{i}' for i in range(3)],
         muzzle=dict(frames=['muzzle_0','muzzle_1'],south_offset_from_turret=[0,15]),
         draw_order=['body','rotors','exposed_core_if_unlocked','turrets','optional_muzzle'])
+    place['side']=side_boss(frames,turrets)
     BOSS.mkdir(parents=True,exist_ok=True)
     save_json(BOSS/'placement.json',place)
     save_json(BOSS/'indexed-source.json',[dict(id=k,width=i.width,height=i.height,rows=hexrows(i,2))
                                           for k,i in frames.items()])
     (BOSS/'palette.rgb').write_bytes(bytes(v for rgb in pal for v in rgb))
-    def composite(phase,dead=False):
-        canvas=Image.new('RGBA',body.size,(79,56,42,255))
+    def composite(phase,dead=False,side=False):
+        layout=place['side'] if side else place
+        w,h=layout['body_size']
+        canvas=Image.new('RGBA',(w,h),(79,56,42,255))
         def layer(k,xy):
             im=raster(frames[k],pal,True);canvas.alpha_composite(im,tuple(xy))
-        layer('body',(0,0))
-        for item in rotors:layer(f'rotor_{(phase+item["phase_offset"])%3}',item['offset'])
-        if dead:layer('core_exposed',(32,16))
-        for item in turrets:layer(item['destroyed' if dead else 'south'],item['offset'])
-        return canvas.convert('RGB').resize((384,256),Image.Resampling.NEAREST)
+        layer(layout['body'],(0,0))
+        for item in layout['rotors']:
+            layer(layout['rotor_frames'][(phase+item['phase_offset'])%3],item['offset'])
+        if dead:layer(layout['core']['exposed_overlay'],layout['core']['offset'])
+        for item in layout['turrets']:layer(item['destroyed' if dead else 'south'],item['offset'])
+        return canvas.convert('RGB').resize((w*4,h*4),Image.Resampling.NEAREST)
     intact, wreck = composite(0), composite(0,True)
     card=Image.new('RGB',(784,282),(32,30,30));card.paste(intact,(4,22));card.paste(wreck,(396,22))
     d=D(card);d.text((5,4),'Landkreuzer / Einsatzbereit',fill='white')
@@ -508,6 +643,14 @@ def make_boss():
     card.save(BOSS/'boss-preview.png')
     anim=[composite(i) for i in range(3)]
     anim[0].save(BOSS/'boss-animation.png',save_all=True,append_images=anim[1:],duration=115,loop=0)
+    side=Image.new('RGB',(528,410),(32,30,30));d=D(side)
+    d.text((4,4),'Querfahrt / Front links',fill='white')
+    d.text((268,4),'Querfahrt / Motorraum offen',fill='white')
+    side.paste(composite(0,side=True),(4,22))
+    side.paste(composite(0,dead=True,side=True),(268,22))
+    side.save(BOSS/'boss-side-preview.png')
+    anim=[composite(i,side=True) for i in range(3)]
+    anim[0].save(BOSS/'boss-side-animation.png',save_all=True,append_images=anim[1:],duration=115,loop=0)
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
@@ -522,7 +665,7 @@ def main():
     rows=map_level()
     level=dict(format='shootermega65-level-1',name='Operation Canyon und Raffinerie',
         tileset='assets/art/level2/generated',ground_targets='assets/art/level2/generated',
-        scroll_speed=0.5,map=rows,paths={},formations={},events=[
+        scroll_speed=0.5,map=rows,events=[
         dict(row=188,type='shop',id='mid'),dict(row=358,type='boss'),
         dict(row=368,type='shop',id='end'),dict(row=375,type='end')])
     # Compact rows keep the map legible in reviews.

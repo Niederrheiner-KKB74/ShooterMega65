@@ -22,12 +22,21 @@ Zelte behalten Teile ihres Gestänges, Funkmasten ihre geknickte Antenne,
 Tanks ihre aufgerissene Rundwand und Pumpen ihren gebrochenen Förderarm.
 Felsgruppen, Dünenkämme, Pisten und Fahrzeugwracks ergänzen die Anflugroute.
 Gemeinsam genutzte Sandzeilen und gebündelte Gebäude halten die Karte bei
-253 von 256 Zeilenmustern.
+236 von 240 für die Grafiklieferung verfügbaren Zeilenmustern.
+
+Schilf, Buschwerk, Gras und Palmenhaine wachsen auf trockenen Tiles entlang
+des Wassers. Salzkrusten, roter Schutt und schattige Felsgruppen lockern die
+Sandflächen auf. Die neuen Tiles belegen die freien Slots `road1`, `road3`,
+`road4`, `road6`, `road7`, `road9` und `road11` in dieser Reihenfolge.
+`nature` 1, 9 und 10 liefern tiefes Grün, helle Blattspitzen und Blattgrün.
 
 Der 96×64-Kettenkreuzer liegt in `assets/art/boss-level2/generated/`. Die vier
 Geschütze haben jeweils zwei aktive Ansichten und ein Wrack. Drei Phasen
 animieren die Ketten. Der offene Motorraum ist ein eigenes Overlay.
-`boss-animation.png` ist eine animierte PNG mit drei Frames.
+`boss-animation.png` ist eine animierte PNG mit drei Frames. Für die Querfahrt
+gibt es zusätzlich den neu schattierten 64×96-Rumpf mit Front links und
+waagerechten Ketten, ein eigenes Motorraum-Overlay und vier neu positionierte
+Turmsockel. `boss-side-animation.png` zeigt die drei Querfahrtphasen.
 
 Aus dem Repository-Stamm mit Python 3, Pillow und NumPy:
 
