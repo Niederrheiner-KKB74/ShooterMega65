@@ -113,6 +113,11 @@ Theme desert, canyon with river, oasis, oil refinery. Tileset ≤ 128 tiles in f
 tanks avoid it; `fixed_targets` exactly the level-1 palette), ≤ 48 destroyed tiles with explicit `kind`, `group`,
 `col`, `row`; map `levels/level2.json` with shops, boss and end; boss in the PR #14 format, ≤ 162 glyphs.
 
+## Level-2 boss: hover tank (next stage)
+Brief: `docs/chatgpt_level2d.md` (replaces the land cruiser): one view up to 128×80, four turrets, core, fan
+animation (3 frames), turret muzzle flash, flame jet 16×32 (3 frames), dust spray 32×16 (3 frames), one palette;
+boss area 324 glyphs; checker `tools/check_level2_art.py`.
+
 ## Working with ChatGPT
 - Ask for *"pixel art, top-down view, flat colours, no anti-aliasing, limited palette of 15 colours, on a
   transparent background, each sprite exactly 16×16 pixels (shown enlarged 8×)"*.

@@ -249,51 +249,33 @@ def check_boss():
     rot = pl.get('rotors', [])
     if len(rot) > 4:
         err('placement.json: at most 4 "rotors" (animated overlays)')
-    side = pl.get('side')
-    if side is None:
-        err('placement.json: "side" (land cruiser driving sideways, docs/chatgpt_level2b.md) missing')
-        return
-    for n in ('body_side', 'core_exposed_side', 'rotor_side_0', 'rotor_side_1', 'rotor_side_2'):
+    # Stage 11: hover tank (docs/chatgpt_level2d.md): no turning views, flame and dust effects
+    for old in ('side', 'diag'):
+        if old in pl:
+            err(f'placement.json: "{old}" belongs to the land cruiser, please remove it')
+    for old in ('body_side', 'core_exposed_side', 'rotor_side_0', 'rotor_side_1', 'rotor_side_2',
+                'body_diag', 'core_exposed_diag', 'dust_0', 'dust_1'):
+        if old in frames:
+            err(f'boss: frame {old} belongs to the land cruiser, please remove it')
+    for n, (w, h) in (('flame_0', (16, 32)), ('flame_1', (16, 32)), ('flame_2', (16, 32)),
+                      ('spray_0', (32, 16)), ('spray_1', (32, 16)), ('spray_2', (32, 16))):
         if n not in frames:
             err(f'boss: frame {n} missing')
-    sb = frames.get('body_side', {})
-    if (sb.get('width'), sb.get('height')) != (64, 96):
-        err(f'boss body_side: {sb.get("width")}x{sb.get("height")}, must be 64x96')
-    if len(side.get('turrets', [])) != 4:
-        err('placement.json side: exactly 4 "turrets"')
-    for t in side.get('turrets', []):
-        ox, oy = t.get('offset', [999, 999])
-        if not (0 <= ox <= 64 - 16 and 0 <= oy <= 96 - 16):
-            err(f'placement.json side: turret {t.get("id")} offset {t.get("offset")} outside the body')
-    if 'offset' not in side.get('core', {}):
-        err('placement.json side: "core" with "offset" missing')
-    if len(side.get('rotors', [])) > 4:
-        err('placement.json side: at most 4 "rotors"')
-    diag = pl.get('diag')                       # Stage 10: turning view (docs/chatgpt_level2c.md)
-    if diag is None:
-        err('placement.json: "diag" (turning view, docs/chatgpt_level2c.md) missing')
-        return
-    for n in ('body_diag', 'core_exposed_diag', 'dust_0', 'dust_1'):
-        if n not in frames:
-            err(f'boss: frame {n} missing')
-    bd = frames.get('body_diag', {})
-    dw, dh = bd.get('width', 0), bd.get('height', 0)
-    if dw > 96 or dh > 96:
-        err(f'boss body_diag: {dw}x{dh}, at most 96x96')
-    for n in ('dust_0', 'dust_1'):
-        if n in frames and (frames[n].get('width'), frames[n].get('height')) != (16, 16):
-            err(f'boss {n}: must be 16x16')
-    if len(diag.get('turrets', [])) != 4:
-        err('placement.json diag: exactly 4 "turrets"')
-    for t in diag.get('turrets', []):
-        ox, oy = t.get('offset', [999, 999])
-        if not (0 <= ox <= dw - 16 and 0 <= oy <= dh - 16):
-            err(f'placement.json diag: turret {t.get("id")} offset {t.get("offset")} outside the body')
-    if 'offset' not in diag.get('core', {}):
-        err('placement.json diag: "core" with "offset" missing')
-    dust = diag.get('dust', [])
-    if not 2 <= len(dust) <= 4:
-        err('placement.json diag: "dust" needs 2 to 4 positions')
+        elif (frames[n].get('width'), frames[n].get('height')) != (w, h):
+            err(f'boss {n}: must be {w}x{h}')
+    fl = pl.get('flame', {})
+    if 'offset' not in fl:
+        err('placement.json: "flame" with "offset" missing')
+    else:
+        fx, fy = fl['offset']
+        if not (0 <= fx <= bw - 16 and 0 <= fy <= bh + 16):
+            err(f'placement.json: flame offset {fl["offset"]} not at the body')
+    sp = pl.get('spray', {}).get('offsets', [])
+    if not 2 <= len(sp) <= 4:
+        err('placement.json: "spray" needs 2 to 4 "offsets"')
+    for o in sp:
+        if not (-32 <= o[0] <= bw and -16 <= o[1] <= bh + 8):
+            err(f'placement.json: spray offset {o} too far from the body')
 
 
 def main():
