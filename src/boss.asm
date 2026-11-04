@@ -38,6 +38,8 @@
 .const BOSS_SWAP_ADDR = PIXIE_ADDR + BOSS_SWAP_GLYPH * 64
 
 // FLASH_BANK, PAL_BOSS_FLASH, FLASH_FRAMES_HIT: layout.asm (used by objects.asm before this file)
+.const CR_TURN = 36              // land cruiser turn: frames in all (Stage 10)
+.const CR_DIAG = 24              // ... the diagonal view from here on (12 frames old view, 24 diagonal)
 .const BS_OFF = 0
 .const BS_WAIT = 1
 .const BS_ENTER = 2
@@ -175,6 +177,7 @@ boss_wait:
     lda #MUS_BOSS
     jsr music_play
     lda #0                      // driving down (level 2) / normal view
+    sta cr_mode
     jsr boss_orient
     lda #<BOSS_X0
     sta boss_x
@@ -403,20 +406,41 @@ cruiser_fight:
     bne !t-
     jsr cr_step
     jmp boss_touch
-!turn:
+!turn:                          // Stage 10: old view 12 frames, then the diagonal view with dust, then the new view
     dec cr_t
-    bne !t-
-    lda cr_mode
+    lda cr_t
+    cmp #CR_DIAG
+    bne !nd+
+    lda cr_mode                 // to the diagonal view (96x96), centre kept
     cmp #1
-    bne !tov+
-    clc                         // to sideways: 96x64 -> 64x96, centre kept
-    lda boss_x
-    adc #16
-    sta boss_x
-    sec
+    bne !fh+
+    sec                         // from driving down (96x64): y - 16
     lda boss_y
     sbc #16
     sta boss_y
+    jmp !od+
+!fh:
+    sec                         // from sideways (64x96): x - 16
+    lda boss_x
+    sbc #16
+    sta boss_x
+!od:
+    lda #2
+    jsr boss_orient
+    lda #SFX_EXPLODE            // rumble of the tracks
+    jsr sfx_play
+    jmp boss_touch
+!nd:
+    lda cr_t
+    beq !+
+    jmp boss_touch
+!:  lda cr_mode
+    cmp #1
+    bne !tov+
+    clc                         // diagonal -> sideways (64x96): x + 16
+    lda boss_x
+    adc #16
+    sta boss_x
     lda #1
     jsr boss_orient
     lda #2
@@ -443,11 +467,7 @@ cruiser_fight:
     sta cr_tx
     jmp boss_touch
 !tov:
-    sec                         // back to driving down: 64x96 -> 96x64
-    lda boss_x
-    sbc #16
-    sta boss_x
-    clc
+    clc                         // diagonal -> driving down (96x64): y + 16
     lda boss_y
     adc #16
     sta boss_y
@@ -484,7 +504,7 @@ cr_step:
     rts
 !arr:
     inc cr_mode                 // 0 -> 1, 2 -> 3: turn
-    lda #40
+    lda #CR_TURN
     sta cr_t
     rts
 cr_mode: .byte 0
@@ -508,16 +528,8 @@ boss_orient:
     sta bt_y1
     lda bo_xmax_tab,x
     sta bo_xmax
-    lda #0
-    sta cr_mode
-    cpx #0
-    beq !+
-    lda #2
-    sta cr_mode
-!:  txa                         // part positions: 22 bytes of boss_place_cur at 22 * A
-    beq !+
-    lda #22
-!:  tax
+    lda bo_place_ofs,x          // part positions: 22 bytes of boss_place_cur at 22 * A
+    tax
     ldy #0
 !:  lda boss_place_cur,x
     sta part_dx,y
@@ -533,13 +545,16 @@ bo_rotor: .byte FR_BOSS_ROTOR0
 bt_x1:    .byte 88
 bt_y1:    .byte 60
 bo_xmax:  .byte BOSS_XMAX
-bo_body_tab:  .byte FR_BOSS_BODY, FR_BOSS_BODY_SIDE
-bo_core_tab:  .byte FR_BOSS_CORE, FR_BOSS_CORE_SIDE
-bo_rotor_tab: .byte FR_BOSS_ROTOR0, FR_BOSS_RSIDE0
-bt_x1_tab:    .byte 88, 60
-bt_y1_tab:    .byte 60, 88
-bo_xmax_tab:  .byte BOSS_XMAX, 320 - 64 - 24
-boss_place_cur: .fill 44, 0       // part positions of this level's boss: normal view, side view (level_enter)
+// orientations: 0 normal / driving down, 1 sideways, 2 diagonal while turning (Stage 10, no rotors, dust)
+bo_body_tab:  .byte FR_BOSS_BODY, FR_BOSS_BODY_SIDE, FR_BOSS_BODY_DIAG
+bo_core_tab:  .byte FR_BOSS_CORE, FR_BOSS_CORE_SIDE, FR_BOSS_CORE_DIAG
+bo_rotor_tab: .byte FR_BOSS_ROTOR0, FR_BOSS_RSIDE0, FR_BOSS_RSIDE0
+bt_x1_tab:    .byte 88, 60, 88
+bt_y1_tab:    .byte 60, 88, 88
+bo_xmax_tab:  .byte BOSS_XMAX, 320 - 64 - 24, BOSS_XMAX
+bo_place_ofs: .byte 0, 22, 44
+boss_place_cur: .fill 66, 0       // part positions of this level's boss: normal, side, diagonal view (level_enter)
+boss_dust_cur:  .fill 8, 0        // dust positions on the diagonal view: x0-3, y0-3
 
 // core destroyed: explosions over the body, then everything back to normal
 boss_dying:
@@ -990,6 +1005,42 @@ boss_draw:
     sta px_pal
     tya
     jsr pixie_draw
+    lda bo_dir                  // diagonal view while turning: dust instead of rotors (Stage 10)
+    cmp #2
+    bne !rotors+
+    lda #3
+    sta bd_i
+!du:
+    ldx bd_i
+    clc
+    lda boss_x
+    adc boss_dust_cur,x
+    sta px_x
+    lda boss_x+1
+    adc #0
+    sta px_x+1
+    clc
+    lda boss_y
+    adc boss_dust_cur+4,x
+    sta px_y
+    lda boss_y+1
+    adc #0
+    sta px_y+1
+    ldy #FR_BOSS_DUST0
+    lda frame_pal,y
+    sta px_pal
+    lda boss_t                  // two phases, alternating per cloud
+    lsr
+    lsr
+    eor bd_i
+    and #1
+    clc
+    adc #FR_BOSS_DUST0
+    jsr pixie_draw
+    dec bd_i
+    bpl !du-
+    jmp bd_muzzles
+!rotors:
     lda #3
     sta bd_i
 !rot:
@@ -1022,6 +1073,7 @@ boss_draw:
     jsr pixie_draw
     dec bd_i
     bpl !rot-
+bd_muzzles:
     // muzzle flashes under firing turrets
     ldx #AIR_FIRST
 !mz:

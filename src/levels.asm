@@ -170,8 +170,18 @@ le_src:
     lda $ffff,y
     sta boss_place_cur,y
     iny
-    cpy #44
+    cpy #66
     bne !-
+    ldx cur_level               // dust positions on the diagonal view (Stage 10)
+    ldy #7
+!:  lda boss_dust1,y
+    cpx #0
+    beq !st+
+    lda boss_dust2,y
+!st:
+    sta boss_dust_cur,y
+    dey
+    bpl !-
     lda #0
     jsr boss_orient
     jmp palette_init            // landscape banks 1-4 (and the boss bank back to normal)

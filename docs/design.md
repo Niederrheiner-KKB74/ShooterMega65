@@ -306,6 +306,7 @@ so `RUN` works again after an exit.
 | 03.11.2026 | Stage 8c: boss core phase 1.5 px/frame (was 2), heavy flak 50 hit points; test cheat C = +5000 credits |
 | 03.11.2026 | Stage 8c confirmed on hardware; balancing accepted by the owner |
 | 03.11.2026 | PR #17 and #18 (level 2 tileset, map, ruins, land cruiser) merged; Stage 9: level 2 with level change, own waves, music "Desert Heat", key 2 on the title starts level 2 |
+| 04.11.2026 | PR #20 merged; Stage 10: land cruiser turns through a diagonal view with dust |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
 
@@ -470,8 +471,10 @@ Requests while the plane is destroyed or inside the shop are dropped.
   aircraft during the fight); both bosses 229 glyphs incl. a second view (`BOSS_BODY_SIDE`, `BOSS_CORE_SIDE`,
   `BOSS_RSIDE0-2`; empty for the quadrotor). `boss_orient` switches frames, part positions (44 bytes per level:
   normal + side), body box and x limit.
-- Land cruiser (`cruiser_fight`): drives y to 20 / 56, stops 40 frames and turns (centre kept), drives x to the
-  player's position (40..216), stops, turns back. The quadrotor of level 1 keeps flying sideways with the bob.
+- Land cruiser (`cruiser_fight`): drives y to 20 / 56, stops and turns (centre kept), drives x to the player's
+  position (40..216), stops, turns back. Stage 10 (PR #20): a turn takes 36 frames: 12 in the old view, then 24 in
+  the diagonal view (`BOSS_BODY_DIAG`, 96×96, front down-left) with dust clouds (`BOSS_DUST0/1`) at the track ends
+  and a rumble, then the new view. Boss area 323 of 324 glyphs; part positions 66 bytes per level (3 views). The quadrotor of level 1 keeps flying sideways with the bob.
 - Title: key **2** starts directly in level 2 (test aid, also in release builds). Test define `START_LEVEL2`,
   `build.py --level2 FILE` builds another JSON as level 2.
 

@@ -1,4 +1,4 @@
-# Memory map (Stage 9)
+# Memory map (Stage 10)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -175,10 +175,10 @@ integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1
 | `$8000000` | title screen data (`TITLE`, 26 KB), copied to `$56000` for the title |
 | `$8010000` | game-over banner data (`GOVER`, 5.6 KB), copied to `$58000` for the banner |
 | `$8020000` | Stage 7c: boss data (`L1BOSS`, 9,584 bytes: 149 glyphs + palette); glyphs copied over the fighter/bomber glyphs (`$46800`) when the boss arrives, palette copied to `boss_pal_buf` at load |
-| `$8030000` | Stage 7c: copy of the fighter/bomber glyphs that the boss replaces (9,536 bytes), saved after `PIXIES` is loaded, copied back after the boss |
+| `$8030000` | copy of the aircraft glyphs that the boss replaces (Stage 10: fighter, bomber, helicopter and armoured-plane frames, 323 glyphs, 20,672 bytes), saved after `PIXIES` is loaded, copied back after the boss |
 | `$8040000–$804FFFF` | Stage 9: level-1 pack: `+$0000` `L1GFX`, `+$4000` `L1DAT`, `+$7000` `L1DEST`, `+$9000` level-1 music piece (copied from the `MUSIC` slot at start) |
 | `$8050000–$805FFFF` | Stage 9: level-2 pack: `L2GFX`, `L2DAT`, `L2DEST`, `MUS2` at the same offsets |
-| `$8060000` | Stage 9: level-2 boss (`L2BOSS`, same layout as `L1BOSS`) |
+| `$8060000` | Stage 9: level-2 boss (`L2BOSS`, same layout as `L1BOSS`; Stage 10: 323 glyphs + palette, 20,720 bytes each) |
 | `$8070000–` | free |
 
 Detected at start (two patterns written by DMA and read back). Without attic RAM the title is loaded straight to
