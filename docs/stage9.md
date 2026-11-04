@@ -33,7 +33,7 @@ Design details: `docs/design.md` §22.
 | XEMU land cruiser: drives down/up, stops, turns (side view on screen), drives sideways to the player, turns back; with a moving test pilot the weak boss is destroyed and all 229 aircraft glyphs (fighters to armoured planes) are identical to `PIXIES` afterwards | ✔ |
 | XEMU level-1 boss unchanged; without attic RAM (`NO_ATTIC`) level 1 runs | ✔ |
 | Found and fixed in XEMU: a label mix-up made the boss event of level 2 restart the event list endlessly | ✔ |
-| Real MEGA65 | open |
+| Real MEGA65 | ✔ all checklist items confirmed by the owner (04.11.2026), `stage9-stable`; level 2 difficulty OK with upgrades from level 1; the 90° turns of the land cruiser look abrupt (next stage) |
 
 ## Hardware test checklist
 1. Loading: the title appears (a few seconds later than before).
