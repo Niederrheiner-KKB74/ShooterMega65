@@ -1,0 +1,9 @@
+level: level Operation Canyon und Raffinerie: 375 map rows (6000 px, 240 s at 0.5 px/frame)
+level: metatiles 106, different rows 255/256, glyphs 252
+level: events 122, formations 16, paths 14 (440 bytes)
+level: L2GFX 16324 bytes (max. 16384), L2DAT 8036 bytes (max. 10240), L2DEST 5120 bytes (40 destroyed tiles)
+NOTE: tileset: 126 tiles; palette water (tanks avoid these tiles): 15 tiles
+NOTE: destroyed tiles: 40 (max 48); buildings: 9
+NOTE: levels/level2.json: 255 different map rows incl. the automatic palms (a new map from ChatGPT: at most 240 without them)
+NOTE: boss: 205 of 324 glyphs, body 112x80
+OK, no errors
