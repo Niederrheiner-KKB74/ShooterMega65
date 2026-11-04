@@ -159,7 +159,7 @@ level_enter:
     sta job_boss_in+DMA_SRC+2
     sta job_boss_pal+DMA_SRC+2
     RunDma(job_boss_pal)
-    ldx cur_level               // part positions (part_dx, part_dy, rotor_dx, rotor_dy, rotor_ph: 22 bytes per view)
+    ldx cur_level               // part positions (22 bytes) and effects/sizes (16 bytes) of this boss
     ldy #0
     lda le_place_lo,x
     sta le_src+1
@@ -168,23 +168,24 @@ level_enter:
 !:
 le_src:
     lda $ffff,y
-    sta boss_place_cur,y
+    sta part_dx,y
     iny
-    cpy #66
+    cpy #22
     bne !-
-    ldx cur_level               // dust positions on the diagonal view (Stage 10)
-    ldy #7
-!:  lda boss_dust1,y
-    cpx #0
-    beq !st+
-    lda boss_dust2,y
-!st:
-    sta boss_dust_cur,y
+    lda le_fx_lo,x
+    sta le_fx+1
+    lda le_fx_hi,x
+    sta le_fx+2
+    ldy #15
+!:
+le_fx:
+    lda $ffff,y
+    sta boss_fx_cur,y
     dey
     bpl !-
-    lda #0
-    jsr boss_orient
     jmp palette_init            // landscape banks 1-4 (and the boss bank back to normal)
+le_fx_lo:    .byte <boss_fx1, <boss_fx2
+le_fx_hi:    .byte >boss_fx1, >boss_fx2
 le_place_lo: .byte <boss_place1, <boss_place2
 le_place_hi: .byte >boss_place1, >boss_place2
 

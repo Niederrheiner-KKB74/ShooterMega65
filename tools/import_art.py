@@ -328,33 +328,28 @@ def main(out):
         [(f'BOSS_T{k}_{v}', f'turret_{t}_{src}') for k, t in enumerate(('nw', 'ne', 'sw', 'se'))
          for v, src in (('S', 'south'), ('SE', 'southeast'), ('SW', 'southeast'), ('X', 'destroyed'))] + \
         [('BOSS_MUZZLE0', 'muzzle_0'), ('BOSS_MUZZLE1', 'muzzle_1')] + \
-        [('BOSS_BODY_SIDE', 'body_side'), ('BOSS_CORE_SIDE', 'core_exposed_side')] + \
-        [(f'BOSS_RSIDE{n}', f'rotor_side_{n}') for n in range(3)] + \
-        [('BOSS_BODY_DIAG', 'body_diag'), ('BOSS_CORE_DIAG', 'core_exposed_diag'),
-         ('BOSS_DUST0', 'dust_0'), ('BOSS_DUST1', 'dust_1')]
-    # Stage 9b: a second view for bosses that drive (level 2: tracks horizontal); bosses without it get empty
-    # frames of the same size. The boss area covers the fighter, bomber, helicopter and armoured-plane frames.
-    side_ids = ('body_side', 'core_exposed_side', 'rotor_side_0', 'rotor_side_1', 'rotor_side_2',
-                'body_diag', 'core_exposed_diag', 'dust_0', 'dust_1')    # Stage 10: turning view and dust
-    side_ref = {f['id']: (f['height'], f['width']) for f in json.loads((BOSS2 / 'indexed-source.json').read_text())
-                if f['id'] in side_ids}
+        [(f'BOSS_FLAME{n}', f'flame_{n}') for n in range(3)] + \
+        [(f'BOSS_SPRAY{n}', f'spray_{n}') for n in range(3)]
+    # Stage 9/11: one frame layout for every level's boss (the frame table is fixed); each level has its own glyphs,
+    # palette and part positions. Every frame gets the largest size any boss has (padded top left); frames a boss
+    # lacks (the quadrotor has no flame and no dust) are empty. The boss area covers the fighter, bomber,
+    # helicopter and armoured-plane frames (no aircraft during the fight).
     swap_end = names_now['PSHOT1']['base'] - 1               # first glyph after the armoured-plane frames
-    # Stage 9: one frame layout for every level's boss (the frame table is fixed); each level has its own glyphs,
-    # palette and part positions. Smaller frames are padded (top left) to the size of the level-1 frame.
-    boss_files, boss_place, boss_dust = {}, {}, {}
-    for lvl, bdir in enumerate((BOSS, BOSS2), 1):
-        src = {f['id']: np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
-               for f in json.loads((bdir / 'indexed-source.json').read_text())}
-        if lvl == 1:
-            ref = {sid: a.shape for sid, a in src.items()}
-            ref.update(side_ref)
-        for sid in side_ids:
-            src.setdefault(sid, np.zeros(ref[sid], np.uint8))
+    srcs = {lvl: {f['id']: np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
+                  for f in json.loads((bdir / 'indexed-source.json').read_text())}
+            for lvl, bdir in ((1, BOSS), (2, BOSS2))}
+    ref = {}
+    for src in srcs.values():
+        for sid, a in src.items():
+            h0, w0 = ref.get(sid, (0, 0))
+            ref[sid] = (max(h0, a.shape[0]), max(w0, a.shape[1]))
+    boss_files, boss_place, boss_fx = {}, {}, {}
+    for lvl, bdir in ((1, BOSS), (2, BOSS2)):
+        src = srcs[lvl]
         bglyphs = [bytes(64)]
         for name, sid in boss_frames:
-            a = src[sid]
+            a = src.get(sid, np.zeros(ref[sid], np.uint8))
             if a.shape != ref[sid]:
-                assert a.shape[0] <= ref[sid][0] and a.shape[1] <= ref[sid][1], f'boss {lvl} {sid} larger than level 1'
                 b = np.zeros(ref[sid], np.uint8)
                 b[:a.shape[0], :a.shape[1]] = a
                 a = b
@@ -368,7 +363,7 @@ def main(out):
                 bglyphs.append(bytes(64))
             if lvl == 1:
                 table.append(dict(name=name, base=base, w=w, h=h, pal=(BOSS_BANK << 4) | 15, hit=hitbox(a)))
-        assert swap0 + len(bglyphs) <= swap_end, f'boss {lvl} glyphs ({len(bglyphs)}) exceed the fighter/bomber area'
+        assert swap0 + len(bglyphs) <= swap_end, f'boss {lvl} glyphs ({len(bglyphs)}) exceed the aircraft area'
         bpal_raw = (bdir / 'palette.rgb').read_bytes()
         bp = [tuple(bpal_raw[i:i + 3]) for i in range(0, 48, 3)]
         if lvl == 1:
@@ -376,18 +371,19 @@ def main(out):
         boss_files[lvl] = b''.join(bglyphs) + bytes(ph.swap(c[ch]) for ch in range(3) for c in bp)
         (out / f'L{lvl}BOSS').write_bytes(boss_files[lvl])
         pl = json.loads((bdir / 'placement.json').read_text())
-        tur = pl['turrets']
-        rot = pl['rotors']
-        def place(pl):
-            tur, rot = pl['turrets'], (pl['rotors'] + [{'offset': [0, 0]}] * 4)[:4]
-            return ([t['offset'][0] for t in tur] + [pl['core']['offset'][0]] +
-                    [t['offset'][1] for t in tur] + [pl['core']['offset'][1]] +
-                    [r['offset'][0] for r in rot] + [r['offset'][1] for r in rot] +
-                    [r.get('phase_offset', 0) for r in rot])
-        boss_place[lvl] = place(pl) + place(pl.get('side', pl)) + place(pl.get('diag', pl))  # down / side / turning
-        assert len(boss_place[lvl]) == 66, f'boss {lvl}: 4 turrets, core and 4 rotors expected'
-        dust = (pl.get('diag', {}).get('dust', []) + [[0, 0]] * 4)[:4]
-        boss_dust[lvl] = [d[0] for d in dust] + [d[1] for d in dust]
+        tur, rot = pl['turrets'], (pl['rotors'] + [{'offset': [0, 0]}] * 4)[:4]
+        boss_place[lvl] = ([t['offset'][0] for t in tur] + [pl['core']['offset'][0]] +
+                           [t['offset'][1] for t in tur] + [pl['core']['offset'][1]] +
+                           [r['offset'][0] for r in rot] + [r['offset'][1] for r in rot] +
+                           [r.get('phase_offset', 0) for r in rot])
+        assert len(boss_place[lvl]) == 22, f'boss {lvl}: 4 turrets, core and up to 4 rotors expected'
+        # effects (Stage 11): flame x, y; spray x0-3, y0-3 (signed); spray count; rotor count; body box; x limit
+        bw, bh = pl.get('body_size', [96, 64])
+        fl = pl.get('flame', {}).get('offset', [0, 0])
+        sp = pl.get('spray', {}).get('offsets', [])
+        sp4 = (sp + [[0, 0]] * 4)[:4]
+        boss_fx[lvl] = [fl[0], fl[1]] + [o[0] & 0xff for o in sp4] + [o[1] & 0xff for o in sp4] + \
+            [len(sp), len(pl['rotors']), bw - 8, bh - 4, 320 - bw - 24, 1 if 'flame' in pl else 0]
         report.append(f'boss {lvl}: {len(bglyphs)} glyphs swapped in at glyph {swap0} (room {swap_end - swap0})')
     assert len(boss_files[1]) == len(boss_files[2])
     boss_consts = [f'.const BOSS_SWAP_GLYPH={swap0}', f'.const BOSS_GLYPHS={len(bglyphs)}',
@@ -514,7 +510,7 @@ def main(out):
     # boss part positions per level (Stage 9): part_dx[5], part_dy[5], rotor_dx[4], rotor_dy[4], rotor_ph[4]
     for lvl in (1, 2):
         tl.append(f'boss_place{lvl}: .byte ' + ','.join(str(v) for v in boss_place[lvl]))
-        tl.append(f'boss_dust{lvl}: .byte ' + ','.join(str(v) for v in boss_dust[lvl]))
+        tl.append(f'boss_fx{lvl}: .byte ' + ','.join(str(v) for v in boss_fx[lvl]))
     tl.append('boss_flash_pal: .byte ' + ','.join(str(ph.swap(c[ch])) for ch in range(3) for c in flash))
     (out / 'frames.inc').write_text('\n'.join(tl) + '\n')
 

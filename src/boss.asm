@@ -38,8 +38,6 @@
 .const BOSS_SWAP_ADDR = PIXIE_ADDR + BOSS_SWAP_GLYPH * 64
 
 // FLASH_BANK, PAL_BOSS_FLASH, FLASH_FRAMES_HIT: layout.asm (used by objects.asm before this file)
-.const CR_TURN = 36              // land cruiser turn: frames in all (Stage 10)
-.const CR_DIAG = 24              // ... the diagonal view from here on (12 frames old view, 24 diagonal)
 .const BS_OFF = 0
 .const BS_WAIT = 1
 .const BS_ENTER = 2
@@ -176,16 +174,21 @@ boss_wait:
     jsr boss_palette
     lda #MUS_BOSS
     jsr music_play
-    lda #0                      // driving down (level 2) / normal view
-    sta cr_mode
-    jsr boss_orient
+    lda #0                      // hover tank: flame idle, first target straight below (Stage 11)
+    sta hv_fp
+    lda #120
+    sta hv_ft
+    lda #BOSS_X0
+    sta hv_tx
+    lda #BOSS_Y
+    sta hv_ty
     lda #<BOSS_X0
     sta boss_x
     lda #>BOSS_X0
     sta boss_x+1
-    lda #<-64
+    lda #<-80                   // above the screen (bodies up to 80 high)
     sta boss_y
-    lda #>-64
+    lda #>-80
     sta boss_y+1
     lda #1
     sta boss_vx
@@ -260,9 +263,9 @@ boss_enter:
 // move sideways (1 px per frame, 2 in the core phase) and bob up and down (0.5 px per frame);
 // the parts fire in their own update
 boss_fight:
-    lda cur_level               // level 2: the land cruiser drives in the direction of its tracks
+    lda cur_level               // level 2: the hover tank glides in every direction (Stage 11)
     beq !+
-    jmp cruiser_fight
+    jmp hover_fight
 !:  jsr boss_step_x
     lda boss_state
     cmp #BS_CORE
@@ -313,7 +316,7 @@ boss_step_x:
     sta boss_x+1
     bne !turn+
     lda boss_x
-    cmp bo_xmax
+    cmp fx_xmax
     bcc !ok+
 !turn:
     lda boss_vx
@@ -359,7 +362,7 @@ boss_touch:
     lda tmp
     cmp #8
     bcc !no+
-    cmp bt_x1                   // 88 (driving down) / 60 (sideways)
+    cmp fx_bx                   // body width - 8 (boss_fx of the level)
     bcs !no+
     lda pl_y                    // player centre y - boss y in 4..60 (sideways 4..88)
     clc
@@ -369,192 +372,292 @@ boss_touch:
     bcc !no+
     cmp #4
     bcc !no+
-    cmp bt_y1
+    cmp fx_by
     bcs !no+
     lda #16
     jmp player_damage
 !no:
     rts
 
-// ---------------------------------------------------------------- land cruiser (level 2, Stage 9b)
-// Drives only along its tracks: down/up in the normal view, sideways in the side view (tracks horizontal).
-// Between the two it stops for 40 frames and turns on the spot (view and part positions change, centre kept).
-// cr_mode 0 drive y (to cr_ty), 1 turn to sideways, 2 drive x (to cr_tx, the player's x), 3 turn to down.
-// 1 px/frame, 1.5 in the core phase.
-cruiser_fight:
-    lda boss_y+1                // core opened while still driving in: keep descending first
+// ---------------------------------------------------------------- hover tank (level 2, Stage 11, PR #21)
+// Glides to a target point (both axes 1 px/frame, in the core phase 1.5), then picks a new one near the
+// player's x. In the core phase it fires its flame thrower: warning (small flame, harmless, it stops),
+// full jet (damage on contact), fading. Dust at the skirt while it moves (boss_draw).
+.const HV_YMIN = 16
+.const HV_WARN = 30                // flame phases (frames)
+.const HV_BURN = 50
+.const HV_FADE = 12
+hover_fight:
+    lda #0
+    sta hv_mov
+    lda boss_y+1                // core opened while still gliding in: keep descending first
     bne !in+
     lda boss_y
-    cmp #BOSS_Y
+    cmp #HV_YMIN                // the targets reach up to HV_YMIN
     bcs !+
 !in:
     inc boss_y
     bne !t+
     inc boss_y+1
-!t: jmp boss_touch
-!:  lda cr_mode
-    cmp #1
-    beq !turn+
-    cmp #3
-    beq !turn+
-    jsr cr_step
+!t: jmp hv_flame
+!:  lda hv_fp                   // no gliding while the flame thrower is busy
+    bne !t-
+    jsr hv_step
     lda boss_state
     cmp #BS_CORE
     bne !t-
     lda boss_t
     and #1
     bne !t-
-    jsr cr_step
-    jmp boss_touch
-!turn:                          // Stage 10: old view 12 frames, then the diagonal view with dust, then the new view
-    dec cr_t
-    lda cr_t
-    cmp #CR_DIAG
-    bne !nd+
-    lda cr_mode                 // to the diagonal view (96x96), centre kept
-    cmp #1
-    bne !fh+
-    sec                         // from driving down (96x64): y - 16
-    lda boss_y
-    sbc #16
-    sta boss_y
-    jmp !od+
-!fh:
-    sec                         // from sideways (64x96): x - 16
+    jsr hv_step
+    jmp hv_flame
+
+// one pixel towards (hv_tx, hv_ty) on each axis; there: a new target
+hv_step:
     lda boss_x
-    sbc #16
-    sta boss_x
-!od:
-    lda #2
-    jsr boss_orient
-    lda #SFX_EXPLODE            // rumble of the tracks
-    jsr sfx_play
-    jmp boss_touch
-!nd:
-    lda cr_t
-    beq !+
-    jmp boss_touch
-!:  lda cr_mode
-    cmp #1
-    bne !tov+
-    clc                         // diagonal -> sideways (64x96): x + 16
+    cmp hv_tx
+    beq !y+
+    inc hv_mov
+    bcc !r+
+    dec boss_x
+    jmp !y+
+!r: inc boss_x
+!y: lda boss_y
+    cmp hv_ty
+    beq !chk+
+    inc hv_mov
+    bcc !d+
+    dec boss_y
+    rts
+!d: inc boss_y
+    rts
+!chk:
     lda boss_x
-    adc #16
-    sta boss_x
-    lda #1
-    jsr boss_orient
-    lda #2
-    sta cr_mode
-    sec                         // target: the player's x (boss centre over the player), x 40..216
-    lda pl_x
-    sbc #32 - PL_HIT_CX
-    sta cr_tx
+    cmp hv_tx
+    beq !new+
+    rts
+!new:
+    // x: centre over the player +- up to 32 px, limited to 24..fx_xmax (16-bit, player x up to 320)
+    lda fx_bx                   // tmp2 = (width - 8) / 2 - PL_HIT_CX + 4 + 32
+    lsr
+    clc
+    adc #36 - PL_HIT_CX
+    sta tmp2
+    jsr random
+    and #63
+    clc
+    adc pl_x
+    sta tmp
     lda pl_x+1
+    adc #0
+    sta tmp+1
+    sec
+    lda tmp
+    sbc tmp2
+    sta tmp
+    lda tmp+1
     sbc #0
     bmi !lo+                    // left of 0
     bne !hi+                    // 256 and more
-    lda cr_tx
-    cmp #40
-    bcs !+
-!lo:
-    lda #40
-    bne !st+
-!:  cmp #217
+    lda tmp
+    cmp #24
+    bcc !lo+
+    cmp fx_xmax
     bcc !st+
 !hi:
-    lda #216
+    lda fx_xmax
+    jmp !st+
+!lo:
+    lda #24
 !st:
-    sta cr_tx
-    jmp boss_touch
-!tov:
-    clc                         // diagonal -> driving down (96x64): y + 16
-    lda boss_y
-    adc #16
-    sta boss_y
-    lda #0
-    jsr boss_orient
-    lda #0
-    sta cr_mode
-    lda cr_ty                   // alternately to y 20 and y 56
-    eor #(BOSS_Y ^ 56)
-    sta cr_ty
-    jmp boss_touch
+    sta hv_tx
+    jsr random                  // y: 16..47
+    and #31
+    clc
+    adc #HV_YMIN
+    sta hv_ty
+    rts
 
-// one pixel towards the target of the current mode; target reached: stop and turn
-cr_step:
-    lda cr_mode
-    bne !x+
-    lda boss_y
-    cmp cr_ty
-    beq !arr+
-    bcc !dn+
-    dec boss_y
-    rts
-!dn:
-    inc boss_y
-    rts
-!x: lda boss_x
-    cmp cr_tx
-    beq !arr+
-    bcc !rt+
-    dec boss_x
-    rts
-!rt:
-    inc boss_x
-    rts
-!arr:
-    inc cr_mode                 // 0 -> 1, 2 -> 3: turn
-    lda #CR_TURN
-    sta cr_t
-    rts
-cr_mode: .byte 0
-cr_t:    .byte 0
-cr_tx:   .byte 0
-cr_ty:   .byte 56
-
-// A = orientation (0 normal / driving down, 1 sideways): frames, part positions, body box, x limit
-boss_orient:
-    sta bo_dir
-    tax
-    lda bo_body_tab,x
-    sta bo_body
-    lda bo_core_tab,x
-    sta bo_core
-    lda bo_rotor_tab,x
-    sta bo_rotor
-    lda bt_x1_tab,x
-    sta bt_x1
-    lda bt_y1_tab,x
-    sta bt_y1
-    lda bo_xmax_tab,x
-    sta bo_xmax
-    lda bo_place_ofs,x          // part positions: 22 bytes of boss_place_cur at 22 * A
-    tax
-    ldy #0
-!:  lda boss_place_cur,x
-    sta part_dx,y
+// flame thrower (core phase, bosses with a flame): phase hv_fp 0 idle, 1 warning, 2 jet, 3 fading
+hv_flame:
+    lda fx_flame
+    beq hv_touch
+    lda boss_state
+    cmp #BS_CORE
+    beq !+
+hv_touch:
+    jmp boss_touch
+!:  dec hv_ft
+    bne !hit+
+    ldx hv_fp                   // next phase
     inx
-    iny
-    cpy #22
-    bne !-
+    cpx #4
+    bcc !+
+    ldx #0
+!:  stx hv_fp
+    lda hv_len,x
+    bne !+
+    jsr random                  // idle: 1.6-3.6 s
+    ora #80
+!:  sta hv_ft
+    cpx #2
+    bne !hit+
+    lda #SFX_BOMB               // the jet ignites
+    jsr sfx_play
+!hit:
+    lda hv_fp                   // full jet: the player in the flame takes damage
+    cmp #2
+    bne !touch+
+    lda pl_state
+    bne !touch+
+    clc                         // player centre x - (boss x + flame x) in 0..15
+    lda pl_x
+    adc #PL_HIT_CX
+    sta tmp
+    lda pl_x+1
+    adc #0
+    sta tmp+1
+    clc
+    lda boss_x
+    adc fx_flx
+    sta tmp2
+    lda boss_x+1
+    adc #0
+    sta tmp2+1
+    sec
+    lda tmp
+    sbc tmp2
+    sta tmp
+    lda tmp+1
+    sbc tmp2+1
+    bne !touch+
+    lda tmp
+    cmp #16
+    bcs !touch+
+    clc                         // player centre y - (boss y + flame y) in 0..31
+    lda boss_y
+    adc fx_fly
+    sta tmp
+    lda pl_y
+    clc
+    adc #PL_HIT_CY
+    sec
+    sbc tmp
+    bcc !touch+
+    cmp #32
+    bcs !touch+
+    lda #12
+    jsr player_damage
+!touch:
+    jmp boss_touch
+hv_len: .byte 0, HV_WARN, HV_BURN, HV_FADE
+hv_tx:  .byte BOSS_X0
+hv_ty:  .byte BOSS_Y
+hv_mov: .byte 0
+hv_fp:  .byte 0
+hv_ft:  .byte 120
+
+// effects and sizes of this level's boss (level_enter, from boss_fx1/2 of tools/import_art.py)
+boss_fx_cur: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 88, 60, BOSS_XMAX, 0
+.label fx_flx   = boss_fx_cur + 0     // flame position on the body
+.label fx_fly   = boss_fx_cur + 1
+.label fx_sx    = boss_fx_cur + 2     // dust positions x0-3, y0-3 (signed)
+.label fx_sy    = boss_fx_cur + 6
+.label fx_spn   = boss_fx_cur + 10    // number of dust positions
+.label fx_rotn  = boss_fx_cur + 11    // number of rotors
+.label fx_bx    = boss_fx_cur + 12    // body box for boss_touch: width - 8, height - 4
+.label fx_by    = boss_fx_cur + 13
+.label fx_xmax  = boss_fx_cur + 14    // right limit of x
+.label fx_flame = boss_fx_cur + 15    // 1 = flame thrower
+
+// dust at the skirt while gliding, flame jet in its phases (boss_draw)
+hv_draw:
+    lda hv_mov
+    beq !fl+
+    lda fx_spn
+    beq !fl+
+    sta bd_i
+    dec bd_i
+!sp:
+    ldx bd_i
+    ldy #0                      // x = boss x + signed offset
+    lda fx_sx,x
+    bpl !+
+    dey
+!:  clc
+    adc boss_x
+    sta px_x
+    tya
+    adc boss_x+1
+    sta px_x+1
+    ldy #0
+    lda fx_sy,x
+    bpl !+
+    dey
+!:  clc
+    adc boss_y
+    sta px_y
+    tya
+    adc boss_y+1
+    sta px_y+1
+    ldy #FR_BOSS_SPRAY0
+    lda frame_pal,y
+    sta px_pal
+    lda boss_t                  // three phases, shifted per cloud
+    lsr
+    lsr
+    clc
+    adc bd_i
+!:  cmp #3
+    bcc !+
+    sbc #3
+    bcs !-
+!:  clc
+    adc #FR_BOSS_SPRAY0
+    jsr pixie_draw
+    dec bd_i
+    bpl !sp-
+!fl:
+    lda hv_fp
+    bne !+
     rts
-bo_dir:   .byte 0
-bo_body:  .byte FR_BOSS_BODY
-bo_core:  .byte FR_BOSS_CORE
-bo_rotor: .byte FR_BOSS_ROTOR0
-bt_x1:    .byte 88
-bt_y1:    .byte 60
-bo_xmax:  .byte BOSS_XMAX
-// orientations: 0 normal / driving down, 1 sideways, 2 diagonal while turning (Stage 10, no rotors, dust)
-bo_body_tab:  .byte FR_BOSS_BODY, FR_BOSS_BODY_SIDE, FR_BOSS_BODY_DIAG
-bo_core_tab:  .byte FR_BOSS_CORE, FR_BOSS_CORE_SIDE, FR_BOSS_CORE_DIAG
-bo_rotor_tab: .byte FR_BOSS_ROTOR0, FR_BOSS_RSIDE0, FR_BOSS_RSIDE0
-bt_x1_tab:    .byte 88, 60, 88
-bt_y1_tab:    .byte 60, 88, 88
-bo_xmax_tab:  .byte BOSS_XMAX, 320 - 64 - 24, BOSS_XMAX
-bo_place_ofs: .byte 0, 22, 44
-boss_place_cur: .fill 66, 0       // part positions of this level's boss: normal, side, diagonal view (level_enter)
-boss_dust_cur:  .fill 8, 0        // dust positions on the diagonal view: x0-3, y0-3
+!:  clc
+    lda boss_x
+    adc fx_flx
+    sta px_x
+    lda boss_x+1
+    adc #0
+    sta px_x+1
+    clc
+    lda boss_y
+    adc fx_fly
+    sta px_y
+    lda boss_y+1
+    adc #0
+    sta px_y+1
+    ldy #FR_BOSS_FLAME0
+    lda frame_pal,y
+    sta px_pal
+    lda hv_fp
+    cmp #2
+    bne !+
+    lda boss_t                  // full jet: flickers between the full and the fading view
+    and #2
+    lsr
+    clc
+    adc #FR_BOSS_FLAME1
+    jmp pixie_draw
+!:  cmp #1
+    bne !+
+    lda boss_t                  // warning: the small flame flickers
+    and #4
+    beq !rts+
+    lda #FR_BOSS_FLAME0
+    jmp pixie_draw
+!:  lda #FR_BOSS_FLAME2
+    jmp pixie_draw
+!rts:
+    rts
 
 // core destroyed: explosions over the body, then everything back to normal
 boss_dying:
@@ -832,7 +935,7 @@ part_frame:
     lda obj_kind,x
     cmp #4
     bne !+
-    lda bo_core
+    lda #FR_BOSS_CORE
     sta obj_fr,x
     rts
 !:  asl
@@ -1000,49 +1103,14 @@ boss_draw:
     sta px_y
     lda boss_y+1
     sta px_y+1
-    ldy bo_body                 // view of the current orientation (Stage 9b)
+    ldy #FR_BOSS_BODY
     lda frame_pal,y
     sta px_pal
     tya
     jsr pixie_draw
-    lda bo_dir                  // diagonal view while turning: dust instead of rotors (Stage 10)
-    cmp #2
-    bne !rotors+
-    lda #3
-    sta bd_i
-!du:
-    ldx bd_i
-    clc
-    lda boss_x
-    adc boss_dust_cur,x
-    sta px_x
-    lda boss_x+1
-    adc #0
-    sta px_x+1
-    clc
-    lda boss_y
-    adc boss_dust_cur+4,x
-    sta px_y
-    lda boss_y+1
-    adc #0
-    sta px_y+1
-    ldy #FR_BOSS_DUST0
-    lda frame_pal,y
-    sta px_pal
-    lda boss_t                  // two phases, alternating per cloud
-    lsr
-    lsr
-    eor bd_i
-    and #1
-    clc
-    adc #FR_BOSS_DUST0
-    jsr pixie_draw
-    dec bd_i
-    bpl !du-
-    jmp bd_muzzles
-!rotors:
-    lda #3
-    sta bd_i
+    ldx fx_rotn                 // rotors / fans of this boss
+    dex
+    stx bd_i
 !rot:
     ldx bd_i
     clc
@@ -1069,11 +1137,11 @@ boss_draw:
     sbc #3
     bcs !-
 !:  clc
-    adc bo_rotor
+    adc #FR_BOSS_ROTOR0
     jsr pixie_draw
     dec bd_i
     bpl !rot-
-bd_muzzles:
+    jsr hv_draw                 // dust and flame of the hover tank (Stage 11)
     // muzzle flashes under firing turrets
     ldx #AIR_FIRST
 !mz:

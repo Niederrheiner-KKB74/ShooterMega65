@@ -307,6 +307,7 @@ so `RUN` works again after an exit.
 | 03.11.2026 | Stage 8c confirmed on hardware; balancing accepted by the owner |
 | 03.11.2026 | PR #17 and #18 (level 2 tileset, map, ruins, land cruiser) merged; Stage 9: level 2 with level change, own waves, music "Desert Heat", key 2 on the title starts level 2 |
 | 04.11.2026 | PR #20 merged; Stage 10: land cruiser turns through a diagonal view with dust |
+| 04.11.2026 | Stage 10 rejected (the diagonal view looks smaller); PR #21 merged; Stage 11: hover tank with dust and flame thrower replaces the land cruiser, Stage 10 is not tested on hardware |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
@@ -476,6 +477,17 @@ Requests while the plane is destroyed or inside the shop are dropped.
   position (40..216), stops, turns back. Stage 10 (PR #20): a turn takes 36 frames: 12 in the old view, then 24 in
   the diagonal view (`BOSS_BODY_DIAG`, 96×96, front down-left) with dust clouds (`BOSS_DUST0/1`) at the track ends
   and a rumble, then the new view. Boss area 323 of 324 glyphs; part positions 66 bytes per level (3 views). The quadrotor of level 1 keeps flying sideways with the bob.
+- **Stage 11 (PR #21): the hover tank replaces the land cruiser** (no turns any more, so no shrinking view).
+  `hover_fight` glides one pixel per frame on both axes (1.5 in the core phase) to a target point: x near the
+  player (± 32 px, limited to 24..`fx_xmax`), y 16..47; on arrival a new target. While it moves, dust (`BOSS_SPRAY0-2`,
+  32×16) is drawn at the skirt positions. In the core phase the flame thrower runs a cycle: idle 1.6–3.6 s, warning
+  30 frames (small flame `BOSS_FLAME0` flickers, harmless, the tank stops), jet 50 frames (`BOSS_FLAME1/2`, damage 12
+  when the player's centre is in the 16×32 box), fading 12 frames. Rotors: `fx_rotn` of them (quadrotor 4, hover
+  tank 2 fans).
+- Per-level boss tables from `import_art.py`: `boss_place1/2` (22 bytes: part and rotor positions) and `boss_fx1/2`
+  (16 bytes: flame position, 4 signed dust positions, dust count, rotor count, body box width − 8 / height − 4,
+  x limit, flame flag). `level_enter` copies them to `part_dx` and `boss_fx_cur`. Both bosses 205 of 324 glyphs.
+  The orientation code (`boss_orient`, `cruiser_fight`, the side and diagonal frames) is gone.
 - Title: key **2** starts directly in level 2 (test aid, also in release builds). Test define `START_LEVEL2`,
   `build.py --level2 FILE` builds another JSON as level 2.
 

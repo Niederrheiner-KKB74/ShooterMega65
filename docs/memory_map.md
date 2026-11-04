@@ -1,4 +1,4 @@
-# Memory map (Stage 10)
+# Memory map (Stage 11)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -178,7 +178,7 @@ integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1
 | `$8030000` | copy of the aircraft glyphs that the boss replaces (Stage 10: fighter, bomber, helicopter and armoured-plane frames, 323 glyphs, 20,672 bytes), saved after `PIXIES` is loaded, copied back after the boss |
 | `$8040000–$804FFFF` | Stage 9: level-1 pack: `+$0000` `L1GFX`, `+$4000` `L1DAT`, `+$7000` `L1DEST`, `+$9000` level-1 music piece (copied from the `MUSIC` slot at start) |
 | `$8050000–$805FFFF` | Stage 9: level-2 pack: `L2GFX`, `L2DAT`, `L2DEST`, `MUS2` at the same offsets |
-| `$8060000` | Stage 9: level-2 boss (`L2BOSS`, same layout as `L1BOSS`; Stage 10: 323 glyphs + palette, 20,720 bytes each) |
+| `$8060000` | Stage 9: level-2 boss (`L2BOSS`, same layout as `L1BOSS`; Stage 10: 323 glyphs + palette, 20,720 bytes each; Stage 11: 205 glyphs + palette, 13,168 bytes each) |
 | `$8070000–` | free |
 
 Detected at start (two patterns written by DMA and read back). Without attic RAM the title is loaded straight to
