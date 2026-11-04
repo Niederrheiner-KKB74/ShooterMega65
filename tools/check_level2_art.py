@@ -212,6 +212,9 @@ def check_boss():
     for n in need:
         if n not in frames:
             err(f'boss: frame {n} missing')
+    # as tools/import_art.py: frames of both bosses get the larger of the two sizes (level-1 quadrotor)
+    l1 = {f['id']: (f['width'], f['height'])
+          for f in json.loads((ROOT / 'assets/art/boss-level1/generated/indexed-source.json').read_text())}
     total = 1
     for fid, f in frames.items():
         w, h = f.get('width', 0), f.get('height', 0)
@@ -219,7 +222,8 @@ def check_boss():
             err(f'boss {fid}: {w}x{h}, width must be a multiple of 16 and height of 8')
             continue
         hexrows(f'boss {fid}', f.get('rows'), w, h, 2)
-        n = glyphs(w, h)
+        lw, lh = l1.get(fid, (w, h))
+        n = glyphs(max(w, lw), max(h, lh))
         total += n * (2 if fid.endswith('_southeast') else 1)   # south-west = mirrored south-east, stored too
     bw, bh = frames.get('body', {}).get('width', 0), frames.get('body', {}).get('height', 0)
     if bw > 128 or bh > 80:
@@ -260,6 +264,31 @@ def check_boss():
         err('placement.json side: "core" with "offset" missing')
     if len(side.get('rotors', [])) > 4:
         err('placement.json side: at most 4 "rotors"')
+    diag = pl.get('diag')                       # Stage 10: turning view (docs/chatgpt_level2c.md)
+    if diag is None:
+        err('placement.json: "diag" (turning view, docs/chatgpt_level2c.md) missing')
+        return
+    for n in ('body_diag', 'core_exposed_diag', 'dust_0', 'dust_1'):
+        if n not in frames:
+            err(f'boss: frame {n} missing')
+    bd = frames.get('body_diag', {})
+    dw, dh = bd.get('width', 0), bd.get('height', 0)
+    if dw > 96 or dh > 96:
+        err(f'boss body_diag: {dw}x{dh}, at most 96x96')
+    for n in ('dust_0', 'dust_1'):
+        if n in frames and (frames[n].get('width'), frames[n].get('height')) != (16, 16):
+            err(f'boss {n}: must be 16x16')
+    if len(diag.get('turrets', [])) != 4:
+        err('placement.json diag: exactly 4 "turrets"')
+    for t in diag.get('turrets', []):
+        ox, oy = t.get('offset', [999, 999])
+        if not (0 <= ox <= dw - 16 and 0 <= oy <= dh - 16):
+            err(f'placement.json diag: turret {t.get("id")} offset {t.get("offset")} outside the body')
+    if 'offset' not in diag.get('core', {}):
+        err('placement.json diag: "core" with "offset" missing')
+    dust = diag.get('dust', [])
+    if not 2 <= len(dust) <= 4:
+        err('placement.json diag: "dust" needs 2 to 4 positions')
 
 
 def main():
