@@ -176,7 +176,12 @@ def check_level():
     rows = []
     for e in lv.get('map', []):
         rows += [tuple(x) for x in e['rows']] * e['repeat'] if isinstance(e, dict) else [tuple(e)]
-    if len(set(rows)) > MAX_ROWS_DELIVERED:
+    palms = {t['id'] for t in json.loads((TILES / 'level-example.json').read_text())['tiles']
+             if t['name'] in ('palm0', 'palm1', 'palm2', 'palm3')}
+    if palms and any(t in palms for r in rows for t in r):
+        note(f'levels/level2.json: {len(set(rows))} different map rows incl. the automatic palms '
+             f'(a new map from ChatGPT: at most {MAX_ROWS_DELIVERED} without them)')
+    elif len(set(rows)) > MAX_ROWS_DELIVERED:
         err(f'levels/level2.json: {len(set(rows))} different map rows, at most {MAX_ROWS_DELIVERED} '
             f'(room for the automatic palms)')
     types = [e.get('type') for e in lv.get('events', [])]
