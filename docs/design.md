@@ -307,6 +307,7 @@ so `RUN` works again after an exit.
 | 03.11.2026 | Stage 8c confirmed on hardware; balancing accepted by the owner |
 | 03.11.2026 | PR #17 and #18 (level 2 tileset, map, ruins, land cruiser) merged; Stage 9: level 2 with level change, own waves, music "Desert Heat", key 2 on the title starts level 2 |
 | 04.11.2026 | PR #20 merged; Stage 10: land cruiser turns through a diagonal view with dust |
+| 05.11.2026 | Stage 11 confirmed on hardware; Stage 12: longer flame jet that shoots down and sweeps towards the player |
 | 04.11.2026 | Stage 10 rejected (the diagonal view looks smaller); PR #21 merged; Stage 11: hover tank with dust and flame thrower replaces the land cruiser, Stage 10 is not tested on hardware |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
@@ -484,6 +485,9 @@ Requests while the plane is destroyed or inside the shop are dropped.
   30 frames (small flame `BOSS_FLAME0` flickers, harmless, the tank stops), jet 50 frames (`BOSS_FLAME1/2`, damage 12
   when the player's centre is in the 16×32 box), fading 12 frames. Rotors: `fx_rotn` of them (quadrotor 4, hover
   tank 2 fans).
+- Stage 12: the jet grows by one 24-px segment every 4 frames to 5 segments (about 128 px; damage length
+  segments·24 + 8), lasts 80 frames, the tank sweeps towards the player at 0.5 px/frame while it burns (`hv_aimx`),
+  and the jet shrinks back from the tip in 15 frames.
 - Per-level boss tables from `import_art.py`: `boss_place1/2` (22 bytes: part and rotor positions) and `boss_fx1/2`
   (16 bytes: flame position, 4 signed dust positions, dust count, rotor count, body box width − 8 / height − 4,
   x limit, flame flag). `level_enter` copies them to `part_dx` and `boss_fx_cur`. Both bosses 205 of 324 glyphs.

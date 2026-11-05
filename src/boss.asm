@@ -385,8 +385,10 @@ boss_touch:
 // full jet (damage on contact), fading. Dust at the skirt while it moves (boss_draw).
 .const HV_YMIN = 16
 .const HV_WARN = 30                // flame phases (frames)
-.const HV_BURN = 50
-.const HV_FADE = 12
+.const HV_BURN = 80                // Stage 12: longer; the jet grows down to HV_SEGS segments of 32 px
+.const HV_FADE = 15
+.const HV_SEGS = 5                 // segments 24 px apart (they overlap, the flame frames taper)
+.const HV_GROW = 4                 // frames per new segment (the tip shoots down at 6 px/frame)
 hover_fight:
     lda #0
     sta hv_mov
@@ -437,14 +439,32 @@ hv_step:
     beq !new+
     rts
 !new:
-    // x: centre over the player +- up to 32 px, limited to 24..fx_xmax (16-bit, player x up to 320)
-    lda fx_bx                   // tmp2 = (width - 8) / 2 - PL_HIT_CX + 4 + 32
-    lsr
-    clc
-    adc #36 - PL_HIT_CX
-    sta tmp2
+    // x: centre over the player +- up to 32 px
     jsr random
     and #63
+    sec
+    sbc #32
+    sta hv_rnd
+    jsr hv_aimx
+    jmp !st+
+!st:
+    sta hv_tx
+    jsr random                  // y: 16..47
+    and #31
+    clc
+    adc #HV_YMIN
+    sta hv_ty
+    rts
+
+// A = boss x that puts the flame over the player (+ hv_rnd), limited to 24..fx_xmax (16-bit, player x up to 320)
+hv_aimx:
+    lda fx_flx                  // tmp2 = flame x + 8 - PL_HIT_CX + 32
+    clc
+    adc #40 - PL_HIT_CX
+    sta tmp2
+    lda hv_rnd
+    clc
+    adc #32
     clc
     adc pl_x
     sta tmp
@@ -463,20 +483,15 @@ hv_step:
     cmp #24
     bcc !lo+
     cmp fx_xmax
-    bcc !st+
+    bcc !rts+
 !hi:
     lda fx_xmax
-    jmp !st+
+    rts
 !lo:
     lda #24
-!st:
-    sta hv_tx
-    jsr random                  // y: 16..47
-    and #31
-    clc
-    adc #HV_YMIN
-    sta hv_ty
+!rts:
     rts
+hv_rnd: .byte 0
 
 // flame thrower (core phase, bosses with a flame): phase hv_fp 0 idle, 1 warning, 2 jet, 3 fading
 hv_flame:
@@ -495,7 +510,17 @@ hv_touch:
     bcc !+
     ldx #0
 !:  stx hv_fp
-    lda hv_len,x
+    lda #0
+    sta hv_seg
+    sta hv_sc
+    cpx #2
+    bne !+
+    inc hv_seg                  // jet: starts with one segment
+!:  cpx #3
+    bne !+
+    lda #HV_SEGS                // fading: the jet shrinks from the tip
+    sta hv_seg
+!:  lda hv_len,x
     bne !+
     jsr random                  // idle: 1.6-3.6 s
     ora #80
@@ -505,9 +530,9 @@ hv_touch:
     lda #SFX_BOMB               // the jet ignites
     jsr sfx_play
 !hit:
-    lda hv_fp                   // full jet: the player in the flame takes damage
-    cmp #2
-    bne !touch+
+    jsr hv_grow
+    lda hv_seg                  // jet (growing or fading): the player in the flame takes damage
+    beq !touch+
     lda pl_state
     bne !touch+
     clc                         // player centre x - (boss x + flame x) in 0..15
@@ -534,7 +559,17 @@ hv_touch:
     lda tmp
     cmp #16
     bcs !touch+
-    clc                         // player centre y - (boss y + flame y) in 0..31
+    lda hv_seg                  // length of the jet: segments * 24 + 8
+    asl
+    asl
+    asl
+    sta tmp2
+    asl
+    clc
+    adc tmp2
+    adc #8
+    sta tmp2
+    clc                         // player centre y - (boss y + flame y) in 0..length-1
     lda boss_y
     adc fx_fly
     sta tmp
@@ -544,13 +579,59 @@ hv_touch:
     sec
     sbc tmp
     bcc !touch+
-    cmp #32
+    cmp tmp2
     bcs !touch+
     lda #12
     jsr player_damage
 !touch:
     jmp boss_touch
 hv_len: .byte 0, HV_WARN, HV_BURN, HV_FADE
+
+// jet: one more segment every HV_GROW frames, the boss sweeps slowly towards the player (0.5 px/frame);
+// fading: one segment less every HV_FADE / HV_SEGS frames
+hv_grow:
+    lda hv_fp
+    cmp #2
+    bne !fade+
+    inc hv_sc
+    lda hv_sc
+    cmp #HV_GROW
+    bcc !sw+
+    lda #0
+    sta hv_sc
+    lda hv_seg
+    cmp #HV_SEGS
+    bcs !sw+
+    inc hv_seg
+!sw:
+    lda boss_t                  // sweep
+    and #1
+    bne !rts+
+    jsr hv_aimx
+    cmp boss_x
+    beq !rts+
+    bcc !l+
+    inc boss_x
+    rts
+!l: dec boss_x
+    rts
+!fade:
+    cmp #3
+    bne !rts+
+    inc hv_sc
+    lda hv_sc
+    cmp #HV_FADE / HV_SEGS
+    bcc !rts+
+    lda #0
+    sta hv_sc
+    lda hv_seg
+    beq !rts+
+    dec hv_seg
+!rts:
+    rts
+hv_seg: .byte 0
+hv_sc:  .byte 0
+hv_k:   .byte 0
 hv_tx:  .byte BOSS_X0
 hv_ty:  .byte BOSS_Y
 hv_mov: .byte 0
@@ -639,23 +720,54 @@ hv_draw:
     lda frame_pal,y
     sta px_pal
     lda hv_fp
-    cmp #2
-    bne !+
-    lda boss_t                  // full jet: flickers between the full and the fading view
-    and #2
-    lsr
-    clc
-    adc #FR_BOSS_FLAME1
-    jmp pixie_draw
-!:  cmp #1
-    bne !+
+    cmp #1
+    bne !jet+
     lda boss_t                  // warning: the small flame flickers
     and #4
     beq !rts+
     lda #FR_BOSS_FLAME0
     jmp pixie_draw
-!:  lda #FR_BOSS_FLAME2
-    jmp pixie_draw
+!jet:
+    lda hv_seg                  // jet: hv_seg segments below each other
+    beq !rts+
+    sta hv_k
+!seg:
+    lda hv_fp
+    cmp #3
+    beq !f2+
+    lda boss_t                  // full: flickers between full and fading view, shifted per segment
+    lsr
+    clc
+    adc hv_k
+    and #1
+    clc
+    adc #FR_BOSS_FLAME1
+    ldx hv_k                    // the tip (lowest segment) of a growing jet: the short flame
+    cpx #1
+    bne !+
+    ldx hv_seg
+    cpx #HV_SEGS
+    beq !+
+    lda #FR_BOSS_FLAME0
+    jmp !+
+!f2:
+    lda #FR_BOSS_FLAME2
+!:  ldx px_y                    // pixie_draw may change px_y: keep it
+    phx
+    ldx px_y+1
+    phx
+    jsr pixie_draw
+    plx
+    stx px_y+1
+    plx
+    clc
+    txa
+    adc #24
+    sta px_y
+    bcc !+
+    inc px_y+1
+!:  dec hv_k
+    bne !seg-
 !rts:
     rts
 
