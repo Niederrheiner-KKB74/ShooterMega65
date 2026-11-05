@@ -307,8 +307,8 @@ so `RUN` works again after an exit.
 | 03.11.2026 | Stage 8c confirmed on hardware; balancing accepted by the owner |
 | 03.11.2026 | PR #17 and #18 (level 2 tileset, map, ruins, land cruiser) merged; Stage 9: level 2 with level change, own waves, music "Desert Heat", key 2 on the title starts level 2 |
 | 04.11.2026 | PR #20 merged; Stage 10: land cruiser turns through a diagonal view with dust |
-| 05.11.2026 | Stage 11 confirmed on hardware; Stage 12: longer flame jet that shoots down and sweeps towards the player |
 | 04.11.2026 | Stage 10 rejected (the diagonal view looks smaller); PR #21 merged; Stage 11: hover tank with dust and flame thrower replaces the land cruiser, Stage 10 is not tested on hardware |
+| 05.11.2026 | Stage 11 confirmed on hardware; Stage 12: longer flame jet that shoots down and sweeps towards the player |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
