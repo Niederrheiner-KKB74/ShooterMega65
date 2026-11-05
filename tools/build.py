@@ -46,6 +46,8 @@ def main():
     ap.add_argument('--level', help='build this level JSON as L1 instead of the default test level')
     ap.add_argument('--level2', help='test build: this level JSON as L2')
     ap.add_argument('--test-credits', action='store_true', help='test build: start with 999 credits (shop tests)')
+    ap.add_argument('--music-level', type=int, default=1,
+                    help='listening test: this level piece plays as level-1 music (MUSICTEST key 1)')
     ap.add_argument('--define', action='append', default=[], help='test build: extra KickAssembler symbol (e.g. BOSS_TEST)')
     a = ap.parse_args()
     out = Path(a.out).resolve()
@@ -59,7 +61,7 @@ def main():
     print('\n'.join(make_shop.main(ROOT / 'build/gen')))     # shop overlay (Stage 3b)
     shop = (ROOT / 'build/gen/SHOP').read_bytes()
     try:
-        print('\n'.join(build_music.main(ROOT / 'build/gen')))   # music + sound effects (Stage 5)
+        print('\n'.join(build_music.main(ROOT / 'build/gen', a.music_level)))   # music + sound effects (Stage 5)
     except build_music.MusicError as e:
         sys.exit(f'music: {e}')
     music = (ROOT / 'build/gen/MUSIC').read_bytes()

@@ -10,6 +10,7 @@ bass/drum styles per section. Each voice is cut into 64-row patterns; identical 
   game_over    D minor, 2 bars, falling line, ends
   level_clear  D major fanfare, 3 bars, ends
   level2       "Desert Heat" (Stage 9) – E Phrygian dominant, 125 BPM (tempo 6), 40 bars, loops to bar 5
+  level3       "Open Waters" (Stage 13) – A Dorian, 125 BPM (tempo 6), 40 bars, loops to bar 5
 """
 import json
 from pathlib import Path
@@ -327,6 +328,75 @@ def level2():
     build('Desert Heat', 6, MUSIC_VOLUME, vs, 64, LEVEL_INST, ROOT / 'music/level2.json')
 
 
+def level3():
+    """Level 3 (open sea, oil rigs, carrier): A Dorian (A B C D E F# G), wide and rolling, level instruments."""
+    lead, harm, low = Voice(), Voice(), Voice()
+    # ---- intro (bars 1-4): suspended swell, the lead rises in the last bar
+    for c in ('Asus', 'D', 'Asus', 'D'):
+        arps(harm, c, 'push')
+    for root in ('A1', 'D2', 'A1', 'D2'):
+        bass_drums(low, root, 'bass_only')
+    lead.rest(48)
+    lead.melody([('E5', 2), ('G5', 2), ('A5', 2), ('B5', 2), ('C6', 4), ('B5', 4)], 'lead', True)
+    chords = ['Am', 'D', 'C', 'G', 'F', 'G', 'Am', 'E']
+    roots = ['A1', 'D2', 'C2', 'G1', 'F1', 'G1', 'A1', 'E2']
+    A = [('E5', 4), ('A5', 4), ('B5', 2), ('C6', 2), ('B5', 4),
+         ('A5', 6), ('F#5', 2), ('D5', 4), ('F#5', 4),
+         ('G5', 4), ('E5', 2), ('G5', 2), ('C6', 4), ('B5', 4),
+         ('B5', 8), ('A5', 4), ('G5', 4),
+         ('A5', 4), ('C6', 4), ('F6', 4), ('E6', 4),
+         ('D6', 6), ('B5', 2), ('G5', 4), ('B5', 4),
+         ('C6', 4), ('B5', 2), ('A5', 2), ('E5', 4), ('A5', 4),
+         ('G#5', 8), ('B5', 4), ('E6', 4)]
+
+    def section_a():
+        lead.melody(A, 'lead', True)
+        for c in chords:
+            arps(harm, c, 'push')
+        for i, r in enumerate(roots):
+            bass_drums(low, r, 'drive_fill' if i == 7 else 'drive')
+    section_a()
+    # ---- A' (bars 13-20): an octave of running eighths on top
+    lead.melody([('A5', 2), ('B5', 2), ('C6', 2), ('E6', 2), ('D6', 4), ('C6', 4),
+                 ('F#6', 6), ('E6', 2), ('D6', 4), ('A5', 4),
+                 ('G5', 2), ('C6', 2), ('E6', 2), ('G6', 2), ('E6', 4), ('C6', 4),
+                 ('D6', 8), ('B5', 4), ('D6', 4),
+                 ('C6', 2), ('A5', 2), ('F5', 2), ('A5', 2), ('C6', 4), ('F6', 4),
+                 ('E6', 4), ('D6', 2), ('B5', 2), ('G5', 4), ('D6', 4),
+                 ('E6', 4), ('C6', 2), ('A5', 2), ('B5', 4), ('C6', 4),
+                 ('B5', 4), ('G#5', 4), ('E5', 4), ('D5', 4)], 'lead', True)
+    for c in chords:
+        arps(harm, c, 'push')
+    for i, r in enumerate(roots):
+        bass_drums(low, r, 'drive_fill' if i == 7 else 'drive')
+    # ---- B (bars 21-28): sawtooth lead over held chords, the long swell
+    lead.melody([('A5', 8), ('C6', 4), ('A5', 4),
+                 ('B5', 8), ('D6', 4), ('B5', 4),
+                 ('G5', 8), ('B5', 4), ('E6', 4),
+                 ('C6', 12), ('-', 4),
+                 ('F6', 8), ('E6', 4), ('C6', 4),
+                 ('D6', 8), ('B5', 4), ('G5', 4),
+                 ('A5', 4), ('C6', 4), ('E6', 8),
+                 ('E6', 8), ('D6', 4), ('B5', 4)], 'lead_saw')
+    for c in ('F', 'G', 'Em', 'Am', 'F', 'G', 'Am', 'E'):
+        arps(harm, c, 'hold')
+    for i, r in enumerate(('F1', 'G1', 'E2', 'A1', 'F1', 'G1', 'A1', 'E2')):
+        bass_drums(low, r, 'drive_fill' if i in (3, 7) else 'drive')
+    # ---- breakdown (bars 29-32): calm water before the fleet
+    lead.melody([('A5', 4), ('-', 4), ('C6', 4), ('-', 4),
+                 ('A5', 4), ('-', 4), ('F5', 4), ('-', 4),
+                 ('G5', 4), ('B5', 4), ('D6', 8),
+                 ('B5', 4), ('G#5', 4), ('E5', 4), ('B4', 4)], 'lead')
+    for c in ('Am', 'F', 'G', 'E'):
+        arps(harm, c, 'stab')
+    for r in ('A1', 'F1', 'G1', 'E2'):
+        bass_drums(low, r, 'half')
+    # ---- A'' (bars 33-40), then back to bar 5
+    section_a()
+    vs = [fix_instruments(v) for v in (lead, harm, low)]
+    build('Open Waters', 6, MUSIC_VOLUME, vs, 64, LEVEL_INST, ROOT / 'music/level3.json')
+
+
 SHOP_INST = {
     'flute':  {'wave': 'triangle', 'attack': 2, 'decay': 9, 'sustain': 10, 'release': 8,
                'vibrato': {'delay': 14, 'speed': 3, 'depth': 3}},
@@ -467,5 +537,5 @@ def title():
 
 if __name__ == '__main__':
     (ROOT / 'music').mkdir(exist_ok=True)
-    level1(); shop(); game_over(); level_clear(); boss(); title(); level2()
-    print('music/level1.json, shop.json, game_over.json, level_clear.json, boss.json, title.json, level2.json written')
+    level1(); shop(); game_over(); level_clear(); boss(); title(); level2(); level3()
+    print('music/level1.json, shop.json, game_over.json, level_clear.json, boss.json, title.json, level2.json, level3.json written')

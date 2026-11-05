@@ -26,7 +26,7 @@ MUSIC_PIECES = ['level1', 'shop', 'game_over', 'level_clear', 'boss', 'title']  
 # Stage 9: the level piece (MUS_LEVEL1 = entry 0) lives in a slot behind the shared pieces. MUSIC carries level 1
 # there; LEVEL_PIECES[n] is built for the same slot (file MUSn, level 1 copy MUS1) and copied in by DMA when
 # level n+1 starts; entry 0 of the header table is set to that piece's header (MUS_HDR1, MUS_HDR2).
-LEVEL_PIECES = ['level1', 'level2']
+LEVEL_PIECES = ['level1', 'level2', 'level3']
 MUSIC_ADDR = 0x0AC00          # bank 0 behind the program (Stage 8: $AC00-$BFFF, 5 KB; Stage 7: $A000; before $5E000)
 MUSIC_MAX = 0xC000 - MUSIC_ADDR
 SID_CLOCK = 1_000_000            # MEGA65 SID clock as emulated by XEMU (check the tuning on hardware: A-4 = 440 Hz)
@@ -247,7 +247,8 @@ def build_sfx(path, blob):
     return names, addrs
 
 
-def main(out):
+def main(out, first=1):
+    """first: level piece that MUSIC carries in its slot (1 = level 1; others only for a listening test disk)."""
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     report = []
@@ -264,11 +265,11 @@ def main(out):
         level_hdr.append(build_piece(ROOT / 'music' / f'{lp}.json', b, report))
         level_data.append(bytes(b.data))
     slot_max = max(len(d) for d in level_data)
-    piece_a[0] = level_hdr[0]
+    piece_a[0] = level_hdr[first - 1]
     data = b'SM' + bytes((len(pieces), len(sfx_names))) + \
-        b''.join(bytes((a & 255, a >> 8)) for a in piece_a + sfx_a) + blob.data + level_data[0]
-    if len(data) - len(level_data[0]) + slot_max > MUSIC_MAX:
-        raise MusicError(f'MUSIC with the largest level piece is {len(data) - len(level_data[0]) + slot_max} '
+        b''.join(bytes((a & 255, a >> 8)) for a in piece_a + sfx_a) + blob.data + level_data[first - 1]
+    if len(data) - len(level_data[first - 1]) + slot_max > MUSIC_MAX:
+        raise MusicError(f'MUSIC with the largest level piece is {len(data) - len(level_data[first - 1]) + slot_max} '
                          f'bytes, maximum {MUSIC_MAX}')
     for n, d in enumerate(level_data, 1):
         (out / f'MUS{n}').write_bytes(d)

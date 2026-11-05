@@ -503,6 +503,9 @@ Requests while the plane is destroyed or inside the shop are dropped.
   frigate (32×64, 2 phases + wreck), and the tank area (48 glyphs) with a speedboat (16×16, 4 dirs × 4). Kept in
   attic RAM per level and copied in by `level_enter` (and after the boss); frame tables (size, palette, hit box)
   per level. Ships move like tanks but only on `water` tiles; guns on ships are the light ground gun.
+- Music: "Open Waters" (A Dorian, 125 BPM, 40 bars, loops to bar 5; `compose_music.py level3()`, file `MUS3` when
+  level 3 is on the disk). `build.py --music-level N` makes a listening disk with piece N as the level-1 music
+  (MUSICTEST key 1).
 - **Tile animation**: `animations.json` (≤ 8 animations, ≤ 24 animated map tiles, 2–4 phases, 4–32 frames per
   phase); the glyph data of a phase is copied over the phase-1 tile's glyphs. Animated tiles are not destroyable.
 
