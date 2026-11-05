@@ -495,6 +495,17 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - Title: key **2** starts directly in level 2 (test aid, also in release builds). Test define `START_LEVEL2`,
   `build.py --level2 FILE` builds another JSON as level 2.
 
+## 22a. Level 3 "Offshore" (planned, brief `docs/chatgpt_level3.md`)
+- Sea level: islands, oil rigs, research platforms, wind farm, naval base; boss: aircraft carrier (glides slowly,
+  bow wave/wake as `spray`, radar dishes as `rotors`, launches deck jets from a catapult, deck lift opens on the core).
+- **Per-level enemy set**: level 3 replaces the aircraft area (324 glyphs: fighter, helicopter, bomber, armoured
+  plane) with seaplane (16×16, 8 dirs × 3), navy helicopter (16×16, 8 × 3), patrol boat (32×32, 4 dirs × 2) and
+  frigate (32×64, 2 phases + wreck), and the tank area (48 glyphs) with a speedboat (16×16, 4 dirs × 4). Kept in
+  attic RAM per level and copied in by `level_enter` (and after the boss); frame tables (size, palette, hit box)
+  per level. Ships move like tanks but only on `water` tiles; guns on ships are the light ground gun.
+- **Tile animation**: `animations.json` (≤ 8 animations, ≤ 24 animated map tiles, 2–4 phases, 4–32 frames per
+  phase); the glyph data of a phase is copied over the phase-1 tile's glyphs. Animated tiles are not destroyable.
+
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
