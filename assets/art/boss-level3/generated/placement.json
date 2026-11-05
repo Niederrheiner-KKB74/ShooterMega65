@@ -1,0 +1,180 @@
+{
+  "body": "body",
+  "body_size": [
+    96,
+    112
+  ],
+  "palette": "boss",
+  "turrets": [
+    {
+      "id": "turret_nw",
+      "offset": [
+        8,
+        12
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "hit_rect": [
+        8,
+        12,
+        16,
+        16
+      ],
+      "independently_destructible": true,
+      "south": "turret_nw_south",
+      "southeast": "turret_nw_southeast",
+      "destroyed": "turret_nw_destroyed"
+    },
+    {
+      "id": "turret_ne",
+      "offset": [
+        72,
+        12
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "hit_rect": [
+        72,
+        12,
+        16,
+        16
+      ],
+      "independently_destructible": true,
+      "south": "turret_ne_south",
+      "southeast": "turret_ne_southeast",
+      "destroyed": "turret_ne_destroyed"
+    },
+    {
+      "id": "turret_sw",
+      "offset": [
+        12,
+        77
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "hit_rect": [
+        12,
+        77,
+        16,
+        16
+      ],
+      "independently_destructible": true,
+      "south": "turret_sw_south",
+      "southeast": "turret_sw_southeast",
+      "destroyed": "turret_sw_destroyed"
+    },
+    {
+      "id": "turret_se",
+      "offset": [
+        68,
+        77
+      ],
+      "size": [
+        16,
+        16
+      ],
+      "hit_rect": [
+        68,
+        77,
+        16,
+        16
+      ],
+      "independently_destructible": true,
+      "south": "turret_se_south",
+      "southeast": "turret_se_southeast",
+      "destroyed": "turret_se_destroyed"
+    }
+  ],
+  "core": {
+    "offset": [
+      30,
+      38
+    ],
+    "size": [
+      32,
+      32
+    ],
+    "hit_rect": [
+      38,
+      46,
+      16,
+      16
+    ],
+    "exposed_overlay": "core_exposed"
+  },
+  "rotors": [
+    {
+      "id": "radar",
+      "offset": [
+        65,
+        29
+      ],
+      "phase_offset": 0
+    }
+  ],
+  "rotor_frames": [
+    "rotor_0",
+    "rotor_1",
+    "rotor_2"
+  ],
+  "muzzle": {
+    "frames": [
+      "muzzle_0",
+      "muzzle_1"
+    ],
+    "south_offset_from_turret": [
+      0,
+      15
+    ]
+  },
+  "spray": {
+    "frames": [
+      "spray_0",
+      "spray_1",
+      "spray_2"
+    ],
+    "offsets": [
+      [
+        9,
+        -6
+      ],
+      [
+        55,
+        -6
+      ],
+      [
+        7,
+        93
+      ],
+      [
+        57,
+        93
+      ]
+    ]
+  },
+  "catapult": {
+    "frames": [
+      "deck_jet_0",
+      "deck_jet_1",
+      "deck_jet_2"
+    ],
+    "offset": [
+      42,
+      76
+    ]
+  },
+  "draw_order": [
+    "spray",
+    "body",
+    "radar",
+    "core_if_exposed",
+    "turrets",
+    "deck_jet"
+  ]
+}

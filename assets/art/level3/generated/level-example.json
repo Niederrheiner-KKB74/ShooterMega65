@@ -1,0 +1,634 @@
+{
+  "tiles": [
+    {
+      "id": 0,
+      "name": "deep0",
+      "palette": "water"
+    },
+    {
+      "id": 1,
+      "name": "deep1",
+      "palette": "water"
+    },
+    {
+      "id": 2,
+      "name": "deep2",
+      "palette": "water"
+    },
+    {
+      "id": 3,
+      "name": "deep3",
+      "palette": "water"
+    },
+    {
+      "id": 4,
+      "name": "sea0",
+      "palette": "water"
+    },
+    {
+      "id": 5,
+      "name": "sea1",
+      "palette": "water"
+    },
+    {
+      "id": 6,
+      "name": "sea2",
+      "palette": "water"
+    },
+    {
+      "id": 7,
+      "name": "sea3",
+      "palette": "water"
+    },
+    {
+      "id": 8,
+      "name": "shelf0",
+      "palette": "water"
+    },
+    {
+      "id": 9,
+      "name": "shelf1",
+      "palette": "water"
+    },
+    {
+      "id": 10,
+      "name": "shelf2",
+      "palette": "water"
+    },
+    {
+      "id": 11,
+      "name": "shelf3",
+      "palette": "water"
+    },
+    {
+      "id": 12,
+      "name": "blue",
+      "palette": "water"
+    },
+    {
+      "id": 13,
+      "name": "edge1",
+      "palette": "water"
+    },
+    {
+      "id": 14,
+      "name": "edge2",
+      "palette": "water"
+    },
+    {
+      "id": 15,
+      "name": "edge3",
+      "palette": "water"
+    },
+    {
+      "id": 16,
+      "name": "edge4",
+      "palette": "water"
+    },
+    {
+      "id": 17,
+      "name": "edge5",
+      "palette": "water"
+    },
+    {
+      "id": 18,
+      "name": "edge6",
+      "palette": "water"
+    },
+    {
+      "id": 19,
+      "name": "edge7",
+      "palette": "water"
+    },
+    {
+      "id": 20,
+      "name": "edge8",
+      "palette": "water"
+    },
+    {
+      "id": 21,
+      "name": "edge9",
+      "palette": "water"
+    },
+    {
+      "id": 22,
+      "name": "edge10",
+      "palette": "water"
+    },
+    {
+      "id": 23,
+      "name": "edge11",
+      "palette": "water"
+    },
+    {
+      "id": 24,
+      "name": "edge12",
+      "palette": "water"
+    },
+    {
+      "id": 25,
+      "name": "edge13",
+      "palette": "water"
+    },
+    {
+      "id": 26,
+      "name": "edge14",
+      "palette": "water"
+    },
+    {
+      "id": 27,
+      "name": "edge15",
+      "palette": "water"
+    },
+    {
+      "id": 28,
+      "name": "reef0",
+      "palette": "water"
+    },
+    {
+      "id": 29,
+      "name": "reef1",
+      "palette": "water"
+    },
+    {
+      "id": 30,
+      "name": "reef2",
+      "palette": "water"
+    },
+    {
+      "id": 31,
+      "name": "bank0",
+      "palette": "water"
+    },
+    {
+      "id": 32,
+      "name": "oil0",
+      "palette": "water"
+    },
+    {
+      "id": 33,
+      "name": "bank1",
+      "palette": "water"
+    },
+    {
+      "id": 34,
+      "name": "oil1",
+      "palette": "water"
+    },
+    {
+      "id": 35,
+      "name": "wake0",
+      "palette": "water"
+    },
+    {
+      "id": 36,
+      "name": "wake1",
+      "palette": "water"
+    },
+    {
+      "id": 37,
+      "name": "subsea_pipe",
+      "palette": "water"
+    },
+    {
+      "id": 38,
+      "name": "buoy",
+      "palette": "water"
+    },
+    {
+      "id": 39,
+      "name": "glint_0_0",
+      "palette": "water"
+    },
+    {
+      "id": 40,
+      "name": "glint_0_1",
+      "palette": "water"
+    },
+    {
+      "id": 41,
+      "name": "glint_1_0",
+      "palette": "water"
+    },
+    {
+      "id": 42,
+      "name": "glint_1_1",
+      "palette": "water"
+    },
+    {
+      "id": 43,
+      "name": "glint_2_0",
+      "palette": "water"
+    },
+    {
+      "id": 44,
+      "name": "glint_2_1",
+      "palette": "water"
+    },
+    {
+      "id": 45,
+      "name": "island1",
+      "palette": "nature"
+    },
+    {
+      "id": 46,
+      "name": "island2",
+      "palette": "nature"
+    },
+    {
+      "id": 47,
+      "name": "island3",
+      "palette": "nature"
+    },
+    {
+      "id": 48,
+      "name": "island4",
+      "palette": "nature"
+    },
+    {
+      "id": 49,
+      "name": "island5",
+      "palette": "nature"
+    },
+    {
+      "id": 50,
+      "name": "island6",
+      "palette": "nature"
+    },
+    {
+      "id": 51,
+      "name": "island7",
+      "palette": "nature"
+    },
+    {
+      "id": 52,
+      "name": "island8",
+      "palette": "nature"
+    },
+    {
+      "id": 53,
+      "name": "island9",
+      "palette": "nature"
+    },
+    {
+      "id": 54,
+      "name": "island10",
+      "palette": "nature"
+    },
+    {
+      "id": 55,
+      "name": "island11",
+      "palette": "nature"
+    },
+    {
+      "id": 56,
+      "name": "island12",
+      "palette": "nature"
+    },
+    {
+      "id": 57,
+      "name": "island13",
+      "palette": "nature"
+    },
+    {
+      "id": 58,
+      "name": "island14",
+      "palette": "nature"
+    },
+    {
+      "id": 59,
+      "name": "island15",
+      "palette": "nature"
+    },
+    {
+      "id": 60,
+      "name": "grass",
+      "palette": "nature"
+    },
+    {
+      "id": 61,
+      "name": "palm",
+      "palette": "nature"
+    },
+    {
+      "id": 62,
+      "name": "rocks",
+      "palette": "nature"
+    },
+    {
+      "id": 63,
+      "name": "palm_grove",
+      "palette": "nature"
+    },
+    {
+      "id": 64,
+      "name": "deck",
+      "palette": "structures"
+    },
+    {
+      "id": 65,
+      "name": "deck_l",
+      "palette": "structures"
+    },
+    {
+      "id": 66,
+      "name": "deck_r",
+      "palette": "structures"
+    },
+    {
+      "id": 67,
+      "name": "deck_top",
+      "palette": "structures"
+    },
+    {
+      "id": 68,
+      "name": "deck_bottom",
+      "palette": "structures"
+    },
+    {
+      "id": 69,
+      "name": "pier",
+      "palette": "structures"
+    },
+    {
+      "id": 70,
+      "name": "quay",
+      "palette": "structures"
+    },
+    {
+      "id": 71,
+      "name": "helipad",
+      "palette": "structures"
+    },
+    {
+      "id": 72,
+      "name": "solar",
+      "palette": "structures"
+    },
+    {
+      "id": 73,
+      "name": "bollards",
+      "palette": "structures"
+    },
+    {
+      "id": 74,
+      "name": "turbine_0_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 75,
+      "name": "turbine_0_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 76,
+      "name": "turbine_0_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 77,
+      "name": "turbine_0_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 78,
+      "name": "turbine_1_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 79,
+      "name": "turbine_1_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 80,
+      "name": "turbine_1_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 81,
+      "name": "turbine_1_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 82,
+      "name": "turbine_2_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 83,
+      "name": "turbine_2_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 84,
+      "name": "turbine_2_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 85,
+      "name": "turbine_2_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 86,
+      "name": "flare_0",
+      "palette": "structures"
+    },
+    {
+      "id": 87,
+      "name": "flare_1",
+      "palette": "structures"
+    },
+    {
+      "id": 88,
+      "name": "flare_2",
+      "palette": "structures"
+    },
+    {
+      "id": 89,
+      "name": "beacon_0",
+      "palette": "structures"
+    },
+    {
+      "id": 90,
+      "name": "beacon_1",
+      "palette": "structures"
+    },
+    {
+      "id": 91,
+      "name": "drill_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 92,
+      "name": "drill_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 93,
+      "name": "drill_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 94,
+      "name": "drill_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 95,
+      "name": "crane_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 96,
+      "name": "crane_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 97,
+      "name": "crane_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 98,
+      "name": "crane_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 99,
+      "name": "mast_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 100,
+      "name": "mast_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 101,
+      "name": "mast_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 102,
+      "name": "mast_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 103,
+      "name": "tank_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 104,
+      "name": "tank_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 105,
+      "name": "tank_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 106,
+      "name": "tank_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 107,
+      "name": "lighthouse_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 108,
+      "name": "lighthouse_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 109,
+      "name": "lighthouse_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 110,
+      "name": "lighthouse_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 111,
+      "name": "cargo_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 112,
+      "name": "cargo_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 113,
+      "name": "cargo_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 114,
+      "name": "cargo_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 115,
+      "name": "command_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 116,
+      "name": "command_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 117,
+      "name": "command_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 118,
+      "name": "command_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 119,
+      "name": "quarters_0_0",
+      "palette": "structures"
+    },
+    {
+      "id": 120,
+      "name": "quarters_1_0",
+      "palette": "structures"
+    },
+    {
+      "id": 121,
+      "name": "quarters_0_1",
+      "palette": "structures"
+    },
+    {
+      "id": 122,
+      "name": "quarters_1_1",
+      "palette": "structures"
+    },
+    {
+      "id": 123,
+      "name": "hall0",
+      "palette": "structures"
+    },
+    {
+      "id": 124,
+      "name": "hall1",
+      "palette": "structures"
+    },
+    {
+      "id": 125,
+      "name": "hall2",
+      "palette": "structures"
+    }
+  ]
+}

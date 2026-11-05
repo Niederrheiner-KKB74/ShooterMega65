@@ -1,0 +1,73 @@
+{
+  "animations": [
+    {
+      "name": "glitter",
+      "period": 12,
+      "phases": [
+        [
+          "glint_0_0",
+          "glint_0_1"
+        ],
+        [
+          "glint_1_0",
+          "glint_1_1"
+        ],
+        [
+          "glint_2_0",
+          "glint_2_1"
+        ]
+      ]
+    },
+    {
+      "name": "turbine",
+      "period": 6,
+      "phases": [
+        [
+          "turbine_0_0_0",
+          "turbine_0_1_0",
+          "turbine_0_0_1",
+          "turbine_0_1_1"
+        ],
+        [
+          "turbine_1_0_0",
+          "turbine_1_1_0",
+          "turbine_1_0_1",
+          "turbine_1_1_1"
+        ],
+        [
+          "turbine_2_0_0",
+          "turbine_2_1_0",
+          "turbine_2_0_1",
+          "turbine_2_1_1"
+        ]
+      ]
+    },
+    {
+      "name": "flare",
+      "period": 7,
+      "phases": [
+        [
+          "flare_0"
+        ],
+        [
+          "flare_1"
+        ],
+        [
+          "flare_2"
+        ]
+      ]
+    },
+    {
+      "name": "beacon",
+      "period": 16,
+      "phases": [
+        [
+          "beacon_0"
+        ],
+        [
+          "beacon_1"
+        ]
+      ]
+    }
+  ]
+}
