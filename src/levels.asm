@@ -11,7 +11,7 @@
 // everything bought are kept. After the last level comes level 1 again.
 // ----------------------------------------------------------------------------
 .const ATTIC_LEVELS = $8040000
-.const LEVELS       = 3
+.const LEVELS       = 4
 .const LV_GFX  = $0000
 .const LV_DAT  = $4000
 .const LV_DEST = $7000
@@ -19,19 +19,20 @@
 
 .errorif (LEVEL_DAT_MAX > LV_DEST - LV_DAT), "LnDAT overlaps LnDEST in the attic pack"
 .errorif (MUS_SLOT_MAX > $10000 - LV_MUS), "level music overlaps the next attic pack"
-lv_pack_bank: .byte $04, $05, $07       // attic bank of each level's pack and boss (Stage 13: tables)
-lv_boss_bank: .byte $02, $06, $08
-lv_set_bank:  .byte $03, $03, $09
-lv_sea:       .byte 0, 0, 1
-lv_kind_ofs:  .byte 0, 0, 5             // per level: kind_hp / kind_fire of fighter, bomber, heli, armoured, tank
-lv_kind_hp:   .byte 1, 6, 2, 10, 3,   2, 6, 3, 10, 3       // level 3: seaplane 2, navy heli 3 (ships: ship_guns)
-lv_kind_fire: .byte 3, 5, 3, 6, 2,    5, 8, 6, 10, 4       // enemy set (Stage 13): ENEM0 for levels 1 and 2, ENEM3
+lv_pack_bank: .byte $04, $05, $07, $0a  // attic bank of each level's pack and boss (Stage 13: tables)
+lv_boss_bank: .byte $02, $06, $08, $0b
+lv_set_bank:  .byte $03, $03, $09, $0c
+lv_sea:       .byte 0, 0, 1, 1          // tanks keep to bank-1 tiles: level 3 speedboats (water), level 4 mechs (streets)
+lv_tankmask:  .byte 1, 1, 0, 1          // tanks move every 2nd frame, speedboats every frame
+lv_kind_ofs:  .byte 0, 0, 5, 10         // per level: kind_hp / kind_fire of fighter, bomber, heli, armoured, tank
+lv_kind_hp:   .byte 1, 6, 2, 10, 3,   2, 6, 3, 10, 3,   2, 2, 3, 30, 4   // L3 seaplane 2, heli 3; L4 jet 2, drone 2
+lv_kind_fire: .byte 3, 5, 3, 6, 2,    5, 8, 6, 10, 4,   6, 6, 7, 10, 5       // enemy set (Stage 13): ENEM0 for levels 1 and 2, ENEM3
 .errorif (lv_boss_bank - lv_pack_bank != LEVELS), "one pack and one boss bank per level"
 
 cur_level:      .byte 0
 level_next_req: .byte 0
-mus_hdr_lo:     .byte <MUS_HDR1, <MUS_HDR2, <MUS_HDR3
-mus_hdr_hi:     .byte >MUS_HDR1, >MUS_HDR2, >MUS_HDR3
+mus_hdr_lo:     .byte <MUS_HDR1, <MUS_HDR2, <MUS_HDR3, <MUS_HDR4
+mus_hdr_hi:     .byte >MUS_HDR1, >MUS_HDR2, >MUS_HDR3, >MUS_HDR4
 
 // ============================================================== loading (KERNAL, at start)
 // all levels into attic RAM (attic_ok must be set). Carry set = failed (message printed).
@@ -126,6 +127,11 @@ levels_load:
     jmp lv_fail
 !:  lda #'3'
     ldx #$09
+    jsr lv_set_load
+    bcc !+
+    jmp lv_fail
+!:  lda #'4'                    // Stage 14: ENEM4 -> bank 12
+    ldx #$0c
     jsr lv_set_load
     bcc !+
     jmp lv_fail
@@ -234,7 +240,7 @@ le_fx:
     ldx cur_level               // the level's enemy set (Stage 13)
     lda lv_sea,x                // level 3: tanks are speedboats (water only, fast)
     sta tank_boat
-    eor #1
+    lda lv_tankmask,x
     sta mvmask+K_TANK
     ldy lv_kind_ofs,x           // hit points and firing chances of the enemy kinds (Stage 13b)
     ldx #0
@@ -249,10 +255,10 @@ le_fx:
     ldx cur_level
     jsr set_in
     jmp palette_init            // landscape banks 1-4 (and the boss bank back to normal)
-le_fx_lo:    .byte <boss_fx1, <boss_fx2, <boss_fx3
-le_fx_hi:    .byte >boss_fx1, >boss_fx2, >boss_fx3
-le_place_lo: .byte <boss_place1, <boss_place2, <boss_place3
-le_place_hi: .byte >boss_place1, >boss_place2, >boss_place3
+le_fx_lo:    .byte <boss_fx1, <boss_fx2, <boss_fx3, <boss_fx4
+le_fx_hi:    .byte >boss_fx1, >boss_fx2, >boss_fx3, >boss_fx4
+le_place_lo: .byte <boss_place1, <boss_place2, <boss_place3, <boss_place4
+le_place_hi: .byte >boss_place1, >boss_place2, >boss_place3, >boss_place4
 
 job_a_hdr:    DmaJob(DMA_CMD_COPY, ATTIC_LEVELS + LV_GFX, lev_gfxhdr, 4 + 192)
 job_a_glyphs: DmaJob(DMA_CMD_COPY, ATTIC_LEVELS + LV_GFX + 4 + 192, TILE_ADDR, 0)

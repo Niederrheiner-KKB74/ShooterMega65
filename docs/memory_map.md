@@ -1,4 +1,4 @@
-# Memory map (Stage 13)
+# Memory map (Stage 14)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -38,7 +38,7 @@ not in the zero page.
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
-| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`) |
+| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`) |
 
 ## Banks 4/5 (chip RAM)
 
@@ -184,7 +184,10 @@ integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1
 | `$8070000–$807FFFF` | Stage 13: level-3 pack: `L3GFX`, `L3DAT`, `L3DEST`, `MUS3` at the same offsets |
 | `$8080000` | Stage 13: level-3 boss (`L3BOSS`, carrier) |
 | `$8090000` | Stage 13: level-3 enemy set (`ENEM3`, layout as `ENEM0`) |
-| `$80A0000–` | free |
+| `$80A0000–$80AFFFF` | Stage 14: level-4 pack (`L4GFX`, `L4DAT`, `L4DEST`, `MUS4`) |
+| `$80B0000` | Stage 14: level-4 boss (`L4BOSS`, mech; all bosses 237 glyphs + palette, 15,216 bytes each) |
+| `$80C0000` | Stage 14: level-4 enemy set (`ENEM4`) |
+| `$80D0000–` | free |
 
 Since Stage 13 the banks of each level are tables in `levels.asm` (`lv_pack_bank`, `lv_boss_bank`, `lv_set_bank`).
 
@@ -194,4 +197,4 @@ Detected at start (two patterns written by DMA and read back). Without attic RAM
 
 ## Files on the D81 (Stage 13)
 
-`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS`, `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `L3GFX`, `L3DAT`, `L3DEST`, `L3BOSS`, `ENEM0`, `ENEM3`, `MUS2`, `MUS3` (SEQ).
+`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS`, `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `L3GFX`, `L3DAT`, `L3DEST`, `L3BOSS`, `L4GFX`, `L4DAT`, `L4DEST`, `L4BOSS`, `ENEM0`, `ENEM3`, `ENEM4`, `SPRITES`, `MUS2`, `MUS3`, `MUS4` (SEQ). Stage 14: the player sprite frames (`SPRITES`, 3 KB) are loaded straight to `SPRITE_ADDR` instead of being part of the PRG.

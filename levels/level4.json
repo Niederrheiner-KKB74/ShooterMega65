@@ -381,13 +381,1453 @@
     [24, 25, 26, 8, 2, 23, 24, 25, 8, 0, 0, 0, 2, 25, 26, 27, 28, 23, 24, 25, 26],
     [24, 25, 26, 8, 2, 23, 24, 25, 8, 16, 16, 16, 2, 25, 26, 27, 28, 23, 24, 25, 26]
   ],
-  "paths": {},
-  "formations": {},
+  "paths": {
+    "swoop": [
+      ["move", 40, 0, 2],
+      ["move", 40, 1, 1.5],
+      ["fire"],
+      ["move", 80, 0.5, 2.5],
+      ["end"]
+    ],
+    "snake": [
+      ["sine", 40, 96, 2, 1.25],
+      ["fire"],
+      ["sine", 40, 96, 1, 1.75],
+      ["end"]
+    ],
+    "loop": [
+      ["move", 48, 0, 2],
+      ["move", 6, 0.5, 2.0],
+      ["move", 6, 1.0, 1.75],
+      ["move", 6, 1.75, 1.0],
+      ["move", 6, 2.0, 0.5],
+      ["move", 6, 2.0, -0.5],
+      ["move", 6, 1.75, -1.0],
+      ["move", 6, 1.0, -1.75],
+      ["move", 6, 0.5, -2.0],
+      ["move", 6, -0.5, -2.0],
+      ["move", 6, -1.0, -1.75],
+      ["move", 6, -1.75, -1.0],
+      ["move", 6, -2.0, -0.5],
+      ["move", 6, -2.0, 0.5],
+      ["move", 6, -1.75, 1.0],
+      ["move", 6, -1.0, 1.75],
+      ["move", 6, -0.5, 2.0],
+      ["fire"],
+      ["move", 127, 0, 2.5],
+      ["end"]
+    ],
+    "u_turn": [
+      ["move", 50, 0, 2.5],
+      ["fire"],
+      ["move", 6, 0.5, 2.5],
+      ["move", 6, 1.5, 2.0],
+      ["move", 6, 2.0, 1.5],
+      ["move", 6, 2.5, 0.5],
+      ["move", 6, 2.5, -0.5],
+      ["move", 6, 2.0, -1.5],
+      ["move", 6, 1.5, -2.0],
+      ["move", 6, 0.5, -2.5],
+      ["move", 127, 0, -2.5],
+      ["end"]
+    ],
+    "side_in": [
+      ["move", 30, 2, 0.5],
+      ["move", 6, 2.0, 0.25],
+      ["move", 6, 1.75, 1.0],
+      ["move", 6, 1.5, 1.5],
+      ["move", 6, 1.0, 1.75],
+      ["move", 6, 0.25, 2.0],
+      ["fire"],
+      ["move", 127, 0, 2],
+      ["end"]
+    ],
+    "zigzag": [
+      ["move", 30, 1.5, 1.5],
+      ["move", 30, -1.5, 1.5],
+      ["fire"],
+      ["move", 30, 1.5, 1.5],
+      ["move", 30, -1.5, 1.5],
+      ["move", 127, 0, 2],
+      ["end"]
+    ],
+    "strafe": [
+      ["move", 127, 2.25, 0.25],
+      ["end"]
+    ],
+    "v_dive": [
+      ["move", 36, 0, 1.5],
+      ["aim", 50, 1],
+      ["fire"],
+      ["move", 127, 0, 3],
+      ["end"]
+    ],
+    "hover": [
+      ["move", 50, 0, 1.5],
+      ["wait", 30],
+      ["fire"],
+      ["aim", 60, 0.75],
+      ["fire"],
+      ["wait", 20],
+      ["move", 127, -1.5, 0.5],
+      ["end"]
+    ],
+    "heli_ring": [
+      ["move", 40, 0, 1.5],
+      ["move", 6, 0.25, 1.5],
+      ["move", 6, 0.5, 1.5],
+      ["move", 6, 0.75, 1.25],
+      ["move", 6, 1.0, 1.0],
+      ["move", 6, 1.25, 0.75],
+      ["move", 6, 1.5, 0.5],
+      ["move", 6, 1.5, 0.0],
+      ["move", 6, 1.5, -0.25],
+      ["move", 6, 1.25, -0.75],
+      ["move", 6, 1.25, -1.0],
+      ["move", 6, 1.0, -1.25],
+      ["move", 6, 0.75, -1.25],
+      ["move", 6, 0.25, -1.5],
+      ["move", 6, 0.0, -1.5],
+      ["move", 6, -0.5, -1.5],
+      ["move", 6, -0.75, -1.25],
+      ["move", 6, -1.0, -1.0],
+      ["move", 6, -1.25, -0.75],
+      ["move", 6, -1.5, -0.5],
+      ["move", 6, -1.5, -0.25],
+      ["fire"],
+      ["wait", 20],
+      ["move", 127, 0, 1.5],
+      ["end"]
+    ],
+    "cross": [
+      ["move", 127, 1.25, 1],
+      ["fire"],
+      ["move", 127, 1.25, 1],
+      ["end"]
+    ],
+    "weave": [
+      ["move", 60, 0, 1],
+      ["move", 50, 1, 0.75],
+      ["fire"],
+      ["move", 60, -1, 0.75],
+      ["move", 127, 0, 1.25],
+      ["end"]
+    ],
+    "stop_fire": [
+      ["move", 70, 0, 1],
+      ["wait", 30],
+      ["fire"],
+      ["wait", 40],
+      ["fire"],
+      ["move", 60, 0.75, 0.5],
+      ["fire"],
+      ["move", 127, 0, 1.5],
+      ["end"]
+    ],
+    "sweep": [
+      ["move", 80, 0, 0.75],
+      ["fire"],
+      ["move", 64, 1.25, 0.5],
+      ["fire"],
+      ["move", 96, -1.25, 0.5],
+      ["move", 127, 0, 1.5],
+      ["end"]
+    ],
+    "dive_aim": [
+      ["move", 30, 0, 2.5],
+      ["aim", 40, 1.75],
+      ["fire"],
+      ["move", 127, 0, 3],
+      ["end"]
+    ],
+    "scissor": [
+      ["move", 60, 1.75, 1.5],
+      ["fire"],
+      ["move", 127, 1.75, 1.5],
+      ["end"]
+    ],
+    "spiral": [
+      ["move", 30, 0, 2],
+      ["move", 6, 0.5, 2.25],
+      ["move", 6, 1.5, 1.75],
+      ["move", 6, 2.0, 0.75],
+      ["move", 6, 2.25, -0.25],
+      ["move", 6, 2.0, -1.25],
+      ["move", 6, 1.25, -2.0],
+      ["move", 6, 0.25, -2.25],
+      ["move", 6, -0.75, -2.0],
+      ["move", 6, -1.75, -1.5],
+      ["move", 6, -2.25, -0.5],
+      ["move", 6, -2.25, 0.5],
+      ["move", 6, -1.75, 1.5],
+      ["move", 6, -0.75, 2.0],
+      ["move", 6, 0.25, 2.25],
+      ["move", 6, 1.25, 2.0],
+      ["move", 6, 2.0, 1.25],
+      ["move", 6, 2.25, 0.25],
+      ["move", 6, 2.0, -0.75],
+      ["move", 6, 1.5, -1.75],
+      ["move", 6, 0.5, -2.25],
+      ["fire"],
+      ["move", 127, 0, 2.5],
+      ["end"]
+    ],
+    "swirl_side": [
+      ["move", 40, 2, 0.25],
+      ["move", 6, 2.0, 0.25],
+      ["move", 6, 1.75, 1.0],
+      ["move", 6, 1.5, 1.5],
+      ["move", 6, 1.0, 1.75],
+      ["move", 6, 0.25, 2.0],
+      ["move", 6, -0.25, 2.0],
+      ["move", 6, -1.0, 1.75],
+      ["move", 6, -1.5, 1.5],
+      ["move", 6, -1.75, 1.0],
+      ["move", 6, -2.0, 0.25],
+      ["move", 6, -2.0, -0.25],
+      ["move", 6, -1.75, -1.0],
+      ["move", 6, -1.5, -1.5],
+      ["move", 6, -1.0, -1.75],
+      ["move", 6, -0.25, -2.0],
+      ["fire"],
+      ["move", 127, 0, 2.25],
+      ["end"]
+    ],
+    "heli_pop": [
+      ["move", 35, 0, 2],
+      ["wait", 20],
+      ["aim", 30, 0.5],
+      ["fire"],
+      ["wait", 15],
+      ["fire"],
+      ["move", 127, 0, -1.25],
+      ["end"]
+    ],
+    "heli_side": [
+      ["move", 50, 1.5, 0.5],
+      ["wait", 25],
+      ["fire"],
+      ["aim", 40, 0.75],
+      ["fire"],
+      ["move", 127, 1.5, -0.5],
+      ["end"]
+    ]
+  },
+  "formations": {
+    "swoop8": {
+      "enemy": "fighter",
+      "count": 8,
+      "path": "swoop",
+      "delay": 14,
+      "x": 40,
+      "y": -24
+    },
+    "swoop6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "swoop",
+      "delay": 14,
+      "x": 40,
+      "y": -24
+    },
+    "snake8": {
+      "enemy": "fighter",
+      "count": 8,
+      "path": "snake",
+      "delay": 14,
+      "x": 136,
+      "y": -24
+    },
+    "loop6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "loop",
+      "delay": 16,
+      "x": 70,
+      "y": -24
+    },
+    "uturn6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "u_turn",
+      "delay": 12,
+      "x": 100,
+      "y": -24
+    },
+    "side6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "side_in",
+      "delay": 14,
+      "x": -32,
+      "y": 24
+    },
+    "zigzag6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "zigzag",
+      "delay": 16,
+      "x": 60,
+      "y": -24
+    },
+    "strafe5": {
+      "enemy": "fighter",
+      "count": 5,
+      "path": "strafe",
+      "delay": 18,
+      "x": -32,
+      "y": 8
+    },
+    "v_lead": {
+      "enemy": "fighter",
+      "count": 1,
+      "path": "v_dive",
+      "delay": 0,
+      "x": 152,
+      "y": -24
+    },
+    "v_wing": {
+      "enemy": "fighter",
+      "count": 2,
+      "path": "v_dive",
+      "delay": 16,
+      "x": 0,
+      "y": -40
+    },
+    "hover4": {
+      "enemy": "helicopter",
+      "count": 4,
+      "path": "hover",
+      "delay": 28,
+      "x": 60,
+      "y": -24
+    },
+    "ring5": {
+      "enemy": "helicopter",
+      "count": 5,
+      "path": "heli_ring",
+      "delay": 22,
+      "x": 120,
+      "y": -24
+    },
+    "cross4": {
+      "enemy": "bomber",
+      "count": 4,
+      "path": "cross",
+      "delay": 32,
+      "x": -24,
+      "y": -40
+    },
+    "weave4": {
+      "enemy": "bomber",
+      "count": 4,
+      "path": "weave",
+      "delay": 30,
+      "x": 140,
+      "y": -40
+    },
+    "stop3": {
+      "enemy": "armoured",
+      "count": 3,
+      "path": "stop_fire",
+      "delay": 40,
+      "x": 80,
+      "y": -40
+    },
+    "sweep3": {
+      "enemy": "armoured",
+      "count": 3,
+      "path": "sweep",
+      "delay": 36,
+      "x": 144,
+      "y": -40
+    },
+    "dive6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "dive_aim",
+      "delay": 12,
+      "x": 48,
+      "y": -24
+    },
+    "scissor5": {
+      "enemy": "fighter",
+      "count": 5,
+      "path": "scissor",
+      "delay": 14,
+      "x": -24,
+      "y": -24
+    },
+    "spiral5": {
+      "enemy": "fighter",
+      "count": 5,
+      "path": "spiral",
+      "delay": 18,
+      "x": 110,
+      "y": -24
+    },
+    "swirl6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "swirl_side",
+      "delay": 14,
+      "x": -32,
+      "y": 40
+    },
+    "hpop3": {
+      "enemy": "helicopter",
+      "count": 3,
+      "path": "heli_pop",
+      "delay": 24,
+      "x": 60,
+      "y": -24
+    },
+    "hside3": {
+      "enemy": "helicopter",
+      "count": 3,
+      "path": "heli_side",
+      "delay": 26,
+      "x": -32,
+      "y": 30
+    }
+  },
   "events": [
+    {
+      "row": 10,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": false
+    },
+    {
+      "row": 14,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 104,
+      "dir": "west"
+    },
+    {
+      "row": 16,
+      "type": "formation",
+      "formation": "hpop3",
+      "mirror": false
+    },
+    {
+      "row": 16,
+      "type": "formation",
+      "formation": "cross4",
+      "mirror": false
+    },
+    {
+      "row": 18,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 240
+    },
+    {
+      "row": 22,
+      "type": "formation",
+      "formation": "scissor5",
+      "mirror": false
+    },
+    {
+      "row": 22,
+      "type": "formation",
+      "formation": "scissor5",
+      "mirror": true
+    },
+    {
+      "row": 26,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 152,
+      "dir": "south"
+    },
+    {
+      "row": 29,
+      "type": "formation",
+      "formation": "spiral5",
+      "mirror": false
+    },
+    {
+      "row": 32,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 248
+    },
+    {
+      "row": 32,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 120,
+      "dir": "south"
+    },
+    {
+      "row": 35,
+      "type": "formation",
+      "formation": "hside3",
+      "mirror": false
+    },
+    {
+      "row": 35,
+      "type": "formation",
+      "formation": "side6",
+      "mirror": true
+    },
+    {
+      "row": 38,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 240,
+      "dir": "east"
+    },
+    {
+      "row": 41,
+      "type": "formation",
+      "formation": "v_lead",
+      "mirror": false
+    },
+    {
+      "row": 41,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": false,
+      "x": 120
+    },
+    {
+      "row": 41,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": true,
+      "x": 120
+    },
+    {
+      "row": 46,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 240
+    },
+    {
+      "row": 47,
+      "type": "formation",
+      "formation": "swirl6",
+      "mirror": false
+    },
+    {
+      "row": 47,
+      "type": "formation",
+      "formation": "weave4",
+      "mirror": true
+    },
+    {
+      "row": 50,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 248,
+      "dir": "east"
+    },
+    {
+      "row": 54,
+      "type": "formation",
+      "formation": "ring5",
+      "mirror": false
+    },
+    {
+      "row": 54,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": true
+    },
+    {
+      "row": 58,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 128,
+      "dir": "south"
+    },
+    {
+      "row": 60,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 272
+    },
+    {
+      "row": 61,
+      "type": "formation",
+      "formation": "snake8",
+      "mirror": false
+    },
+    {
+      "row": 61,
+      "type": "formation",
+      "formation": "hpop3",
+      "mirror": true
+    },
+    {
+      "row": 62,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 168,
+      "dir": "east"
+    },
+    {
+      "row": 68,
+      "type": "formation",
+      "formation": "scissor5",
+      "mirror": true
+    },
+    {
+      "row": 68,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": false
+    },
+    {
+      "row": 74,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 112
+    },
+    {
+      "row": 74,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 112,
+      "dir": "south"
+    },
+    {
+      "row": 75,
+      "type": "formation",
+      "formation": "loop6",
+      "mirror": false
+    },
+    {
+      "row": 75,
+      "type": "formation",
+      "formation": "loop6",
+      "mirror": true
+    },
+    {
+      "row": 80,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 160,
+      "dir": "south"
+    },
+    {
+      "row": 82,
+      "type": "formation",
+      "formation": "hside3",
+      "mirror": false
+    },
+    {
+      "row": 82,
+      "type": "formation",
+      "formation": "stop3",
+      "mirror": true
+    },
+    {
+      "row": 86,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 192,
+      "dir": "east"
+    },
+    {
+      "row": 88,
+      "type": "formation",
+      "formation": "spiral5",
+      "mirror": true
+    },
+    {
+      "row": 88,
+      "type": "formation",
+      "formation": "zigzag6",
+      "mirror": false
+    },
+    {
+      "row": 88,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 56
+    },
+    {
+      "row": 95,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": false
+    },
+    {
+      "row": 95,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": true
+    },
+    {
+      "row": 100,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 48,
+      "dir": "east"
+    },
+    {
+      "row": 102,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": false
+    },
+    {
+      "row": 102,
+      "type": "formation",
+      "formation": "swirl6",
+      "mirror": true
+    },
+    {
+      "row": 102,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 272
+    },
+    {
+      "row": 104,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 160,
+      "dir": "south"
+    },
+    {
+      "row": 109,
+      "type": "formation",
+      "formation": "swoop8",
+      "mirror": false
+    },
+    {
+      "row": 109,
+      "type": "formation",
+      "formation": "hpop3",
+      "mirror": true
+    },
+    {
+      "row": 112,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 192,
+      "dir": "east"
+    },
+    {
+      "row": 116,
+      "type": "formation",
+      "formation": "scissor5",
+      "mirror": false
+    },
+    {
+      "row": 116,
+      "type": "formation",
+      "formation": "scissor5",
+      "mirror": true
+    },
+    {
+      "row": 116,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 256
+    },
+    {
+      "row": 123,
+      "type": "formation",
+      "formation": "ring5",
+      "mirror": true
+    },
+    {
+      "row": 123,
+      "type": "formation",
+      "formation": "cross4",
+      "mirror": false
+    },
+    {
+      "row": 124,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 192,
+      "dir": "west"
+    },
+    {
+      "row": 128,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 136,
+      "dir": "south"
+    },
+    {
+      "row": 130,
+      "type": "formation",
+      "formation": "v_lead",
+      "mirror": false,
+      "x": 60
+    },
+    {
+      "row": 130,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": false,
+      "x": 28
+    },
+    {
+      "row": 130,
+      "type": "formation",
+      "formation": "v_lead",
+      "mirror": true,
+      "x": 60
+    },
+    {
+      "row": 130,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": true,
+      "x": 28
+    },
+    {
+      "row": 130,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 184
+    },
+    {
+      "row": 136,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 32,
+      "dir": "west"
+    },
+    {
+      "row": 137,
+      "type": "formation",
+      "formation": "spiral5",
+      "mirror": false
+    },
+    {
+      "row": 137,
+      "type": "formation",
+      "formation": "hside3",
+      "mirror": true
+    },
+    {
+      "row": 144,
+      "type": "formation",
+      "formation": "uturn6",
+      "mirror": false
+    },
+    {
+      "row": 144,
+      "type": "formation",
+      "formation": "uturn6",
+      "mirror": true
+    },
+    {
+      "row": 144,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 104
+    },
+    {
+      "row": 148,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 48,
+      "dir": "south"
+    },
+    {
+      "row": 151,
+      "type": "formation",
+      "formation": "hpop3",
+      "mirror": false
+    },
+    {
+      "row": 151,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": true
+    },
+    {
+      "row": 152,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 152,
+      "dir": "south"
+    },
+    {
+      "row": 158,
+      "type": "formation",
+      "formation": "swirl6",
+      "mirror": false
+    },
+    {
+      "row": 158,
+      "type": "formation",
+      "formation": "snake8",
+      "mirror": true
+    },
+    {
+      "row": 158,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 64
+    },
+    {
+      "row": 160,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 176,
+      "dir": "east"
+    },
+    {
+      "row": 165,
+      "type": "formation",
+      "formation": "weave4",
+      "mirror": false
+    },
+    {
+      "row": 165,
+      "type": "formation",
+      "formation": "weave4",
+      "mirror": true
+    },
+    {
+      "row": 172,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": false
+    },
+    {
+      "row": 172,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": true
+    },
+    {
+      "row": 172,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": false
+    },
+    {
+      "row": 172,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 144
+    },
+    {
+      "row": 172,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 128,
+      "dir": "east"
+    },
+    {
+      "row": 176,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 240,
+      "dir": "south"
+    },
+    {
+      "row": 186,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 168
+    },
     {
       "row": 188,
       "type": "shop",
       "id": "mid"
+    },
+    {
+      "row": 196,
+      "type": "formation",
+      "formation": "scissor5",
+      "mirror": false
+    },
+    {
+      "row": 196,
+      "type": "formation",
+      "formation": "scissor5",
+      "mirror": true
+    },
+    {
+      "row": 198,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 40,
+      "dir": "west"
+    },
+    {
+      "row": 200,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 88
+    },
+    {
+      "row": 203,
+      "type": "formation",
+      "formation": "hside3",
+      "mirror": false
+    },
+    {
+      "row": 203,
+      "type": "formation",
+      "formation": "ring5",
+      "mirror": true
+    },
+    {
+      "row": 206,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 120,
+      "dir": "south"
+    },
+    {
+      "row": 210,
+      "type": "formation",
+      "formation": "spiral5",
+      "mirror": false
+    },
+    {
+      "row": 210,
+      "type": "formation",
+      "formation": "spiral5",
+      "mirror": true
+    },
+    {
+      "row": 210,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 128,
+      "dir": "south"
+    },
+    {
+      "row": 214,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 56
+    },
+    {
+      "row": 217,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": false
+    },
+    {
+      "row": 217,
+      "type": "formation",
+      "formation": "hpop3",
+      "mirror": true
+    },
+    {
+      "row": 222,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 136,
+      "dir": "east"
+    },
+    {
+      "row": 224,
+      "type": "formation",
+      "formation": "swirl6",
+      "mirror": false
+    },
+    {
+      "row": 224,
+      "type": "formation",
+      "formation": "swirl6",
+      "mirror": true
+    },
+    {
+      "row": 228,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 96
+    },
+    {
+      "row": 230,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 120,
+      "dir": "south"
+    },
+    {
+      "row": 231,
+      "type": "formation",
+      "formation": "stop3",
+      "mirror": false
+    },
+    {
+      "row": 231,
+      "type": "formation",
+      "formation": "stop3",
+      "mirror": true
+    },
+    {
+      "row": 234,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 240,
+      "dir": "west"
+    },
+    {
+      "row": 238,
+      "type": "formation",
+      "formation": "v_lead",
+      "mirror": false
+    },
+    {
+      "row": 238,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": false,
+      "x": 120
+    },
+    {
+      "row": 238,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": true,
+      "x": 120
+    },
+    {
+      "row": 238,
+      "type": "formation",
+      "formation": "hpop3",
+      "mirror": false
+    },
+    {
+      "row": 242,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 216
+    },
+    {
+      "row": 245,
+      "type": "formation",
+      "formation": "loop6",
+      "mirror": false
+    },
+    {
+      "row": 245,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": true
+    },
+    {
+      "row": 246,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 152,
+      "dir": "east"
+    },
+    {
+      "row": 252,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": false
+    },
+    {
+      "row": 252,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": true
+    },
+    {
+      "row": 252,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": false
+    },
+    {
+      "row": 254,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 136,
+      "dir": "south"
+    },
+    {
+      "row": 256,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 240
+    },
+    {
+      "row": 258,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 168,
+      "dir": "south"
+    },
+    {
+      "row": 259,
+      "type": "formation",
+      "formation": "scissor5",
+      "mirror": true
+    },
+    {
+      "row": 259,
+      "type": "formation",
+      "formation": "spiral5",
+      "mirror": false
+    },
+    {
+      "row": 266,
+      "type": "formation",
+      "formation": "swoop8",
+      "mirror": false
+    },
+    {
+      "row": 266,
+      "type": "formation",
+      "formation": "hside3",
+      "mirror": true
+    },
+    {
+      "row": 270,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 96
+    },
+    {
+      "row": 270,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 160,
+      "dir": "west"
+    },
+    {
+      "row": 273,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": false
+    },
+    {
+      "row": 273,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": true
+    },
+    {
+      "row": 278,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 128,
+      "dir": "south"
+    },
+    {
+      "row": 280,
+      "type": "formation",
+      "formation": "swirl6",
+      "mirror": false
+    },
+    {
+      "row": 280,
+      "type": "formation",
+      "formation": "hpop3",
+      "mirror": true
+    },
+    {
+      "row": 284,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 16
+    },
+    {
+      "row": 286,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 168,
+      "dir": "west"
+    },
+    {
+      "row": 287,
+      "type": "formation",
+      "formation": "cross4",
+      "mirror": false
+    },
+    {
+      "row": 287,
+      "type": "formation",
+      "formation": "cross4",
+      "mirror": true
+    },
+    {
+      "row": 294,
+      "type": "formation",
+      "formation": "scissor5",
+      "mirror": false
+    },
+    {
+      "row": 294,
+      "type": "formation",
+      "formation": "scissor5",
+      "mirror": true
+    },
+    {
+      "row": 294,
+      "type": "formation",
+      "formation": "hside3",
+      "mirror": false
+    },
+    {
+      "row": 298,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 240
+    },
+    {
+      "row": 298,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 256,
+      "dir": "west"
+    },
+    {
+      "row": 301,
+      "type": "formation",
+      "formation": "spiral5",
+      "mirror": false
+    },
+    {
+      "row": 301,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": true
+    },
+    {
+      "row": 302,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 120,
+      "dir": "south"
+    },
+    {
+      "row": 308,
+      "type": "formation",
+      "formation": "uturn6",
+      "mirror": false
+    },
+    {
+      "row": 308,
+      "type": "formation",
+      "formation": "uturn6",
+      "mirror": true
+    },
+    {
+      "row": 310,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 248,
+      "dir": "west"
+    },
+    {
+      "row": 312,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 104
+    },
+    {
+      "row": 315,
+      "type": "formation",
+      "formation": "hpop3",
+      "mirror": false
+    },
+    {
+      "row": 315,
+      "type": "formation",
+      "formation": "hpop3",
+      "mirror": true
+    },
+    {
+      "row": 315,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": false
+    },
+    {
+      "row": 322,
+      "type": "formation",
+      "formation": "weave4",
+      "mirror": true
+    },
+    {
+      "row": 322,
+      "type": "formation",
+      "formation": "snake8",
+      "mirror": false
+    },
+    {
+      "row": 322,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 248,
+      "dir": "east"
+    },
+    {
+      "row": 326,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 40
+    },
+    {
+      "row": 326,
+      "type": "ground",
+      "enemy": "walker",
+      "x": 160,
+      "dir": "south"
+    },
+    {
+      "row": 329,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": false
+    },
+    {
+      "row": 329,
+      "type": "formation",
+      "formation": "dive6",
+      "mirror": true
+    },
+    {
+      "row": 334,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 128,
+      "dir": "south"
+    },
+    {
+      "row": 336,
+      "type": "formation",
+      "formation": "hside3",
+      "mirror": false
+    },
+    {
+      "row": 336,
+      "type": "formation",
+      "formation": "hside3",
+      "mirror": true
+    },
+    {
+      "row": 336,
+      "type": "formation",
+      "formation": "zigzag6",
+      "mirror": false
+    },
+    {
+      "row": 340,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 32
+    },
+    {
+      "row": 344,
+      "type": "ground",
+      "enemy": "mech",
+      "x": 232,
+      "dir": "south"
     },
     {
       "row": 352,

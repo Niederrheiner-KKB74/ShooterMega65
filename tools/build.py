@@ -25,7 +25,8 @@ import make_shop      # noqa: E402
 import build_music    # noqa: E402
 import make_screens   # noqa: E402
 
-LEVELS = [('L1', 'levels/coastal_base.json'), ('L2', 'levels/level2.json'), ('L3', 'levels/level3.json')]   # (file prefix on the disk, source)
+LEVELS = [('L1', 'levels/coastal_base.json'), ('L2', 'levels/level2.json'), ('L3', 'levels/level3.json'),
+          ('L4', 'levels/level4.json')]   # (file prefix on the disk, source)
 
 KICKASS_SHA256 = '5d8544280dae2d018c79151d8c7b877eca1fb994096e54ca380b26d0cd79f847'
 PRG_NAME = 'SHOOTER'
@@ -46,6 +47,7 @@ def main():
     ap.add_argument('--level', help='build this level JSON as L1 instead of the default test level')
     ap.add_argument('--level2', help='test build: this level JSON as L2')
     ap.add_argument('--level3', help='test build: this level JSON as L3')
+    ap.add_argument('--level4', help='test build: this level JSON as L4')
     ap.add_argument('--test-credits', action='store_true', help='test build: start with 999 credits (shop tests)')
     ap.add_argument('--music-level', type=int, default=1,
                     help='listening test: this level piece plays as level-1 music (MUSICTEST key 1)')
@@ -72,7 +74,7 @@ def main():
     gover = (ROOT / 'build/gen/GOVER').read_bytes()
     level_files = []
     selected_levels = [('L1', a.level or LEVELS[0][1]), ('L2', a.level2 or LEVELS[1][1]),
-                       ('L3', a.level3 or LEVELS[2][1])]
+                       ('L3', a.level3 or LEVELS[2][1]), ('L4', a.level4 or LEVELS[3][1])]
     for name, src in selected_levels:
         try:
             gfx, dat, report = build_level.build(ROOT / src, out / 'levels', name)
@@ -83,9 +85,9 @@ def main():
                         (name + 'DEST', (out / 'levels' / f'{name}DEST').read_bytes(), d81.SEQ)]
         # LnBOSS lives in attic RAM (Stage 7c/9), LnDAT alone has the level buffer (checked by build_level)
         level_files.append((name + 'BOSS', (ROOT / f'build/gen/{name}BOSS').read_bytes(), d81.SEQ))
-    for n in (0, 3):                                 # enemy sets (Stage 13)
+    for n in (0, 3, 4):                              # enemy sets (Stage 13, 14)
         level_files.append((f'ENEM{n}', (ROOT / f'build/gen/ENEM{n}').read_bytes(), d81.SEQ))
-    for n in (2, 3):                                 # level music pieces (Stage 9, 13)
+    for n in (2, 3, 4):                              # level music pieces (Stage 9, 13, 14)
         level_files.append((f'MUS{n}', (ROOT / f'build/gen/MUS{n}').read_bytes(), d81.SEQ))
     pixies2 = (ROOT / 'build/gen/PIXIES2').read_bytes()  # heavy gun (Stage 8), loaded to $52800
     prg = out / f'{PRG_NAME}.PRG'

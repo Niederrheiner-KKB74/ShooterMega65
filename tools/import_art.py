@@ -62,8 +62,10 @@ ROCKET_VIEWS = ROOT / 'assets/art/rocket-directions/generated'
 BOSS = ROOT / 'assets/art/boss-level1/generated'
 BOSS2 = ROOT / 'assets/art/boss-level2/generated'   # PR #17 (Stage 9)
 BOSS3 = ROOT / 'assets/art/boss-level3/generated'   # PR #22 (Stage 13)
-BOSSES = ((1, BOSS), (2, BOSS2), (3, BOSS3))
 ENEM3 = ROOT / 'assets/art/enemies-level3/generated'   # PR #22 (Stage 13): level-3 enemy set
+ENEM4 = ROOT / 'assets/art/enemies-level4/generated'   # PR #25 (Stage 14): level-4 enemy set
+BOSS4 = ROOT / 'assets/art/boss-level4/generated'      # PR #25 (Stage 14): mech
+BOSSES = ((1, BOSS), (2, BOSS2), (3, BOSS3), (4, BOSS4))
 BOSS_BANK = 5                # boss palette replaces the fighter palette while the boss is on screen
 TANKS = ROOT / 'assets/art/ground-vehicles/generated'
 TANK_DIRS = ('north', 'east', 'south', 'west')       # engine direction 0-3
@@ -184,44 +186,55 @@ def enemy_sets(out, table, glyphs, pal, report):
     (out / 'ENEM0').write_bytes(default)
     # level 3: seaplane -> fighter slots, patrol boat -> bomber slots, navy helicopter -> helicopter slots,
     # frigate -> armoured-plane slots, speedboat -> tank slots
-    src = json.loads((ENEM3 / 'indexed-source.json').read_text())
-    pals = json.loads((ENEM3 / 'palettes.json').read_text())
-    fr = {(f['group'], f['pose'], f['phase']): f for f in src}
-    bank = {'air': 5, 'ships': 6, 'heli': 7, 'frigate': 8}
-    slots = [('seaplane', d, n) for d in VIEW_DIRS for n in range(3)] + \
-        [('patrol_boat', d, n) for d in TANK_DIRS for n in range(2)] + [('patrol_boat', 'south', 0)] + \
-        [('navy_heli', d, n) for d in VIEW_DIRS for n in range(3)] + \
-        [('frigate', 'south', 0), ('frigate', 'south', 1), ('frigate', 'destroyed', 0)] + \
-        [('frigate', 'south', 0)] * 6 + \
-        [('speedboat', d, n) for d in TANK_DIRS for n in range(4)]
-    assert len(slots) == len(air_frames) + len(tank_frames)
-    g3, tabs, placed = {'air': [bytes(64)], 'tank': [bytes(64)]}, [], {}
-    for k, key in enumerate(slots):
-        area, start = ('air', air0) if k < len(air_frames) else ('tank', tank0)
-        if key in placed:
+    sets = {
+        3: (ENEM3, {'air': 5, 'ships': 6, 'heli': 7, 'frigate': 8}, ('air', 'ships', 'heli', 'frigate'),
+            [('seaplane', d, n) for d in VIEW_DIRS for n in range(3)] +
+            [('patrol_boat', d, n) for d in TANK_DIRS for n in range(2)] + [('patrol_boat', 'south', 0)] +
+            [('navy_heli', d, n) for d in VIEW_DIRS for n in range(3)] +
+            [('frigate', 'south', 0), ('frigate', 'south', 1), ('frigate', 'destroyed', 0)] +
+            [('frigate', 'south', 0)] * 6 +
+            [('speedboat', d, n) for d in TANK_DIRS for n in range(4)]),
+        # level 4 (Stage 14, PR #25): jet -> fighter slots, drone -> bomber slots (banking views), attack helicopter
+        # -> helicopter slots, walker -> armoured-plane slots, mech -> tank slots
+        4: (ENEM4, {'air': 5, 'drone': 6, 'heli': 7, 'mechs': 8}, ('air', 'drone', 'heli', 'mechs'),
+            [('jet', d, n) for d in VIEW_DIRS for n in range(3)] +
+            [('drone', v, n) for v in VIEW_BANK for n in range(3)] +
+            [('attack_heli', d, n) for d in VIEW_DIRS for n in range(3)] +
+            [('walker', 'south', 0), ('walker', 'south', 1), ('walker', 'destroyed', 0)] +
+            [('walker', 'south', 0)] * 6 +
+            [('mech', d, n) for d in TANK_DIRS for n in range(4)]),
+    }
+    for lvl, (edir, bank, pnames, slots) in sets.items():
+        src = json.loads((edir / 'indexed-source.json').read_text())
+        pals = json.loads((edir / 'palettes.json').read_text())
+        fr = {(f['group'], f['pose'], f['phase']): f for f in src}
+        assert len(slots) == len(air_frames) + len(tank_frames)
+        g3, tabs, placed = {'air': [bytes(64)], 'tank': [bytes(64)]}, [], {}
+        for k, key in enumerate(slots):
+            area, start = ('air', air0) if k < len(air_frames) else ('tank', tank0)
+            if key in placed:
+                tabs.append(placed[key])
+                continue
+            f = fr[key]
+            a = np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
+            h, w = a.shape[0] // 8, a.shape[1] // 16
+            base = start + len(g3[area])
+            for c in range(w):
+                for i in range(h):
+                    g3[area].append(ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
+                g3[area].append(bytes(64))
+            placed[key] = dict(base=base, w=w, h=h, pal=(bank[f['palette']] << 4) | 15, hit=hitbox(a))
             tabs.append(placed[key])
-            continue
-        f = fr[key]
-        a = np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
-        h, w = a.shape[0] // 8, a.shape[1] // 16
-        base = start + len(g3[area])
-        for c in range(w):
-            for i in range(h):
-                g3[area].append(ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
-            g3[area].append(bytes(64))
-        placed[key] = dict(base=base, w=w, h=h, pal=(bank[f['palette']] << 4) | 15, hit=hitbox(a))
-        tabs.append(placed[key])
-    assert len(g3['air']) <= air1 - air0, f'level-3 aircraft set: {len(g3["air"])} glyphs, room {air1 - air0}'
-    assert len(g3['tank']) <= tank1 - tank0, f'level-3 tank set: {len(g3["tank"])} glyphs, room {tank1 - tank0}'
-    g3['air'] += [bytes(64)] * (air1 - air0 - len(g3['air']))
-    g3['tank'] += [bytes(64)] * (tank1 - tank0 - len(g3['tank']))
-    p3 = []
-    for b in (5, 6, 7, 8):
-        name = {5: 'air', 6: 'ships', 7: 'heli', 8: 'frigate'}[b]
-        p3 += [tuple(c) for c in pals.get(name, pals['ships'])]
-    enem3 = pack(g3['air'] + g3['tank'], tabs, p3)
-    assert len(enem3) == len(default)
-    (out / 'ENEM3').write_bytes(enem3)
+        assert len(g3['air']) <= air1 - air0, f'level-{lvl} aircraft set: {len(g3["air"])} glyphs, room {air1 - air0}'
+        assert len(g3['tank']) <= tank1 - tank0, f'level-{lvl} tank set: {len(g3["tank"])} glyphs'
+        g3['air'] += [bytes(64)] * (air1 - air0 - len(g3['air']))
+        g3['tank'] += [bytes(64)] * (tank1 - tank0 - len(g3['tank']))
+        p3 = []
+        for name in pnames:
+            p3 += [tuple(c) for c in pals.get(name, pals[pnames[1]])]
+        data = pack(g3['air'] + g3['tank'], tabs, p3)
+        assert len(data) == len(default)
+        (out / f'ENEM{lvl}').write_bytes(data)
     report.append(f'enemy sets: {len(default)} bytes each (aircraft area {air1 - air0} glyphs, tanks {tank1 - tank0})')
     return [f'.const SET_AIR_GLYPH={air0}', f'.const SET_AIR_GLYPHS={air1 - air0}',
             f'.const SET_TANK_GLYPH={tank0}', f'.const SET_TANK_GLYPHS={tank1 - tank0}',
@@ -463,7 +476,7 @@ def main(out):
             [len(sp), len(pl['rotors']), bw - 8, bh - 4, 320 - bw - 24, 1 if 'flame' in pl else 0] + \
             pl.get('catapult', {}).get('offset', [0, 0]) + [1 if 'catapult' in pl else 0]   # Stage 13
         report.append(f'boss {lvl}: {len(bglyphs)} glyphs swapped in at glyph {swap0} (room {swap_end - swap0})')
-    assert len(boss_files[1]) == len(boss_files[2]) == len(boss_files[3])
+    assert len({len(b) for b in boss_files.values()}) == 1
     boss_consts = [f'.const BOSS_SWAP_GLYPH={swap0}', f'.const BOSS_GLYPHS={len(bglyphs)}',
                    f'.const BOSS_FILE_BYTES={len(bglyphs) * 64 + 48}', f'.const BOSS_BANK={BOSS_BANK}']
     # ------------------------------------------------------------ heavy gun (PR #15), file PIXIES2 at PIXIE2_ADDR
@@ -587,7 +600,7 @@ def main(out):
     flash = [tuple(min(255, int(v + (255 - v) * 0.65)) for v in c) for c in bpal]
     tl += gun_consts[1:]
     # boss part positions per level (Stage 9): part_dx[5], part_dy[5], rotor_dx[4], rotor_dy[4], rotor_ph[4]
-    for lvl in (1, 2, 3):
+    for lvl in (1, 2, 3, 4):
         tl.append(f'boss_place{lvl}: .byte ' + ','.join(str(v) for v in boss_place[lvl]))
         tl.append(f'boss_fx{lvl}: .byte ' + ','.join(str(v) for v in boss_fx[lvl]))
     tl.append('boss_flash_pal: .byte ' + ','.join(str(ph.swap(c[ch])) for ch in range(3) for c in flash))

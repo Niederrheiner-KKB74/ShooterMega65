@@ -161,6 +161,9 @@ title_run:
 #if START_LEVEL3
     lda #2                      // test build: level 3 first
 #endif
+#if START_LEVEL4
+    lda #3                      // test build: level 4 first
+#endif
     sta start_level
 !loop:
     jsr shop_frame              // vertical blank, sound, keys, debounced joystick

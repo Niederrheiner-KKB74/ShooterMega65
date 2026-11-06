@@ -34,7 +34,8 @@ LAND_BANKS = {'water': 1, 'nature': 2, 'structures': 3, 'fixed_targets': 4}
 PALETTE_ALIAS = {'streets': 'water', 'ruins': 'nature', 'buildings': 'structures'}
 ENEMIES = {'fighter': 0, 'bomber': 1, 'helicopter': 2, 'armoured': 3}
 GROUND = {'tank': 4, 'flak': 8, 'heavy_flak': 9,
-          'speedboat': 4, 'patrol_boat': 5, 'frigate': 6}   # Stage 13: ships (level 3 enemy set)
+          'speedboat': 4, 'patrol_boat': 5, 'frigate': 6,    # Stage 13: ships (level 3 enemy set)
+          'mech': 4, 'walker': 6}                            # Stage 14: level 4 enemy set
 DIRS = {'north': 0, 'east': 1, 'south': 2, 'west': 3}
 EV_FORMATION, EV_GROUND, EV_SPEED, EV_SHOP, EV_BOSS, EV_END = 1, 2, 3, 4, 5, 6
 OP_END, OP_LOOP, OP_ENDLOOP, OP_AIM, OP_FIRE, OP_WAIT = 0x80, 0x81, 0x82, 0x83, 0x84, 0x85

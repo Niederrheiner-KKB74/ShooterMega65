@@ -149,7 +149,7 @@ read_keys:
     beq !space+
     cmp #$32                     // 2 / 3: on the title screen, start in level 2 / 3 (Stage 9/13, test aid)
     bcc !+
-    cmp #$34
+    cmp #$35                     // (Stage 14: up to key 4)
     bcs !+
     sbc #$31 - 1                 // carry clear: level index 1 / 2
     sta key_2

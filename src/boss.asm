@@ -633,6 +633,8 @@ hv_jets:
 !rts:
     rts
 hv_jt:  .byte 120
+hv_walk: .byte 0
+bd_clk: .byte 0
 
 // jet: one more segment every HV_GROW frames, the boss sweeps slowly towards the player (0.5 px/frame);
 // fading: one segment less every HV_FADE / HV_SEGS frames
@@ -1303,7 +1305,17 @@ boss_draw:
     sta px_pal
     tya
     jsr pixie_draw
-    ldx fx_rotn                 // rotors / fans of this boss
+    lda fx_flame                // the mech (flame and drones, level 4): legs step only while it walks
+    and fx_cat
+    beq !+
+    lda hv_mov
+    beq !w+
+    inc hv_walk
+!w: lda hv_walk
+    jmp !c+
+!:  lda boss_t
+!c: sta bd_clk
+    ldx fx_rotn                 // rotors / fans / legs of this boss
     dex
     stx bd_i
 !rot:
@@ -1322,7 +1334,7 @@ boss_draw:
     lda boss_y+1
     adc #0
     sta px_y+1
-    lda boss_t                  // rotor phase: every 3 frames, offset per rotor
+    lda bd_clk                  // rotor phase: every 4 frames, offset per rotor
     lsr
     lsr
     clc
