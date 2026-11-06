@@ -1,11 +1,13 @@
-126 terrain tiles, 35 ruined tiles, 251 distinct rows
+124 tiles; 250 row patterns; 9 turbines.
 level: level Operation Offshore: 375 map rows (6000 px, 240 s at 0.5 px/frame)
-level: metatiles 104, different rows 251/256, glyphs 252
-level: events 4, formations 0, paths 0 (0 bytes)
-level: L3GFX 16324 bytes (max. 16384), L3DAT 6391 bytes (max. 10240), L3DEST 4480 bytes (35 destroyed tiles)
-NOTE: tileset: 126 tiles; palette water (tanks avoid these tiles): 45 tiles
+level: metatiles 107, different rows 250/256, glyphs 248
+level: events 161, formations 22, paths 20 (610 bytes)
+level: L3GFX 16068 bytes (max. 16384), L3DAT 8488 bytes (max. 10240), L3DEST 4480 bytes (35 destroyed tiles)
+NOTE: tileset: 124 tiles; palette water (tanks avoid these tiles): 55 tiles
 NOTE: destroyed tiles: 35 (max 48); buildings: 8
-NOTE: animations: 4, 8 animated map tiles (max 24)
+NOTE: colour cycling: water indices 9-12, every 6 frames
+NOTE: animations: 3, 6 animated map tiles (max 24)
+NOTE: levels/level3.json: formations and paths are made by Claude; they will be replaced
 NOTE: enemy set: aircraft area 279 of 324 glyphs, speedboat 48 of 48
-NOTE: boss: 242 of 324 glyphs, body 96x112
+NOTE: boss: 225 of 324 glyphs, body 128x56
 OK, no errors
