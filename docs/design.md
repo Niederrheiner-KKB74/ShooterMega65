@@ -310,6 +310,7 @@ so `RUN` works again after an exit.
 | 04.11.2026 | Stage 10 rejected (the diagonal view looks smaller); PR #21 merged; Stage 11: hover tank with dust and flame thrower replaces the land cruiser, Stage 10 is not tested on hardware |
 | 05.11.2026 | Stage 11 confirmed on hardware; Stage 12: longer flame jet that shoots down and sweeps towards the player |
 | 06.11.2026 | Stage 12 confirmed; PR #22 (level 3) revised and merged; Stage 13: level 3 with enemy sets, ships, tile animation and carrier |
+| 06.11.2026 | Stage 13 confirmed; Stage 13b: level 3 harder, more formations, ships glide in; art revision 2 ordered |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
@@ -522,6 +523,10 @@ Requests while the plane is destroyed or inside the shop are dropped.
   phase's tile glyphs are copied by DMA from the level pack (untouched `LnGFX`) over the phase-0 tiles. ≤ 8
   animations, ≤ 24 animated map tiles; animated tiles are not destroyable.
 - Music "Open Waters" (A Dorian, `MUS3`); `build.py --music-level N` makes a listening disk.
+- Stage 13b: ships spawn above the top edge by their height (`gr_y`); `kind_hp`/`kind_fire` are set per level
+  by `level_enter` (`lv_kind_hp`, `lv_kind_fire`); level 3 has six own paths/formations (`design_waves_l3.py`
+  PATHS3/FORMATIONS3) and denser waves. Art revision 2 ordered (`docs/chatgpt_level3c.md`): top-down wind
+  turbines, slimmer and more colourful enemies (fourth palette `frigate` in bank 8), lying carrier ≤ 128×64.
 - Bank-0 space: BASIC's palette 0 and zero page are saved in chip RAM (`$5DB00`, `$5DE00`) instead of bank 0.
 
 ## 23. Open questions for the owner

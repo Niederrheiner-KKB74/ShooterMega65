@@ -22,7 +22,10 @@
 lv_pack_bank: .byte $04, $05, $07       // attic bank of each level's pack and boss (Stage 13: tables)
 lv_boss_bank: .byte $02, $06, $08
 lv_set_bank:  .byte $03, $03, $09
-lv_sea:       .byte 0, 0, 1       // enemy set (Stage 13): ENEM0 for levels 1 and 2, ENEM3
+lv_sea:       .byte 0, 0, 1
+lv_kind_ofs:  .byte 0, 0, 5             // per level: kind_hp / kind_fire of fighter, bomber, heli, armoured, tank
+lv_kind_hp:   .byte 1, 6, 2, 10, 3,   2, 6, 3, 10, 3       // level 3: seaplane 2, navy heli 3 (ships: ship_guns)
+lv_kind_fire: .byte 3, 5, 3, 6, 2,    5, 8, 6, 10, 4       // enemy set (Stage 13): ENEM0 for levels 1 and 2, ENEM3
 .errorif (lv_boss_bank - lv_pack_bank != LEVELS), "one pack and one boss bank per level"
 
 cur_level:      .byte 0
@@ -233,6 +236,17 @@ le_fx:
     sta tank_boat
     eor #1
     sta mvmask+K_TANK
+    ldy lv_kind_ofs,x           // hit points and firing chances of the enemy kinds (Stage 13b)
+    ldx #0
+!:  lda lv_kind_hp,y
+    sta kind_hp,x
+    lda lv_kind_fire,y
+    sta kind_fire,x
+    iny
+    inx
+    cpx #5
+    bne !-
+    ldx cur_level
     jsr set_in
     jmp palette_init            // landscape banks 1-4 (and the boss bank back to normal)
 le_fx_lo:    .byte <boss_fx1, <boss_fx2, <boss_fx3

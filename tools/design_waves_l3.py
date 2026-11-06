@@ -19,61 +19,94 @@ import design_waves_l1 as w1  # noqa: E402
 
 LEVEL = w1.ROOT / 'levels/level3.json'
 
+# Stage 13b: own paths and formations in addition to level 1's (more variety), denser waves (harder)
+PATHS3 = {
+    'dive_aim':   [['move', 30, 0, 2.5], ['aim', 40, 1.75], ['fire'], ['move', 127, 0, 3], ['end']],
+    'scissor':    [['move', 60, 1.75, 1.5], ['fire'], ['move', 127, 1.75, 1.5], ['end']],
+    'spiral':     [['move', 30, 0, 2]] + w1.arc(2.25, 0, 540, 120) + [['fire'], ['move', 127, 0, 2.5], ['end']],
+    'swirl_side': [['move', 40, 2, 0.25]] + w1.arc(2, 90, -270, 90) + [['fire'], ['move', 127, 0, 2.25], ['end']],
+    'heli_pop':   [['move', 35, 0, 2], ['wait', 20], ['aim', 30, 0.5], ['fire'], ['wait', 15], ['fire'],
+                   ['move', 127, 0, -1.25], ['end']],
+    'heli_side':  [['move', 50, 1.5, 0.5], ['wait', 25], ['fire'], ['aim', 40, 0.75], ['fire'],
+                   ['move', 127, 1.5, -0.5], ['end']],
+}
+FORMATIONS3 = {
+    'dive6':      ('fighter', 6, 'dive_aim', 12, 48, -24),
+    'scissor5':   ('fighter', 5, 'scissor', 14, -24, -24),
+    'spiral5':    ('fighter', 5, 'spiral', 18, 110, -24),
+    'swirl6':     ('fighter', 6, 'swirl_side', 14, -32, 40),
+    'hpop3':      ('helicopter', 3, 'heli_pop', 24, 60, -24),
+    'hside3':     ('helicopter', 3, 'heli_side', 26, -32, 30),
+}
+
 # (row, [(formation, mirror, x or None), ...]); quiet before the shops (188, 368) and the boss (352)
 WAVES = [
-    (12, [('side6', False, None)]),
-    (20, [('hover4', False, None)]),
-    (28, [('snake8', False, None)]),
-    (37, [('v_lead', False, None), ('v_wing', False, 120), ('v_wing', True, 120)]),
-    (46, [('ring5', False, None)]),
-    (55, [('loop6', False, None), ('loop6', True, None)]),
-    (64, [('hover4', False, None), ('hover4', True, None)]),
-    (73, [('strafe5', False, None), ('strafe5', True, None)]),
-    (82, [('uturn6', False, None)]),
+    (10, [('dive6', False, None)]),
+    (16, [('hpop3', False, None), ('hpop3', True, None)]),
+    (22, [('scissor5', False, None), ('scissor5', True, None)]),
+    (29, [('spiral5', False, None)]),
+    (35, [('hside3', False, None), ('side6', True, None)]),
+    (41, [('v_lead', False, None), ('v_wing', False, 120), ('v_wing', True, 120)]),
+    (47, [('swirl6', False, None), ('swirl6', True, None)]),
+    (54, [('ring5', False, None), ('dive6', True, None)]),
+    (61, [('snake8', False, None), ('hpop3', True, None)]),
+    (68, [('scissor5', True, None), ('strafe5', False, None)]),
+    (75, [('loop6', False, None), ('loop6', True, None)]),
+    (82, [('hside3', False, None), ('hside3', True, None)]),
+    (88, [('spiral5', True, None), ('zigzag6', False, None)]),
     # oil field (96-183)
-    (94, [('zigzag6', False, None), ('zigzag6', True, None)]),
-    (103, [('ring5', True, None)]),
-    (112, [('swoop8', False, None)]),
-    (121, [('hover4', False, None), ('side6', True, None)]),
+    (95, [('dive6', False, None), ('dive6', True, None)]),
+    (102, [('hover4', False, None), ('swirl6', True, None)]),
+    (109, [('swoop8', False, None), ('hpop3', True, None)]),
+    (116, [('scissor5', False, None), ('scissor5', True, None)]),
+    (123, [('ring5', True, None), ('side6', False, None)]),
     (130, [('v_lead', False, 60), ('v_wing', False, 28), ('v_lead', True, 60), ('v_wing', True, 28)]),
-    (140, [('loop6', False, None), ('ring5', False, None)]),
-    (150, [('snake8', True, None)]),
-    (160, [('hover4', False, None), ('hover4', True, None)]),
-    (170, [('strafe5', False, None), ('strafe5', True, None)]),
+    (137, [('spiral5', False, None), ('hside3', True, None)]),
+    (144, [('uturn6', False, None), ('uturn6', True, None)]),
+    (151, [('hpop3', False, None), ('dive6', True, None)]),
+    (158, [('swirl6', False, None), ('snake8', True, None)]),
+    (165, [('hover4', False, None), ('hover4', True, None)]),
+    (172, [('strafe5', False, None), ('strafe5', True, None), ('dive6', False, None)]),
     # mid shop at row 188; research platforms and wind farm (184-279)
-    (198, [('swoop6', False, None), ('swoop6', True, None)]),
-    (207, [('ring5', False, None), ('ring5', True, None)]),
-    (216, [('uturn6', False, None), ('uturn6', True, None)]),
-    (225, [('side6', False, None), ('hover4', True, None)]),
-    (234, [('zigzag6', False, None), ('zigzag6', True, None)]),
-    (243, [('v_lead', False, None), ('v_wing', False, 120), ('v_wing', True, 120)]),
-    (252, [('loop6', False, None), ('loop6', True, None)]),
-    (261, [('hover4', False, None), ('ring5', True, None)]),
-    (270, [('snake8', False, None)]),
+    (196, [('scissor5', False, None), ('scissor5', True, None)]),
+    (203, [('hside3', False, None), ('ring5', True, None)]),
+    (210, [('spiral5', False, None), ('spiral5', True, None)]),
+    (217, [('dive6', False, None), ('hpop3', True, None)]),
+    (224, [('swirl6', False, None), ('swirl6', True, None)]),
+    (231, [('zigzag6', False, None), ('hside3', True, None)]),
+    (238, [('v_lead', False, None), ('v_wing', False, 120), ('v_wing', True, 120), ('hpop3', False, None)]),
+    (245, [('loop6', False, None), ('dive6', True, None)]),
+    (252, [('hover4', False, None), ('hover4', True, None), ('strafe5', False, None)]),
+    (259, [('scissor5', True, None), ('spiral5', False, None)]),
+    (266, [('swoop8', False, None), ('hside3', True, None)]),
+    (273, [('dive6', False, None), ('dive6', True, None)]),
     # naval base (280-374)
-    (282, [('strafe5', False, None), ('strafe5', True, None)]),
-    (291, [('ring5', False, None), ('hover4', True, None)]),
-    (300, [('swoop8', False, None)]),
-    (309, [('side6', False, None), ('side6', True, None)]),
-    (318, [('uturn6', False, None), ('uturn6', True, None)]),
-    (327, [('hover4', False, None), ('hover4', True, None)]),
-    (336, [('zigzag6', False, None)]),
+    (280, [('swirl6', False, None), ('hpop3', True, None)]),
+    (287, [('ring5', False, None), ('ring5', True, None)]),
+    (294, [('scissor5', False, None), ('scissor5', True, None), ('hside3', False, None)]),
+    (301, [('spiral5', False, None), ('dive6', True, None)]),
+    (308, [('uturn6', False, None), ('uturn6', True, None)]),
+    (315, [('hpop3', False, None), ('hpop3', True, None), ('strafe5', False, None)]),
+    (322, [('swirl6', True, None), ('snake8', False, None)]),
+    (329, [('dive6', False, None), ('dive6', True, None)]),
+    (336, [('hside3', False, None), ('hside3', True, None), ('zigzag6', False, None)]),
     # boss at row 352
 ]
 
 # (row, kind, size in px (w, h), directions)
 SHIPS = [(r, 'speedboat', (16, 16), ['east', 'west', 'south']) for r in
-         (16, 33, 50, 68, 86, 105, 125, 145, 165, 200, 218, 238, 258, 276, 296, 314, 332, 344)] + \
+         (14, 26, 38, 50, 62, 74, 86, 100, 112, 124, 136, 148, 160, 172, 198, 210, 222, 234, 246, 258, 270,
+          286, 298, 310, 322, 334, 344)] + \
         [(r, 'patrol_boat', (32, 32), ['south', 'east', 'west']) for r in
-         (42, 78, 116, 156, 210, 248, 288, 322)] + \
-        [(r, 'frigate', (32, 64), ['south']) for r in (100, 174, 230, 306, 338)]
+         (32, 58, 80, 104, 128, 152, 176, 206, 230, 254, 278, 302, 326)] + \
+        [(r, 'frigate', (32, 64), ['south']) for r in (70, 118, 166, 216, 262, 296, 332)]
 
-GUN_ROWS = [(24, 'flak'), (60, 'flak'), (98, 'heavy_flak'), (118, 'flak'), (136, 'flak'), (152, 'heavy_flak'),
-            (176, 'flak'), (204, 'flak'), (222, 'heavy_flak'), (244, 'flak'), (264, 'flak'), (286, 'heavy_flak'),
-            (298, 'flak'), (312, 'heavy_flak'), (326, 'flak'), (340, 'heavy_flak')]
+GUN_ROWS = [(r, k) for r in range(18, 350, 9) for k in (('heavy_flak' if r % 4 == 0 else 'flak'),)]
 
 
 def main():
+    w1.PATHS.update(PATHS3)
+    w1.FORMATIONS.update(FORMATIONS3)
     w1.design(LEVEL, WAVES, [], GUN_ROWS)
     lv = json.loads(LEVEL.read_text())
     tiles = json.loads((w1.ROOT / lv['tileset'] / 'level-example.json').read_text())['tiles']

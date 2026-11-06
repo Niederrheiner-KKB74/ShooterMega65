@@ -452,10 +452,11 @@ hv_step:
     jmp !st+
 !st:
     sta hv_tx
-    jsr random                  // y: 16..47 (carrier, 128 high: 16..31)
+    jsr random                  // y: 16..47 (bodies over 100 high: 16..31)
     and #31
-    ldy fx_cat
-    beq !+
+    ldy fx_by
+    cpy #100
+    bcc !+
     and #15
 !:  clc
     adc #HV_YMIN

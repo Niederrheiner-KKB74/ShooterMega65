@@ -568,9 +568,10 @@ ev_ground:
     sta sp_x
     lda ev_p+2
     sta sp_x+1
-    lda #<-16
+    ldy ev_p                    // just above the top edge: 16 / 32 / 64 high (Stage 13b: ships glide in)
+    lda gr_y-4,y
     sta sp_y
-    lda #>-16
+    lda #$ff
     sta sp_y+1
     ldx #GROUND_FIRST
     lda #GROUND_END
@@ -591,6 +592,7 @@ ev_ground:
     jmp ship_guns               // ships (Stage 13): hit points, guns
 !:  rts
 gr_kind: .byte K_TANK, K_BOMBER, K_ARMOURED     // level 3: speedboat, patrol boat, frigate (enemy set slots)
+gr_y:    .byte <-16, <-32, <-64
 
 ev_formation:
     // formation record: kind, count, path, delay, x (16), y (16)

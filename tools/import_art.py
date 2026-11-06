@@ -187,7 +187,7 @@ def enemy_sets(out, table, glyphs, pal, report):
     src = json.loads((ENEM3 / 'indexed-source.json').read_text())
     pals = json.loads((ENEM3 / 'palettes.json').read_text())
     fr = {(f['group'], f['pose'], f['phase']): f for f in src}
-    bank = {'air': 5, 'ships': 6, 'heli': 7}
+    bank = {'air': 5, 'ships': 6, 'heli': 7, 'frigate': 8}
     slots = [('seaplane', d, n) for d in VIEW_DIRS for n in range(3)] + \
         [('patrol_boat', d, n) for d in TANK_DIRS for n in range(2)] + [('patrol_boat', 'south', 0)] + \
         [('navy_heli', d, n) for d in VIEW_DIRS for n in range(3)] + \
@@ -217,8 +217,8 @@ def enemy_sets(out, table, glyphs, pal, report):
     g3['tank'] += [bytes(64)] * (tank1 - tank0 - len(g3['tank']))
     p3 = []
     for b in (5, 6, 7, 8):
-        name = {5: 'air', 6: 'ships', 7: 'heli', 8: 'ships'}[b]
-        p3 += [tuple(c) for c in pals[name]]
+        name = {5: 'air', 6: 'ships', 7: 'heli', 8: 'frigate'}[b]
+        p3 += [tuple(c) for c in pals.get(name, pals['ships'])]
     enem3 = pack(g3['air'] + g3['tank'], tabs, p3)
     assert len(enem3) == len(default)
     (out / 'ENEM3').write_bytes(enem3)

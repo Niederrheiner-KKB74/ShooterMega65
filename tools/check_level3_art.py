@@ -122,8 +122,8 @@ ENEMY_SET = (
     ('seaplane', DIR8, 3, (16, 16), 'air', 'aircraft'),
     ('navy_heli', DIR8, 3, (16, 16), 'heli', 'aircraft'),
     ('patrol_boat', DIR4, 2, (32, 32), 'ships', 'aircraft'),
-    ('frigate', ['south'], 2, (32, 64), 'ships', 'aircraft'),
-    ('frigate', ['destroyed'], 1, (32, 64), 'ships', 'aircraft'),
+    ('frigate', ['south'], 2, (32, 64), 'frigate', 'aircraft'),      # Stage 13b: own palette (bank 8)
+    ('frigate', ['destroyed'], 1, (32, 64), 'frigate', 'aircraft'),
     ('speedboat', DIR4, 4, (16, 16), 'ships', 'boat'),
 )
 
@@ -133,7 +133,7 @@ def check_enemies():
     pal = load(ENEMIES / 'palettes.json', 'enemy set')
     pl = load(ENEMIES / 'placement.json', 'enemy set')
     if pal is not None:
-        for p in ('air', 'heli', 'ships'):
+        for p in ('air', 'heli', 'ships', 'frigate'):
             if p not in pal or len(pal[p]) != 16:
                 err(f'enemies palettes.json: palette "{p}" with exactly 16 entries [R,G,B] missing')
     if src is None:
@@ -219,8 +219,8 @@ def check_boss():
         if fid not in frames:
             total += glyphs(w, h) * (2 if fid.endswith('_southeast') else 1)
     bw, bh = frames.get('body', {}).get('width', 0), frames.get('body', {}).get('height', 0)
-    if bw > 96 or bh > 128:
-        err(f'boss body {bw}x{bh}: at most 96x128')
+    if bw > 128 or bh > 64 or bw < bh:
+        err(f'boss body {bw}x{bh}: lying (bow to the left), at most 128x64 (Stage 13b)')
     if total > BOSS_ROOM:
         err(f'boss needs {total} glyphs, room for {BOSS_ROOM} (per frame width/16 x (height/8 + 1), plus one; '
             f'south-east views count twice; each frame as large as the largest of all bosses)')
