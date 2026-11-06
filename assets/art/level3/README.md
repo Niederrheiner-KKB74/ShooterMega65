@@ -21,10 +21,9 @@ verwenden `hall`. Alle 35 zerstörten Tiles halten die äußeren zwei Pixel
 der zugehörigen Gebäudegruppe bzw. des Hallenfelds exakt ein.
 
 Die Wasserpalette rotiert die Indizes 9–12 alle neun Frames (180 ms bei
-50 Hz). Die vier Blautöne liegen dicht beieinander. Ungleichmäßige
-Wellenmulden und Lichtkanten laufen ineinander. Im offenen Wasser nimmt
-jeder Pixel am Cycling teil. Die Farben ändern sich über die gesamte
-Oberfläche, während Riffe, Sandbänke, Bojen und
+50 Hz). Breite Flächen sind in festen, nahen Blautönen abgestuft.
+Vereinzelte Lichtreflexe verwenden das Farbband. Die hellste Phase
+wandert darin von oben nach unten. Riffe, Sandbänke, Bojen und
 Ölfilme nutzen feste Farben. `water-cycle.gif` zeigt die vier Palettenphasen.
 
 Die Windräder sind 32×64 Pixel groß und stehen auf Pylonen im Wasser. Die oberen

@@ -10,8 +10,8 @@ from PIL import Image, ImageDraw
 ART = Path('assets/art/level3/generated')
 MAP = Path('levels/level3.json')
 CYCLE = dict(palette='water',first=9,count=4,period=9)
-WATER = ('000000 101e38 142c51 1a3f66 1d5276 226b89 278299 429da2 '
-         '9ec6a9 35678a 3f789b 4b89a8 417b9d 263a47 b8ac8f e1f0da')
+WATER = ('000000 172b47 1d3956 234762 2a556e 30647c 397a8d 4798a0 '
+         '9ec6a9 265c78 326e8b 427f9a 367592 263a47 b8ac8f e1f0da')
 STATIC_REMAP = bytes((0,1,2,3,4,5,6,7,7,8,15,15,13,3,8,5))+bytes(range(16,256))
 WIND_LAYOUT = [(x,y) for y in (228,236) for x in (2,7,13,18)]+[(7,244)]
 
@@ -38,29 +38,32 @@ def open_water(name):
 
 
 def wave_art(im,variant,name):
-    # Distances to irregular, repeating centers produce connected lobes
-    # instead of stripes. Shared edge geometry keeps the open-water tiles
-    # compatible, while the interior warp changes the shape of each variant.
-    sites = ((1.7,1.9),(9.4,.6),(14.1,6.7),(3.7,10.4),(10.8,12.8),(7.5,6.1))
-    angle = variant * 1.73
+    shore = name.startswith('edge')
     period = math.tau / 16
-    for y in range(16):
-        for x in range(16):
-            if name.startswith('edge') and im.getpixel((x,y))>5:
-                continue
-            interior = math.sin(math.pi*x/15) * math.sin(math.pi*y/15)
-            xx = x + .9*math.sin(y*period) + 1.9*interior*math.sin(y*period+angle)
-            yy = y + .8*math.cos(x*period) + 1.6*interior*math.cos(x*period+angle)
-            distances = []
-            for sx,sy in sites:
-                dx = (xx-sx+8) % 16 - 8
-                dy = (yy-sy+8) % 16 - 8
-                distances.append(dx*dx + dy*dy)
-            near,next_near = sorted(distances)[:2]
-            radius = math.sqrt(near / next_near)
-            # Shift the phase gently across the lobes to stagger their pulse.
-            phase = 3.6*radius**1.65 + .165*(1+math.sin((xx+yy)*period))
-            im.putpixel((x,y),9 + int(phase))
+    if not shore:
+        # Broad resting tones use the depth palette. Tile variants only
+        # change the interior shape, leaving the same periodic edge field.
+        depth = 2 if name.startswith('deep') else 6 if name.startswith('shelf') else 3 if name=='blue' else 4
+        for y in range(16):
+            for x in range(16):
+                interior = math.sin(math.pi*x/15) * math.sin(math.pi*y/15)
+                field = math.sin(y*period + .55*math.cos(x*period))
+                field += .43*math.cos(x*period + y*period)
+                field += .55*interior*math.sin(variant*1.73 + x*period)
+                shade = int(field>.56) - int(field<-.68)
+                im.putpixel((x,y),depth+shade)
+    # Leave several variants without a glint. For the others, the four
+    # indices run top to bottom, so the brightest color travels downward.
+    if name!='sea0' and variant % 3 == (1 if shore else 0):
+        return
+    center = 4 + (variant*3) % 8
+    top = 3 + (variant*5) % 7
+    for offset,width in enumerate((2,3,3,2)):
+        start = center - width//2 + (offset>=2)
+        for x in range(start,start+width):
+            y = top+offset
+            if not shore or im.getpixel((x,y))<=5:
+                im.putpixel((x,y),9+offset)
 
 
 def turbine(sea,phase):
