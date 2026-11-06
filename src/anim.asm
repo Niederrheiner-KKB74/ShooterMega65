@@ -53,8 +53,58 @@ anim_init:
 !rts:
     rts
 
+// colour cycling (Stage 13d, header +26..29: bank, first index, count, frames per step; bank 0 = none):
+// the colours first .. first+count-1 of the landscape bank rotate by one place each step
+cycle_frame:
+    lda lev_hdr+26
+    beq !rts+
+    dec cy_t
+    bne !rts+
+    lda lev_hdr+29
+    sta cy_t
+    lda lev_hdr+26              // x = first register, y = last
+    asl
+    asl
+    asl
+    asl
+    ora lev_hdr+27
+    tax
+    clc
+    adc lev_hdr+28
+    tay
+    dey
+    lda PAL_RED,y               // the last colour moves to the front
+    pha
+    lda PAL_GREEN,y
+    pha
+    lda PAL_BLUE,y
+    pha
+!:  tya                         // down to the first index (low nibble)
+    and #15
+    cmp lev_hdr+27
+    beq !put+
+    lda PAL_RED-1,y
+    sta PAL_RED,y
+    lda PAL_GREEN-1,y
+    sta PAL_GREEN,y
+    lda PAL_BLUE-1,y
+    sta PAL_BLUE,y
+    dey
+    bne !-
+!put:
+    pla
+    sta PAL_BLUE,x
+    pla
+    sta PAL_GREEN,x
+    pla
+    sta PAL_RED,x
+!rts:
+    rts
+cy_t: .byte 1
+
 // once per frame (build_frame)
 anim_frame:
+    jsr cycle_frame
     ldx anim_n
     bne !+
     rts

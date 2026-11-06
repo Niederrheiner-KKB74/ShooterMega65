@@ -32,6 +32,7 @@ DIR4 = ['north', 'east', 'south', 'west']
 TURRETS = ['nw', 'ne', 'sw', 'se']
 
 c2.TILES = TILES
+c2.MAX_TILES = 126              # 4 + 192 + 126 * 128 bytes fit the 16 KB of L3GFX
 err, note, load, hexrows, glyphs = c2.err, c2.note, c2.load, c2.hexrows, c2.glyphs
 
 
@@ -70,6 +71,14 @@ def check_animations(by_name):
             if len(pals) > 1:
                 err(f'{w}: tile {k} changes its palette between phases ({sorted(pals)})')
         slots += len(ph[0])
+    cy = an.get('cycle')            # Stage 13d: colour cycling of the water
+    if cy is None:
+        note('animations.json: no "cycle" (colour cycling of the water)')
+    elif cy.get('palette') != 'water' or not (1 <= cy.get('first', 0) and cy.get('first', 0) + cy.get('count', 0) <= 16
+                                              and 3 <= cy.get('count', 0) <= 6 and 2 <= cy.get('period', 0) <= 32):
+        err(f'animations.json "cycle" {cy}: palette "water", first >= 1, 3-6 colours within 1-15, period 2-32')
+    else:
+        note(f'colour cycling: water indices {cy["first"]}-{cy["first"] + cy["count"] - 1}, every {cy["period"]} frames')
     if slots > MAX_ANIM_SLOTS:
         err(f'animations: {slots} animated map tiles, at most {MAX_ANIM_SLOTS}')
     note(f'animations: {len(anims)}, {slots} animated map tiles (max {MAX_ANIM_SLOTS})')

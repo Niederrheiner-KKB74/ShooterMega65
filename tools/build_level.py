@@ -281,13 +281,20 @@ def build(src, outdir, name):
         if len(al) > ANIM_MAX or len(anim) > ANIM_BUF:
             raise LevelError(f'tile animations: {len(al)} animations / {len(anim)} bytes, maximum {ANIM_MAX} / {ANIM_BUF}')
     off_anim = off_gt + len(gt_block) if anim else 0
+    # Stage 13d: colour cycling ("cycle" in animations.json): landscape bank, first index, count, frames per step
+    cyc = bytes(4)
+    if af.exists() and 'cycle' in json.loads(af.read_text()):
+        c = json.loads(af.read_text())['cycle']
+        if not (1 <= c['first'] and c['first'] + c['count'] <= 16 and 2 <= c['count'] and 2 <= c['period'] <= 255):
+            raise LevelError(f'colour cycle {c}: indices 1-15, at least 2 colours, period 2-255')
+        cyc = bytes((LAND_BANKS[c['palette']], c['first'], c['count'], c['period']))
     ptab, code = bytearray(), bytearray()
     for p in paths:
         ptab += struct.pack('<H', off_code + len(code))
         code += p
     header = struct.pack('<2sBBHHHHHHHHBHB', b'SL', 2, len(used), nrows, off_meta, off_dict, off_rows,
                          off_events, off_forms, off_ptab, speed, len(dict_rows) & 0xFF, off_gt, len(dest_tab) // 3)
-    header = (header + struct.pack('<H', off_anim)).ljust(hdr_len, b'\0')
+    header = (header + struct.pack('<H', off_anim) + cyc).ljust(hdr_len, b'\0')
     dat = header + meta + b''.join(bytes(r) for r in dict_rows) + bytes(rowlist) + bytes(events) + bytes(forms) + bytes(ptab) + bytes(code) + gt_block + bytes(anim)
     for fname, data, mx in (('GFX', gfx, MAX_FILE), ('DAT', dat, MAX_DAT)):
         if len(data) > mx:
