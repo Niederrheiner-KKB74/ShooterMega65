@@ -2,6 +2,7 @@
 import argparse
 import json
 import math
+import random
 import re
 from pathlib import Path
 
@@ -11,7 +12,7 @@ ART = Path('assets/art/level3/generated')
 MAP = Path('levels/level3.json')
 CYCLE = dict(palette='water',first=9,count=4,period=6)
 WATER = ('000000 101e38 142c51 1a3f66 1d5276 226b89 278299 429da2 '
-         '9ec6a9 296682 337e95 55a6aa 3b8c9c 263a47 b8ac8f e1f0da')
+         '9ec6a9 2d6c86 357b92 4a93a4 3d8498 263a47 b8ac8f e1f0da')
 STATIC_REMAP = bytes((0,1,2,3,4,5,6,7,7,8,15,15,13,3,8,5))+bytes(range(16,256))
 WIND_LAYOUT = [(x,y) for y in (228,236) for x in (2,7,13,18)]+[(7,244)]
 
@@ -38,17 +39,26 @@ def open_water(name):
 
 
 def wave_art(im,variant,shore=False):
-    # Each strip is one phase across its full width. The game rotates
-    # the brightest color from index 11 to 12, so the crest moves upward.
-    # Offset the wavelets between tile variants and taper their ends.
-    center = 6 + variant * 3 % 4
-    top = 2 + variant * 5 % 7
-    for offset,(index,width) in enumerate(zip((12,11,10,9),(5,11,9,5))):
-        start = center - width // 2
-        for x in range(start,start + width):
-            y = top + offset + (abs(x-center) >= 3)
-            if not shore or im.getpixel((x,y))<=5:
-                im.putpixel((x,y),index)
+    # Break the surface into two uneven arcs. A phase offset applies to
+    # the entire arc, keeping each crest coherent as it moves upward.
+    rng = random.Random(6502 + 157 * variant)
+    upper,lower = rng.randrange(1,6),rng.randrange(8,12)
+    left,right = rng.randrange(3,5),rng.randrange(11,13)
+    if variant % 2:
+        upper,lower = lower,upper
+    arcs = (
+        (left,upper,(3,6,5,3),rng.randrange(4)),
+        (right,lower,(2,4,4,2),rng.randrange(4)),
+    )
+    for center,top,widths,phase in arcs:
+        bend = rng.choice((-1,1))
+        for offset,width in enumerate(widths):
+            index = 9 + (3-offset+phase) % 4
+            start = center - width // 2
+            for x in range(start,start + width):
+                y = top + offset + (bend * (x-center) > 1)
+                if not shore or im.getpixel((x,y))<=5:
+                    im.putpixel((x,y),index)
 
 
 def turbine(sea,phase):
