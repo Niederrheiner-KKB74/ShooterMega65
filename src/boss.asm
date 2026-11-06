@@ -387,8 +387,7 @@ boss_touch:
 .const HV_GROW = 4                 // frames per new segment (the tip shoots down at 6 px/frame)
 hover_fight:
     jsr hv_jets                 // carrier (level 3): deck jets
-    lda #0
-    sta hv_mov
+    lsr hv_mov                  // dust/wake: still shown one frame after a step (the carrier steps every 2nd)
     lda boss_y+1                // core opened while still gliding in: keep descending first
     bne !in+
     lda boss_y
@@ -421,7 +420,8 @@ hv_step:
     lda boss_x
     cmp hv_tx
     beq !y+
-    inc hv_mov
+    lda #3
+    sta hv_mov
     bcc !r+
     dec boss_x
     jmp !y+
@@ -429,7 +429,8 @@ hv_step:
 !y: lda boss_y
     cmp hv_ty
     beq !chk+
-    inc hv_mov
+    lda #3
+    sta hv_mov
     bcc !d+
     dec boss_y
     rts

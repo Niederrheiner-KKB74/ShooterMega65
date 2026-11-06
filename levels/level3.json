@@ -381,13 +381,915 @@
     [0, 12, 4, 12, 12, 4, 6, 7, 5, 6, 4, 5, 7, 4, 6, 4, 12, 12, 0, 2, 3],
     [0, 12, 4, 12, 12, 4, 6, 7, 5, 6, 4, 5, 7, 4, 6, 4, 12, 12, 0, 2, 3]
   ],
-  "paths": {},
-  "formations": {},
+  "paths": {
+    "swoop": [
+      ["move", 40, 0, 2],
+      ["move", 40, 1, 1.5],
+      ["fire"],
+      ["move", 80, 0.5, 2.5],
+      ["end"]
+    ],
+    "snake": [
+      ["sine", 40, 96, 2, 1.25],
+      ["fire"],
+      ["sine", 40, 96, 1, 1.75],
+      ["end"]
+    ],
+    "loop": [
+      ["move", 48, 0, 2],
+      ["move", 6, 0.5, 2.0],
+      ["move", 6, 1.0, 1.75],
+      ["move", 6, 1.75, 1.0],
+      ["move", 6, 2.0, 0.5],
+      ["move", 6, 2.0, -0.5],
+      ["move", 6, 1.75, -1.0],
+      ["move", 6, 1.0, -1.75],
+      ["move", 6, 0.5, -2.0],
+      ["move", 6, -0.5, -2.0],
+      ["move", 6, -1.0, -1.75],
+      ["move", 6, -1.75, -1.0],
+      ["move", 6, -2.0, -0.5],
+      ["move", 6, -2.0, 0.5],
+      ["move", 6, -1.75, 1.0],
+      ["move", 6, -1.0, 1.75],
+      ["move", 6, -0.5, 2.0],
+      ["fire"],
+      ["move", 127, 0, 2.5],
+      ["end"]
+    ],
+    "u_turn": [
+      ["move", 50, 0, 2.5],
+      ["fire"],
+      ["move", 6, 0.5, 2.5],
+      ["move", 6, 1.5, 2.0],
+      ["move", 6, 2.0, 1.5],
+      ["move", 6, 2.5, 0.5],
+      ["move", 6, 2.5, -0.5],
+      ["move", 6, 2.0, -1.5],
+      ["move", 6, 1.5, -2.0],
+      ["move", 6, 0.5, -2.5],
+      ["move", 127, 0, -2.5],
+      ["end"]
+    ],
+    "side_in": [
+      ["move", 30, 2, 0.5],
+      ["move", 6, 2.0, 0.25],
+      ["move", 6, 1.75, 1.0],
+      ["move", 6, 1.5, 1.5],
+      ["move", 6, 1.0, 1.75],
+      ["move", 6, 0.25, 2.0],
+      ["fire"],
+      ["move", 127, 0, 2],
+      ["end"]
+    ],
+    "zigzag": [
+      ["move", 30, 1.5, 1.5],
+      ["move", 30, -1.5, 1.5],
+      ["fire"],
+      ["move", 30, 1.5, 1.5],
+      ["move", 30, -1.5, 1.5],
+      ["move", 127, 0, 2],
+      ["end"]
+    ],
+    "strafe": [
+      ["move", 127, 2.25, 0.25],
+      ["end"]
+    ],
+    "v_dive": [
+      ["move", 36, 0, 1.5],
+      ["aim", 50, 1],
+      ["fire"],
+      ["move", 127, 0, 3],
+      ["end"]
+    ],
+    "hover": [
+      ["move", 50, 0, 1.5],
+      ["wait", 30],
+      ["fire"],
+      ["aim", 60, 0.75],
+      ["fire"],
+      ["wait", 20],
+      ["move", 127, -1.5, 0.5],
+      ["end"]
+    ],
+    "heli_ring": [
+      ["move", 40, 0, 1.5],
+      ["move", 6, 0.25, 1.5],
+      ["move", 6, 0.5, 1.5],
+      ["move", 6, 0.75, 1.25],
+      ["move", 6, 1.0, 1.0],
+      ["move", 6, 1.25, 0.75],
+      ["move", 6, 1.5, 0.5],
+      ["move", 6, 1.5, 0.0],
+      ["move", 6, 1.5, -0.25],
+      ["move", 6, 1.25, -0.75],
+      ["move", 6, 1.25, -1.0],
+      ["move", 6, 1.0, -1.25],
+      ["move", 6, 0.75, -1.25],
+      ["move", 6, 0.25, -1.5],
+      ["move", 6, 0.0, -1.5],
+      ["move", 6, -0.5, -1.5],
+      ["move", 6, -0.75, -1.25],
+      ["move", 6, -1.0, -1.0],
+      ["move", 6, -1.25, -0.75],
+      ["move", 6, -1.5, -0.5],
+      ["move", 6, -1.5, -0.25],
+      ["fire"],
+      ["wait", 20],
+      ["move", 127, 0, 1.5],
+      ["end"]
+    ],
+    "cross": [
+      ["move", 127, 1.25, 1],
+      ["fire"],
+      ["move", 127, 1.25, 1],
+      ["end"]
+    ],
+    "weave": [
+      ["move", 60, 0, 1],
+      ["move", 50, 1, 0.75],
+      ["fire"],
+      ["move", 60, -1, 0.75],
+      ["move", 127, 0, 1.25],
+      ["end"]
+    ],
+    "stop_fire": [
+      ["move", 70, 0, 1],
+      ["wait", 30],
+      ["fire"],
+      ["wait", 40],
+      ["fire"],
+      ["move", 60, 0.75, 0.5],
+      ["fire"],
+      ["move", 127, 0, 1.5],
+      ["end"]
+    ],
+    "sweep": [
+      ["move", 80, 0, 0.75],
+      ["fire"],
+      ["move", 64, 1.25, 0.5],
+      ["fire"],
+      ["move", 96, -1.25, 0.5],
+      ["move", 127, 0, 1.5],
+      ["end"]
+    ]
+  },
+  "formations": {
+    "swoop8": {
+      "enemy": "fighter",
+      "count": 8,
+      "path": "swoop",
+      "delay": 14,
+      "x": 40,
+      "y": -24
+    },
+    "swoop6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "swoop",
+      "delay": 14,
+      "x": 40,
+      "y": -24
+    },
+    "snake8": {
+      "enemy": "fighter",
+      "count": 8,
+      "path": "snake",
+      "delay": 14,
+      "x": 136,
+      "y": -24
+    },
+    "loop6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "loop",
+      "delay": 16,
+      "x": 70,
+      "y": -24
+    },
+    "uturn6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "u_turn",
+      "delay": 12,
+      "x": 100,
+      "y": -24
+    },
+    "side6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "side_in",
+      "delay": 14,
+      "x": -32,
+      "y": 24
+    },
+    "zigzag6": {
+      "enemy": "fighter",
+      "count": 6,
+      "path": "zigzag",
+      "delay": 16,
+      "x": 60,
+      "y": -24
+    },
+    "strafe5": {
+      "enemy": "fighter",
+      "count": 5,
+      "path": "strafe",
+      "delay": 18,
+      "x": -32,
+      "y": 8
+    },
+    "v_lead": {
+      "enemy": "fighter",
+      "count": 1,
+      "path": "v_dive",
+      "delay": 0,
+      "x": 152,
+      "y": -24
+    },
+    "v_wing": {
+      "enemy": "fighter",
+      "count": 2,
+      "path": "v_dive",
+      "delay": 16,
+      "x": 0,
+      "y": -40
+    },
+    "hover4": {
+      "enemy": "helicopter",
+      "count": 4,
+      "path": "hover",
+      "delay": 28,
+      "x": 60,
+      "y": -24
+    },
+    "ring5": {
+      "enemy": "helicopter",
+      "count": 5,
+      "path": "heli_ring",
+      "delay": 22,
+      "x": 120,
+      "y": -24
+    },
+    "cross4": {
+      "enemy": "bomber",
+      "count": 4,
+      "path": "cross",
+      "delay": 32,
+      "x": -24,
+      "y": -40
+    },
+    "weave4": {
+      "enemy": "bomber",
+      "count": 4,
+      "path": "weave",
+      "delay": 30,
+      "x": 140,
+      "y": -40
+    },
+    "stop3": {
+      "enemy": "armoured",
+      "count": 3,
+      "path": "stop_fire",
+      "delay": 40,
+      "x": 80,
+      "y": -40
+    },
+    "sweep3": {
+      "enemy": "armoured",
+      "count": 3,
+      "path": "sweep",
+      "delay": 36,
+      "x": 144,
+      "y": -40
+    }
+  },
   "events": [
+    {
+      "row": 12,
+      "type": "formation",
+      "formation": "side6",
+      "mirror": false
+    },
+    {
+      "row": 16,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 176,
+      "dir": "west"
+    },
+    {
+      "row": 20,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": false
+    },
+    {
+      "row": 28,
+      "type": "formation",
+      "formation": "snake8",
+      "mirror": false
+    },
+    {
+      "row": 33,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 104,
+      "dir": "south"
+    },
+    {
+      "row": 37,
+      "type": "formation",
+      "formation": "v_lead",
+      "mirror": false
+    },
+    {
+      "row": 37,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": false,
+      "x": 120
+    },
+    {
+      "row": 37,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": true,
+      "x": 120
+    },
+    {
+      "row": 42,
+      "type": "ground",
+      "enemy": "patrol_boat",
+      "x": 104,
+      "dir": "east"
+    },
+    {
+      "row": 46,
+      "type": "formation",
+      "formation": "ring5",
+      "mirror": false
+    },
+    {
+      "row": 50,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 128,
+      "dir": "south"
+    },
+    {
+      "row": 55,
+      "type": "formation",
+      "formation": "loop6",
+      "mirror": false
+    },
+    {
+      "row": 55,
+      "type": "formation",
+      "formation": "loop6",
+      "mirror": true
+    },
+    {
+      "row": 64,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": false
+    },
+    {
+      "row": 64,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": true
+    },
+    {
+      "row": 68,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 88,
+      "dir": "east"
+    },
+    {
+      "row": 73,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": false
+    },
+    {
+      "row": 73,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": true
+    },
+    {
+      "row": 78,
+      "type": "ground",
+      "enemy": "patrol_boat",
+      "x": 96,
+      "dir": "west"
+    },
+    {
+      "row": 82,
+      "type": "formation",
+      "formation": "uturn6",
+      "mirror": false
+    },
+    {
+      "row": 86,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 240,
+      "dir": "south"
+    },
+    {
+      "row": 94,
+      "type": "formation",
+      "formation": "zigzag6",
+      "mirror": false
+    },
+    {
+      "row": 94,
+      "type": "formation",
+      "formation": "zigzag6",
+      "mirror": true
+    },
+    {
+      "row": 100,
+      "type": "ground",
+      "enemy": "frigate",
+      "x": 240,
+      "dir": "south"
+    },
+    {
+      "row": 103,
+      "type": "formation",
+      "formation": "ring5",
+      "mirror": true
+    },
+    {
+      "row": 105,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 104,
+      "dir": "east"
+    },
+    {
+      "row": 112,
+      "type": "formation",
+      "formation": "swoop8",
+      "mirror": false
+    },
+    {
+      "row": 116,
+      "type": "ground",
+      "enemy": "patrol_boat",
+      "x": 120,
+      "dir": "east"
+    },
+    {
+      "row": 121,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": false
+    },
+    {
+      "row": 121,
+      "type": "formation",
+      "formation": "side6",
+      "mirror": true
+    },
+    {
+      "row": 125,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 48,
+      "dir": "south"
+    },
+    {
+      "row": 130,
+      "type": "formation",
+      "formation": "v_lead",
+      "mirror": false,
+      "x": 60
+    },
+    {
+      "row": 130,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": false,
+      "x": 28
+    },
+    {
+      "row": 130,
+      "type": "formation",
+      "formation": "v_lead",
+      "mirror": true,
+      "x": 60
+    },
+    {
+      "row": 130,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": true,
+      "x": 28
+    },
+    {
+      "row": 140,
+      "type": "formation",
+      "formation": "loop6",
+      "mirror": false
+    },
+    {
+      "row": 140,
+      "type": "formation",
+      "formation": "ring5",
+      "mirror": false
+    },
+    {
+      "row": 145,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 120,
+      "dir": "south"
+    },
+    {
+      "row": 150,
+      "type": "formation",
+      "formation": "snake8",
+      "mirror": true
+    },
+    {
+      "row": 156,
+      "type": "ground",
+      "enemy": "patrol_boat",
+      "x": 264,
+      "dir": "west"
+    },
+    {
+      "row": 160,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": false
+    },
+    {
+      "row": 160,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": true
+    },
+    {
+      "row": 165,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 88,
+      "dir": "east"
+    },
+    {
+      "row": 170,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": false
+    },
+    {
+      "row": 170,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": true
+    },
+    {
+      "row": 174,
+      "type": "ground",
+      "enemy": "frigate",
+      "x": 88,
+      "dir": "south"
+    },
     {
       "row": 188,
       "type": "shop",
       "id": "mid"
+    },
+    {
+      "row": 198,
+      "type": "formation",
+      "formation": "swoop6",
+      "mirror": false
+    },
+    {
+      "row": 198,
+      "type": "formation",
+      "formation": "swoop6",
+      "mirror": true
+    },
+    {
+      "row": 200,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 216,
+      "dir": "east"
+    },
+    {
+      "row": 204,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 240
+    },
+    {
+      "row": 207,
+      "type": "formation",
+      "formation": "ring5",
+      "mirror": false
+    },
+    {
+      "row": 207,
+      "type": "formation",
+      "formation": "ring5",
+      "mirror": true
+    },
+    {
+      "row": 210,
+      "type": "ground",
+      "enemy": "patrol_boat",
+      "x": 80,
+      "dir": "west"
+    },
+    {
+      "row": 216,
+      "type": "formation",
+      "formation": "uturn6",
+      "mirror": false
+    },
+    {
+      "row": 216,
+      "type": "formation",
+      "formation": "uturn6",
+      "mirror": true
+    },
+    {
+      "row": 218,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 280,
+      "dir": "south"
+    },
+    {
+      "row": 225,
+      "type": "formation",
+      "formation": "side6",
+      "mirror": false
+    },
+    {
+      "row": 225,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": true
+    },
+    {
+      "row": 230,
+      "type": "ground",
+      "enemy": "frigate",
+      "x": 120,
+      "dir": "south"
+    },
+    {
+      "row": 234,
+      "type": "formation",
+      "formation": "zigzag6",
+      "mirror": false
+    },
+    {
+      "row": 234,
+      "type": "formation",
+      "formation": "zigzag6",
+      "mirror": true
+    },
+    {
+      "row": 238,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 16,
+      "dir": "west"
+    },
+    {
+      "row": 243,
+      "type": "formation",
+      "formation": "v_lead",
+      "mirror": false
+    },
+    {
+      "row": 243,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": false,
+      "x": 120
+    },
+    {
+      "row": 243,
+      "type": "formation",
+      "formation": "v_wing",
+      "mirror": true,
+      "x": 120
+    },
+    {
+      "row": 248,
+      "type": "ground",
+      "enemy": "patrol_boat",
+      "x": 128,
+      "dir": "west"
+    },
+    {
+      "row": 252,
+      "type": "formation",
+      "formation": "loop6",
+      "mirror": false
+    },
+    {
+      "row": 252,
+      "type": "formation",
+      "formation": "loop6",
+      "mirror": true
+    },
+    {
+      "row": 258,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 48,
+      "dir": "east"
+    },
+    {
+      "row": 261,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": false
+    },
+    {
+      "row": 261,
+      "type": "formation",
+      "formation": "ring5",
+      "mirror": true
+    },
+    {
+      "row": 270,
+      "type": "formation",
+      "formation": "snake8",
+      "mirror": false
+    },
+    {
+      "row": 276,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 144,
+      "dir": "west"
+    },
+    {
+      "row": 282,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": false
+    },
+    {
+      "row": 282,
+      "type": "formation",
+      "formation": "strafe5",
+      "mirror": true
+    },
+    {
+      "row": 286,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 80
+    },
+    {
+      "row": 288,
+      "type": "ground",
+      "enemy": "patrol_boat",
+      "x": 264,
+      "dir": "west"
+    },
+    {
+      "row": 291,
+      "type": "formation",
+      "formation": "ring5",
+      "mirror": false
+    },
+    {
+      "row": 291,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": true
+    },
+    {
+      "row": 296,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 160,
+      "dir": "east"
+    },
+    {
+      "row": 298,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 256
+    },
+    {
+      "row": 300,
+      "type": "formation",
+      "formation": "swoop8",
+      "mirror": false
+    },
+    {
+      "row": 306,
+      "type": "ground",
+      "enemy": "frigate",
+      "x": 128,
+      "dir": "south"
+    },
+    {
+      "row": 309,
+      "type": "formation",
+      "formation": "side6",
+      "mirror": false
+    },
+    {
+      "row": 309,
+      "type": "formation",
+      "formation": "side6",
+      "mirror": true
+    },
+    {
+      "row": 312,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 192
+    },
+    {
+      "row": 314,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 144,
+      "dir": "west"
+    },
+    {
+      "row": 318,
+      "type": "formation",
+      "formation": "uturn6",
+      "mirror": false
+    },
+    {
+      "row": 318,
+      "type": "formation",
+      "formation": "uturn6",
+      "mirror": true
+    },
+    {
+      "row": 322,
+      "type": "ground",
+      "enemy": "patrol_boat",
+      "x": 120,
+      "dir": "east"
+    },
+    {
+      "row": 326,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 208
+    },
+    {
+      "row": 327,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": false
+    },
+    {
+      "row": 327,
+      "type": "formation",
+      "formation": "hover4",
+      "mirror": true
+    },
+    {
+      "row": 332,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 72,
+      "dir": "west"
+    },
+    {
+      "row": 336,
+      "type": "formation",
+      "formation": "zigzag6",
+      "mirror": false
+    },
+    {
+      "row": 338,
+      "type": "ground",
+      "enemy": "frigate",
+      "x": 128,
+      "dir": "south"
+    },
+    {
+      "row": 344,
+      "type": "ground",
+      "enemy": "speedboat",
+      "x": 232,
+      "dir": "south"
     },
     {
       "row": 352,

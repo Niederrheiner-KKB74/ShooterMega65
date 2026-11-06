@@ -1,4 +1,4 @@
-# Memory map (Stage 11)
+# Memory map (Stage 13)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -38,13 +38,13 @@ not in the zero page.
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
-| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`) |
+| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`) |
 
 ## Banks 4/5 (chip RAM)
 
 | Address | Size | Use |
 |---|---|---|
-| `$40000–$43FFF` | 16 KB | landscape NCM glyphs, char `$1000`+ (max. 256 per level: tile offsets in the map are bytes; `build_level.py` allows 128 tiles; the coastal level uses 208 glyphs) |
+| `$40000–$43FFF` | 16 KB | landscape NCM glyphs, char `$1000`+ (Stage 13: animated tiles are overwritten with their phases from the level pack by `anim.asm`) (max. 256 per level: tile offsets in the map are bytes; `build_level.py` allows 128 tiles; the coastal level uses 208 glyphs) |
 | `$44000–$467FF` | 10 KB | shop glyphs from the file `SHOP`, char `$1100`+ (160 reserved, 148 used). Guarded in `shop.asm` |
 | `$46800–$4F7FF` | 36 KB | pixie NCM glyphs, char `$11A0`+ (max. 576, Stage 8 uses 574 incl. light gun and gun muzzle flashes): loaded at start from the file `PIXIES` (complete image incl. blank guards) straight into this area. Frame bases in `frames.inc` are absolute character numbers. HUD glyphs at `HUD_GLYPH + 2k`, rebuilt at run time |
 | `$4F800–$4FFFF` | 2 KB | Stage 8: destroyed landscape tiles 32–47 (char `$13E0`+, from `LnDEST`) |
@@ -59,6 +59,8 @@ not in the zero page.
 | `$5E000–$5EFFF` | 4 KB | Stage 8: destroyed landscape tiles 0–31 (char `$1780`+, from `LnDEST`) |
 | `$5F000–$5FBFF` | | player sprites, 6 frame pairs (left/right half 256 bytes each) |
 | `$5FC00–$5FEFF` | | invulnerability ring, sprites 2–4 (256 bytes each, `special.asm`) |
+| `$5DB00–$5DDFF` | 768 | Stage 13: BASIC's palette 0, saved at start, restored at exit (`SAVED_PAL0`; was 768 bytes in bank 0) |
+| `$5DE00–$5DEFF` | 256 | Stage 13: BASIC's zero page, saved/restored by DMA (`SAVED_ZP`; was 256 bytes in bank 0) |
 | `$5FF00–$5FFFF` | | free |
 
 `$20000–$3FFFF` is ROM and is never used for data (Vyper rule 4).
@@ -175,16 +177,21 @@ integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1
 | `$8000000` | title screen data (`TITLE`, 26 KB), copied to `$56000` for the title |
 | `$8010000` | game-over banner data (`GOVER`, 5.6 KB), copied to `$58000` for the banner |
 | `$8020000` | Stage 7c: boss data (`L1BOSS`, 9,584 bytes: 149 glyphs + palette); glyphs copied over the fighter/bomber glyphs (`$46800`) when the boss arrives, palette copied to `boss_pal_buf` at load |
-| `$8030000` | copy of the aircraft glyphs that the boss replaces (Stage 10: fighter, bomber, helicopter and armoured-plane frames, 323 glyphs, 20,672 bytes), saved after `PIXIES` is loaded, copied back after the boss |
+| `$8030000` | Stage 13: enemy set `ENEM0` (levels 1 and 2; 24,802 bytes: aircraft area 324 glyphs, tank area 49 glyphs, palettes of banks 5–8, the frame-table entries of frames 0–65 and `FR_TANK_N0`+0–15). `set_in` copies the set of the level into place at `level_enter` and after the boss. Until Stage 12: copy of the aircraft glyphs that the boss replaces |
 | `$8040000–$804FFFF` | Stage 9: level-1 pack: `+$0000` `L1GFX`, `+$4000` `L1DAT`, `+$7000` `L1DEST`, `+$9000` level-1 music piece (copied from the `MUSIC` slot at start) |
 | `$8050000–$805FFFF` | Stage 9: level-2 pack: `L2GFX`, `L2DAT`, `L2DEST`, `MUS2` at the same offsets |
-| `$8060000` | Stage 9: level-2 boss (`L2BOSS`, same layout as `L1BOSS`; Stage 10: 323 glyphs + palette, 20,720 bytes each; Stage 11: 205 glyphs + palette, 13,168 bytes each) |
-| `$8070000–` | free |
+| `$8060000` | Stage 9: level-2 boss (`L2BOSS`, same layout as `L1BOSS`; Stage 10: 323 glyphs + palette, 20,720 bytes each; Stage 11: 205 glyphs + palette, 13,168 bytes each; Stage 13: 256 glyphs + palette, 16,432 bytes each) |
+| `$8070000–$807FFFF` | Stage 13: level-3 pack: `L3GFX`, `L3DAT`, `L3DEST`, `MUS3` at the same offsets |
+| `$8080000` | Stage 13: level-3 boss (`L3BOSS`, carrier) |
+| `$8090000` | Stage 13: level-3 enemy set (`ENEM3`, layout as `ENEM0`) |
+| `$80A0000–` | free |
+
+Since Stage 13 the banks of each level are tables in `levels.asm` (`lv_pack_bank`, `lv_boss_bank`, `lv_set_bank`).
 
 Detected at start (two patterns written by DMA and read back). Without attic RAM the title is loaded straight to
 `$56000` and shown only once, and there is no boss (the level simply goes on). Each area is guarded by an
 `.errorif` in its module.
 
-## Files on the D81 (Stage 9)
+## Files on the D81 (Stage 13)
 
-`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS`, `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `MUS2` (SEQ).
+`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS`, `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `L3GFX`, `L3DAT`, `L3DEST`, `L3BOSS`, `ENEM0`, `ENEM3`, `MUS2`, `MUS3` (SEQ).

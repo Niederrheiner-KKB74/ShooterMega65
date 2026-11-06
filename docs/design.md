@@ -309,6 +309,7 @@ so `RUN` works again after an exit.
 | 04.11.2026 | PR #20 merged; Stage 10: land cruiser turns through a diagonal view with dust |
 | 04.11.2026 | Stage 10 rejected (the diagonal view looks smaller); PR #21 merged; Stage 11: hover tank with dust and flame thrower replaces the land cruiser, Stage 10 is not tested on hardware |
 | 05.11.2026 | Stage 11 confirmed on hardware; Stage 12: longer flame jet that shoots down and sweeps towards the player |
+| 06.11.2026 | Stage 12 confirmed; PR #22 (level 3) revised and merged; Stage 13: level 3 with enemy sets, ships, tile animation and carrier |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
@@ -495,19 +496,33 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - Title: key **2** starts directly in level 2 (test aid, also in release builds). Test define `START_LEVEL2`,
   `build.py --level2 FILE` builds another JSON as level 2.
 
-## 22a. Level 3 "Offshore" (planned, brief `docs/chatgpt_level3.md`)
-- Sea level: islands, oil rigs, research platforms, wind farm, naval base; boss: aircraft carrier (glides slowly,
-  bow wave/wake as `spray`, radar dishes as `rotors`, launches deck jets from a catapult, deck lift opens on the core).
-- **Per-level enemy set**: level 3 replaces the aircraft area (324 glyphs: fighter, helicopter, bomber, armoured
-  plane) with seaplane (16×16, 8 dirs × 3), navy helicopter (16×16, 8 × 3), patrol boat (32×32, 4 dirs × 2) and
-  frigate (32×64, 2 phases + wreck), and the tank area (48 glyphs) with a speedboat (16×16, 4 dirs × 4). Kept in
-  attic RAM per level and copied in by `level_enter` (and after the boss); frame tables (size, palette, hit box)
-  per level. Ships move like tanks but only on `water` tiles; guns on ships are the light ground gun.
-- Music: "Open Waters" (A Dorian, 125 BPM, 40 bars, loops to bar 5; `compose_music.py level3()`, file `MUS3` when
-  level 3 is on the disk). `build.py --music-level N` makes a listening disk with piece N as the level-1 music
-  (MUSICTEST key 1).
-- **Tile animation**: `animations.json` (≤ 8 animations, ≤ 24 animated map tiles, 2–4 phases, 4–32 frames per
-  phase); the glyph data of a phase is copied over the phase-1 tile's glyphs. Animated tiles are not destroyable.
+## 22a. Level 3 "Operation Offshore" (Stage 13, PR #22)
+- Sea level by ChatGPT: open sea with islands, oil field, research platforms with wind farm, naval base; 126 tiles,
+  35 ruined tiles, 4 tile animations. Waves: `tools/design_waves_l3.py` (only fighter and helicopter formations,
+  ships as ground events on open water, guns on islands and platforms).
+- **Attic layout per level** (tables in `levels.asm`): pack banks 4, 5, 7; boss banks 2, 6, 8; enemy-set banks 3, 3, 9.
+  Key 3 on the title starts level 3 (test aid, like key 2); `--define START_LEVEL3`, `build.py --level3`.
+- **Per-level enemy set** (`import_art.py enemy_sets`, files `ENEM0` for levels 1/2 and `ENEM3`): the aircraft area
+  (324 glyphs, frames 0–65), the tank area (49 glyphs, `FR_TANK_N0`+0–15), the palettes of banks 5–8 (into
+  `palette_data`) and these frames' table entries. `set_in` copies it with one DMA job per part (23 parts) at
+  `level_enter` and after the boss (replaces the Stage 7c `PXSAVE` copy). Level 3: seaplane in the fighter slots,
+  patrol boat (4 directions × 2) in the bomber slots, navy helicopter in the helicopter slots, frigate (2 phases +
+  wreck) in the armoured-plane slots, speedboat in the tank slots. Bomber and armoured formations must not be used
+  in level 3.
+- **Ships** are `T_TANK` objects: speedboat = `K_TANK` (in level 3 `tank_boat` = 1: land ahead blocks, off-screen is
+  open water, it moves every frame), patrol boat = `K_BOMBER` (32×32, every 2nd frame, 16 hits, one light gun),
+  frigate = `K_ARMOURED` (south only, every 4th frame, 40 hits, two light guns). Guns on ships are `T_GUN` objects
+  in a slot after the ship's (drawn on top) with the ship's slot + 1 in `obj_mir` and their offset in
+  `obj_pcl/obj_pch`; they ride with the ship and vanish with it. The frigate wreck frame is not used yet.
+- **Carrier boss** uses the hover code (`hover_fight`): no flame, half glide speed, y 16–31, wake (`spray`) while it
+  moves, 1 radar (`rotors`). Every 2–5 s a deck jet: 24 frames on the catapult (`BOSS_JET0/1`), then it flies at
+  the player as a fire shot with frame `BOSS_JET2` (cannot be shot down). `boss_fx` has 19 bytes (catapult x, y,
+  flag added).
+- **Tile animation** (`anim.asm`): `animations.json` → table in `LnDAT` (header word +24); every `period` frames the
+  phase's tile glyphs are copied by DMA from the level pack (untouched `LnGFX`) over the phase-0 tiles. ≤ 8
+  animations, ≤ 24 animated map tiles; animated tiles are not destroyable.
+- Music "Open Waters" (A Dorian, `MUS3`); `build.py --music-level N` makes a listening disk.
+- Bank-0 space: BASIC's palette 0 and zero page are saved in chip RAM (`$5DB00`, `$5DE00`) instead of bank 0.
 
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
