@@ -204,6 +204,8 @@ spawn_eshot_a:
     lda obj_yh,x
     adc #0
     sta sp_y+1
+// entry with sp_x/sp_y set (es_kind, es_slot as above; Stage 13: the carrier's deck jets)
+spawn_eshot_at:
     stx ob_i
     ldx #SHOT_FIRST
     lda #SHOT_END
@@ -688,10 +690,12 @@ upd_tank:
     bne !+
     rts
 !:  inc obj_t,x
-    lda obj_t,x
-    and #1
-    beq !moved+
-    lda obj_b,x
+    ldy obj_kind,x              // moves every 2nd frame (tank, patrol boat), every frame (speedboat),
+    lda obj_t,x                 // every 4th (frigate, always south)
+    and mvmask,y
+    beq !+
+    jmp !moved+
+!:  lda obj_b,x
     bne !+
     sec                         // north
     lda obj_yl,x
@@ -734,7 +738,10 @@ upd_tank:
     lda #1                      // left edge: turn east
     sta obj_b,x
 !moved:
-    lda obj_b,x                 // water ahead: turn round (Stage 7c)
+    lda obj_kind,x              // the frigate keeps its course
+    cmp #K_ARMOURED
+    beq !anim+
+    lda obj_b,x                 // water ahead: turn round (Stage 7c); ships: land ahead
     jsr tank_water
     bcc !+
     lda obj_b,x
@@ -773,14 +780,24 @@ upd_tank:
 !:  jsr tank_frame
     jmp maybe_fire
 
-// Carry set if the point just ahead of tank X in direction A (0 N, 1 E, 2 S, 3 W) is water. Keeps X.
+// Carry set if the point just ahead of tank X in direction A (0 N, 1 E, 2 S, 3 W) is water (ships, Stage 13:
+// if it is land on the screen; the patrol boat is 32x32, its offsets are doubled). Keeps X.
 tank_water:
     tay
-    clc
+    lda tw_dx,y
+    sta tmp
+    lda tw_dy,y
+    sta tmp+1
+    lda obj_kind,x
+    cmp #K_TANK
+    beq !+
+    asl tmp
+    asl tmp+1
+!:  clc
     lda obj_xl,x
-    adc tw_dx,y
+    adc tmp
     sta ln_x
-    lda tw_dx,y                 // sign extension
+    lda tmp                     // sign extension
     and #$80
     beq !+
     lda #$ff
@@ -788,21 +805,62 @@ tank_water:
     sta ln_x+1
     clc
     lda obj_yl,x
-    adc tw_dy,y
+    adc tmp+1
     sta ln_y
-    lda tw_dy,y
+    lda tmp+1
     and #$80
     beq !+
     lda #$ff
 !:  adc obj_yh,x
     sta ln_y+1
+    lda tank_boat
+    bne !+
     jmp is_water
+!:  lda ln_y+1                  // ships: off the screen (above, below) is open water
+    bne !free+
+    lda ln_y
+    cmp #200
+    bcs !free+
+    jsr is_water
+    bcc !blk+
+!free:
+    clc
+    rts
+!blk:
+    sec
+    rts
+tank_boat: .byte 0               // 1: level 3, tanks are speedboats on water (levels.asm)
+mvmask:    .byte 0, 1, 0, 3, 1     // movement every (mask+1) frames by kind; tank: 0 in level 3 (speedboat)
 tw_dx: .byte 8, 17, 8, $fe
 tw_dy: .byte $fe, 8, 17, 8
 tw_d:  .byte 0
 
-// frame = FR_TANK_N0 + direction * 4 + phase
+// frame = FR_TANK_N0 + direction * 4 + phase; patrol boat FR_BOMBER0 + direction * 2 + phase & 1;
+// frigate FR_ARMOURED0 + phase & 1 (level-3 enemy set, Stage 13)
 tank_frame:
+    lda obj_kind,x
+    cmp #K_TANK
+    beq !tank+
+    cmp #K_BOMBER
+    bne !fr+
+    lda obj_b,x
+    asl
+    sta tmp
+    lda obj_wave,x
+    and #1
+    ora tmp
+    clc
+    adc #FR_BOMBER0
+    sta obj_fr,x
+    rts
+!fr:
+    lda obj_wave,x
+    and #1
+    clc
+    adc #FR_ARMOURED0
+    sta obj_fr,x
+    rts
+!tank:
     lda obj_b,x
     asl
     asl

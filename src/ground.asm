@@ -706,6 +706,7 @@ gun_spawn:
     sta obj_a,x                 // pointing south
     lda #0
     sta obj_wave,x
+    sta obj_mir,x               // no ship below it
     lda #60
     sta obj_t,x
     ldy #GUN_HP_LIGHT
@@ -717,6 +718,96 @@ gun_spawn:
     jsr gun_frame
 !:  rts
 gu_k: .byte 0
+
+// ships (Stage 13), tank slot X just spawned: patrol boat 16 hits and one light gun, frigate 40 hits, course
+// south and two light guns (gun positions on the hull: enemies-level3 placement.json)
+ship_guns:
+    lda obj_kind,x
+    cmp #K_TANK
+    beq !rts+
+    stx sg_par
+    ldy #16
+    cmp #K_BOMBER
+    beq !+
+    lda #2
+    sta obj_b,x
+    ldy #40
+!:  tya
+    sta obj_hp,x
+    lda #8                      // first gun
+    tay
+    jsr ship_gun
+    ldx sg_par
+    lda obj_kind,x
+    cmp #K_ARMOURED
+    bne !rts+
+    lda #36
+    ldy #8
+    jsr ship_gun
+    ldx sg_par
+!rts:
+    rts
+// light gun at dx Y, dy A on ship sg_par (a slot after the ship's, so it is drawn on top)
+ship_gun:
+    sta sg_dy
+    sty sg_dx
+    ldx sg_par
+    inx
+    lda #GROUND_END
+    sta ob_end
+    jsr alloc_slot
+    bcs !rts-
+    lda #T_GUN
+    jsr init_slot
+    lda #1
+    sta obj_b,x                 // alive
+    lda #4
+    sta obj_a,x                 // pointing south
+    lda #60
+    sta obj_t,x
+    lda #GUN_HP_LIGHT
+    sta obj_hp,x
+    lda #0
+    sta obj_wave,x
+    ldy sg_par
+    iny
+    tya
+    sta obj_mir,x
+    lda sg_dx
+    sta obj_pcl,x
+    lda sg_dy
+    sta obj_pch,x
+    jsr gun_follow
+    jmp gun_frame
+// gun X onto its ship: position = ship + (obj_pcl, obj_pch). Carry set: the ship is gone.
+gun_follow:
+    ldy obj_mir,x
+    dey
+    lda obj_type,y
+    cmp #T_TANK
+    bne !gone+
+    clc
+    lda obj_xl,y
+    adc obj_pcl,x
+    sta obj_xl,x
+    lda obj_xh,y
+    adc #0
+    sta obj_xh,x
+    clc
+    lda obj_yl,y
+    adc obj_pch,x
+    sta obj_yl,x
+    lda obj_yh,y
+    adc #0
+    sta obj_yh,x
+    clc
+    rts
+!gone:
+    sec
+    rts
+sg_par: .byte 0
+sg_dx:  .byte 0
+sg_dy:  .byte 0
 
 gun_frame:
     lda obj_b,x
@@ -739,12 +830,21 @@ gun_frame:
     rts
 
 upd_gun:
+    lda obj_mir,x               // on a ship (Stage 13): rides with it, gone with it
+    beq !land+
+    jsr gun_follow
+    bcc !go+
+    lda #0
+    sta obj_type,x
+    rts
+!land:
     lda scroll_delta            // moves with the landscape
     jsr move_down
     lda obj_type,x
-    bne !+
+    bne !go+
     rts
-!:  lda obj_wave,x
+!go:
+    lda obj_wave,x
     beq !+
     dec obj_wave,x
 !:  lda obj_b,x

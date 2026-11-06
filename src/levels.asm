@@ -21,7 +21,8 @@
 .errorif (MUS_SLOT_MAX > $10000 - LV_MUS), "level music overlaps the next attic pack"
 lv_pack_bank: .byte $04, $05, $07       // attic bank of each level's pack and boss (Stage 13: tables)
 lv_boss_bank: .byte $02, $06, $08
-lv_set_bank:  .byte $03, $03, $09       // enemy set (Stage 13): ENEM0 for levels 1 and 2, ENEM3
+lv_set_bank:  .byte $03, $03, $09
+lv_sea:       .byte 0, 0, 1       // enemy set (Stage 13): ENEM0 for levels 1 and 2, ENEM3
 .errorif (lv_boss_bank - lv_pack_bank != LEVELS), "one pack and one boss bank per level"
 
 cur_level:      .byte 0
@@ -228,6 +229,10 @@ le_fx:
     dey
     bpl !-
     ldx cur_level               // the level's enemy set (Stage 13)
+    lda lv_sea,x                // level 3: tanks are speedboats (water only, fast)
+    sta tank_boat
+    eor #1
+    sta mvmask+K_TANK
     jsr set_in
     jmp palette_init            // landscape banks 1-4 (and the boss bank back to normal)
 le_fx_lo:    .byte <boss_fx1, <boss_fx2, <boss_fx3

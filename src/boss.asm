@@ -386,6 +386,7 @@ boss_touch:
 .const HV_SEGS = 5                 // segments 24 px apart (they overlap, the flame frames taper)
 .const HV_GROW = 4                 // frames per new segment (the tip shoots down at 6 px/frame)
 hover_fight:
+    jsr hv_jets                 // carrier (level 3): deck jets
     lda #0
     sta hv_mov
     lda boss_y+1                // core opened while still gliding in: keep descending first
@@ -400,7 +401,12 @@ hover_fight:
 !t: jmp hv_flame
 !:  lda hv_fp                   // no gliding while the flame thrower is busy
     bne !t-
-    jsr hv_step
+    lda fx_cat                  // the carrier glides at half speed
+    beq !+
+    lda boss_t
+    and #1
+    bne !t-
+!:  jsr hv_step
     lda boss_state
     cmp #BS_CORE
     bne !t-
@@ -445,9 +451,12 @@ hv_step:
     jmp !st+
 !st:
     sta hv_tx
-    jsr random                  // y: 16..47
+    jsr random                  // y: 16..47 (carrier, 128 high: 16..31)
     and #31
-    clc
+    ldy fx_cat
+    beq !+
+    and #15
+!:  clc
     adc #HV_YMIN
     sta hv_ty
     rts
@@ -583,6 +592,46 @@ hv_touch:
     jmp boss_touch
 hv_len: .byte 0, HV_WARN, HV_BURN, HV_FADE
 
+// carrier (Stage 13): every 2-5 s a jet takes off from the catapult (hv_jt < 24: launch views in hv_draw) and
+// flies at the player like a fire shot (it cannot be shot down)
+hv_jets:
+    lda fx_cat
+    beq !rts+
+    dec hv_jt
+    bne !rts+
+    jsr random
+    ora #96
+    sta hv_jt
+    clc
+    lda boss_x
+    adc fx_catx
+    sta sp_x
+    lda boss_x+1
+    adc #0
+    sta sp_x+1
+    clc
+    lda boss_y
+    adc fx_caty
+    sta sp_y
+    lda boss_y+1
+    adc #0
+    sta sp_y+1
+    lda #K_SHOT_FIRE
+    sta es_kind
+    lda #$ff
+    sta es_slot
+    jsr spawn_eshot_at
+    ldy es_slot
+    bmi !rts+
+    lda #FR_BOSS_JET2
+    sta obj_fr,y
+    sta obj_base,y
+    lda #SFX_SELECT
+    jmp sfx_play
+!rts:
+    rts
+hv_jt:  .byte 120
+
 // jet: one more segment every HV_GROW frames, the boss sweeps slowly towards the player (0.5 px/frame);
 // fading: one segment less every HV_FADE / HV_SEGS frames
 hv_grow:
@@ -700,6 +749,36 @@ hv_draw:
     dec bd_i
     bpl !sp-
 !fl:
+    lda fx_cat                  // carrier: jet on the catapult before take-off
+    beq !nc+
+    lda hv_jt
+    cmp #24
+    bcs !nc+
+    cmp #12                     // first on the catapult (steam), then lifting off
+    lda #FR_BOSS_JET0
+    bcs !+
+    lda #FR_BOSS_JET1
+!:  pha
+    clc
+    lda boss_x
+    adc fx_catx
+    sta px_x
+    lda boss_x+1
+    adc #0
+    sta px_x+1
+    clc
+    lda boss_y
+    adc fx_caty
+    sta px_y
+    lda boss_y+1
+    adc #0
+    sta px_y+1
+    ldy #FR_BOSS_JET0
+    lda frame_pal,y
+    sta px_pal
+    pla
+    jsr pixie_draw
+!nc:
     lda hv_fp
     bne !+
     rts

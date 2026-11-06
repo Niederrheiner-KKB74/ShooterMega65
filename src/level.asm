@@ -558,7 +558,7 @@ ev_run:
 !:  rts
 
 ev_ground:
-    lda ev_p                    // 4 tank, 8 light gun, 9 heavy gun (build_level.py GROUND)
+    lda ev_p                    // 4 tank/speedboat, 5 patrol boat, 6 frigate, 8 light gun, 9 heavy gun (GROUND)
     cmp #8
     bcc !tank+
     sbc #8
@@ -579,14 +579,18 @@ ev_ground:
     bcs !+
     lda #T_TANK
     jsr init_slot
-    ldy #K_TANK
+    ldy ev_p
+    lda gr_kind-4,y
+    tay
     jsr set_kind
     lda ev_p+3
     sta obj_b,x                 // direction
     lda #0
     sta obj_wave,x
     jsr tank_frame
+    jmp ship_guns               // ships (Stage 13): hit points, guns
 !:  rts
+gr_kind: .byte K_TANK, K_BOMBER, K_ARMOURED     // level 3: speedboat, patrol boat, frigate (enemy set slots)
 
 ev_formation:
     // formation record: kind, count, path, delay, x (16), y (16)

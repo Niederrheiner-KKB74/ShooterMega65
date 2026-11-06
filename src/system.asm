@@ -30,11 +30,7 @@ system_save:
     sta saved_b
     lda #0
     tab                          // our zero page is $00xx
-    ldx #2                       // zero page $02-$ff (absolute addressing, independent of B)
-!:  lda $0000,x
-    sta saved_zp,x
-    inx
-    bne !-
+    RunDma(job_zp_save)          // zero page $02-$ff to chip RAM (Stage 13: SAVED_ZP)
     lda CIA1_DDRA
     sta saved_ddra
     .for (var i = 0; i < vic_restore.size(); i++) {
@@ -128,11 +124,7 @@ exit_to_basic:
     sta CIA1_DDRA
     jsr key_drain                // do not hand the exit key to BASIC
     // zero page, base page and stack as BASIC left them
-    ldx #2
-!:  lda saved_zp,x
-    sta $0000,x
-    inx
-    bne !-
+    RunDma(job_zp_rest)
     lda saved_b
     tab
     ldx saved_sp
@@ -219,7 +211,8 @@ saved_b:    .byte 0
 saved_ddra: .byte 0
 saved_d05d: .byte 0
 saved_vic:  .fill vic_restore.size(), 0
-saved_zp:   .fill 256, 0
+job_zp_save: DmaJob(DMA_CMD_COPY, $0002, SAVED_ZP + 2, 254)
+job_zp_rest: DmaJob(DMA_CMD_COPY, SAVED_ZP + 2, $0002, 254)
 // palette 0 (768 bytes) at SAVED_PAL0 in chip RAM: scr_ptr -> it, Z = 0
 pal0_ptr:
     lda #<SAVED_PAL0
