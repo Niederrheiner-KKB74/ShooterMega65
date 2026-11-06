@@ -63,6 +63,7 @@ BOSS = ROOT / 'assets/art/boss-level1/generated'
 BOSS2 = ROOT / 'assets/art/boss-level2/generated'   # PR #17 (Stage 9)
 BOSS3 = ROOT / 'assets/art/boss-level3/generated'   # PR #22 (Stage 13)
 BOSSES = ((1, BOSS), (2, BOSS2), (3, BOSS3))
+ENEM3 = ROOT / 'assets/art/enemies-level3/generated'   # PR #22 (Stage 13): level-3 enemy set
 BOSS_BANK = 5                # boss palette replaces the fighter palette while the boss is on screen
 TANKS = ROOT / 'assets/art/ground-vehicles/generated'
 TANK_DIRS = ('north', 'east', 'south', 'west')       # engine direction 0-3
@@ -152,6 +153,79 @@ def pad16(a):
     off = (out.shape[1] - w) // 2
     out[:, off:off + w] = a
     return out
+
+
+def enemy_sets(out, table, glyphs, pal, report):
+    """Stage 13: per-level enemy sets, files ENEM0 (levels 1 and 2: the aircraft and tanks of PIXIES) and ENEM3.
+
+    A set replaces the aircraft area (fighter, bomber, helicopter, armoured-plane frames 0-65; the same glyphs the
+    boss uses) and the tank area (frames FR_TANK_N0 + 0-15), the palettes of banks 5-8 and those frames' table
+    entries. Layout: aircraft glyphs, tank glyphs, palettes (R, G, B planes of banks 5-8, 64 entries each), then the
+    nine frame tables (frame_base, frame_base_hi, frame_w, frame_h, frame_pal, hit cx, cy, halfw, halfh), each with
+    the 66 aircraft entries followed by the 16 tank entries. levels.asm copies it into place (set_in)."""
+    names = {t['name']: i for i, t in enumerate(table)}
+    air0, air1 = table[names['FIGHTER_0_0']]['base'] - 1, table[names['PSHOT1']]['base'] - 1
+    tk = names['TANK_N0']
+    tank0, tank1 = table[tk]['base'] - 1, table[tk + 15]['base'] + table[tk + 15]['w'] * (table[tk + 15]['h'] + 1)
+    air_frames, tank_frames = list(range(names['PSHOT1'])), list(range(tk, tk + 16))
+    pchar = PIXIE_ADDR // 64
+
+    def pack(glist, tabs, pals):
+        tb = b''
+        for f in (lambda t: (pchar + t['base']) & 255, lambda t: (pchar + t['base']) >> 8, lambda t: t['w'],
+                  lambda t: t['h'], lambda t: t['pal'], lambda t: t['hit'][0], lambda t: t['hit'][1],
+                  lambda t: t['hit'][2], lambda t: t['hit'][3]):
+            tb += bytes(f(t) for t in tabs)
+        pb = bytes(ph.swap(c[ch]) for ch in range(3) for c in pals)
+        return b''.join(glist) + pb + tb
+
+    default = pack(glyphs[air0:air1] + glyphs[tank0:tank1], [table[i] for i in air_frames + tank_frames],
+                   pal[5 * 16:9 * 16])
+    (out / 'ENEM0').write_bytes(default)
+    # level 3: seaplane -> fighter slots, patrol boat -> bomber slots, navy helicopter -> helicopter slots,
+    # frigate -> armoured-plane slots, speedboat -> tank slots
+    src = json.loads((ENEM3 / 'indexed-source.json').read_text())
+    pals = json.loads((ENEM3 / 'palettes.json').read_text())
+    fr = {(f['group'], f['pose'], f['phase']): f for f in src}
+    bank = {'air': 5, 'ships': 6, 'heli': 7}
+    slots = [('seaplane', d, n) for d in VIEW_DIRS for n in range(3)] + \
+        [('patrol_boat', d, n) for d in TANK_DIRS for n in range(2)] + [('patrol_boat', 'south', 0)] + \
+        [('navy_heli', d, n) for d in VIEW_DIRS for n in range(3)] + \
+        [('frigate', 'south', 0), ('frigate', 'south', 1), ('frigate', 'destroyed', 0)] + \
+        [('frigate', 'south', 0)] * 6 + \
+        [('speedboat', d, n) for d in TANK_DIRS for n in range(4)]
+    assert len(slots) == len(air_frames) + len(tank_frames)
+    g3, tabs, placed = {'air': [bytes(64)], 'tank': [bytes(64)]}, [], {}
+    for k, key in enumerate(slots):
+        area, start = ('air', air0) if k < len(air_frames) else ('tank', tank0)
+        if key in placed:
+            tabs.append(placed[key])
+            continue
+        f = fr[key]
+        a = np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
+        h, w = a.shape[0] // 8, a.shape[1] // 16
+        base = start + len(g3[area])
+        for c in range(w):
+            for i in range(h):
+                g3[area].append(ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
+            g3[area].append(bytes(64))
+        placed[key] = dict(base=base, w=w, h=h, pal=(bank[f['palette']] << 4) | 15, hit=hitbox(a))
+        tabs.append(placed[key])
+    assert len(g3['air']) <= air1 - air0, f'level-3 aircraft set: {len(g3["air"])} glyphs, room {air1 - air0}'
+    assert len(g3['tank']) <= tank1 - tank0, f'level-3 tank set: {len(g3["tank"])} glyphs, room {tank1 - tank0}'
+    g3['air'] += [bytes(64)] * (air1 - air0 - len(g3['air']))
+    g3['tank'] += [bytes(64)] * (tank1 - tank0 - len(g3['tank']))
+    p3 = []
+    for b in (5, 6, 7, 8):
+        name = {5: 'air', 6: 'ships', 7: 'heli', 8: 'ships'}[b]
+        p3 += [tuple(c) for c in pals[name]]
+    enem3 = pack(g3['air'] + g3['tank'], tabs, p3)
+    assert len(enem3) == len(default)
+    (out / 'ENEM3').write_bytes(enem3)
+    report.append(f'enemy sets: {len(default)} bytes each (aircraft area {air1 - air0} glyphs, tanks {tank1 - tank0})')
+    return [f'.const SET_AIR_GLYPH={air0}', f'.const SET_AIR_GLYPHS={air1 - air0}',
+            f'.const SET_TANK_GLYPH={tank0}', f'.const SET_TANK_GLYPHS={tank1 - tank0}',
+            f'.const SET_AIR_FRAMES={len(air_frames)}', f'.const SET_BYTES={len(default)}']
 
 
 def main(out):
@@ -419,6 +493,7 @@ def main(out):
     # The complete glyph image (blank guards included) is a file on the disk (PIXIES), loaded to PIXIE_ADDR.
     (out / 'PIXIES').write_bytes(b''.join(glyphs))
     report.append(f'pixies: {len(table)} frames, {len(glyphs)} glyphs of {PIXIE_MAX}')
+    set_consts = enemy_sets(out, table, glyphs, pal, report)
 
     # ------------------------------------------------------------ HUD source data
     digits = bytearray()
@@ -493,7 +568,7 @@ def main(out):
              f'.const TANK_PHASES={TANK_PHASES}', f'.const SHIELD_MAX={SHIELD_MAX}', f'.const BAR_X0={BAR_X0}',
              f'.const HUD_GLYPH={table[names["HUD_SCORE"]]["base"]}',
              f'.const PAL_HUD=${(HUD_BANK << 4) | 15:02x}']
-    lines += boss_consts + gun_consts[:1]
+    lines += boss_consts + gun_consts[:1] + set_consts
     for name, i in names.items():
         lines.append(f'.const FR_{name}={i}')
     for alias, name in air_extra:

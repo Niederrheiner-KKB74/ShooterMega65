@@ -34,7 +34,6 @@
 // copied by DMA over the fighter and bomber glyphs when the boss arrives, and the saved originals are copied
 // back afterwards. Without attic RAM there is no boss (the level simply goes on).
 .const ATTIC_BOSS    = $8020000    // L1BOSS: glyphs + palette
-.const ATTIC_PXSAVE  = $8030000    // the fighter + bomber glyphs that the boss replaces
 .const BOSS_SWAP_ADDR = PIXIE_ADDR + BOSS_SWAP_GLYPH * 64
 
 // FLASH_BANK, PAL_BOSS_FLASH, FLASH_FRAMES_HIT: layout.asm (used by objects.asm before this file)
@@ -80,10 +79,7 @@ boss_load:
     ldx #>name_boss
     ldy #name_boss_end - name_boss
     jsr load_seq_to
-    bcs !+
-    RunDma(job_px_save)         // keep the glyphs the boss will replace (PIXIES is loaded already)
-    clc                         // (palette: level_enter)
-!:  rts
+    rts                         // (palette: level_enter; the glyphs come back from the level's enemy set)
 bl_bank: .byte (ATTIC_BOSS >> 16) & $0f
 name_boss: .text "L1BOSS"
 name_boss_end:
@@ -867,7 +863,8 @@ boss_parts_away:
 bpa_x: .byte 0
 
 boss_restore:
-    RunDma(job_boss_out)        // the fighter and bomber glyphs back
+    ldx cur_level               // the level's aircraft glyphs back (Stage 13: from its enemy set)
+    jsr set_in
     jmp palette_init
 
 // ============================================================== parts (T_BOSS objects)
@@ -1296,9 +1293,7 @@ bd_x: .byte 0
 
 // ============================================================== glyphs and palette
 job_boss_pal: DmaJob(DMA_CMD_COPY, ATTIC_BOSS + BOSS_GLYPHS * 64, boss_pal_buf, 48)
-job_px_save:  DmaJob(DMA_CMD_COPY, BOSS_SWAP_ADDR, ATTIC_PXSAVE, BOSS_GLYPHS * 64)
 job_boss_in:  DmaJob(DMA_CMD_COPY, ATTIC_BOSS, BOSS_SWAP_ADDR, BOSS_GLYPHS * 64)
-job_boss_out: DmaJob(DMA_CMD_COPY, ATTIC_PXSAVE, BOSS_SWAP_ADDR, BOSS_GLYPHS * 64)
 boss_pal_buf: .fill 48, 0
 
 // bank 5 <- boss palette (R, G, B planes of 16), bank 6 <- lightened copy

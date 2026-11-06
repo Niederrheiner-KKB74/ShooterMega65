@@ -21,6 +21,7 @@
 .errorif (MUS_SLOT_MAX > $10000 - LV_MUS), "level music overlaps the next attic pack"
 lv_pack_bank: .byte $04, $05, $07       // attic bank of each level's pack and boss (Stage 13: tables)
 lv_boss_bank: .byte $02, $06, $08
+lv_set_bank:  .byte $03, $03, $09       // enemy set (Stage 13): ENEM0 for levels 1 and 2, ENEM3
 .errorif (lv_boss_bank - lv_pack_bank != LEVELS), "one pack and one boss bank per level"
 
 cur_level:      .byte 0
@@ -114,6 +115,17 @@ levels_load:
     inx
     cpx #LEVELS
     bne !mu-
+    lda #'0'                    // enemy sets (Stage 13): ENEM0 -> bank 3, ENEM3 -> bank 9
+    ldx #$03
+    jsr lv_set_load
+    bcc !+
+    jmp lv_fail
+!:  lda #'3'
+    ldx #$09
+    jsr lv_set_load
+    bcc !+
+    jmp lv_fail
+!:
     lda #'1'                    // names back for messages
     sta name_gfx+1
     sta name_dat+1
@@ -125,6 +137,20 @@ lv_bank: .byte 0
 name_mus2: .text "MUS2"
 name_mus2_end:
 job_mus1_save: DmaJob(DMA_CMD_COPY, MUS_SLOT, ATTIC_LEVELS + LV_MUS, MUS1_BYTES)
+
+// enemy set file ENEM<A> into attic bank X
+lv_set_load:
+    sta name_enem+4
+    stx lv_bank
+    lda #0
+    tax
+    ldy #(>SET_BYTES) + 1
+    jsr lv_dst
+    lda #<name_enem
+    ldx #>name_enem
+    ldy #5
+    jmp load_seq_to
+name_enem: .text "ENEM0"
 
 // load destination: attic RAM, bank lv_bank, offset A/X; Y = size limit (high byte + 1)
 lv_dst:
@@ -201,6 +227,8 @@ le_fx:
     sta boss_fx_cur,y
     dey
     bpl !-
+    ldx cur_level               // the level's enemy set (Stage 13)
+    jsr set_in
     jmp palette_init            // landscape banks 1-4 (and the boss bank back to normal)
 le_fx_lo:    .byte <boss_fx1, <boss_fx2, <boss_fx3
 le_fx_hi:    .byte >boss_fx1, >boss_fx2, >boss_fx3
@@ -213,6 +241,46 @@ job_a_dest1:  DmaJob(DMA_CMD_COPY, ATTIC_LEVELS + LV_DEST, DEST1_ADDR, 32 * 128)
 job_a_dest2:  DmaJob(DMA_CMD_COPY, ATTIC_LEVELS + LV_DEST + 32 * 128, DEST2_ADDR, 16 * 128)
 job_a_dat:    DmaJob(DMA_CMD_COPY, ATTIC_LEVELS + LV_DAT, LEVEL_BUF, LEVEL_DAT_MAX)
 job_a_mus:    DmaJob(DMA_CMD_COPY, ATTIC_LEVELS + LV_MUS, MUS_SLOT, MUS_SLOT_MAX)
+
+// enemy set of level X into place (Stage 13; ENEMn from tools/import_art.py enemy_sets): aircraft and tank
+// glyphs, palettes of banks 5-8 (into palette_data; palette_init sets them), the frame-table entries
+set_in:
+    lda lv_set_bank,x
+    sta job_set+DMA_SRC+2
+    lda #0
+    sta job_set+DMA_SRC
+    sta job_set+DMA_SRC+1
+    tax
+!:  lda set_dlo,x
+    sta job_set+DMA_DST
+    lda set_dhi,x
+    sta job_set+DMA_DST+1
+    lda set_dbk,x
+    sta job_set+DMA_DST+2
+    lda set_llo,x
+    sta job_set+DMA_COUNT
+    lda set_lhi,x
+    sta job_set+DMA_COUNT+1
+    RunDma(job_set)
+    clc
+    lda job_set+DMA_SRC
+    adc set_llo,x
+    sta job_set+DMA_SRC
+    lda job_set+DMA_SRC+1
+    adc set_lhi,x
+    sta job_set+DMA_SRC+1
+    inx
+    cpx #set_dhi - set_dlo
+    bne !-
+    rts
+// destinations and sizes of the parts of a set, in file order
+set_dlo: .byte <(PIXIE_ADDR + SET_AIR_GLYPH * 64), <(PIXIE_ADDR + SET_TANK_GLYPH * 64), <(palette_data + $50), <(palette_data + $150), <(palette_data + $250), <(frame_base), <(frame_base + FR_TANK_N0), <(frame_base_hi), <(frame_base_hi + FR_TANK_N0), <(frame_w), <(frame_w + FR_TANK_N0), <(frame_h), <(frame_h + FR_TANK_N0), <(frame_pal), <(frame_pal + FR_TANK_N0), <(frame_hit_cx), <(frame_hit_cx + FR_TANK_N0), <(frame_hit_cy), <(frame_hit_cy + FR_TANK_N0), <(frame_hit_halfw), <(frame_hit_halfw + FR_TANK_N0), <(frame_hit_halfh), <(frame_hit_halfh + FR_TANK_N0)
+set_dhi: .byte >(PIXIE_ADDR + SET_AIR_GLYPH * 64), >(PIXIE_ADDR + SET_TANK_GLYPH * 64), >(palette_data + $50), >(palette_data + $150), >(palette_data + $250), >(frame_base), >(frame_base + FR_TANK_N0), >(frame_base_hi), >(frame_base_hi + FR_TANK_N0), >(frame_w), >(frame_w + FR_TANK_N0), >(frame_h), >(frame_h + FR_TANK_N0), >(frame_pal), >(frame_pal + FR_TANK_N0), >(frame_hit_cx), >(frame_hit_cx + FR_TANK_N0), >(frame_hit_cy), >(frame_hit_cy + FR_TANK_N0), >(frame_hit_halfw), >(frame_hit_halfw + FR_TANK_N0), >(frame_hit_halfh), >(frame_hit_halfh + FR_TANK_N0)
+set_dbk: .byte [(PIXIE_ADDR + SET_AIR_GLYPH * 64) >> 16] & $0f, [(PIXIE_ADDR + SET_TANK_GLYPH * 64) >> 16] & $0f, [(palette_data + $50) >> 16] & $0f, [(palette_data + $150) >> 16] & $0f, [(palette_data + $250) >> 16] & $0f, [(frame_base) >> 16] & $0f, [(frame_base + FR_TANK_N0) >> 16] & $0f, [(frame_base_hi) >> 16] & $0f, [(frame_base_hi + FR_TANK_N0) >> 16] & $0f, [(frame_w) >> 16] & $0f, [(frame_w + FR_TANK_N0) >> 16] & $0f, [(frame_h) >> 16] & $0f, [(frame_h + FR_TANK_N0) >> 16] & $0f, [(frame_pal) >> 16] & $0f, [(frame_pal + FR_TANK_N0) >> 16] & $0f, [(frame_hit_cx) >> 16] & $0f, [(frame_hit_cx + FR_TANK_N0) >> 16] & $0f, [(frame_hit_cy) >> 16] & $0f, [(frame_hit_cy + FR_TANK_N0) >> 16] & $0f, [(frame_hit_halfw) >> 16] & $0f, [(frame_hit_halfw + FR_TANK_N0) >> 16] & $0f, [(frame_hit_halfh) >> 16] & $0f, [(frame_hit_halfh + FR_TANK_N0) >> 16] & $0f
+set_llo: .byte <(SET_AIR_GLYPHS * 64), <(SET_TANK_GLYPHS * 64), <(64), <(64), <(64), <(SET_AIR_FRAMES), <(16), <(SET_AIR_FRAMES), <(16), <(SET_AIR_FRAMES), <(16), <(SET_AIR_FRAMES), <(16), <(SET_AIR_FRAMES), <(16), <(SET_AIR_FRAMES), <(16), <(SET_AIR_FRAMES), <(16), <(SET_AIR_FRAMES), <(16), <(SET_AIR_FRAMES), <(16)
+set_lhi: .byte >(SET_AIR_GLYPHS * 64), >(SET_TANK_GLYPHS * 64), >(64), >(64), >(64), >(SET_AIR_FRAMES), >(16), >(SET_AIR_FRAMES), >(16), >(SET_AIR_FRAMES), >(16), >(SET_AIR_FRAMES), >(16), >(SET_AIR_FRAMES), >(16), >(SET_AIR_FRAMES), >(16), >(SET_AIR_FRAMES), >(16), >(SET_AIR_FRAMES), >(16), >(SET_AIR_FRAMES), >(16)
+job_set: DmaJob(DMA_CMD_COPY, $8030000, PIXIE_ADDR, 0)
+.errorif (FR_PSHOT1 != SET_AIR_FRAMES), "the enemy set covers frames 0 to FR_PSHOT1 - 1"
 
 // end of a level (main loop, after the event `end`): the next level, the player keeps everything
 level_next:

@@ -83,6 +83,8 @@ def main():
                         (name + 'DEST', (out / 'levels' / f'{name}DEST').read_bytes(), d81.SEQ)]
         # LnBOSS lives in attic RAM (Stage 7c/9), LnDAT alone has the level buffer (checked by build_level)
         level_files.append((name + 'BOSS', (ROOT / f'build/gen/{name}BOSS').read_bytes(), d81.SEQ))
+    for n in (0, 3):                                 # enemy sets (Stage 13)
+        level_files.append((f'ENEM{n}', (ROOT / f'build/gen/ENEM{n}').read_bytes(), d81.SEQ))
     for n in (2, 3):                                 # level music pieces (Stage 9, 13)
         level_files.append((f'MUS{n}', (ROOT / f'build/gen/MUS{n}').read_bytes(), d81.SEQ))
     pixies2 = (ROOT / 'build/gen/PIXIES2').read_bytes()  # heavy gun (Stage 8), loaded to $52800
