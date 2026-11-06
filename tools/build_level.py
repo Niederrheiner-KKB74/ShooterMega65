@@ -31,6 +31,7 @@ DEST_CHARS = (0x1780, 0x13E0)    # $4F800 (PIXIE_CHAR $11A0 + 576); see src/grou
 # destroyable landscape targets (Stage 8): kind = index (hit points, points: src/ground.asm); 2x2 groups by name
 TARGET_KINDS = ['hangar', 'depot', 'checkpoint', 'bunker', 'radar', 'fuel', 'crates', 'hall']
 LAND_BANKS = {'water': 1, 'nature': 2, 'structures': 3, 'fixed_targets': 4}
+PALETTE_ALIAS = {'streets': 'water', 'ruins': 'nature', 'buildings': 'structures'}
 ENEMIES = {'fighter': 0, 'bomber': 1, 'helicopter': 2, 'armoured': 3}
 GROUND = {'tank': 4, 'flak': 8, 'heavy_flak': 9,
           'speedboat': 4, 'patrol_boat': 5, 'frigate': 6}   # Stage 13: ships (level 3 enemy set)
@@ -123,6 +124,11 @@ def build(src, outdir, name):
     tiles_meta = json.loads((tileset / 'level-example.json').read_text())['tiles']
     terrain = (tileset / 'terrain.ncm.bin').read_bytes()
     manifest = json.loads((tileset / 'manifest.json').read_text())
+    # Stage 14: level 4 names its landscape palettes streets / ruins / buildings (banks 1-3 like water / nature /
+    # structures; units that keep to bank 1 walk on the streets there)
+    alias = lambda n: PALETTE_ALIAS.get(n, n)                                   # noqa: E731
+    tiles_meta = [dict(t, palette=alias(t['palette'])) for t in tiles_meta]
+    manifest = dict(manifest, palettes={alias(k): v for k, v in manifest['palettes'].items()})
     ntiles = len(terrain) // 128
     if ntiles > 128:                 # glyph offsets are bytes; the shop glyphs follow at $44000
         raise LevelError(f'tile set has {ntiles} tiles, maximum 128 (256 glyphs)')
@@ -160,7 +166,7 @@ def build(src, outdir, name):
                     rr = px[half * 8 + y]
                     dest_glyphs += bytes(rr[x] | (rr[x + 1] << 4) for x in range(0, 16, 2))
             char = DEST_CHARS[k // 32] + 2 * (k % 32)
-            dest_tab += bytes((char & 0xFF, char >> 8, (LAND_BANKS[d['palette']] << 4) | 0x0F))
+            dest_tab += bytes((char & 0xFF, char >> 8, (LAND_BANKS[alias(d['palette'])] << 4) | 0x0F))
 
     # ---------------- GFX file: palettes of banks 1-4 + all landscape glyphs
     pal = bytearray()
@@ -287,7 +293,7 @@ def build(src, outdir, name):
         c = json.loads(af.read_text())['cycle']
         if not (1 <= c['first'] and c['first'] + c['count'] <= 16 and 2 <= c['count'] and 2 <= c['period'] <= 255):
             raise LevelError(f'colour cycle {c}: indices 1-15, at least 2 colours, period 2-255')
-        cyc = bytes((LAND_BANKS[c['palette']], c['first'], c['count'], c['period']))
+        cyc = bytes((LAND_BANKS[alias(c['palette'])], c['first'], c['count'], c['period']))
     ptab, code = bytearray(), bytearray()
     for p in paths:
         ptab += struct.pack('<H', off_code + len(code))
