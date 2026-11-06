@@ -20,9 +20,10 @@ und Tank (`fuel`), Kran (`depot`), Containerstapel (`crates`), Kommandomodul
 verwenden `hall`. Alle 35 zerstörten Tiles halten die äußeren zwei Pixel
 der zugehörigen Gebäudegruppe bzw. des Hallenfelds exakt ein.
 
-Die Wasserpalette rotiert die Indizes 9–12 alle sechs Frames. Je 29 Pixel
-pro offenem Wasser-Tile bilden zwei ungleich große, versetzte Wellenbögen.
-Die Kämme laufen in unterschiedlichen Phasen nach oben. Riffe, Sandbänke, Bojen und
+Die Wasserpalette rotiert die Indizes 9–12 alle sechs Frames. Ein Feld aus
+breiten, leicht gebogenen Wellenbändern bedeckt den Großteil der offenen
+See. Die Kämme laufen über Tile-Grenzen hinweg nach oben. Ruhige Tiefentöne
+bleiben zwischen den Bändern sichtbar. Riffe, Sandbänke, Bojen und
 Ölfilme nutzen feste Farben. `water-cycle.gif` zeigt die vier Palettenphasen.
 
 Die Windräder sind 32×64 Pixel groß und stehen auf Pylonen im Wasser. Die oberen
