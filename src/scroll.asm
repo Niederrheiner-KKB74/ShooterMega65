@@ -26,6 +26,32 @@ scroll_init:
     bpl !-
     rts
 
+// Stage 14: the 27 map rows from (scroll_px >> 3) on into the ring (restart at a checkpoint)
+scroll_restore:
+    lda #0
+    sta scroll_frac
+    sta scroll_delta
+    lda scroll_px+1
+    sta tmp+1
+    lda scroll_px
+    lsr tmp+1
+    ror
+    lsr tmp+1
+    ror
+    lsr tmp+1
+    ror
+    sta tmp
+    lda #27
+    sta sr_n
+!:  jsr decode_row
+    inc tmp
+    bne !n+
+    inc tmp+1
+!n: dec sr_n
+    bne !-
+    rts
+sr_n: .byte 0
+
 scroll_advance:
     lda scroll_px
     sta tmp2

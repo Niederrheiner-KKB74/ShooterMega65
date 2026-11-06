@@ -57,6 +57,8 @@ start:
     bcs !fail+
     jsr pixies_load                    // all pixie glyphs, straight into the pixie area
     bcs !fail+
+    jsr sprites_load                   // Stage 14: player sprite frames straight to SPRITE_ADDR (were in the PRG)
+    bcs !fail+
     jsr attic_detect                   // attic RAM? (screens.asm)
     lda attic_ok
     beq !direct+
@@ -136,7 +138,14 @@ main_loop:
     sta VIC_BORDER
     lda shop_req                       // shop event reached: paused shop overlay
     beq !+
+    cmp #1                             // mid-level shop: the checkpoint after a lost plane (Stage 14)
+    bne !sh+
+    jsr cp_save
+!sh:
     jsr shop_run
+!:  lda level_retry_req                // plane lost: the level again from its start or checkpoint
+    beq !+
+    jsr level_retry
 !:  lda level_next_req                 // level end with attic RAM: the next level (levels.asm)
     beq !+
     jsr level_next
@@ -262,25 +271,33 @@ pixies_load:
     jmp load_seq_to
 name_pixies: .text "PIXIES"
 name_pixies_end:
+sprites_load:
+    lda #<(SPRITE_ADDR & $ffff)
+    sta ld_dst
+    lda #>(SPRITE_ADDR & $ffff)
+    sta ld_dst+1
+    lda #(SPRITE_ADDR >> 16)
+    sta ld_dst+2
+    lda #(>(PLAYER_FRAMES * $200)) + 1
+    sta ld_maxhi
+    lda #<name_sprites
+    ldx #>name_sprites
+    ldy #7
+    jmp load_seq_to
+name_sprites: .text "SPRITES"
 .errorif (((PIXIE_ADDR & $ffff) + PIXIE_MAX * 64) > $10000), "pixie area crosses a 64 KB boundary"
 
 // ---------------------------------------------------------------- data
 #import "../build/gen/frames.inc"
 
 code_end:
-.align $100
 pixie_end:
-.align $100
-sprite_data:  .import binary "../build/gen/sprite.bin"
-sprite_end:
 ring_data:    .import binary "../build/gen/ring.bin"
 ring_end:
 palette_data: .import binary "../build/gen/palette.bin"
 sprpal_data:  .import binary "../build/gen/sprpal.bin"
 prg_end:
 .errorif (prg_end > $c000), "PRG too large for bank 0 below $c000"
-.errorif ((sprite_data & $ff) != 0), "player DMA frames must be page aligned"
-.errorif (sprite_end - sprite_data != PLAYER_FRAMES * $200), "player frame size mismatch"
 .errorif (PIXIE_GLYPHS > PIXIE_MAX), "pixie glyph area ($46800-$4FFFF) exceeded"
 .print "code ends at $" + toHexString(code_end) + ", PRG ends at $" + toHexString(prg_end)
 

@@ -301,10 +301,85 @@ set_lhi: .byte >(SET_AIR_GLYPHS * 64), >(SET_TANK_GLYPHS * 64), >(64), >(64), >(
 job_set: DmaJob(DMA_CMD_COPY, $8030000, PIXIE_ADDR, 0)
 .errorif (FR_PSHOT1 != SET_AIR_FRAMES), "the enemy set covers frames 0 to FR_PSHOT1 - 1"
 
+// ============================================================== checkpoint (Stage 14)
+// A lost plane restarts the level: from its start, or after the mid-level shop once that was reached. The shot
+// level drops by one; everything else bought stays. Destroyed buildings stay destroyed after the checkpoint.
+level_retry_req: .byte 0
+cp_valid:  .byte 0
+cp_scroll: .word 0
+cp_evp:    .word 0
+cp_base:   .word 0
+
+// mid-level shop reached (main loop, before the shop): remember where the level goes on
+cp_save:
+    lda #1
+    sta cp_valid
+    lda scroll_px
+    sta cp_scroll
+    lda scroll_px+1
+    sta cp_scroll+1
+    lda lev_evp
+    sta cp_evp
+    lda lev_evp+1
+    sta cp_evp+1
+    lda lev_base
+    sta cp_base
+    lda lev_base+1
+    sta cp_base+1
+    rts
+
+level_retry:
+    lda #0
+    sta level_retry_req
+    sta boss_state
+    sta boss_req
+    lda pl_power                // the shot level drops by one
+    cmp #2
+    bcc !+
+    dec pl_power
+!:  lda cp_valid
+    bne !cp+
+    lda attic_ok                // from the start: the level fresh from attic RAM
+    beq !na+
+    lda cur_level
+    jsr level_enter
+    jmp !go+
+!na:
+    jsr level_restart           // (without attic RAM: level 1 is in place)
+!go:
+    jsr buffers_init
+    jsr scroll_init
+    jmp !obj+
+!cp:
+    lda cp_scroll
+    sta scroll_px
+    lda cp_scroll+1
+    sta scroll_px+1
+    lda cp_evp
+    sta lev_evp
+    lda cp_evp+1
+    sta lev_evp+1
+    lda cp_base
+    sta lev_base
+    lda cp_base+1
+    sta lev_base+1
+    ldx cur_level               // the boss may have replaced the aircraft glyphs
+    jsr set_in
+    jsr palette_init
+    jsr buffers_init
+    jsr scroll_restore
+!obj:
+    jsr objects_init
+    lda #MUS_LEVEL1
+    jsr music_play
+    jsr player_spawn
+    jmp build_frame
+
 // end of a level (main loop, after the event `end`): the next level, the player keeps everything
 level_next:
     lda #0
     sta level_next_req
+    sta cp_valid                // the new level starts without a checkpoint
     lda cur_level
     clc
     adc #1

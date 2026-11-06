@@ -103,7 +103,11 @@ player_move:
     dec pl_timer                // destroyed: wait, then the next plane or a new game
     bne !+
     lda pl_lives
-    bne player_spawn
+    beq pm_last
+    lda #1                      // Stage 14: the main loop restarts the level at its checkpoint (levels.asm)
+    sta level_retry_req
+    rts
+pm_last:
     lda #1                      // last plane: the main loop shows the game over (screens.asm)
     sta game_over_req
     sta pl_timer

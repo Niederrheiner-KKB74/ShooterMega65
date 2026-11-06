@@ -356,6 +356,9 @@ hiscore_update:
 
 // ============================================================== new game
 game_new:
+    lda #0                      // no checkpoint yet (Stage 14)
+    sta cp_valid
+    sta level_retry_req
     lda attic_ok                // Stage 9: the level chosen on the title (key 2: level 2) from attic RAM
     beq !+
     lda start_level
