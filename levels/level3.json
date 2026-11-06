@@ -852,8 +852,8 @@
       "row": 32,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 240,
-      "dir": "west"
+      "x": 112,
+      "dir": "south"
     },
     {
       "row": 35,
@@ -935,7 +935,7 @@
       "row": 58,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 104,
+      "x": 192,
       "dir": "east"
     },
     {
@@ -973,7 +973,7 @@
       "row": 70,
       "type": "ground",
       "enemy": "frigate",
-      "x": 248,
+      "x": 232,
       "dir": "south"
     },
     {
@@ -1005,8 +1005,8 @@
       "row": 80,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 64,
-      "dir": "south"
+      "x": 104,
+      "dir": "east"
     },
     {
       "row": 82,
@@ -1074,8 +1074,8 @@
       "row": 104,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 192,
-      "dir": "east"
+      "x": 144,
+      "dir": "west"
     },
     {
       "row": 109,
@@ -1112,7 +1112,7 @@
       "row": 118,
       "type": "ground",
       "enemy": "frigate",
-      "x": 96,
+      "x": 152,
       "dir": "south"
     },
     {
@@ -1138,7 +1138,7 @@
       "row": 128,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 104,
+      "x": 80,
       "dir": "east"
     },
     {
@@ -1223,7 +1223,7 @@
       "row": 152,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 176,
+      "x": 144,
       "dir": "west"
     },
     {
@@ -1261,7 +1261,7 @@
       "row": 166,
       "type": "ground",
       "enemy": "frigate",
-      "x": 24,
+      "x": 136,
       "dir": "south"
     },
     {
@@ -1293,8 +1293,8 @@
       "row": 176,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 80,
-      "dir": "east"
+      "x": 136,
+      "dir": "west"
     },
     {
       "row": 188,
@@ -1336,7 +1336,7 @@
       "row": 206,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 48,
+      "x": 72,
       "dir": "west"
     },
     {
@@ -1368,7 +1368,7 @@
       "row": 216,
       "type": "ground",
       "enemy": "frigate",
-      "x": 120,
+      "x": 152,
       "dir": "south"
     },
     {
@@ -1406,8 +1406,8 @@
       "row": 230,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 160,
-      "dir": "west"
+      "x": 136,
+      "dir": "south"
     },
     {
       "row": 231,
@@ -1425,7 +1425,7 @@
       "row": 234,
       "type": "ground",
       "enemy": "speedboat",
-      "x": 112,
+      "x": 128,
       "dir": "west"
     },
     {
@@ -1470,7 +1470,7 @@
       "row": 246,
       "type": "ground",
       "enemy": "speedboat",
-      "x": 288,
+      "x": 232,
       "dir": "south"
     },
     {
@@ -1501,14 +1501,14 @@
       "row": 254,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 72,
-      "dir": "west"
+      "x": 104,
+      "dir": "south"
     },
     {
       "row": 258,
       "type": "ground",
       "enemy": "speedboat",
-      "x": 160,
+      "x": 104,
       "dir": "west"
     },
     {
@@ -1527,7 +1527,7 @@
       "row": 262,
       "type": "ground",
       "enemy": "frigate",
-      "x": 128,
+      "x": 56,
       "dir": "south"
     },
     {
@@ -1546,8 +1546,8 @@
       "row": 270,
       "type": "ground",
       "enemy": "speedboat",
-      "x": 200,
-      "dir": "west"
+      "x": 176,
+      "dir": "south"
     },
     {
       "row": 273,
@@ -1565,8 +1565,8 @@
       "row": 278,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 136,
-      "dir": "south"
+      "x": 48,
+      "dir": "east"
     },
     {
       "row": 280,
@@ -1584,7 +1584,7 @@
       "row": 286,
       "type": "ground",
       "enemy": "speedboat",
-      "x": 272,
+      "x": 136,
       "dir": "west"
     },
     {
@@ -1627,7 +1627,7 @@
       "row": 296,
       "type": "ground",
       "enemy": "frigate",
-      "x": 120,
+      "x": 152,
       "dir": "south"
     },
     {
@@ -1640,8 +1640,8 @@
       "row": 298,
       "type": "ground",
       "enemy": "speedboat",
-      "x": 120,
-      "dir": "west"
+      "x": 144,
+      "dir": "south"
     },
     {
       "row": 301,
@@ -1659,8 +1659,8 @@
       "row": 302,
       "type": "ground",
       "enemy": "patrol_boat",
-      "x": 136,
-      "dir": "south"
+      "x": 152,
+      "dir": "east"
     },
     {
       "row": 306,
@@ -1684,7 +1684,7 @@
       "row": 310,
       "type": "ground",
       "enemy": "speedboat",
-      "x": 144,
+      "x": 168,
       "dir": "south"
     },
     {
@@ -1727,8 +1727,8 @@
       "row": 322,
       "type": "ground",
       "enemy": "speedboat",
-      "x": 168,
-      "dir": "south"
+      "x": 128,
+      "dir": "west"
     },
     {
       "row": 324,
@@ -1741,7 +1741,7 @@
       "type": "ground",
       "enemy": "patrol_boat",
       "x": 112,
-      "dir": "east"
+      "dir": "west"
     },
     {
       "row": 329,
@@ -1759,14 +1759,14 @@
       "row": 332,
       "type": "ground",
       "enemy": "frigate",
-      "x": 80,
+      "x": 104,
       "dir": "south"
     },
     {
       "row": 334,
       "type": "ground",
       "enemy": "speedboat",
-      "x": 168,
+      "x": 128,
       "dir": "south"
     },
     {
@@ -1791,7 +1791,7 @@
       "row": 344,
       "type": "ground",
       "enemy": "speedboat",
-      "x": 80,
+      "x": 104,
       "dir": "west"
     },
     {

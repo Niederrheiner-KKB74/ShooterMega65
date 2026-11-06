@@ -313,6 +313,7 @@ so `RUN` works again after an exit.
 | 06.11.2026 | Stage 13 confirmed; Stage 13b: level 3 harder, more formations, ships glide in; art revision 2 ordered |
 | 06.11.2026 | PR #23 merged (top-down wind turbines, new enemies, lying carrier 128×56); Stage 13c |
 | 06.11.2026 | Stage 13c confirmed; colour cycling of the water (`cycle_frame`, header +26..29 from `animations.json` "cycle") built; brief `chatgpt_level3d.md`: wave band 9–12 in the water palette, tall wind turbines 32×64 on pylons |
+| 06.11.2026 | PR #24 merged (wave band and colour cycling, tall wind turbines); ships placed anew; Stage 13d |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
