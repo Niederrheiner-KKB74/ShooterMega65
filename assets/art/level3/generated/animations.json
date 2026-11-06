@@ -1,24 +1,6 @@
 {
   "animations": [
     {
-      "name": "glitter",
-      "period": 12,
-      "phases": [
-        [
-          "glint_0_0",
-          "glint_0_1"
-        ],
-        [
-          "glint_1_0",
-          "glint_1_1"
-        ],
-        [
-          "glint_2_0",
-          "glint_2_1"
-        ]
-      ]
-    },
-    {
       "name": "turbine",
       "period": 6,
       "phases": [
@@ -69,5 +51,11 @@
         ]
       ]
     }
-  ]
+  ],
+  "cycle": {
+    "palette": "water",
+    "first": 9,
+    "count": 4,
+    "period": 9
+  }
 }

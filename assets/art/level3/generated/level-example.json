@@ -197,33 +197,33 @@
     },
     {
       "id": 39,
-      "name": "glint_0_0",
+      "name": "turbine_base_0_0",
       "palette": "water"
     },
     {
       "id": 40,
-      "name": "glint_0_1",
+      "name": "turbine_base_1_0",
       "palette": "water"
     },
     {
       "id": 41,
-      "name": "glint_1_0",
+      "name": "turbine_base_0_1",
       "palette": "water"
     },
     {
       "id": 42,
-      "name": "glint_1_1",
+      "name": "turbine_base_1_1",
       "palette": "water"
     },
     {
       "id": 43,
-      "name": "glint_2_0",
-      "palette": "water"
+      "name": "hall2",
+      "palette": "structures"
     },
     {
       "id": 44,
-      "name": "glint_2_1",
-      "palette": "water"
+      "name": "hall1",
+      "palette": "structures"
     },
     {
       "id": 45,
@@ -373,62 +373,62 @@
     {
       "id": 74,
       "name": "turbine_0_0_0",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 75,
       "name": "turbine_0_1_0",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 76,
       "name": "turbine_0_0_1",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 77,
       "name": "turbine_0_1_1",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 78,
       "name": "turbine_1_0_0",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 79,
       "name": "turbine_1_1_0",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 80,
       "name": "turbine_1_0_1",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 81,
       "name": "turbine_1_1_1",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 82,
       "name": "turbine_2_0_0",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 83,
       "name": "turbine_2_1_0",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 84,
       "name": "turbine_2_0_1",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 85,
       "name": "turbine_2_1_1",
-      "palette": "structures"
+      "palette": "water"
     },
     {
       "id": 86,
@@ -618,16 +618,6 @@
     {
       "id": 123,
       "name": "hall0",
-      "palette": "structures"
-    },
-    {
-      "id": 124,
-      "name": "hall1",
-      "palette": "structures"
-    },
-    {
-      "id": 125,
-      "name": "hall2",
       "palette": "structures"
     }
   ]
