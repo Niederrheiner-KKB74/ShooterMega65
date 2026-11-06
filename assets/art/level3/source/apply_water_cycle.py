@@ -11,7 +11,7 @@ ART = Path('assets/art/level3/generated')
 MAP = Path('levels/level3.json')
 CYCLE = dict(palette='water',first=9,count=4,period=6)
 WATER = ('000000 101e38 142c51 1a3f66 1d5276 226b89 278299 429da2 '
-         '9ec6a9 245a77 286781 327891 2c6e86 263a47 b8ac8f e1f0da')
+         '9ec6a9 28587f 36779e 5a9fb8 438aaa 263a47 b8ac8f e1f0da')
 STATIC_REMAP = bytes((0,1,2,3,4,5,6,7,7,8,15,15,13,3,8,5))+bytes(range(16,256))
 WIND_LAYOUT = [(x,y) for y in (228,236) for x in (2,7,13,18)]+[(7,244)]
 
@@ -38,18 +38,29 @@ def open_water(name):
 
 
 def wave_art(im,variant,name):
-    # The phase field wraps at the tile edges, so the swells cross
-    # adjoining tiles. The fixed depth colors show through in small patches.
-    bend = (0,0,1,1,2,2,2,1,1,0,-1,-1,-2,-2,-1,0)
-    depth = 4 if name.startswith('shelf') else 3
+    # Distances to irregular, repeating centers produce connected lobes
+    # instead of stripes. Shared edge geometry keeps the open-water tiles
+    # compatible, while the interior warp changes the shape of each variant.
+    sites = ((1.7,1.9),(9.4,.6),(14.1,6.7),(3.7,10.4),(10.8,12.8),(7.5,6.1))
+    angle = variant * 1.73
+    period = math.tau / 16
     for y in range(16):
-        for x,offset in enumerate(bend):
+        for x in range(16):
             if name.startswith('edge') and im.getpixel((x,y))>5:
                 continue
-            if (x//3 + 3*(y//2) + 5*variant) % 11 < depth:
-                continue
-            phase = ((y-offset) % 16)//4
-            im.putpixel((x,y),12-phase)
+            interior = math.sin(math.pi*x/15) * math.sin(math.pi*y/15)
+            xx = x + .9*math.sin(y*period) + 1.9*interior*math.sin(y*period+angle)
+            yy = y + .8*math.cos(x*period) + 1.6*interior*math.cos(x*period+angle)
+            distances = []
+            for sx,sy in sites:
+                dx = (xx-sx+8) % 16 - 8
+                dy = (yy-sy+8) % 16 - 8
+                distances.append(dx*dx + dy*dy)
+            near,next_near = sorted(distances)[:2]
+            radius = math.sqrt(near / next_near)
+            # Shift the phase gently across the lobes to stagger their pulse.
+            phase = 3.6*radius**1.65 + .165*(1+math.sin((xx+yy)*period))
+            im.putpixel((x,y),9 + int(phase))
 
 
 def turbine(sea,phase):
