@@ -1,0 +1,61 @@
+{
+  "animations": [
+    {
+      "name": "fire",
+      "period": 7,
+      "phases": [
+        [
+          "fire_0"
+        ],
+        [
+          "fire_1"
+        ],
+        [
+          "fire_2"
+        ]
+      ]
+    },
+    {
+      "name": "smoke",
+      "period": 9,
+      "phases": [
+        [
+          "smoke_0"
+        ],
+        [
+          "smoke_1"
+        ],
+        [
+          "smoke_2"
+        ]
+      ]
+    },
+    {
+      "name": "beacon",
+      "period": 18,
+      "phases": [
+        [
+          "beacon_0"
+        ],
+        [
+          "beacon_1"
+        ]
+      ]
+    },
+    {
+      "name": "sign",
+      "period": 12,
+      "phases": [
+        [
+          "sign_0"
+        ],
+        [
+          "sign_1"
+        ],
+        [
+          "sign_2"
+        ]
+      ]
+    }
+  ]
+}
