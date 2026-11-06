@@ -9,9 +9,9 @@ from PIL import Image, ImageDraw
 
 ART = Path('assets/art/level3/generated')
 MAP = Path('levels/level3.json')
-CYCLE = dict(palette='water',first=9,count=4,period=6)
+CYCLE = dict(palette='water',first=9,count=4,period=9)
 WATER = ('000000 101e38 142c51 1a3f66 1d5276 226b89 278299 429da2 '
-         '9ec6a9 28587f 36779e 5a9fb8 438aaa 263a47 b8ac8f e1f0da')
+         '9ec6a9 35678a 3f789b 4b89a8 417b9d 263a47 b8ac8f e1f0da')
 STATIC_REMAP = bytes((0,1,2,3,4,5,6,7,7,8,15,15,13,3,8,5))+bytes(range(16,256))
 WIND_LAYOUT = [(x,y) for y in (228,236) for x in (2,7,13,18)]+[(7,244)]
 
@@ -198,7 +198,7 @@ def previews(out,tiles,images,manifest,rows,wind,animations,ids):
         im=render_map(rows,phase_render,31,49)
         frames.append(im.resize((640,576),Image.Resampling.NEAREST))
     frames[0].save(out/'water-cycle.gif',save_all=True,append_images=frames[1:],
-                   duration=120,loop=0,disposal=2,optimize=True)
+                   duration=CYCLE['period']*20,loop=0,disposal=2,optimize=True)
 
 
 def main():

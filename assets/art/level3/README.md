@@ -20,7 +20,8 @@ und Tank (`fuel`), Kran (`depot`), Containerstapel (`crates`), Kommandomodul
 verwenden `hall`. Alle 35 zerstörten Tiles halten die äußeren zwei Pixel
 der zugehörigen Gebäudegruppe bzw. des Hallenfelds exakt ein.
 
-Die Wasserpalette rotiert die Indizes 9–12 alle sechs Frames. Ungleichmäßige
+Die Wasserpalette rotiert die Indizes 9–12 alle neun Frames (180 ms bei
+50 Hz). Die vier Blautöne liegen dicht beieinander. Ungleichmäßige
 Wellenmulden und Lichtkanten laufen ineinander. Im offenen Wasser nimmt
 jeder Pixel am Cycling teil. Die Farben ändern sich über die gesamte
 Oberfläche, während Riffe, Sandbänke, Bojen und
