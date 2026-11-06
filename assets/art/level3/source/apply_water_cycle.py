@@ -14,7 +14,6 @@ WATER = ('000000 101e38 142c51 1a3f66 1d5276 226b89 278299 429da2 '
          '9ec6a9 296682 337e95 55a6aa 3b8c9c 263a47 b8ac8f e1f0da')
 STATIC_REMAP = bytes((0,1,2,3,4,5,6,7,7,8,15,15,13,3,8,5))+bytes(range(16,256))
 WIND_LAYOUT = [(x,y) for y in (228,236) for x in (2,7,13,18)]+[(7,244)]
-WAVE_Y = (5,5,4,4,3,3,2,2,2,2,3,3,4,4,5,5)
 
 
 def read(path):
@@ -39,14 +38,17 @@ def open_water(name):
 
 
 def wave_art(im,variant,shore=False):
-    for x,y in enumerate(WAVE_Y):
-        if not shore or im.getpixel((x,y))<=5:
-            im.putpixel((x,y),9+x%4)
-    start=2+variant%4
-    for x in range(start,start+8):
-        y=11+(x-start)//4+variant%2
-        if not shore or im.getpixel((x,y))<=5:
-            im.putpixel((x,y),9+(x-start)%4)
+    # Each strip is one phase across its full width. The game rotates
+    # the brightest color from index 11 to 12, so the crest moves upward.
+    # Offset the wavelets between tile variants and taper their ends.
+    center = 6 + variant * 3 % 4
+    top = 2 + variant * 5 % 7
+    for offset,(index,width) in enumerate(zip((12,11,10,9),(5,11,9,5))):
+        start = center - width // 2
+        for x in range(start,start + width):
+            y = top + offset + (abs(x-center) >= 3)
+            if not shore or im.getpixel((x,y))<=5:
+                im.putpixel((x,y),index)
 
 
 def turbine(sea,phase):
