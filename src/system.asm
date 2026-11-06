@@ -47,14 +47,20 @@ system_save:
     lda VIC_PALSEL
     and #%00111111               // MAPEDPAL = 0
     sta VIC_PALSEL
-    ldx #0
-!:  lda PAL_RED,x
-    sta saved_pal0,x
+    jsr pal0_ptr                 // Stage 13: saved in chip RAM (SAVED_PAL0), not in bank 0
+!:  tza
+    tax
+    lda PAL_RED,x
+    sta ((scr_ptr)),z
+    inc scr_ptr+1
     lda PAL_GREEN,x
-    sta saved_pal0+$100,x
+    sta ((scr_ptr)),z
+    inc scr_ptr+1
     lda PAL_BLUE,x
-    sta saved_pal0+$200,x
-    inx
+    sta ((scr_ptr)),z
+    dec scr_ptr+1
+    dec scr_ptr+1
+    inz
     bne !-
     lda VIC_PALSEL
     ora #%01000000               // MAPEDPAL = 1
@@ -81,14 +87,20 @@ exit_to_basic:
     // palettes (VIC-IV I/O personality is still active)
     lda #$00                     // MAPEDPAL = 0
     sta VIC_PALSEL
-    ldx #0
-!:  lda saved_pal0,x
+    jsr pal0_ptr
+!:  tza
+    tax
+    lda ((scr_ptr)),z
     sta PAL_RED,x
-    lda saved_pal0+$100,x
+    inc scr_ptr+1
+    lda ((scr_ptr)),z
     sta PAL_GREEN,x
-    lda saved_pal0+$200,x
+    inc scr_ptr+1
+    lda ((scr_ptr)),z
     sta PAL_BLUE,x
-    inx
+    dec scr_ptr+1
+    dec scr_ptr+1
+    inz
     bne !-
     lda #$40                     // MAPEDPAL = 1
     sta VIC_PALSEL
@@ -143,8 +155,11 @@ read_keys:
     beq !exit+
     cmp #$20                     // space
     beq !space+
-    cmp #$32                     // 2: on the title screen, start in level 2 (Stage 9, test aid)
-    bne !+
+    cmp #$32                     // 2 / 3: on the title screen, start in level 2 / 3 (Stage 9/13, test aid)
+    bcc !+
+    cmp #$34
+    bcs !+
+    sbc #$31 - 1                 // carry clear: level index 1 / 2
     sta key_2
     rts
 !:
@@ -196,7 +211,7 @@ key_drain:
 !:  rts
 
 special_req: .byte 0
-key_2:       .byte 0             // != 0: key 2 pressed (title_run)
+key_2:       .byte 0             // != 0: key 2 / 3 pressed (title_run): level index 1 / 2
 debug_raster: .byte 0
 saved_sp:   .byte 0
 saved_sph:  .byte 0
@@ -205,5 +220,16 @@ saved_ddra: .byte 0
 saved_d05d: .byte 0
 saved_vic:  .fill vic_restore.size(), 0
 saved_zp:   .fill 256, 0
-saved_pal0: .fill 768, 0
+// palette 0 (768 bytes) at SAVED_PAL0 in chip RAM: scr_ptr -> it, Z = 0
+pal0_ptr:
+    lda #<SAVED_PAL0
+    sta scr_ptr
+    lda #>SAVED_PAL0
+    sta scr_ptr+1
+    lda #[SAVED_PAL0 >> 16] & $ff
+    sta scr_ptr+2
+    lda #0
+    sta scr_ptr+3
+    taz
+    rts
 saved_pal1: .fill 240, 0

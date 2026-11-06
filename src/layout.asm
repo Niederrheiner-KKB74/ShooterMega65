@@ -21,6 +21,8 @@
 .const SCREEN_B     = $056000            // RRB screen buffer B
 .const RING_SCR     = $058000            // 64 x 170 bytes decoded map rows (screen part)
 .const RING_COL     = $05b000            // 64 x 170 bytes decoded map rows (colour part)
+.const SAVED_PAL0   = $05db00            // Stage 13: BASIC's palette 0 (768 bytes) until exit
+.errorif (RING_COL + 64 * 170 > SAVED_PAL0 || SAVED_PAL0 + 768 > $05e000), "SAVED_PAL0 overlaps the ring or the destroyed tiles"
 .const SPRITE_ADDR  = $05f000            // player sprites (256 bytes each)
 .const RING_ADDR    = $05fc00            // invulnerability ring, sprites 2-4 (256 bytes each)
 .const RING_PTR     = RING_ADDR / 64

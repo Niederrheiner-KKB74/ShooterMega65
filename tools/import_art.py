@@ -61,6 +61,8 @@ HUD_INVULN = ['7777777.', '7222227.', '7222227.', '7222227.', '.72227..', '.7222
 ROCKET_VIEWS = ROOT / 'assets/art/rocket-directions/generated'
 BOSS = ROOT / 'assets/art/boss-level1/generated'
 BOSS2 = ROOT / 'assets/art/boss-level2/generated'   # PR #17 (Stage 9)
+BOSS3 = ROOT / 'assets/art/boss-level3/generated'   # PR #22 (Stage 13)
+BOSSES = ((1, BOSS), (2, BOSS2), (3, BOSS3))
 BOSS_BANK = 5                # boss palette replaces the fighter palette while the boss is on screen
 TANKS = ROOT / 'assets/art/ground-vehicles/generated'
 TANK_DIRS = ('north', 'east', 'south', 'west')       # engine direction 0-3
@@ -329,7 +331,8 @@ def main(out):
          for v, src in (('S', 'south'), ('SE', 'southeast'), ('SW', 'southeast'), ('X', 'destroyed'))] + \
         [('BOSS_MUZZLE0', 'muzzle_0'), ('BOSS_MUZZLE1', 'muzzle_1')] + \
         [(f'BOSS_FLAME{n}', f'flame_{n}') for n in range(3)] + \
-        [(f'BOSS_SPRAY{n}', f'spray_{n}') for n in range(3)]
+        [(f'BOSS_SPRAY{n}', f'spray_{n}') for n in range(3)] + \
+        [(f'BOSS_JET{n}', f'deck_jet_{n}') for n in range(3)]
     # Stage 9/11: one frame layout for every level's boss (the frame table is fixed); each level has its own glyphs,
     # palette and part positions. Every frame gets the largest size any boss has (padded top left); frames a boss
     # lacks (the quadrotor has no flame and no dust) are empty. The boss area covers the fighter, bomber,
@@ -337,14 +340,14 @@ def main(out):
     swap_end = names_now['PSHOT1']['base'] - 1               # first glyph after the armoured-plane frames
     srcs = {lvl: {f['id']: np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
                   for f in json.loads((bdir / 'indexed-source.json').read_text())}
-            for lvl, bdir in ((1, BOSS), (2, BOSS2))}
+            for lvl, bdir in BOSSES}
     ref = {}
     for src in srcs.values():
         for sid, a in src.items():
             h0, w0 = ref.get(sid, (0, 0))
             ref[sid] = (max(h0, a.shape[0]), max(w0, a.shape[1]))
     boss_files, boss_place, boss_fx = {}, {}, {}
-    for lvl, bdir in ((1, BOSS), (2, BOSS2)):
+    for lvl, bdir in BOSSES:
         src = srcs[lvl]
         bglyphs = [bytes(64)]
         for name, sid in boss_frames:
@@ -383,9 +386,10 @@ def main(out):
         sp = pl.get('spray', {}).get('offsets', [])
         sp4 = (sp + [[0, 0]] * 4)[:4]
         boss_fx[lvl] = [fl[0], fl[1]] + [o[0] & 0xff for o in sp4] + [o[1] & 0xff for o in sp4] + \
-            [len(sp), len(pl['rotors']), bw - 8, bh - 4, 320 - bw - 24, 1 if 'flame' in pl else 0]
+            [len(sp), len(pl['rotors']), bw - 8, bh - 4, 320 - bw - 24, 1 if 'flame' in pl else 0] + \
+            pl.get('catapult', {}).get('offset', [0, 0]) + [1 if 'catapult' in pl else 0]   # Stage 13
         report.append(f'boss {lvl}: {len(bglyphs)} glyphs swapped in at glyph {swap0} (room {swap_end - swap0})')
-    assert len(boss_files[1]) == len(boss_files[2])
+    assert len(boss_files[1]) == len(boss_files[2]) == len(boss_files[3])
     boss_consts = [f'.const BOSS_SWAP_GLYPH={swap0}', f'.const BOSS_GLYPHS={len(bglyphs)}',
                    f'.const BOSS_FILE_BYTES={len(bglyphs) * 64 + 48}', f'.const BOSS_BANK={BOSS_BANK}']
     # ------------------------------------------------------------ heavy gun (PR #15), file PIXIES2 at PIXIE2_ADDR
@@ -508,7 +512,7 @@ def main(out):
     flash = [tuple(min(255, int(v + (255 - v) * 0.65)) for v in c) for c in bpal]
     tl += gun_consts[1:]
     # boss part positions per level (Stage 9): part_dx[5], part_dy[5], rotor_dx[4], rotor_dy[4], rotor_ph[4]
-    for lvl in (1, 2):
+    for lvl in (1, 2, 3):
         tl.append(f'boss_place{lvl}: .byte ' + ','.join(str(v) for v in boss_place[lvl]))
         tl.append(f'boss_fx{lvl}: .byte ' + ','.join(str(v) for v in boss_fx[lvl]))
     tl.append('boss_flash_pal: .byte ' + ','.join(str(ph.swap(c[ch])) for ch in range(3) for c in flash))

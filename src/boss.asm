@@ -639,7 +639,8 @@ hv_fp:  .byte 0
 hv_ft:  .byte 120
 
 // effects and sizes of this level's boss (level_enter, from boss_fx1/2 of tools/import_art.py)
-boss_fx_cur: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 88, 60, BOSS_XMAX, 0
+.const BOSS_FX_LEN = 19
+boss_fx_cur: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 88, 60, BOSS_XMAX, 0, 0, 0, 0
 .label fx_flx   = boss_fx_cur + 0     // flame position on the body
 .label fx_fly   = boss_fx_cur + 1
 .label fx_sx    = boss_fx_cur + 2     // dust positions x0-3, y0-3 (signed)
@@ -650,6 +651,10 @@ boss_fx_cur: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 88, 60, BOSS_XMAX, 0
 .label fx_by    = boss_fx_cur + 13
 .label fx_xmax  = boss_fx_cur + 14    // right limit of x
 .label fx_flame = boss_fx_cur + 15    // 1 = flame thrower
+.label fx_catx  = boss_fx_cur + 16    // Stage 13: catapult (deck jets) position, flag
+.label fx_caty  = boss_fx_cur + 17
+.label fx_cat   = boss_fx_cur + 18
+.errorif (boss_place2 - boss_fx1 != BOSS_FX_LEN), "boss_fx tables of import_art.py and BOSS_FX_LEN differ"
 
 // dust at the skirt while gliding, flame jet in its phases (boss_draw)
 hv_draw:

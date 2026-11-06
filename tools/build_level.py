@@ -24,6 +24,8 @@ ROOT = Path(__file__).resolve().parents[1]
 COLS = 21
 MAX_FILE = 0x4000
 MAX_DAT = 0x2800                 # Stage 8: LnDAT stays at $50000-$527FF (behind it: heavy gun glyphs, PIXIES2)
+ANIM_MAX = 8                     # Stage 13: tile animations (anim.asm)
+ANIM_BUF = 128
 MAX_DEST = 48                    # destroyed tiles: 32 at $5E000 (char $1780), 16 in the last 32 pixie glyphs
 DEST_CHARS = (0x1780, 0x13E0)    # $4F800 (PIXIE_CHAR $11A0 + 576); see src/ground.asm
 # destroyable landscape targets (Stage 8): kind = index (hit points, points: src/ground.asm); 2x2 groups by name
@@ -263,14 +265,29 @@ def build(src, outdir, name):
     code_len = sum(len(p) for p in paths)
     off_gt = off_code + code_len       # 128 dest indices, 128 info bytes, then 3 bytes per destroyed tile
     gt_block = bytes(gt_dest) + bytes(gt_info) + bytes(dest_tab)
+    # Stage 13: tile animations (animations.json of the tile set): count, then per animation period, phases,
+    # tiles and the tile ids phase by phase (phase 0 = the tiles in the map). anim.asm copies it to anim_buf.
+    anim = bytearray()
+    af = tileset / 'animations.json'
+    if af.exists():
+        names = {t['name']: t['id'] for t in tiles_meta}
+        al = json.loads(af.read_text())['animations']
+        anim.append(len(al))
+        for a in al:
+            ph = a['phases']
+            anim += bytes((a['period'], len(ph), len(ph[0])))
+            anim += bytes(names[t] for p in ph for t in p)
+        if len(al) > ANIM_MAX or len(anim) > ANIM_BUF:
+            raise LevelError(f'tile animations: {len(al)} animations / {len(anim)} bytes, maximum {ANIM_MAX} / {ANIM_BUF}')
+    off_anim = off_gt + len(gt_block) if anim else 0
     ptab, code = bytearray(), bytearray()
     for p in paths:
         ptab += struct.pack('<H', off_code + len(code))
         code += p
     header = struct.pack('<2sBBHHHHHHHHBHB', b'SL', 2, len(used), nrows, off_meta, off_dict, off_rows,
                          off_events, off_forms, off_ptab, speed, len(dict_rows) & 0xFF, off_gt, len(dest_tab) // 3)
-    header = header.ljust(hdr_len, b'\0')
-    dat = header + meta + b''.join(bytes(r) for r in dict_rows) + bytes(rowlist) + bytes(events) + bytes(forms) + bytes(ptab) + bytes(code) + gt_block
+    header = (header + struct.pack('<H', off_anim)).ljust(hdr_len, b'\0')
+    dat = header + meta + b''.join(bytes(r) for r in dict_rows) + bytes(rowlist) + bytes(events) + bytes(forms) + bytes(ptab) + bytes(code) + gt_block + bytes(anim)
     for fname, data, mx in (('GFX', gfx, MAX_FILE), ('DAT', dat, MAX_DAT)):
         if len(data) > mx:
             raise LevelError(f'{name}{fname} is {len(data)} bytes, maximum {mx}')

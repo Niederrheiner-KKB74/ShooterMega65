@@ -158,14 +158,17 @@ title_run:
 #if START_LEVEL2
     lda #1                      // test build (build.py --define START_LEVEL2): level 2 first
 #endif
+#if START_LEVEL3
+    lda #2                      // test build: level 3 first
+#endif
     sta start_level
 !loop:
     jsr shop_frame              // vertical blank, sound, keys, debounced joystick
-    lda key_2                   // key 2: start in level 2 (with attic RAM)
+    lda key_2                   // key 2 / 3: start in level 2 / 3 (with attic RAM)
     beq !+
     lda attic_ok
     beq !+
-    lda #1
+    lda key_2
     sta start_level
     bne !go+
 !:

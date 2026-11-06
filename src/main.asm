@@ -193,6 +193,7 @@ music_test:
 // ---------------------------------------------------------------- frame
 // Build the complete next frame into the back buffer.
 build_frame:
+    jsr anim_frame                     // tile animations (Stage 13)
     jsr scroll_copy_rows               // background rows (DMA) + reset row fill levels
     jsr spawn_update
     jsr boss_update
@@ -242,6 +243,7 @@ random:
 #import "boss.asm"
 #import "ground.asm"
 #import "levels.asm"
+#import "anim.asm"
 #import "screens.asm"
 
 // file PIXIES: the complete pixie glyph area image (tools/import_art.py), loaded to PIXIE_ADDR

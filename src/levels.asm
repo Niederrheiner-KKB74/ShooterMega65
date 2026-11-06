@@ -1,16 +1,17 @@
 // ----------------------------------------------------------------------------
-// Several levels (Stage 9)
+// Several levels (Stage 9; three since Stage 13)
 //
 // With attic RAM all level files are loaded at start into one 64 KB pack per level and copied into place by
-// DMA when the level begins (level_enter). Pack n (level n+1) at ATTIC_LEVELS + n * $10000:
+// DMA when the level begins (level_enter). Each level has a 64 KB pack (bank lv_pack_bank of the attic RAM):
 //   +$0000 LnGFX (<= 16 KB)   +$4000 LnDAT (<= 10 KB)   +$7000 LnDEST (<= 6 KB)   +$9000 level music piece
-// The boss of level n+1 (LnBOSS) is at $8020000 + n * $40000 (level 1 $8020000, level 2 $8060000).
+// and its boss LnBOSS in bank lv_boss_bank. Attic banks ($80n0000): 0 TITLE, 1 GOVER, 2 L1BOSS, 3 PXSAVE,
+// 4 pack 1, 5 pack 2, 6 L2BOSS, 7 pack 3, 8 L3BOSS (docs/memory_map.md).
 // Without attic RAM only level 1 exists: it is loaded straight into place as before and repeats.
 // At the end of a level (event `end`) the next level starts with the next map; score, lives, credits and
 // everything bought are kept. After the last level comes level 1 again.
 // ----------------------------------------------------------------------------
 .const ATTIC_LEVELS = $8040000
-.const LEVELS       = 2
+.const LEVELS       = 3
 .const LV_GFX  = $0000
 .const LV_DAT  = $4000
 .const LV_DEST = $7000
@@ -18,12 +19,14 @@
 
 .errorif (LEVEL_DAT_MAX > LV_DEST - LV_DAT), "LnDAT overlaps LnDEST in the attic pack"
 .errorif (MUS_SLOT_MAX > $10000 - LV_MUS), "level music overlaps the next attic pack"
-.errorif (ATTIC_LEVELS + LEVELS * $10000 > $8060000), "level packs overlap the level-2 boss"
+lv_pack_bank: .byte $04, $05, $07       // attic bank of each level's pack and boss (Stage 13: tables)
+lv_boss_bank: .byte $02, $06, $08
+.errorif (lv_boss_bank - lv_pack_bank != LEVELS), "one pack and one boss bank per level"
 
 cur_level:      .byte 0
 level_next_req: .byte 0
-mus_hdr_lo:     .byte <MUS_HDR1, <MUS_HDR2
-mus_hdr_hi:     .byte >MUS_HDR1, >MUS_HDR2
+mus_hdr_lo:     .byte <MUS_HDR1, <MUS_HDR2, <MUS_HDR3
+mus_hdr_hi:     .byte >MUS_HDR1, >MUS_HDR2, >MUS_HDR3
 
 // ============================================================== loading (KERNAL, at start)
 // all levels into attic RAM (attic_ok must be set). Carry set = failed (message printed).
@@ -38,9 +41,8 @@ levels_load:
     sta name_dat+1
     sta name_dest+1
     sta name_boss+1
-    lda lv_n
-    clc
-    adc #((ATTIC_LEVELS >> 16) & $0f)
+    ldx lv_n
+    lda lv_pack_bank,x
     sta lv_bank
     lda #<LV_GFX
     ldx #>LV_GFX
@@ -50,7 +52,9 @@ levels_load:
     ldx #>name_gfx
     ldy #name_gfx_end - name_gfx
     jsr load_seq_to
-    bcs !fail+
+    bcc !+
+    jmp lv_fail
+!:
     lda #<LV_DAT
     ldx #>LV_DAT
     ldy #(>LEVEL_DAT_MAX) + 1
@@ -59,7 +63,9 @@ levels_load:
     ldx #>name_dat
     ldy #name_dat_end - name_dat
     jsr load_seq_to
-    bcs !fail+
+    bcc !+
+    jmp lv_fail
+!:
     lda #<LV_DEST
     ldx #>LV_DEST
     ldy #(>(48 * 128)) + 1
@@ -68,23 +74,31 @@ levels_load:
     ldx #>name_dest
     ldy #name_dest_end - name_dest
     jsr load_seq_to
-    bcs !fail+
-    lda lv_n                    // boss: bank 2 + 4n of the attic RAM
-    asl
-    asl
-    clc
-    adc #((ATTIC_BOSS >> 16) & $0f)
+    bcc !+
+    jmp lv_fail
+!:
+    ldx lv_n                    // boss: its own bank of the attic RAM
+    lda lv_boss_bank,x
     sta bl_bank
     jsr boss_load
-    bcs !fail+
+    bcc !+
+    jmp lv_fail
+!:
     inc lv_n
     lda lv_n
     cmp #LEVELS
     bne !lv-
-    // music: the level-1 piece is in MUSIC already (copied to pack 0), the others are files MUS2 ...
+    // music: the level-1 piece is in MUSIC already (copied to pack 1), the others are files MUS2, MUS3
     RunDma(job_mus1_save)
-    lda #((ATTIC_LEVELS >> 16) & $0f) + 1
+    ldx #1
+!mu:
+    stx lv_n
+    lda lv_pack_bank,x
     sta lv_bank
+    txa
+    clc
+    adc #'1'
+    sta name_mus2+3
     lda #<LV_MUS
     ldx #>LV_MUS
     ldy #(>MUS_SLOT_MAX) + 1
@@ -93,12 +107,18 @@ levels_load:
     ldx #>name_mus2
     ldy #name_mus2_end - name_mus2
     jsr load_seq_to
-    bcs !fail+
+    bcc !+
+    jmp lv_fail
+!:
+    ldx lv_n
+    inx
+    cpx #LEVELS
+    bne !mu-
     lda #'1'                    // names back for messages
     sta name_gfx+1
     sta name_dat+1
     clc
-!fail:
+lv_fail:
     rts
 lv_n:    .byte 0
 lv_bank: .byte 0
@@ -122,8 +142,8 @@ lv_dst:
 // level data, level music, boss glyph source, palette and part positions
 level_enter:
     sta cur_level
-    clc
-    adc #((ATTIC_LEVELS >> 16) & $0f)
+    tax
+    lda lv_pack_bank,x
     sta job_a_hdr+DMA_SRC+2
     sta job_a_glyphs+DMA_SRC+2
     sta job_a_dest1+DMA_SRC+2
@@ -145,21 +165,19 @@ level_enter:
     RunDma(job_a_dat)
     RunDma(job_dathdr)          // header of LnDAT -> lev_hdr
     jsr level_init              // metatiles, ground-target tables, events from the start
+    ldx cur_level
+    jsr anim_init               // tile animations of the level (Stage 13)
     RunDma(job_a_mus)           // level music into the slot, header table entry 0 -> its piece
     ldx cur_level
     lda mus_hdr_lo,x
     sta MUSIC_ADDR + 4
     lda mus_hdr_hi,x
     sta MUSIC_ADDR + 5
-    txa                         // boss of this level: attic bank 2 + 4n
-    asl
-    asl
-    clc
-    adc #((ATTIC_BOSS >> 16) & $0f)
+    lda lv_boss_bank,x          // boss of this level
     sta job_boss_in+DMA_SRC+2
     sta job_boss_pal+DMA_SRC+2
     RunDma(job_boss_pal)
-    ldx cur_level               // part positions (22 bytes) and effects/sizes (16 bytes) of this boss
+    ldx cur_level               // part positions (22 bytes) and effects/sizes (BOSS_FX_LEN bytes) of this boss
     ldy #0
     lda le_place_lo,x
     sta le_src+1
@@ -176,7 +194,7 @@ le_src:
     sta le_fx+1
     lda le_fx_hi,x
     sta le_fx+2
-    ldy #15
+    ldy #BOSS_FX_LEN - 1
 !:
 le_fx:
     lda $ffff,y
@@ -184,10 +202,10 @@ le_fx:
     dey
     bpl !-
     jmp palette_init            // landscape banks 1-4 (and the boss bank back to normal)
-le_fx_lo:    .byte <boss_fx1, <boss_fx2
-le_fx_hi:    .byte >boss_fx1, >boss_fx2
-le_place_lo: .byte <boss_place1, <boss_place2
-le_place_hi: .byte >boss_place1, >boss_place2
+le_fx_lo:    .byte <boss_fx1, <boss_fx2, <boss_fx3
+le_fx_hi:    .byte >boss_fx1, >boss_fx2, >boss_fx3
+le_place_lo: .byte <boss_place1, <boss_place2, <boss_place3
+le_place_hi: .byte >boss_place1, >boss_place2, >boss_place3
 
 job_a_hdr:    DmaJob(DMA_CMD_COPY, ATTIC_LEVELS + LV_GFX, lev_gfxhdr, 4 + 192)
 job_a_glyphs: DmaJob(DMA_CMD_COPY, ATTIC_LEVELS + LV_GFX + 4 + 192, TILE_ADDR, 0)
