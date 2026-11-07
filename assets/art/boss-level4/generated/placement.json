@@ -1,7 +1,7 @@
 {
  "body": "body",
  "body_size": [
-  96,
+  112,
   64
  ],
  "palette": "boss",
@@ -9,8 +9,8 @@
   {
    "id": "turret_nw",
    "offset": [
-    22,
-    10
+    30,
+    6
    ],
    "size": [
     16,
@@ -23,8 +23,8 @@
   {
    "id": "turret_ne",
    "offset": [
-    58,
-    10
+    66,
+    6
    ],
    "size": [
     16,
@@ -37,8 +37,8 @@
   {
    "id": "turret_sw",
    "offset": [
-    22,
-    38
+    30,
+    40
    ],
    "size": [
     16,
@@ -51,8 +51,8 @@
   {
    "id": "turret_se",
    "offset": [
-    58,
-    38
+    66,
+    40
    ],
    "size": [
     16,
@@ -65,7 +65,7 @@
  ],
  "core": {
   "offset": [
-   32,
+   40,
    16
   ],
   "size": [
@@ -76,7 +76,23 @@
  },
  "rotors": [
   {
-   "id": "foot_nw",
+   "id": "leg_sw",
+   "offset": [
+    0,
+    24
+   ],
+   "phase_offset": 1
+  },
+  {
+   "id": "leg_se",
+   "offset": [
+    80,
+    24
+   ],
+   "phase_offset": 0
+  },
+  {
+   "id": "leg_nw",
    "offset": [
     0,
     0
@@ -84,28 +100,12 @@
    "phase_offset": 0
   },
   {
-   "id": "foot_ne",
+   "id": "leg_ne",
    "offset": [
-    64,
+    80,
     0
    ],
    "phase_offset": 1
-  },
-  {
-   "id": "foot_sw",
-   "offset": [
-    0,
-    40
-   ],
-   "phase_offset": 1
-  },
-  {
-   "id": "foot_se",
-   "offset": [
-    64,
-    40
-   ],
-   "phase_offset": 0
   }
  ],
  "rotor_frames": [
@@ -130,8 +130,8 @@
    "flame_2"
   ],
   "offset": [
-   40,
-   56
+   48,
+   60
   ]
  },
  "spray": {
@@ -146,16 +146,16 @@
     60
    ],
    [
-    64,
+    80,
     60
    ],
    [
     0,
-    8
+    36
    ],
    [
-    64,
-    8
+    80,
+    36
    ]
   ]
  },
@@ -166,7 +166,7 @@
    "deck_jet_2"
   ],
   "offset": [
-   40,
+   48,
    0
   ]
  }

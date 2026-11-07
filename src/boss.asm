@@ -1281,30 +1281,8 @@ boss_bomb_part:
 
 // ============================================================== drawing
 // body and rotors, before all objects (turrets, core and explosions are drawn on top)
-boss_draw:
-    lda boss_state
-    cmp #BS_ENTER
-    bcs !+
-    rts
-!:  cmp #BS_DIE                 // the wreck disappears halfway through the explosions
-    bne !+
-    lda boss_t
-    cmp #BOSS_DIE / 2
-    bcc !+
-    rts
-!:  lda boss_x
-    sta px_x
-    lda boss_x+1
-    sta px_x+1
-    lda boss_y
-    sta px_y
-    lda boss_y+1
-    sta px_y+1
-    ldy #FR_BOSS_BODY
-    lda frame_pal,y
-    sta px_pal
-    tya
-    jsr pixie_draw
+// rotors / fans / legs (px_pal = the boss palette); the mech's legs step only while it walks
+bd_rotors:
     lda fx_flame                // the mech (flame and drones, level 4): legs step only while it walks
     and fx_cat
     beq !+
@@ -1348,6 +1326,51 @@ boss_draw:
     jsr pixie_draw
     dec bd_i
     bpl !rot-
+    rts
+bd_legs: .byte 0
+
+boss_draw:
+    lda boss_state
+    cmp #BS_ENTER
+    bcs !+
+    rts
+!:  cmp #BS_DIE                 // the wreck disappears halfway through the explosions
+    bne !+
+    lda boss_t
+    cmp #BOSS_DIE / 2
+    bcc !+
+    rts
+!:  lda boss_x
+    sta px_x
+    lda boss_x+1
+    sta px_x+1
+    lda boss_y
+    sta px_y
+    lda boss_y+1
+    sta px_y+1
+    ldy #FR_BOSS_BODY
+    lda frame_pal,y
+    sta px_pal
+    lda fx_flame                // the mech (flame and missiles, level 4): legs under the body (Stage 14h)
+    and fx_cat
+    sta bd_legs
+    beq bd_body
+    jsr bd_rotors
+    lda boss_x
+    sta px_x
+    lda boss_x+1
+    sta px_x+1
+    lda boss_y
+    sta px_y
+    lda boss_y+1
+    sta px_y+1
+bd_body:
+    lda #FR_BOSS_BODY
+    jsr pixie_draw
+    lda bd_legs                 // rotors and fans on top of the body
+    bne bd_after
+    jsr bd_rotors
+bd_after:
     jsr hv_draw                 // dust and flame of the hover tank (Stage 11)
     // muzzle flashes under firing turrets
     ldx #AIR_FIRST
