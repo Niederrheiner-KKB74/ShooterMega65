@@ -19,11 +19,13 @@
                                          // (directly behind the 160 glyphs reserved for the shop at $44000)
 .const SCREEN_A     = $054000            // RRB screen buffer A (27 x 170 bytes)
 .const SCREEN_B     = $056000            // RRB screen buffer B
-.const PIXIE3_ADDR  = $055200            // Stage 15: diagonal enemy shots (file PIXIES3, 56 glyphs max., char $1548+)
+.const PIXIE3_ADDR  = $055200            // Stage 15: diagonal enemy shots (file PIXIES3, 24 glyphs max., char $1548+)
 .const RING_SCR     = $058000            // 64 x 170 bytes decoded map rows (screen part)
 .const RING_COL     = $05b000            // 64 x 170 bytes decoded map rows (colour part)
 .const SAVED_PAL0   = $05db00            // Stage 13: BASIC's palette 0 (768 bytes) until exit
 .const SAVED_ZP     = $05de00            // Stage 13: BASIC's zero page (256 bytes) until exit
+.const SAVED_GZP    = $05df00            // Stage 16: the game's zero page during a KERNAL session (hiscore.asm)
+.const SAVED_SCR    = $055800            // Stage 16: BASIC's text screen $0800-$0FFF (2 KB) until exit
 .errorif (RING_COL + 64 * 170 > SAVED_PAL0 || SAVED_PAL0 + 768 > SAVED_ZP || SAVED_ZP + 256 > $05e000), "SAVED_PAL0/SAVED_ZP overlap the ring or the destroyed tiles"
 .const SPRITE_ADDR  = $05f000            // player sprites (256 bytes each)
 .const RING_ADDR    = $05fc00            // invulnerability ring, sprites 2-4 (256 bytes each)
@@ -60,3 +62,4 @@
 .if (SCREEN_B + ROW_BYTES * BUF_ROWS > RING_SCR) .error "screen buffer B overlaps ring"
 .if (COLOUR_A + ROW_BYTES * BUF_ROWS > COLOUR_B) .error "colour buffer A overlaps B"
 .const CLEAR_DELAY  = 60                // Stage 15: frames between the end of the boss and LEVEL CLEAR (transition.asm)
+.errorif (PIXIE3_ADDR + 24 * 64 > SAVED_SCR || SAVED_SCR + $800 > SCREEN_B), "PIXIES3 / SAVED_SCR overlap"

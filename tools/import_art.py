@@ -92,7 +92,7 @@ GUN_DIRS = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']          # engine direct
 PIXIE2_ADDR = 0x52800        # second pixie area (Stage 8): heavy gun, file PIXIES2 (src/layout.asm)
 PIXIE2_MAX = 96
 PIXIE3_ADDR = 0x55200        # third pixie area (Stage 15): diagonal enemy shots, file PIXIES3, behind screen buffer A
-PIXIE3_MAX = 56              # $55200-$55FFF (src/layout.asm)
+PIXIE3_MAX = 24              # $55200-$557FF (src/layout.asm; Stage 16: BASIC's screen saved at $55800)
 PIXIE_ADDR = 0x46800
 CAPSULE_FRAMES = [('CAP_S', 'capsule_S'), ('CAP_D1', 'capsule_dollar_small'),
                   ('CAP_D2', 'capsule_dollar_medium'), ('CAP_D3', 'capsule_dollar_large')]

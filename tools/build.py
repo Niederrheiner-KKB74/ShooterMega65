@@ -114,6 +114,7 @@ def main():
     data = prg.read_bytes()
     if data[:2] != b'\x01\x20':
         sys.exit('PRG must load at $2001')
+    himenu = (out / 'HIMENU.bin').read_bytes()       # Stage 16: menu overlay (read before MUSICTEST overwrites it)
     # music test program for the same disk: keys 1-4 play the pieces, T = 440 Hz tuning tone
     mt = out / 'MUSICTEST.PRG'
     run2 = subprocess.run(['java', '-jar', str(jar), str(ROOT / 'src/main.asm'), '-o', str(mt), '-odir', str(out),
@@ -122,7 +123,7 @@ def main():
     if run2.returncode or 'Error' in run2.stdout:
         print(run2.stdout)
         sys.exit('assembly of MUSICTEST failed')
-    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ), ('PIXIES', pixies, d81.SEQ), ('SPRITES', (ROOT / 'build/gen/sprite.bin').read_bytes() + (ROOT / 'build/gen/ring.bin').read_bytes(), d81.SEQ), ('PIXIES2', pixies2, d81.SEQ), ('PIXIES3', pixies3, d81.SEQ), ('TITLE', title, d81.SEQ), ('GOVER', gover, d81.SEQ)] + level_files
+    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ), ('PIXIES', pixies, d81.SEQ), ('SPRITES', (ROOT / 'build/gen/sprite.bin').read_bytes() + (ROOT / 'build/gen/ring.bin').read_bytes(), d81.SEQ), ('PIXIES2', pixies2, d81.SEQ), ('PIXIES3', pixies3, d81.SEQ), ('TITLE', title, d81.SEQ), ('GOVER', gover, d81.SEQ), ('HIMENU', himenu, d81.SEQ)] + level_files
     image = d81.build_disk(files)
     for fname, payload, _ in files:
         if d81.read_file(image, fname) != payload:

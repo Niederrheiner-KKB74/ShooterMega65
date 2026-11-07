@@ -31,6 +31,7 @@ system_save:
     lda #0
     tab                          // our zero page is $00xx
     RunDma(job_zp_save)          // zero page $02-$ff to chip RAM (Stage 13: SAVED_ZP)
+    RunDma(job_scr_save)         // Stage 16: BASIC's screen $0800-$0FFF, the game uses it as work RAM
     lda CIA1_DDRA
     sta saved_ddra
     .for (var i = 0; i < vic_restore.size(); i++) {
@@ -109,21 +110,10 @@ exit_to_basic:
     sta PAL_BLUE,x
     dex
     bpl !-
-    // VIC-IV registers: HOTREG off first, saved values, HOTREG last
-    lda VIC_D05D
-    and #$7f
-    sta VIC_D05D
-    sta VIC_D05D
-    .for (var i = 0; i < vic_restore.size(); i++) {
-        lda saved_vic + i
-        sta vic_restore.get(i)
-    }
-    lda saved_d05d
-    sta VIC_D05D
-    lda saved_ddra
-    sta CIA1_DDRA
+    jsr vic_to_basic
     jsr key_drain                // do not hand the exit key to BASIC
-    // zero page, base page and stack as BASIC left them
+    // screen, zero page, base page and stack as BASIC left them
+    RunDma(job_scr_rest)
     RunDma(job_zp_rest)
     lda saved_b
     tab
@@ -137,6 +127,22 @@ exit_to_basic:
     tay
     cli
     rts                          // back to the SYS caller -> READY.
+
+// VIC-IV registers as BASIC had them: HOTREG off first, saved values, HOTREG last; CIA port A direction
+vic_to_basic:
+    lda VIC_D05D
+    and #$7f
+    sta VIC_D05D
+    sta VIC_D05D
+    .for (var i = 0; i < vic_restore.size(); i++) {
+        lda saved_vic + i
+        sta vic_restore.get(i)
+    }
+    lda saved_d05d
+    sta VIC_D05D
+    lda saved_ddra
+    sta CIA1_DDRA
+    rts
 
 // Read one key from the hardware queue (0 = none). Handles the global keys.
 read_keys:
@@ -230,6 +236,8 @@ saved_d05d: .byte 0
 saved_vic:  .fill vic_restore.size(), 0
 job_zp_save: DmaJob(DMA_CMD_COPY, $0002, SAVED_ZP + 2, 254)
 job_zp_rest: DmaJob(DMA_CMD_COPY, SAVED_ZP + 2, $0002, 254)
+job_scr_save: DmaJob(DMA_CMD_COPY, $0800, SAVED_SCR, $800)
+job_scr_rest: DmaJob(DMA_CMD_COPY, SAVED_SCR, $0800, $800)
 // palette 0 (768 bytes) at SAVED_PAL0 in chip RAM: scr_ptr -> it, Z = 0
 pal0_ptr:
     lda #<SAVED_PAL0

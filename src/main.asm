@@ -74,6 +74,15 @@ start:
     jsr pixies3_load                   // Stage 15: diagonal enemy shots behind screen buffer A (ground.asm)
     bcs !fail+
     jsr screens_load                   // title and game-over banner: attic RAM or title directly (screens.asm)
+    bcs !fail+
+    lda attic_ok                       // Stage 16: menu overlay to attic RAM, high-score list from disk
+    beq !+
+    jsr menu_load
+    bcs !fail+
+    jsr menu_in
+    jsr hi_boot                        // (the default list if there is no file; never fails)
+    jsr menu_out
+    clc
     bcc !+
 !fail:
     rts                                // failed: message printed, back to BASIC
@@ -131,6 +140,16 @@ main_loop:
     bne !+
     inc frame_hi
 !:
+#if HI_TEST
+    lda frame_hi                       // test build (--define HI_TEST): game over after 256 frames
+    cmp #1
+    bne !+
+    lda frame_lo
+    bne !+
+    lda #1
+    sta game_over_req
+!:
+#endif
     jsr read_keys                      // X or RUN/STOP: exit to BASIC; space: bomb; S: invulnerability
     jsr special_update
     jsr read_joystick
@@ -260,12 +279,15 @@ random:
 #import "shop.asm"
 #import "special.asm"
 #import "sound.asm"
+swap_start:                            // Stage 16: overlay area for the menu code (menu.asm)
 #import "boss.asm"
 #import "ground.asm"
+swap_end:
 #import "levels.asm"
 #import "anim.asm"
 #import "screens.asm"
 #import "transition.asm"
+#import "menu.asm"
 
 // file PIXIES: the complete pixie glyph area image (tools/import_art.py), loaded to PIXIE_ADDR
 pixies_load:
@@ -313,3 +335,17 @@ prg_end:
 .errorif (PIXIE_GLYPHS > PIXIE_MAX), "pixie glyph area ($46800-$4FFFF) exceeded"
 .print "code ends at $" + toHexString(code_end) + ", PRG ends at $" + toHexString(prg_end)
 
+// ---------------------------------------------------------------- Stage 16: menu overlay (file HIMENU)
+// High scores, text pages, name entry, end screen: assembled for swap_start, written to HIMENU.bin, kept in
+// attic RAM and swapped in over boss.asm/ground.asm while no game runs (menu.asm).
+.segmentdef Menu [start=$0000]
+.file [name="HIMENU.bin", type="bin", segments="Menu"]
+.segment Menu
+.pseudopc swap_start {
+menu_start:
+#import "hiscore.asm"
+#import "textpage.asm"
+#import "hipages.asm"
+menu_end:
+}
+.segment Default

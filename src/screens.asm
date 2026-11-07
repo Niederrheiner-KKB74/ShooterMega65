@@ -115,14 +115,96 @@ screens_load:
 // ============================================================== title
 title_run:
     lda attic_ok
-    bne !load+
+    bne !+
     lda title_seen
-    beq !show+
+    beq !+
     rts                         // no attic RAM: the title data were overwritten by the first game
-!load:
+!:  lda #MUS_TITLE
+    jsr music_play
+    jsr title_show
+    jsr fire_reset
+    lda #0
+    sta key_2
+#if START_LEVEL2
+    lda #1                      // test build (build.py --define START_LEVEL2): level 2 first
+#endif
+#if START_LEVEL3
+    lda #2                      // test build: level 3 first
+#endif
+#if START_LEVEL4
+    lda #3                      // test build: level 4 first
+#endif
+    sta start_level
+    lda #0
+    sta tt_time
+    sta tt_time+1
+!loop:
+    jsr shop_frame              // vertical blank, sound, keys, debounced joystick
+    lda key_2                   // key 2 / 3: start in level 2 / 3 (with attic RAM)
+    beq !+
+    lda attic_ok
+    beq !+
+!key:
+    lda key_2
+    sta start_level
+    bne !go+
+!:
+    inc tt_blink
+    lda tt_blink
+    and #31                     // "PRESS FIRE" blinks
+    bne !+
+    lda tt_blink
+    and #32
+    lsr
+    lsr
+    lsr
+    lsr
+    lsr
+    sta tt_alt
+    lda #22
+    sta tt_row
+    jsr title_row
+    lda #0
+    sta tt_alt
+!:  lda sh_press
+    and #$10
+    bne !go+
+    lda attic_ok                // Stage 16: every 10 s the Hall of Fame (about 10 s)
+    beq !loop-
+    inc tt_time
+    bne !loop-
+    inc tt_time+1
+    lda tt_time+1
+    cmp #2
+    bne !loop-
+    jsr menu_in
+    jsr hof_page
+    php
+    jsr menu_out
+    plp
+    bcs !hof+
+    jsr title_show
+    lda #0
+    sta tt_time
+    sta tt_time+1
+    jmp !loop-
+!hof:
+    lda key_2
+    bne !key-
+!go:
+    lda #SFX_SELECT
+    jsr sfx_play
+    lda #0
+    sta VIC_BGCOL
+    sta VIC_BORDER
+    jmp palette_init
+
+// the title picture on screen A (palette bank 1, high score in the bottom row)
+title_show:
+    lda attic_ok
+    beq !+
     RunDma(job_title_in)
-!show:
-    lda #1
+!:  lda #1
     sta title_seen
     lda #0
     sta VIC_SPREN
@@ -150,58 +232,8 @@ title_run:
     lda tt_row
     cmp #25
     bne !-
-    lda #MUS_TITLE
-    jsr music_play
-    jsr fire_reset
-    lda #0
-    sta key_2
-#if START_LEVEL2
-    lda #1                      // test build (build.py --define START_LEVEL2): level 2 first
-#endif
-#if START_LEVEL3
-    lda #2                      // test build: level 3 first
-#endif
-#if START_LEVEL4
-    lda #3                      // test build: level 4 first
-#endif
-    sta start_level
-!loop:
-    jsr shop_frame              // vertical blank, sound, keys, debounced joystick
-    lda key_2                   // key 2 / 3: start in level 2 / 3 (with attic RAM)
-    beq !+
-    lda attic_ok
-    beq !+
-    lda key_2
-    sta start_level
-    bne !go+
-!:
-    inc tt_blink
-    lda tt_blink
-    and #31                     // "PRESS FIRE" blinks
-    bne !+
-    lda tt_blink
-    and #32
-    lsr
-    lsr
-    lsr
-    lsr
-    lsr
-    sta tt_alt
-    lda #22
-    sta tt_row
-    jsr title_row
-    lda #0
-    sta tt_alt
-!:  lda sh_press
-    and #$10
-    beq !loop-
-!go:
-    lda #SFX_SELECT
-    jsr sfx_play
-    lda #0
-    sta VIC_BGCOL
-    sta VIC_BORDER
-    jmp palette_init
+    rts
+tt_time:  .word 0
 start_level: .byte 0           // level of the next game (0 = level 1; key 2 on the title: 1)
 tt_row:   .byte 0
 tt_blink: .byte 0
@@ -325,7 +357,15 @@ game_over_run:
     and #$10
     beq !-
 !done:
-    jmp palette_init
+    lda attic_ok                // Stage 16: name entry when the score enters the list (hipages.asm)
+    beq !+
+    jsr menu_in
+    lda cur_level
+    clc
+    adc #1
+    jsr hi_after_game
+    jsr menu_out
+!:  jmp palette_init
 go_t: .byte 0
 
 // fire must be released first (shop_frame debounce)
@@ -381,6 +421,14 @@ game_new:
 #endif
     jsr shop_reset
     jsr hud_reset
+#if HI_TEST
+    lda #$03                    // test build: 031250 points
+    sta score_bcd
+    lda #$12
+    sta score_bcd+1
+    lda #$50
+    sta score_bcd+2
+#endif
     jsr player_init
     lda #MUS_LEVEL1
     jsr music_play

@@ -72,27 +72,17 @@ level_transition:
     jsr ov_show
     jsr ov_wait
     jsr shop_glyphs_back
-    jsr shop_run                // the end shop
+    lda cur_level               // Stage 16: after the last level the end of the mission
+    cmp #LEVELS - 1
+    bne !+
+    jmp mission_end
+!:  jsr shop_run                // the end shop
     jsr wait_vblank
     jsr flip                    // shop_run built the back buffer without its panel
     lda #$ff
     jsr music_queue
     jsr music_stop
-    // fade out: palette 2 = palette 0, show palette 2, darken it
-    jsr pal_snapshot
-    lda #16
-    jsr fade_set
-    lda #$20
-    sta pal_show
-    lda #PALSEL_SHOW2
-    sta VIC_PALSEL
-    lda #15
-    sta fd_step
-!:  jsr fade_wait
-    lda fd_step
-    jsr fade_set
-    dec fd_step
-    bpl !-
+    jsr fade_out
     // next level behind the black screen (palette_init writes palette 0)
     jsr level_next
     jsr ov_clean
@@ -128,6 +118,40 @@ level_transition:
     lda #INV_FRAMES
     sta pl_inv
     rts
+
+// fade out: palette 2 = palette 0, show palette 2, darken it to black
+fade_out:
+    jsr pal_snapshot
+    lda #16
+    jsr fade_set
+    lda #$20
+    sta pal_show
+    lda #PALSEL_SHOW2
+    sta VIC_PALSEL
+    lda #15
+    sta fd_step
+!:  jsr fade_wait
+    lda fd_step
+    jsr fade_set
+    dec fd_step
+    bpl !-
+    rts
+
+// Stage 16: level 4 cleared -> fade out, MISSION ACCOMPLISHED, high-score entry, title, new game
+mission_end:
+    lda #$ff
+    jsr music_queue
+    jsr music_stop
+    jsr fade_out
+    jsr hiscore_update
+    jsr menu_in
+    jsr mission_page            // (hipages.asm; ends with palette 0 shown)
+    lda #5
+    jsr hi_after_game
+    jsr menu_out
+    jsr palette_init
+    jsr title_run
+    jmp game_new
 
 // objects away, both buffers rebuilt (without objects and pictures), player hidden
 ov_clean:
@@ -326,7 +350,7 @@ job_shopg_save: DmaJob(DMA_CMD_COPY, SHOP_ADDR, ATTIC_SHOPG, SHOP_GLYPHS * 64)
 job_shopg_back: DmaJob(DMA_CMD_COPY, ATTIC_SHOPG, SHOP_ADDR, SHOP_GLYPHS * 64)
 .errorif (SHOP_ADDR + 160 * 64 > PIXIE_ADDR), "transition glyphs overlap the pixie glyphs"
 
-// work buffers in the old text screen area $0800-$0FFF (not used by the game; Stage 16, frees bank-0 PRG space)
+// work buffers in BASIC's text screen area $0800-$0FFF (saved to SAVED_SCR at start, restored on exit)
 .label fade_tab = $0800                     // 256, page aligned
 .label pal_snap = $0900                     // 768
 .label ov_map   = $0c00                     // TR_MAP_MAX * 2
