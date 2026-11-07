@@ -89,6 +89,26 @@ pixies2_load:
 name_pixies2: .text "PIXIES2"
 name_pixies2_end:
 
+// file PIXIES3 (Stage 15): diagonal enemy shots behind screen buffer A
+.errorif (PIXIE3_ADDR + PIXIES3_BYTES > SCREEN_B), "diagonal shots overlap screen buffer B"
+pixies3_load:
+    lda #<(PIXIE3_ADDR & $ffff)
+    sta ld_dst
+    lda #>(PIXIE3_ADDR & $ffff)
+    sta ld_dst+1
+    lda #(PIXIE3_ADDR >> 16)
+    sta ld_dst+2
+    lda #0
+    sta ld_dst+3
+    lda #(>PIXIES3_BYTES) + 1
+    sta ld_maxhi
+    lda #<name_pixies3
+    ldx #>name_pixies3
+    ldy #name_pixies3_end - name_pixies3
+    jmp load_seq_to
+name_pixies3: .text "PIXIES3"
+name_pixies3_end:
+
 // tables behind the path code of LnDAT (level_init)
 gd_tables:
     lda lev_offgt

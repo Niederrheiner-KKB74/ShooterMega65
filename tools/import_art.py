@@ -91,9 +91,43 @@ GROUND_TARGETS = ROOT / 'assets/art/ground-targets/generated'   # PR #15: guns (
 GUN_DIRS = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw']          # engine direction 0-7 (as vec_dir)
 PIXIE2_ADDR = 0x52800        # second pixie area (Stage 8): heavy gun, file PIXIES2 (src/layout.asm)
 PIXIE2_MAX = 96
+PIXIE3_ADDR = 0x55200        # third pixie area (Stage 15): diagonal enemy shots, file PIXIES3, behind screen buffer A
+PIXIE3_MAX = 56              # $55200-$55FFF (src/layout.asm)
 PIXIE_ADDR = 0x46800
 CAPSULE_FRAMES = [('CAP_S', 'capsule_S'), ('CAP_D1', 'capsule_dollar_small'),
                   ('CAP_D2', 'capsule_dollar_medium'), ('CAP_D3', 'capsule_dollar_large')]
+
+
+def shear45(a):
+    """a vertical bolt turned to fly down-left: every row one pixel further left (centred in the frame)"""
+    ys, xs = np.nonzero(a)
+    out = np.zeros_like(a)
+    y0, y1 = ys.min(), ys.max()
+    for y, x in zip(ys, xs):
+        out[y, x - (y - y0) + (y1 - y0) // 2] = a[y, x]
+    return out
+
+
+def rot45(a, s=8):
+    """turned 45 degrees clockwise on screen (down -> down-left): s x upscaled, turned, majority downsampled"""
+    h, w = a.shape
+    big = np.kron(a, np.ones((s, s), np.uint8))
+    yy, xx = np.mgrid[0:h * s, 0:w * s]
+    u, v = xx - (w * s - 1) / 2, yy - (h * s - 1) / 2
+    c = np.sqrt(0.5)
+    sx, sy = u * c + v * c + (w * s - 1) / 2, -u * c + v * c + (h * s - 1) / 2
+    ok = (sx >= 0) & (sx < w * s) & (sy >= 0) & (sy < h * s)
+    res = np.zeros_like(big)
+    res[ok] = big[sy[ok].astype(int), sx[ok].astype(int)]
+    out = np.zeros_like(a)
+    for y in range(h):
+        for x in range(w):
+            blk = res[y * s:y * s + s, x * s:x * s + s].ravel()
+            nz = blk[blk != 0]
+            if len(nz) >= s * s * 0.4:
+                vals, cnt = np.unique(nz, return_counts=True)
+                out[y, x] = vals[cnt.argmax()]
+    return out
 
 
 def load():
@@ -503,6 +537,28 @@ def main(out):
     (out / 'PIXIES2').write_bytes(b''.join(g2))
     report.append(f'pixies2: heavy gun {len(g2)} glyphs of {PIXIE2_MAX}')
     gun_consts = [f'.const PIXIES2_BYTES={len(g2) * 64}']
+    # ------------------------------------------------------------ diagonal enemy shots (Stage 15), file PIXIES3
+    # The elongated shots are drawn turned by 45 degrees when they fly at an angle (objects.asm eshot_view):
+    # down-left (DL) and its mirror down-right (DR). The red bolt is sheared (one pixel per row, stays crisp),
+    # the fireball rotated (rotsprite-like: 8x upscaled, turned, majority downsampled).
+    p3base = (PIXIE3_ADDR - PIXIE_ADDR) // 64
+    g3 = [bytes(64)]
+    red, rbank3 = grp('enemy_shot_red', 0)
+    fire, fbank3 = grp('enemy_shot_fire', 0)
+    for name, a, bank in (('ESHOT_RED_DL', shear45(red), rbank3), ('ESHOT_RED_DR', shear45(red)[:, ::-1], rbank3),
+                          ('ESHOT_FIRE_DL', rot45(fire), fbank3), ('ESHOT_FIRE_DR', rot45(fire)[:, ::-1], fbank3)):
+        a = np.ascontiguousarray(a)
+        h, w = a.shape[0] // 8, a.shape[1] // 16
+        base = p3base + len(g3)
+        for c in range(w):
+            for i in range(h):
+                g3.append(ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
+            g3.append(bytes(64))
+        table.append(dict(name=name, base=base, w=w, h=h, pal=(bank << 4) | 15, hit=hitbox(a)))
+    assert len(g3) <= PIXIE3_MAX, f'third pixie area ({PIXIE3_MAX} glyphs) exceeded: {len(g3)}'
+    (out / 'PIXIES3').write_bytes(b''.join(g3))
+    report.append(f'pixies3: diagonal shots {len(g3)} glyphs of {PIXIE3_MAX}')
+    gun_consts[0:0] = [f'.const PIXIES3_BYTES={len(g3) * 64}']
     for key, pre in (('ground_gun', 'gun'), ('heavy_gun', 'hgun')):
         mz = gt[key]['muzzle']
         half = gt[key]['size'][0] // 2
@@ -589,7 +645,7 @@ def main(out):
              f'.const TANK_PHASES={TANK_PHASES}', f'.const SHIELD_MAX={SHIELD_MAX}', f'.const BAR_X0={BAR_X0}',
              f'.const HUD_GLYPH={table[names["HUD_SCORE"]]["base"]}',
              f'.const PAL_HUD=${(HUD_BANK << 4) | 15:02x}']
-    lines += boss_consts + gun_consts[:1] + set_consts
+    lines += boss_consts + gun_consts[:2] + set_consts
     for name, i in names.items():
         lines.append(f'.const FR_{name}={i}')
     for alias, name in air_extra:
@@ -606,7 +662,7 @@ def main(out):
         tl.append(f'{label}: .byte ' + ','.join(str(f(t)) for t in table))
     # boss hit flash (Stage 7b): the boss palette lightened towards white, loaded into bank 6 during the fight
     flash = [tuple(min(255, int(v + (255 - v) * 0.65)) for v in c) for c in bpal]
-    tl += gun_consts[1:]
+    tl += gun_consts[2:]
     # boss part positions per level (Stage 9): part_dx[5], part_dy[5], rotor_dx[4], rotor_dy[4], rotor_ph[4]
     for lvl in (1, 2, 3, 4):
         tl.append(f'boss_place{lvl}: .byte ' + ','.join(str(v) for v in boss_place[lvl]))

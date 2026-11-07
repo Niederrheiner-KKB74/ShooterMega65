@@ -250,6 +250,56 @@ spawn_eshot_at:
 es_kind: .byte 0
 es_slot: .byte $ff
 
+// Stage 15: red bolts and fireballs flying at an angle are shown turned by 45 degrees. Diagonal when
+// |dx| >= 7/16 of the fall speed (about 24 degrees and more); the carrier's deck jets keep their frame.
+eshot_view:
+    lda obj_kind,x              // red bolts and fireballs only (no rockets)
+    cmp #K_SHOT_RED
+    beq !+
+    cmp #K_SHOT_FIRE
+    bne ev_rts
+!:  lda obj_fr,x
+    cmp #FR_BOSS_JET2
+    beq ev_rts
+    ldy #0                      // 0 straight, 1 down-left, 2 down-right
+    lda obj_a,x
+    beq ev_set
+    sta ev_dx
+    bpl ev_pos
+    eor #$ff
+    clc
+    adc #1
+ev_pos:
+    sta ev_abs
+    lda obj_b,x                 // speed * 7 (speed 1-3 px/frame, dx in 1/16 px)
+    asl
+    asl
+    asl
+    sec
+    sbc obj_b,x
+    cmp ev_abs
+    beq ev_diag
+    bcs ev_set
+ev_diag:
+    iny
+    lda ev_dx
+    bmi ev_set
+    iny
+ev_set:
+    lda obj_kind,x
+    cmp #K_SHOT_FIRE
+    bne !+
+    iny
+    iny
+    iny
+!:  lda es_views,y
+    sta obj_fr,x
+ev_rts:
+    rts
+ev_dx:  .byte 0
+ev_abs: .byte 0
+es_views: .byte FR_ESHOT_RED, FR_ESHOT_RED_DL, FR_ESHOT_RED_DR, FR_ESHOT_FIRE, FR_ESHOT_FIRE_DL, FR_ESHOT_FIRE_DR
+
 // explosion with first frame A at sp_x/sp_y (air range, does not scroll)
 spawn_explosion:
     sta se_frame
@@ -871,6 +921,7 @@ tank_frame:
     rts
 
 upd_eshot:
+    jsr eshot_view
     lda obj_b,x                 // speed
     jsr move_down
     lda obj_type,x
