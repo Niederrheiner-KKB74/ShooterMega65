@@ -110,52 +110,74 @@ def drone(pose, phase):
         line(img, cx - 0.7, 15.0, hx - 0.7, hy - 0.5, 5)
     for hx, hy, r, low in hubs:
         rotor(img, hx, hy, r, phase, low)
-    # armoured hull: octagon 12 x 16
+    # armoured hull: octagon 12 x 16. Stage 14f: when banking the hull rolls too: the deck (top surface) gets
+    # narrower and slides towards the lowered side, the raised side shows its side wall, the deck turns towards
+    # the light (rolling left) or away from it (rolling right), the details follow the deck, and of the pods and
+    # gun barrels on the lowered side only stumps remain visible.
+    L = lean
     x0, x1, y0, y1 = int(cx - 5.5), int(cx + 5.5), 8, 24
+    if L == 0:
+        d0, d1 = x0, x1                                   # deck = whole hull
+    elif L < 0:
+        d0, d1 = x0, x1 - 3                               # wall on the right (raised side)
+    else:
+        d0, d1 = x0 + 3, x1                               # wall on the left (raised side)
+    lit, base, shade = {0: (5, 3, 2), -1: (6, 4, 3), 1: (4, 3, 2)}[L]
+    wall = {-1: 2, 1: 4}.get(L, 3)
     for y in range(y0, y1 + 1):
         cut = max(0, 2 - (y - y0), (y - 19) if y > 19 else 0)     # pointed towards the front (down)
         for x in range(x0 + cut, x1 - cut + 1):
             edge = x in (x0 + cut, x1 - cut) or y in (y0, y1)
+            on_deck = d0 <= x <= d1
             if edge:
                 img[y, x] = 1
-            elif x - x0 + y - y0 < 9:
-                img[y, x] = 5          # lit top-left
-            elif (x1 - x) + (y1 - y) < 7:
-                img[y, x] = 2          # shadow bottom-right
+            elif not on_deck:
+                img[y, x] = 1 if x in (d0 - 1, d1 + 1) else (wall if y % 3 else wall - 1)   # wall with ribs
+            elif x - d0 + y - y0 < (9 if L >= 0 else 11):
+                img[y, x] = lit
+            elif (d1 - x) + (y1 - y) < (7 if L <= 0 else 9):
+                img[y, x] = shade
             else:
-                img[y, x] = 3
-    # dorsal plate with panel line and cyan status lights
+                img[y, x] = base
+    dc = (d0 + d1) / 2 + 0.5                              # deck centre: the details sit on it
+    hw = 3 if L == 0 else 2
+    # dorsal plate with panel lines
     for y in range(11, 16):
-        for x in range(int(cx - 3), int(cx + 4)):
-            img[y, x] = 4
-    line(img, cx - 3, 11, cx + 3, 11, 6)
-    line(img, cx - 3, 16, cx + 3, 16, 2)
-    for x in range(int(cx - 2), int(cx + 3)):                    # red warning stripe, antenna
+        for x in range(int(dc - hw), int(dc + hw + 1)):
+            img[y, x] = 4 if L >= 0 else 5
+    line(img, dc - hw, 11, dc + hw, 11, 6)
+    line(img, dc - hw, 16, dc + hw, 16, 2)
+    for x in range(int(dc - hw + 1), int(dc + hw)):                  # red warning stripe, antenna
         img[13, x] = 10
-    img[13, int(cx)] = 9
-    img[9, int(cx) + 2] = 6
-    img[8, int(cx) + 2] = 1
+    img[13, int(dc)] = 9
+    img[9, int(dc) + 2] = 6
+    img[8, int(dc) + 2] = 1
     # hazard stripes across the front
-    for x in range(int(cx - 4), int(cx + 5)):
+    for x in range(int(dc - hw - 1), int(dc + hw + 2)):
         img[17, x] = 12 if (x + 17) % 3 else 13
         img[18, x] = 13 if (x + 18) % 3 else 12
-    for x in (x0, x1):                                           # side missile pods
+    for x, side in ((x0, -1), (x1, 1)):                      # side missile pods
+        if L != 0 and side == L:
+            img[15, x] = 1                                   # lowered side: hidden under the hull
+            continue
+        ox = x + side * (1 if L != 0 else 0)
         for y in range(14, 20):
-            img[y, x] = 1
-            img[y, x + (-1 if x == x0 else 1)] = 10 if y == 14 else 3
-    # red sensor eye with glow (flickers with the phase)
+            img[y, ox] = 1
+            img[y, ox + side] = 10 if y == 14 else (4 if L != 0 else 3)
+    # red sensor eye (steady)
     ey = 20
-    for x in range(int(cx - 2), int(cx + 3)):
+    for x in range(int(dc - 2), int(dc + 3)):
         img[ey, x] = 10
-    img[ey, int(cx)] = 9                                         # steady eye (no blinking)
-    img[ey, int(cx) - 1] = 11
-    img[ey, int(cx) + 1] = 9
-    # gun barrels pointing down, muzzle glow
-    for gx in (int(cx - 4), int(cx + 4)):
-        for y in range(22, 28):
+    img[ey, int(dc)] = 9
+    img[ey, int(dc) - 1] = 11
+    img[ey, int(dc) + 1] = 9
+    # gun barrels pointing down; the lowered side's barrel is foreshortened
+    for gx, side in ((int(dc - 4), -1), (int(dc + 4), 1)):
+        y_end = 25 if (L != 0 and side == L) else 28
+        for y in range(22, y_end):
             img[y, gx] = 1
-            img[y, gx + (1 if gx < cx else -1)] = 4 if y < 26 else 2
-        img[28, gx] = 1
+            img[y, gx - side] = 4 if y < y_end - 2 else 2
+        img[y_end, gx] = 1
     # lights at the arm ends (navigation: red left, cyan right)
     for (hx, hy, r, low), c in zip(hubs, (9, 9, 14, 14)):
         if hy > 15.5:
