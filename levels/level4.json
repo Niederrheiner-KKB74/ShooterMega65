@@ -851,12 +851,6 @@
     {
       "row": 32,
       "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 248
-    },
-    {
-      "row": 32,
-      "type": "ground",
       "enemy": "walker",
       "x": 120,
       "dir": "south"
@@ -881,6 +875,12 @@
       "dir": "east"
     },
     {
+      "row": 40,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 224
+    },
+    {
       "row": 41,
       "type": "formation",
       "formation": "v_lead",
@@ -899,12 +899,6 @@
       "formation": "v_wing",
       "mirror": true,
       "x": 120
-    },
-    {
-      "row": 46,
-      "type": "ground",
-      "enemy": "flak",
-      "x": 240
     },
     {
       "row": 47,
@@ -945,12 +939,6 @@
       "dir": "south"
     },
     {
-      "row": 60,
-      "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 272
-    },
-    {
       "row": 61,
       "type": "formation",
       "formation": "snake8",
@@ -961,6 +949,12 @@
       "type": "formation",
       "formation": "hpop3",
       "mirror": true
+    },
+    {
+      "row": 62,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 248
     },
     {
       "row": 62,
@@ -980,12 +974,6 @@
       "type": "formation",
       "formation": "strafe5",
       "mirror": false
-    },
-    {
-      "row": 74,
-      "type": "ground",
-      "enemy": "flak",
-      "x": 112
     },
     {
       "row": 74,
@@ -1026,6 +1014,12 @@
       "mirror": true
     },
     {
+      "row": 84,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 240
+    },
+    {
       "row": 86,
       "type": "ground",
       "enemy": "mech",
@@ -1043,12 +1037,6 @@
       "type": "formation",
       "formation": "zigzag6",
       "mirror": false
-    },
-    {
-      "row": 88,
-      "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 56
     },
     {
       "row": 95,
@@ -1082,17 +1070,17 @@
       "mirror": true
     },
     {
-      "row": 102,
-      "type": "ground",
-      "enemy": "flak",
-      "x": 272
-    },
-    {
       "row": 104,
       "type": "ground",
       "enemy": "walker",
       "x": 160,
       "dir": "south"
+    },
+    {
+      "row": 106,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 168
     },
     {
       "row": 109,
@@ -1126,12 +1114,6 @@
       "mirror": true
     },
     {
-      "row": 116,
-      "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 256
-    },
-    {
       "row": 123,
       "type": "formation",
       "formation": "ring5",
@@ -1149,6 +1131,12 @@
       "enemy": "mech",
       "x": 192,
       "dir": "west"
+    },
+    {
+      "row": 128,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 112
     },
     {
       "row": 128,
@@ -1186,12 +1174,6 @@
       "x": 28
     },
     {
-      "row": 130,
-      "type": "ground",
-      "enemy": "flak",
-      "x": 184
-    },
-    {
       "row": 136,
       "type": "ground",
       "enemy": "mech",
@@ -1223,17 +1205,17 @@
       "mirror": true
     },
     {
-      "row": 144,
-      "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 104
-    },
-    {
       "row": 148,
       "type": "ground",
       "enemy": "mech",
       "x": 48,
       "dir": "south"
+    },
+    {
+      "row": 150,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 48
     },
     {
       "row": 151,
@@ -1265,12 +1247,6 @@
       "type": "formation",
       "formation": "snake8",
       "mirror": true
-    },
-    {
-      "row": 158,
-      "type": "ground",
-      "enemy": "flak",
-      "x": 64
     },
     {
       "row": 160,
@@ -1330,15 +1306,15 @@
       "dir": "south"
     },
     {
-      "row": 186,
-      "type": "ground",
-      "enemy": "flak",
-      "x": 168
-    },
-    {
       "row": 188,
       "type": "shop",
       "id": "mid"
+    },
+    {
+      "row": 194,
+      "type": "ground",
+      "enemy": "flak",
+      "x": 104
     },
     {
       "row": 196,
@@ -1358,12 +1334,6 @@
       "enemy": "mech",
       "x": 40,
       "dir": "west"
-    },
-    {
-      "row": 200,
-      "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 88
     },
     {
       "row": 203,
@@ -1404,10 +1374,10 @@
       "dir": "south"
     },
     {
-      "row": 214,
+      "row": 216,
       "type": "ground",
-      "enemy": "flak",
-      "x": 56
+      "enemy": "heavy_flak",
+      "x": 64
     },
     {
       "row": 217,
@@ -1439,12 +1409,6 @@
       "type": "formation",
       "formation": "swirl6",
       "mirror": true
-    },
-    {
-      "row": 228,
-      "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 96
     },
     {
       "row": 230,
@@ -1499,10 +1463,10 @@
       "mirror": false
     },
     {
-      "row": 242,
+      "row": 238,
       "type": "ground",
       "enemy": "flak",
-      "x": 216
+      "x": 240
     },
     {
       "row": 245,
@@ -1549,12 +1513,6 @@
       "dir": "south"
     },
     {
-      "row": 256,
-      "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 240
-    },
-    {
       "row": 258,
       "type": "ground",
       "enemy": "mech",
@@ -1574,6 +1532,12 @@
       "mirror": false
     },
     {
+      "row": 260,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 168
+    },
+    {
       "row": 266,
       "type": "formation",
       "formation": "swoop8",
@@ -1584,12 +1548,6 @@
       "type": "formation",
       "formation": "hside3",
       "mirror": true
-    },
-    {
-      "row": 270,
-      "type": "ground",
-      "enemy": "flak",
-      "x": 96
     },
     {
       "row": 270,
@@ -1630,10 +1588,10 @@
       "mirror": true
     },
     {
-      "row": 284,
+      "row": 282,
       "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 16
+      "enemy": "flak",
+      "x": 88
     },
     {
       "row": 286,
@@ -1675,12 +1633,6 @@
     {
       "row": 298,
       "type": "ground",
-      "enemy": "flak",
-      "x": 240
-    },
-    {
-      "row": 298,
-      "type": "ground",
       "enemy": "mech",
       "x": 256,
       "dir": "west"
@@ -1705,6 +1657,12 @@
       "dir": "south"
     },
     {
+      "row": 304,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 48
+    },
+    {
       "row": 308,
       "type": "formation",
       "formation": "uturn6",
@@ -1722,12 +1680,6 @@
       "enemy": "mech",
       "x": 248,
       "dir": "west"
-    },
-    {
-      "row": 312,
-      "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 112
     },
     {
       "row": 315,
@@ -1770,7 +1722,7 @@
       "row": 326,
       "type": "ground",
       "enemy": "flak",
-      "x": 40
+      "x": 288
     },
     {
       "row": 326,
@@ -1817,17 +1769,17 @@
       "mirror": false
     },
     {
-      "row": 340,
-      "type": "ground",
-      "enemy": "heavy_flak",
-      "x": 32
-    },
-    {
       "row": 344,
       "type": "ground",
       "enemy": "mech",
       "x": 232,
       "dir": "south"
+    },
+    {
+      "row": 348,
+      "type": "ground",
+      "enemy": "heavy_flak",
+      "x": 32
     },
     {
       "row": 352,

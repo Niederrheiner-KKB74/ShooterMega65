@@ -130,7 +130,7 @@ def check_level(later_phases, animated):
 ENEMY_SET = (
     # group, poses, phases, size, palette, area
     # fighter slots: the level-1 fighters (Stage 14b, 72 glyphs, counted below)
-    ('drone', ['straight', 'left', 'right'], 3, (32, 32), 'drone', 'aircraft'),   # bomber slots, 32x32 (Stage 14b)
+    ('gunship', ['straight', 'left', 'right'], 3, (32, 32), 'gunship', 'aircraft'),   # bomber slots (Stage 14g)
     ('attack_heli', DIR8, 3, (16, 16), 'heli', 'aircraft'),         # helicopter slots
     ('walker', ['south'], 4, (32, 32), 'mechs', 'aircraft'),      # Stage 14d: 4 steps (Claude)        # armoured-plane slots
     ('walker', ['destroyed'], 1, (32, 32), 'mechs', 'aircraft'),
@@ -143,7 +143,7 @@ def check_enemies():
     pal = load(ENEMIES / 'palettes.json', 'enemy set')
     pl = load(ENEMIES / 'placement.json', 'enemy set')
     if pal is not None:
-        for p in ('drone', 'heli', 'mechs'):
+        for p in ('gunship', 'heli', 'mechs'):
             if p not in pal or len(pal[p]) != 16:
                 err(f'enemies palettes.json: palette "{p}" with exactly 16 entries [R,G,B] missing')
     if src is None:

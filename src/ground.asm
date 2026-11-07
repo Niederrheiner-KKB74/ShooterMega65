@@ -735,7 +735,7 @@ ship_guns:
     lda cur_level               // level 4: the walker (30 hits, one gun) in the frigate's place (Stage 14)
     cmp #3
     bne !+
-    ldy #30
+    ldy #24
 !:  tya
     sta obj_hp,x
     lda #8                      // first gun

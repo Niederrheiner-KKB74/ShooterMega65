@@ -99,7 +99,7 @@ SHIPS = [(r, 'mech', (16, 16), ['east', 'west', 'south']) for r in
           286, 298, 310, 322, 334, 344)] + \
         [(r, 'walker', (32, 32), ['south']) for r in (32, 58, 80, 104, 128, 152, 176, 206, 230, 254, 278, 302, 326)]
 
-GUN_ROWS = [(r, k) for r in range(18, 350, 14) for k in (('heavy_flak' if r % 4 == 0 else 'flak'),)]
+GUN_ROWS = [(r, k) for r in range(18, 350, 22) for k in (('heavy_flak' if r % 4 == 0 else 'flak'),)]
 
 
 def main():

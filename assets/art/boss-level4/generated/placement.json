@@ -1,192 +1,173 @@
 {
-  "body": "body",
-  "body_size": [
-    112,
-    64
+ "body": "body",
+ "body_size": [
+  96,
+  64
+ ],
+ "palette": "boss",
+ "turrets": [
+  {
+   "id": "turret_nw",
+   "offset": [
+    22,
+    10
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "south": "turret_nw_south",
+   "southeast": "turret_nw_southeast",
+   "destroyed": "turret_nw_destroyed"
+  },
+  {
+   "id": "turret_ne",
+   "offset": [
+    58,
+    10
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "south": "turret_ne_south",
+   "southeast": "turret_ne_southeast",
+   "destroyed": "turret_ne_destroyed"
+  },
+  {
+   "id": "turret_sw",
+   "offset": [
+    22,
+    38
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "south": "turret_sw_south",
+   "southeast": "turret_sw_southeast",
+   "destroyed": "turret_sw_destroyed"
+  },
+  {
+   "id": "turret_se",
+   "offset": [
+    58,
+    38
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "south": "turret_se_south",
+   "southeast": "turret_se_southeast",
+   "destroyed": "turret_se_destroyed"
+  }
+ ],
+ "core": {
+  "offset": [
+   32,
+   16
   ],
-  "palette": "boss",
-  "turrets": [
-    {
-      "id": "turret_nw",
-      "offset": [
-        10,
-        10
-      ],
-      "size": [
-        16,
-        16
-      ],
-      "hit_rect": [
-        10,
-        10,
-        16,
-        16
-      ],
-      "independently_destructible": true,
-      "south": "turret_nw_south",
-      "southeast": "turret_nw_southeast",
-      "destroyed": "turret_nw_destroyed"
-    },
-    {
-      "id": "turret_ne",
-      "offset": [
-        86,
-        10
-      ],
-      "size": [
-        16,
-        16
-      ],
-      "hit_rect": [
-        86,
-        10,
-        16,
-        16
-      ],
-      "independently_destructible": true,
-      "south": "turret_ne_south",
-      "southeast": "turret_ne_southeast",
-      "destroyed": "turret_ne_destroyed"
-    },
-    {
-      "id": "turret_sw",
-      "offset": [
-        5,
-        37
-      ],
-      "size": [
-        16,
-        16
-      ],
-      "hit_rect": [
-        5,
-        37,
-        16,
-        16
-      ],
-      "independently_destructible": true,
-      "south": "turret_sw_south",
-      "southeast": "turret_sw_southeast",
-      "destroyed": "turret_sw_destroyed"
-    },
-    {
-      "id": "turret_se",
-      "offset": [
-        91,
-        37
-      ],
-      "size": [
-        16,
-        16
-      ],
-      "hit_rect": [
-        91,
-        37,
-        16,
-        16
-      ],
-      "independently_destructible": true,
-      "south": "turret_se_south",
-      "southeast": "turret_se_southeast",
-      "destroyed": "turret_se_destroyed"
-    }
+  "size": [
+   32,
+   32
   ],
-  "core": {
-    "offset": [
-      40,
-      22
-    ],
-    "size": [
-      32,
-      32
-    ],
-    "hit_rect": [
-      48,
-      30,
-      16,
-      16
-    ],
-    "exposed_overlay": "core_exposed"
+  "exposed_overlay": "core_exposed"
+ },
+ "rotors": [
+  {
+   "id": "foot_nw",
+   "offset": [
+    0,
+    0
+   ],
+   "phase_offset": 0
   },
-  "rotors": [
-    {
-      "id": "leg_l",
-      "offset": [
-        23,
-        55
-      ],
-      "phase_offset": 0
-    },
-    {
-      "id": "leg_r",
-      "offset": [
-        57,
-        55
-      ],
-      "phase_offset": 1
-    }
+  {
+   "id": "foot_ne",
+   "offset": [
+    64,
+    0
+   ],
+   "phase_offset": 1
+  },
+  {
+   "id": "foot_sw",
+   "offset": [
+    0,
+    40
+   ],
+   "phase_offset": 1
+  },
+  {
+   "id": "foot_se",
+   "offset": [
+    64,
+    40
+   ],
+   "phase_offset": 0
+  }
+ ],
+ "rotor_frames": [
+  "rotor_0",
+  "rotor_1",
+  "rotor_2"
+ ],
+ "muzzle": {
+  "frames": [
+   "muzzle_0",
+   "muzzle_1"
   ],
-  "rotor_frames": [
-    "rotor_0",
-    "rotor_1",
-    "rotor_2"
-  ],
-  "muzzle": {
-    "frames": [
-      "muzzle_0",
-      "muzzle_1"
-    ],
-    "south_offset_from_turret": [
-      0,
-      15
-    ]
-  },
-  "flame": {
-    "frames": [
-      "flame_0",
-      "flame_1",
-      "flame_2"
-    ],
-    "offset": [
-      93,
-      56
-    ]
-  },
-  "spray": {
-    "frames": [
-      "spray_0",
-      "spray_1",
-      "spray_2"
-    ],
-    "offsets": [
-      [
-        23,
-        92
-      ],
-      [
-        57,
-        92
-      ]
-    ]
-  },
-  "catapult": {
-    "frames": [
-      "deck_jet_0",
-      "deck_jet_1",
-      "deck_jet_2"
-    ],
-    "offset": [
-      48,
-      0
-    ]
-  },
-  "draw_order": [
-    "spray",
-    "legs",
-    "body",
-    "core_if_exposed",
-    "turrets",
-    "flame",
-    "deck_jet"
+  "south_offset_from_turret": [
+   0,
+   15
   ]
+ },
+ "flame": {
+  "frames": [
+   "flame_0",
+   "flame_1",
+   "flame_2"
+  ],
+  "offset": [
+   40,
+   56
+  ]
+ },
+ "spray": {
+  "frames": [
+   "spray_0",
+   "spray_1",
+   "spray_2"
+  ],
+  "offsets": [
+   [
+    0,
+    60
+   ],
+   [
+    64,
+    60
+   ],
+   [
+    0,
+    8
+   ],
+   [
+    64,
+    8
+   ]
+  ]
+ },
+ "catapult": {
+  "frames": [
+   "deck_jet_0",
+   "deck_jet_1",
+   "deck_jet_2"
+  ],
+  "offset": [
+   40,
+   0
+  ]
+ }
 }

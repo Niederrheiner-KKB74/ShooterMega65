@@ -197,9 +197,9 @@ def enemy_sets(out, table, glyphs, pal, report):
         # level 4 (Stage 14, PR #25): jet -> fighter slots, drone -> bomber slots (banking views), attack helicopter
         # -> helicopter slots, walker -> armoured-plane slots, mech -> tank slots
         # Stage 14b: the jets are the level-1 fighters (owner's wish), the drone is Claude's 32x32 heavy drone
-        4: (ENEM4, {'air': 5, 'drone': 6, 'heli': 7, 'mechs': 8}, ('L1', 'drone', 'heli', 'mechs'),
+        4: (ENEM4, {'gunship': 6, 'heli': 7, 'mechs': 8}, ('L1', 'gunship', 'heli', 'mechs'),
             [('L1', i) for i in range(24)] +
-            [('drone', v, n) for v in VIEW_BANK for n in range(3)] +
+            [('gunship', v, n) for v in VIEW_BANK for n in range(3)] +      # Stage 14g: Claude's set
             [('attack_heli', d, n) for d in VIEW_DIRS for n in range(3)] +
             [('walker', 'south', n) for n in range(4)] + [('walker', 'destroyed', 0)] +   # Stage 14d: 4 steps
             [('walker', 'south', 0)] * 4 +

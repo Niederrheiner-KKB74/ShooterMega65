@@ -25,8 +25,8 @@ lv_set_bank:  .byte $03, $03, $09, $0c
 lv_sea:       .byte 0, 0, 1, 1          // tanks keep to bank-1 tiles: level 3 speedboats (water), level 4 mechs (streets)
 lv_tankmask:  .byte 1, 1, 0, 1          // tanks move every 2nd frame, speedboats every frame
 lv_kind_ofs:  .byte 0, 0, 5, 10         // per level: kind_hp / kind_fire of fighter, bomber, heli, armoured, tank
-lv_kind_hp:   .byte 1, 6, 2, 10, 3,   2, 6, 3, 10, 3,   2, 6, 3, 30, 4   // L3 seaplane 2, heli 3; L4 jet 2, heavy drone 6
-lv_kind_fire: .byte 3, 5, 3, 6, 2,    5, 8, 6, 10, 4,   6, 6, 7, 10, 5       // enemy set (Stage 13): ENEM0 for levels 1 and 2, ENEM3
+lv_kind_hp:   .byte 1, 6, 2, 10, 3,   2, 6, 3, 10, 3,   2, 5, 2, 30, 3   // L3 seaplane 2, heli 3; L4 jet 2, gunship 5
+lv_kind_fire: .byte 3, 5, 3, 6, 2,    5, 8, 6, 10, 4,   4, 6, 4, 8, 3      // Stage 14g: level 4 a little easier       // enemy set (Stage 13): ENEM0 for levels 1 and 2, ENEM3
 .errorif (lv_boss_bank - lv_pack_bank != LEVELS), "one pack and one boss bank per level"
 
 cur_level:      .byte 0
