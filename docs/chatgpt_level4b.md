@@ -12,7 +12,7 @@ Prüfen mit `python3 tools/check_level4_art.py` (Ausgabe in die PR-Beschreibung)
 ## 1. Gegner: Detailgrad wie Level 1
 
 Maßstab sind die Gegner aus Level 1: `assets/art/enemy-views/generated/fighter-preview.png`, `bomber-preview.png`,
-`helicopter-preview.png` und die Panzer in `assets/art/source/`. Bitte vor dem Zeichnen ansehen und vergleichen.
+`helicopter-preview.png` und die Panzer in `assets/art/ground-vehicles/generated/tank_atlas.png`. Bitte vor dem Zeichnen ansehen und vergleichen.
 
 - **Plastische Schattierung** statt flacher Flächen: jede Fläche mit 2–3 Helligkeitsstufen (Licht von oben links,
   hellere Kanten oben/links, Schatten unten/rechts), 1 px dunkle Kontur.
