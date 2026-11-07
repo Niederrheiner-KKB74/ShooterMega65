@@ -337,8 +337,7 @@ cp_save:
 level_retry:
     lda #0
     sta level_retry_req
-    sta boss_state
-    sta boss_req
+    jsr boss_reset              // died at the boss: glyphs, palette and scrolling back (Stage 14c fix)
     lda pl_power                // the shot level drops by one
     cmp #2
     bcc !+
@@ -357,6 +356,10 @@ level_retry:
     jsr scroll_init
     jmp !obj+
 !cp:
+    lda lev_speed               // the scroll speed of the level (the boss may have stopped it)
+    sta scroll_spd
+    lda lev_speed+1
+    sta scroll_spd+1
     lda cp_scroll
     sta scroll_px
     lda cp_scroll+1

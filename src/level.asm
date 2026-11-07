@@ -520,7 +520,11 @@ ev_run:
 !:  cmp #EV_SHOP
     bne !+
 #if SKIP_SHOP
-    rts                         // test build (build.py --define SKIP_SHOP): no shops
+    lda ev_p                    // test build (build.py --define SKIP_SHOP): no shops, the checkpoint stays
+    bne ev_noshop               // (named: an anonymous label would capture "bne !+" above)
+    jmp cp_save
+ev_noshop:
+    rts
 #endif
     lda ev_p                    // 0 mid, 1 end -> shop_req 1 / 2
     clc

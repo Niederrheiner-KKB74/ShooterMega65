@@ -64,26 +64,26 @@ def line(img, x0, y0, x1, y1, c):
 
 
 def rotor(img, cx, cy, r, phase, low):
-    """Ducted fan: dark duct ring, blur inside, two blades at the phase angle, hub."""
+    """Ducted fan (Stage 14c: calm): dark duct, static blur ring, hub; only two blade glints orbit the hub
+    (60 degrees per phase), so the rotor turns smoothly instead of flickering."""
     disc(img, cx, cy, r, 7)
     ring(img, cx, cy, r, 1)
     ring(img, cx, cy, r - 1, 2 if low else 3)
-    # light rim top-left (light from top left)
     for y in range(32):
         for x in range(32):
             d = math.hypot(x - cx, y - cy)
             if r - 1.0 < d <= r and (x - cx) + (y - cy) < -r * 0.6:
-                img[y, x] = 4 if low else 5
-    a = phase * 30 + 10                     # blurred blades: two lit sectors that turn by 30 degrees
-    for y in range(32):
-        for x in range(32):
-            d = math.hypot(x - cx, y - cy)
-            if 1.0 < d <= r - 2.0:
-                t = (math.degrees(math.atan2(y - cy, x - cx)) - a) % 90
-                if t < 26:
-                    img[y, x] = 4 if low else (8 if d < r - 3 else 5)
-    img[round(cy), round(cx)] = 2
+                img[y, x] = 4 if low else 5            # rim lit from top left
+            elif r - 3.2 < d <= r - 2.4:
+                img[y, x] = 2                          # faint inner ring (static)
+    for k in (0, 180):
+        for back, c in ((0, 8 if not low else 5), (28, 4)):
+            b = math.radians(phase * 60 + k - back + 20)
+            x, y = round(cx + math.cos(b) * (r - 2.6)), round(cy + math.sin(b) * (r - 2.6))
+            img[y, x] = c
+    img[round(cy), round(cx)] = 4
     img[round(cy) - 1, round(cx) - 1] = 6
+    img[round(cy), round(cx) - 1] = 3
 
 
 def drone(pose, phase):
@@ -95,8 +95,8 @@ def drone(pose, phase):
     for sx in (-1, 1):
         for sy in (-1, 1):
             low = (lean != 0 and sx == lean)
-            r = 5.0 if low else 6.2
-            hx = cx + sx * (9.0 if not low else 8.0)
+            r = 6.2
+            hx = 15.5 + sx * 9.0
             hy = 15.5 + sy * 9.0
             hubs.append((hx, hy, r, low))
     # arms (drawn first, rotors and hull on top)
@@ -144,15 +144,15 @@ def drone(pose, phase):
     ey = 20
     for x in range(int(cx - 2), int(cx + 3)):
         img[ey, x] = 10
-    img[ey, int(cx)] = 15 if phase == 1 else 9
-    img[ey, int(cx) - 1] = 9
-    img[ey, int(cx) + 1] = 11 if phase == 2 else 9
+    img[ey, int(cx)] = 9                                         # steady eye (no blinking)
+    img[ey, int(cx) - 1] = 11
+    img[ey, int(cx) + 1] = 9
     # gun barrels pointing down, muzzle glow
     for gx in (int(cx - 4), int(cx + 4)):
         for y in range(22, 28):
             img[y, gx] = 1
             img[y, gx + (1 if gx < cx else -1)] = 4 if y < 26 else 2
-        img[28, gx] = 11 if phase == 0 else 1
+        img[28, gx] = 1
     # lights at the arm ends (navigation: red left, cyan right)
     for (hx, hy, r, low), c in zip(hubs, (9, 9, 14, 14)):
         if hy > 15.5:
