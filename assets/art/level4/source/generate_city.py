@@ -2,6 +2,7 @@
 import json
 import math
 import random
+import re
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -10,9 +11,9 @@ ROOT = Path(__file__).resolve().parents[4]
 OUT = ROOT/'assets/art/level4/generated'
 D = ImageDraw.Draw
 PALETTE = {
- 'streets':'000000 202630 2d343e 3a424a 485057 59616a 6c7276 8a8e8a a7a6a0 ccc8ad dfb868 a77156 8f675c 425457 596753 28373a',
- 'ruins':'000000 2c282b 463b39 645047 806557 a27c61 bb9a76 6c7271 94918a 505440 686b49 8b8653 5d3d37 9f5037 d77739 f4ae59',
- 'buildings':'000000 202733 343e48 4d5a62 687b80 899795 b7b8a5 d9cfb3 4b3841 784f4d a36956 c18a6c 2e5261 4c8190 81b4b4 d99754',
+ 'streets':'000000 202630 2d343e 3a424a 485057 59616a 777973 96978b aba99a d7d3be dfb868 8c6655 b28e73 425457 596753 28373a',
+ 'ruins':'000000 2b282d 443b3a 605a53 777268 9b8976 bbaa91 717877 9c9d91 343e34 4e5d43 71845a 593c35 9f5037 d77739 f4ae59',
+ 'buildings':'000000 202733 343e48 555853 75796e 96998a bfc1ac e6dbbd 4b3336 79514d ac6650 d39770 294e60 4b7d8d 8bb9bd e2aa56',
 }
 PALETTE = {k:[list(bytes.fromhex(v)) for v in s.split()] for k,s in PALETTE.items()}
 PALETTE['fixed_targets']=json.loads(
@@ -49,12 +50,16 @@ def streets():
     # Edge bits are north, east, south, west. The sidewalk meets the block.
     for mask in range(16):
         im=Image.new('L',(16,16),3);d=D(im)
-        grit(im,7,(2,4),15)
+        grit(im,7,(2,4),7)
         for bit,box in enumerate(((0,0,15,2),(13,0,15,15),(0,13,15,15),(0,0,2,15))):
             if mask&(1<<bit):
-                d.rectangle(box,fill=6)
+                d.rectangle(box,fill=7)
                 x,y,u,v=box
                 d.line((x,y,u,y) if bit%2==0 else (x,y,x,v),fill=8)
+                if bit==0:d.line((0,2,15,2),fill=5)
+                if bit==1:d.line((13,0,13,15),fill=5)
+                if bit==2:d.line((0,13,15,13),fill=5)
+                if bit==3:d.line((2,0,2,15),fill=5)
         add(f'street{mask}','streets',im)
     for name in ('lane_v','lane_h','crosswalk','parking','plaza','bridge','asphalt_damage'):
         im=Image.new('L',(16,16),3);d=D(im)
@@ -81,20 +86,33 @@ def streets():
 
 def neighborhood():
     for i in range(12):
-        im=Image.new('L',(16,16),(3,4,7,9)[i%4]);d=D(im)
-        grit(im,80+i,(2,3,4,5,7,9,10),20)
+        im=Image.new('L',(16,16),4 if i<9 else 3);d=D(im)
         if i<3:
-            for x,y in ((3,5),(9,8),(5,11)):
-                d.polygon([(x,y),(x+3,y-2),(x+5,y+1),(x+2,y+3)],fill=2)
-                d.line((x,y,x+3,y-2),fill=6 if i==0 else 8)
-        elif i<6:
-            d.ellipse((3,4,13,13),fill=2,outline=5)
-            d.arc((3,3,12,11),155,304,fill=8)
-            d.line((8,4,12,1),fill=3)
+            if i:
+                d.polygon([(2,12),(4,7),(9,5),(13,9),(14,12),(10,14),(5,14)],fill=2)
+                d.polygon([(3,11),(5,7),(10,6),(13,10),(9,12),(5,13)],fill=5)
+                d.line((4,9,7,7,10,7),fill=6)
+                d.line((7,12,11,9),fill=12)
+            else:d.rectangle((0,0,15,15),fill=4)
+        elif i==3:
+            d.rectangle((0,0,15,15),fill=7)
+        elif i==4:
+            d.polygon([(3,8),(6,5),(11,5),(13,8),(11,12),(7,13),(4,11)],fill=3)
+            d.polygon([(4,8),(7,6),(11,6),(12,8),(9,11),(6,11)],fill=2)
+            d.line((4,8,7,6,10,6),fill=5)
+        elif i==5:
+            d.rectangle((1,1,14,14),fill=7,outline=3)
+            d.line((1,6,6,7,8,11,13,12),fill=2)
+            d.line((2,2,13,2),fill=8)
         elif i<9:
-            d.polygon([(2,8),(4,5),(9,4),(13,7),(11,12),(5,13)],fill=10,outline=9)
-            for x,y in ((4,7),(7,6),(10,10)):d.line((x,y,x+2,y-1),fill=11)
-            d.line((1,14,12,12),fill=5)
+            d.rectangle((0,0,15,15),fill=10)
+            d.line((1,0,1,15),fill=5,width=3)
+            if i!=8:
+                d.ellipse((5,5,14,13),fill=9)
+                d.ellipse((4,2,12,10),fill=9)
+                d.ellipse((4,2,10,8),fill=11)
+                d.line((7,9,7,12),fill=5)
+            else:d.line((3,8,15,8),fill=5,width=3)
         elif i==9:
             d.polygon([(4,4),(10,3),(12,9),(11,12),(6,13),(3,9)],fill=1)
             d.line((5,4,10,4,11,8),fill=13,width=2)
@@ -108,24 +126,69 @@ def neighborhood():
         add(f'ruins{i}','ruins',im)
 
 
+def street_details():
+    for direction in range(4):
+        im=TILES[ID[f'street{1<<direction}']].copy()
+        # Rubble touches the sidewalk, leaving the driving lane clear.
+        points=[(3,0),(12,0),(11,3),(8,5),(4,4)]
+        transform=(
+            lambda x,y:(x,y),lambda x,y:(15-y,x),
+            lambda x,y:(x,15-y),lambda x,y:(y,x),
+        )[direction]
+        d=D(im)
+        d.polygon([transform(x,y) for x,y in points],fill=11)
+        d.line([transform(x,y) for x,y in ((4,1),(9,1),(11,2))],fill=12)
+        d.point(transform(8,4),fill=8)
+        add(f'rubble_curb{direction}','streets',im)
+    im=TILES[ID['street8']].copy();d=D(im)
+    d.line((1,10,6,12),fill=2,width=2)
+    d.line((1,9,2,4,4,4),fill=9)
+    d.point((4,5),fill=10)
+    add('lamp_curb','streets',im)
+    im=TILES[ID['street2']].copy();d=D(im)
+    d.polygon([(10,3),(13,4),(13,11),(9,11),(8,7)],fill=2)
+    d.line((10,4,12,5,12,8),fill=11)
+    d.rectangle((9,6,11,8),fill=5)
+    d.point((11,10),fill=10)
+    add('wreck_curb','streets',im)
+    for name,mask,shape in (
+        ('shadow_n',1,((1,3),(13,3),(15,6),(6,7),(1,6))),
+        ('shadow_w',8,((3,2),(5,4),(7,13),(3,15))),
+    ):
+        im=TILES[ID[f'street{mask}']].copy()
+        D(im).polygon(shape,fill=2)
+        add(name,'streets',im)
+
+
 def building(name,kind,theme):
-    im=Image.new('L',(32,32),4);d=D(im)
-    d.rectangle((4,7,28,28),fill=2)
+    im=Image.new('L',(32,32),3);d=D(im)
+    d.polygon([(7,9),(25,5),(30,10),(30,27),(25,30),(8,30)],fill=2)
     if theme in ('brick','glass','industrial','guard'):
-        wall,roof,edge={'brick':(8,10,11),'glass':(12,13,14),
-                        'industrial':(3,5,6),'guard':(8,9,11)}[theme]
-        d.rectangle((4,5,25,25),fill=wall,outline=2)
-        d.rectangle((5,6,24,20),fill=roof)
-        d.line((5,20,5,6,24,6),fill=edge)
-        d.line((6,21,23,21),fill=2)
-        for x in (7,12,17,22):
-            d.rectangle((x,23,x+1,24),fill=edge if theme=='glass' else 12)
+        wall,roof,edge={'brick':(9,10,11),'glass':(12,13,14),
+                        'industrial':(4,5,7),'guard':(8,3,6)}[theme]
+        d.rectangle((3,4,27,28),fill=wall,outline=2)
+        d.rectangle((4,5,26,20),fill=roof,outline=edge)
+        d.line((5,20,25,20),fill=wall,width=2)
+        d.line((4,21,26,21),fill=edge)
+        d.line((4,27,26,27),fill=2)
+        for x in (6,11,16,21):
+            d.rectangle((x,23,x+2,25),fill=2)
+            d.line((x,23,x+1,23),fill=14 if theme=='glass' else 6)
         if theme=='glass':
             for x in (9,15,21):d.line((x,7,x,19),fill=12)
             d.line((6,16,15,7),fill=14,width=2)
             d.line((14,18,23,9),fill=14)
+        elif theme=='industrial':
+            for x in (6,13,20):
+                d.polygon([(x,8),(x+4,6),(x+5,8),(x+5,18),(x,18)],fill=6)
+                d.line((x,8,x,18),fill=3);d.line((x+1,8,x+1,17),fill=7)
+            for x in (7,16):
+                d.rectangle((x,23,x+6,27),fill=2)
+                for y in (24,26):d.line((x+1,y,x+5,y),fill=5)
         else:
-            for y in (9,13,17):d.line((7,y,22,y),fill=wall)
+            d.rectangle((8,8,14,13),fill=wall,outline=edge)
+            d.rectangle((18,12,22,16),fill=2,outline=6)
+            d.line((19,13,21,13),fill=5)
         if name=='factory':
             for x in (9,17):
                 d.rectangle((x,5,x+3,15),fill=3)
@@ -194,9 +257,19 @@ def hexrows(im):
 def roofs():
     for i in range(4):
         im=Image.new('L',(16,16),4 if i<2 else 9);d=D(im)
-        for y in (0,4,8,12):d.line((0,y,15,y),fill=5 if i<2 else 10)
-        d.line((0,0,0,15),fill=2);d.line((1,0,1,15),fill=6)
-        if i%2:d.rectangle((4,4,12,11),fill=3,outline=7)
+        roof,highlight=(5,7) if i<2 else (10,11)
+        d.rectangle((0,0,15,10 if i%2 else 15),fill=roof)
+        d.line((0,0,15,0),fill=highlight)
+        for x in (1,8):
+            d.polygon([(x,2),(x+5,1),(x+5,9 if i%2 else 15),
+                       (x,10 if i%2 else 15)],fill=6 if i<2 else 11)
+            d.line((x,2,x,9 if i%2 else 15),fill=3)
+        if i%2:
+            d.line((0,10,15,10),fill=highlight)
+            d.rectangle((2,11,6,15),fill=2)
+            d.rectangle((9,11,13,15),fill=2)
+            for y in (12,14):
+                d.line((3,y,5,y),fill=4);d.line((10,y,12,y),fill=4)
         name=f'hall{i}';add(name,'buildings',im)
         damaged=im.copy();d=D(damaged)
         d.polygon([(3,5),(9,3),(13,7),(11,12),(4,13)],fill=1)
@@ -256,6 +329,10 @@ def landmark(name):
         d.line((20,28,35,15),fill=14,width=2)
         d.rectangle((18,12,28,19),fill=3,outline=6)
         d.line((19,13,26,13),fill=7)
+        d.line((6,32,35,30),fill=2,width=2)
+        for x in (8,14,20,26,32):
+            d.rectangle((x,34,x+2,37),fill=13)
+            d.point((x,34),fill=14)
     elif name=='citadel':
         d.polygon([(7,6),(37,6),(42,12),(42,35),(36,42),(9,42),(4,34),(4,12)],fill=2)
         d.polygon([(8,8),(36,8),(39,12),(39,33),(34,39),(10,39),(7,33),(7,12)],fill=5)
@@ -277,6 +354,8 @@ def landmark(name):
         d.polygon([(29,16),(37,18),(35,30),(27,27)],fill=9)
         d.line((14,33,32,15),fill=6,width=2)
         d.line((18,38,35,27),fill=3,width=2)
+        d.line((7,39,39,39),fill=10,width=2)
+        for x in (9,16,24,32):d.rectangle((x,37,x+3,39),fill=1)
         for x,y in ((14,26),(24,31),(31,12),(34,34),(8,31)):
             d.line((x,y,x+3,y+1),fill=11)
             d.point((x,y+2),fill=15)
@@ -320,11 +399,10 @@ def make_map():
                 else:name=f'street{mask}'
                 if name=='street0' and (x+3*((y//12)%3))%19==0:name='asphalt_damage'
             else:
+                # Broad paving tones unify a block instead of lining every
+                # column with little debris marks.
                 band=(y//12)%3
-                if y<96: k=(x*3+band*7)%12
-                elif y<184:k=(x+band*2)%6
-                elif y<280:k=(x*5+band*3)%12
-                else:k=(x*7+band)%6
+                k=3 if (x//6+band+(y>=184))%3==0 else 0
                 name=f'ruins{k}'
             row.append(name)
         rows.append(row)
@@ -351,6 +429,15 @@ def make_map():
                 tile='beacon_0' if name=='highrise' and (c,r)==(1,1) else f'{name}_{c}_{r}'
                 rows[y+2-r][x+c]=tile
 
+    for start,left in ((23,True),(49,False),(84,True),(194,False),(269,True)):
+        candidates=((x,y) for y in range(start,start+5)
+                    for x in (range(1,7) if left else range(18,12,-1)))
+        position=next(((x,y) for x,y in candidates if free(x,y,2,3)),None)
+        if position:
+            x,y=position
+            for dy,pair in enumerate(((6,8),(8,7),(7,8))):
+                for dx,t in enumerate(pair):rows[y+dy][x+dx]=f'ruins{t}'
+
     # Stamp whole buildings only into block interiors; row 0 faces north.
     schemes=(
         ('tenement','checkpoint','tenement','warehouse','checkpoint','tenement'),
@@ -362,11 +449,42 @@ def make_map():
         section=0 if y<96 else 1 if y<184 else 2 if y<280 else 3
         choices=schemes[section]
         for x in (1,5,7,12,14,18):
-            if not free(x,y,2,2) or (x+y//6)%7==0:continue
+            if (not free(x,y,2,2) or (x+y//6)%7==0 or
+                any(rows[yy][xx] in ('ruins6','ruins7','ruins8')
+                    for yy in (y,y+1) for xx in (x,x+1))):continue
             name=choices[(x*3+y//6)%len(choices)]
             for r in range(2):
                 for c in range(2):
-                    rows[y+1-r][x+c]=name if name.startswith('hall') else f'{name}_{c}_{r}'
+                    rows[y+1-r][x+c]=f'hall{2*int(name=="hall2")+r}' if name.startswith('hall') else f'{name}_{c}_{r}'
+            if name in ('factory','warehouse') and (x+y//6)%3==0:
+                for start in (x+2,x-2):
+                    if free(start,y,2,2):
+                        for r in range(2):
+                            for c in range(2):rows[y+1-r][start+c]=f'hall{r}'
+                        break
+    for y in range(10,336,13):
+        for x in (2,6,14,19):
+            if free(x,y,1,1) and (x+y)%3==0:rows[y][x]='ruins9'
+    for y in range(13,336,17):
+        for x in (2,6,14,19):
+            if free(x,y,1,1) and rows[y][x] in ('ruins0','ruins3') and (x+y)%5==0:
+                rows[y][x]='ruins5' if y>=96 else 'ruins1'
+    # Street details stay in the existing collision palette.
+    for y in range(1,335):
+        for x in range(1,20):
+            tile=rows[y][x]
+            if not tile.startswith('street'):continue
+            for direction,(xx,yy) in enumerate(((x,y+1),(x+1,y),(x,y-1),(x-1,y))):
+                if tile==f'street{1<<direction}' and rows[yy][xx].startswith('collapse'):
+                    rows[y][x]=f'rubble_curb{direction}'
+                    break
+            else:
+                if tile=='street8' and y%24==9 and x%3==0:rows[y][x]='lamp_curb'
+                elif tile=='street2' and y%48==15 and x%4==2:rows[y][x]='wreck_curb'
+                elif tile=='street1' and rows[y+1][x].startswith(('tower','highrise','citadel')):
+                    rows[y][x]='shadow_n'
+                elif tile=='street8' and rows[y][x-1].startswith(('tower','highrise','citadel')):
+                    rows[y][x]='shadow_w'
     for y in range(7,336,7):
         for x in (2,6,8,13,15,19):
             if not free(x,y,1,1):continue
@@ -388,7 +506,7 @@ def sheet(path,items,columns,width,height,scale):
 
 
 def main():
-    streets();neighborhood()
+    streets();neighborhood();street_details()
     for entry in (
         ('tenement',None,'brick'),('warehouse','hangar','industrial'),
         ('factory','bunker','industrial'),('tank','fuel','tank'),
@@ -411,15 +529,14 @@ def main():
     (OUT/'terrain.ncm.bin').write_bytes(binary)
     rows=make_map()
     assert len(set(map(tuple,rows)))<=256,len(set(map(tuple,rows)))
-    level=dict(format='shootermega65-level-1',name='Operation Iron City',
-        tileset='assets/art/level4/generated',ground_targets='assets/art/level4/generated',
-        scroll_speed=.5,map='ROWS',paths={},formations={},events=[
-            dict(row=188,type='shop',id='mid'),dict(row=352,type='boss'),
-            dict(row=368,type='shop',id='end'),dict(row=375,type='end')])
     path=ROOT/'levels/level4.json'
-    path.parent.mkdir(exist_ok=True)
-    path.write_text(json.dumps(level,indent=2).replace('"ROWS"',
-        '[\n'+',\n'.join('    '+json.dumps(row) for row in rows)+'\n  ]')+'\n',encoding='ascii')
+    source=path.read_text(encoding='utf-8')
+    key=re.search(r'"map"\s*:\s*',source)
+    assert key
+    start=key.end()
+    _,end=json.JSONDecoder().raw_decode(source[start:])
+    encoded='[\n'+',\n'.join('    '+json.dumps(row) for row in rows)+'\n  ]'
+    path.write_text(source[:start]+encoded+source[start+end:],encoding='utf-8',newline='\n')
     render=[rgb(im,t['palette']) for im,t in zip(TILES,META)]
     sheet(OUT/'terrain-sheet.png',[(f"{t['id']} {t['name']}",im)
           for t,im in zip(META,render)],8,116,54,2)
@@ -441,6 +558,9 @@ def main():
         x=i*328+4;d.text((x,4),label,fill='white')
         board.paste(overview.crop((0,(375-hi)*16,320,(375-lo)*16)),(x,20))
     board.save(OUT/'level-sections.png',optimize=True)
+    for name,start in (('vorstadt',38),('industrie',146),('innenstadt',196),('festung',289)):
+        bottom=(375-start)*16
+        overview.crop((0,bottom-200,320,bottom)).save(OUT/f'{name}-320x200.png')
     print(f'{len(TILES)} tiles, {len(WRECKS)} damaged variants, {len(set(map(tuple,rows)))} row patterns')
 
 

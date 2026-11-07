@@ -5,6 +5,12 @@ Die durchgehende Hauptstraße ist fünf Tiles breit, die Seitenstraßen zwei.
 Querstraßen verbinden sie. Der 15 Tiles breite Vorplatz bietet Raum für
 den Kampf-Mech.
 
+Dachaufbauten, Südfassaden und Schatten machen die Gebäude aus der
+Draufsicht erkennbar. Ruhige Höfe trennen Backstein, Glas und Fabrikdächer.
+Größere Ruinen zeigen eingestürzte Dachflächen und gebrochene Träger.
+Schutt ragt stellenweise über die Bordsteine. Die Ausschnitte
+`*-320x200.png` zeigen jeden Abschnitt in Spielauflösung.
+
 | Zeilen | Abschnitt |
 |---|---|
 | 0–95 | Vorstadt mit Backsteinhäusern, Parks, Kratern und Autowracks |
@@ -30,6 +36,8 @@ haben zwei Phasen. Die Karte verweist jeweils auf die Startphase.
 Die 76 Gegnerframes decken Jet, Kampfhubschrauber, Quadrocopter,
 zweibeinigen Mech und den Vierbeiner samt Wrack ab. Die 4×-Vorschauen
 zeigen die Posen und Phasen auf hellem und dunklem Untergrund.
+In den Vergleichsbögen `*-vergleich.png` stehen die Level-1-Referenzen
+links und die überarbeiteten Gegner rechts, beide in 4×.
 
 Der Endboss hat einen 112×64-Pixel-Rumpf, vier unabhängige Waffen und zwei
 gegenläufig animierte Beine. Die Schulterwaffen sind Raketenwerfer, die
@@ -43,7 +51,7 @@ Im Repository-Stamm mit Python 3, Pillow und NumPy:
 
 ```sh
 python assets/art/level4/source/generate_city.py
-python assets/art/level4/source/generate_mechs.py
+python assets/art/enemies-level4/source/refine_enemies.py
 python tools/check_level4_art.py
 ```
 
