@@ -326,6 +326,8 @@ job_shopg_save: DmaJob(DMA_CMD_COPY, SHOP_ADDR, ATTIC_SHOPG, SHOP_GLYPHS * 64)
 job_shopg_back: DmaJob(DMA_CMD_COPY, ATTIC_SHOPG, SHOP_ADDR, SHOP_GLYPHS * 64)
 .errorif (SHOP_ADDR + 160 * 64 > PIXIE_ADDR), "transition glyphs overlap the pixie glyphs"
 
-ov_map:   .fill TR_MAP_MAX * 2, 0
-fade_tab: .fill 256, 0
-pal_snap: .fill 768, 0
+// work buffers in the old text screen area $0800-$0FFF (not used by the game; Stage 16, frees bank-0 PRG space)
+.label fade_tab = $0800                     // 256, page aligned
+.label pal_snap = $0900                     // 768
+.label ov_map   = $0c00                     // TR_MAP_MAX * 2
+.errorif (ov_map + TR_MAP_MAX * 2 > $1000), "transition buffers beyond $0FFF"

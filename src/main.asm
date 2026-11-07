@@ -290,13 +290,15 @@ sprites_load:
     sta ld_dst+1
     lda #(SPRITE_ADDR >> 16)
     sta ld_dst+2
-    lda #(>(PLAYER_FRAMES * $200)) + 1
+    lda #(>(PLAYER_FRAMES * $200 + 3 * 256)) + 1     // Stage 16: the ring sprites follow (RING_ADDR)
     sta ld_maxhi
     lda #<name_sprites
     ldx #>name_sprites
     ldy #7
     jmp load_seq_to
 name_sprites: .text "SPRITES"
+
+.errorif (SPRITE_ADDR + PLAYER_FRAMES * $200 != RING_ADDR), "file SPRITES: the ring must follow the player frames"
 .errorif (((PIXIE_ADDR & $ffff) + PIXIE_MAX * 64) > $10000), "pixie area crosses a 64 KB boundary"
 
 // ---------------------------------------------------------------- data
@@ -304,8 +306,6 @@ name_sprites: .text "SPRITES"
 
 code_end:
 pixie_end:
-ring_data:    .import binary "../build/gen/ring.bin"
-ring_end:
 palette_data: .import binary "../build/gen/palette.bin"
 sprpal_data:  .import binary "../build/gen/sprpal.bin"
 prg_end:

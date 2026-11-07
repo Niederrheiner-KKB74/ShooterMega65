@@ -123,7 +123,6 @@ palette_init:
 // Copy glyphs and sprites to their final place, initialise all RRB rows.
 assets_init:
     // pixie glyphs: loaded from the file PIXIES directly into the pixie area (pixies_load)
-    RunDma(job_ring)
     rts
 
 // all RRB rows: ring, screen buffers A and B (game start; the title uses screen B and the ring)
@@ -247,7 +246,6 @@ show_buffer_b:
     rts
 
 // ---------------------------------------------------------------- DMA jobs
-job_ring:    DmaJob(DMA_CMD_COPY, ring_data, RING_ADDR, ring_end - ring_data)
 job_ring_scr: DmaJob(DMA_CMD_COPY, row_tpl_scr, RING_SCR, ROW_BYTES)
 job_ring_col: DmaJob(DMA_CMD_COPY, row_tpl_col, RING_COL, ROW_BYTES)
 job_scr_a:   DmaJob(DMA_CMD_COPY, row_tpl_scr, SCREEN_A, ROW_BYTES)
