@@ -132,7 +132,7 @@ ENEMY_SET = (
     # fighter slots: the level-1 fighters (Stage 14b, 72 glyphs, counted below)
     ('drone', ['straight', 'left', 'right'], 3, (32, 32), 'drone', 'aircraft'),   # bomber slots, 32x32 (Stage 14b)
     ('attack_heli', DIR8, 3, (16, 16), 'heli', 'aircraft'),         # helicopter slots
-    ('walker', ['south'], 2, (32, 32), 'mechs', 'aircraft'),        # armoured-plane slots
+    ('walker', ['south'], 4, (32, 32), 'mechs', 'aircraft'),      # Stage 14d: 4 steps (Claude)        # armoured-plane slots
     ('walker', ['destroyed'], 1, (32, 32), 'mechs', 'aircraft'),
     ('mech', DIR4, 4, (16, 16), 'mechs', 'boat'),                   # tank slots
 )

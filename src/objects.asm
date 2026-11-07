@@ -854,8 +854,8 @@ tank_frame:
     sta obj_fr,x
     rts
 !fr:
-    lda obj_wave,x
-    and #1
+    lda obj_wave,x              // frigate / walker: 4 phases (frigate: 2 phases twice; Stage 14d)
+    and #3
     clc
     adc #FR_ARMOURED0
     sta obj_fr,x

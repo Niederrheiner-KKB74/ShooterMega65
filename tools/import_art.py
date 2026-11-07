@@ -191,8 +191,8 @@ def enemy_sets(out, table, glyphs, pal, report):
             [('seaplane', d, n) for d in VIEW_DIRS for n in range(3)] +
             [('patrol_boat', d, n) for d in TANK_DIRS for n in range(2)] + [('patrol_boat', 'south', 0)] +
             [('navy_heli', d, n) for d in VIEW_DIRS for n in range(3)] +
-            [('frigate', 'south', 0), ('frigate', 'south', 1), ('frigate', 'destroyed', 0)] +
-            [('frigate', 'south', 0)] * 6 +
+            [('frigate', 'south', 0), ('frigate', 'south', 1)] * 2 + [('frigate', 'destroyed', 0)] +
+            [('frigate', 'south', 0)] * 4 +
             [('speedboat', d, n) for d in TANK_DIRS for n in range(4)]),
         # level 4 (Stage 14, PR #25): jet -> fighter slots, drone -> bomber slots (banking views), attack helicopter
         # -> helicopter slots, walker -> armoured-plane slots, mech -> tank slots
@@ -201,8 +201,8 @@ def enemy_sets(out, table, glyphs, pal, report):
             [('L1', i) for i in range(24)] +
             [('drone', v, n) for v in VIEW_BANK for n in range(3)] +
             [('attack_heli', d, n) for d in VIEW_DIRS for n in range(3)] +
-            [('walker', 'south', 0), ('walker', 'south', 1), ('walker', 'destroyed', 0)] +
-            [('walker', 'south', 0)] * 6 +
+            [('walker', 'south', n) for n in range(4)] + [('walker', 'destroyed', 0)] +   # Stage 14d: 4 steps
+            [('walker', 'south', 0)] * 4 +
             [('mech', d, n) for d in TANK_DIRS for n in range(4)]),
     }
     for lvl, (edir, bank, pnames, slots) in sets.items():
