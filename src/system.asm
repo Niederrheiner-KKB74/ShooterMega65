@@ -166,6 +166,9 @@ read_keys:
 !:  cmp #$43                     // C: test cheat, + 5000 credits (Stage 8c, owner's request)
     bne !+
     jmp cheat_credits
+!:  cmp #$46                     // F: test cheat, fully armed (Stage 14e, owner's request)
+    bne !+
+    jmp cheat_full
 !:  cmp #$44                     // D: toggle the raster time display
     bne !none+
     lda debug_raster
@@ -191,6 +194,20 @@ cheat_credits:
     lda #$99
     sta credit_bcd+1
 !:  sta credit_bcd
+    lda #SFX_SELECT
+    jsr sfx_play
+    jmp hud_score_changed
+
+// Shot IV, the missile, 9 invulnerability shields, full shield energy
+cheat_full:
+    lda #4
+    sta pl_power
+    lda #1
+    sta has_missile
+    lda #9
+    sta inv_count
+    lda #SHIELD_MAX
+    sta pl_shield
     lda #SFX_SELECT
     jsr sfx_play
     jmp hud_score_changed

@@ -89,14 +89,17 @@ def rotor(img, cx, cy, r, phase, low):
 def drone(pose, phase):
     img = np.zeros((32, 32), np.uint8)
     lean = {'straight': 0, 'left': -1, 'right': 1}[pose]
-    cx = 15.5 + lean * 0.8
+    cx = 15.5 + lean * 1.6
     # rotor hubs; banking: the side the drone leans to sinks (smaller, darker)
     hubs = []
     for sx in (-1, 1):
         for sy in (-1, 1):
             low = (lean != 0 and sx == lean)
-            r = 6.2
-            hx = 15.5 + sx * 9.0
+            high = (lean != 0 and sx == -lean)
+            # Stage 14e: stronger banking (owner's wish): the lowered side's rotors are small, dark and pulled in,
+            # the raised side's rotors larger and further out
+            r = 4.4 if low else (6.9 if high else 6.2)
+            hx = 15.5 + sx * (7.2 if low else (9.8 if high else 9.0))
             hy = 15.5 + sy * 9.0
             hubs.append((hx, hy, r, low))
     # arms (drawn first, rotors and hull on top)
