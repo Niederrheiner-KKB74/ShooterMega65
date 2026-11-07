@@ -1,11 +1,13 @@
 level: level Operation Iron City: 375 map rows (6000 px, 240 s at 0.5 px/frame)
-level: metatiles 98, different rows 236/256, glyphs 234
-level: events 4, formations 0, paths 0 (0 bytes)
-level: L4GFX 15172 bytes (max. 16384), L4DAT 6085 bytes (max. 10240), L4DEST 4608 bytes (36 destroyed tiles)
-NOTE: tileset: 117 tiles; palette water (tanks avoid these tiles): 0 tiles
+level: metatiles 99, different rows 235/256, glyphs 250
+level: events 168, formations 22, paths 20 (610 bytes)
+level: L4GFX 16196 bytes (max. 16384), L4DAT 8205 bytes (max. 10240), L4DEST 4608 bytes (36 destroyed tiles)
+NOTE: tileset: 125 tiles; palette water (tanks avoid these tiles): 0 tiles
 NOTE: destroyed tiles: 36 (max 48); buildings: 8
 NOTE: animations.json: no "cycle" (colour cycling, optional)
 NOTE: animations: 4, 4 animated map tiles (max 24)
+NOTE: levels/level4.json: formations and paths are made by Claude; they will be replaced
 NOTE: enemy set: aircraft area 202 of 324 glyphs, mechs 48 of 48
 NOTE: boss: 237 of 324 glyphs, body 112x64
 OK, no errors
+PASS: byte-identical non-map fields, identical walkable tiles, clear boss arena, exact ruin rims, 76 distinct enemy phases, 320x200 previews.

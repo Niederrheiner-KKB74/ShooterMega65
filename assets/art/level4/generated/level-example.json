@@ -177,411 +177,451 @@
     },
     {
       "id": 35,
+      "name": "rubble_curb0",
+      "palette": "streets"
+    },
+    {
+      "id": 36,
+      "name": "rubble_curb1",
+      "palette": "streets"
+    },
+    {
+      "id": 37,
+      "name": "rubble_curb2",
+      "palette": "streets"
+    },
+    {
+      "id": 38,
+      "name": "rubble_curb3",
+      "palette": "streets"
+    },
+    {
+      "id": 39,
+      "name": "lamp_curb",
+      "palette": "streets"
+    },
+    {
+      "id": 40,
+      "name": "wreck_curb",
+      "palette": "streets"
+    },
+    {
+      "id": 41,
+      "name": "shadow_n",
+      "palette": "streets"
+    },
+    {
+      "id": 42,
+      "name": "shadow_w",
+      "palette": "streets"
+    },
+    {
+      "id": 43,
       "name": "tenement_0_0",
       "palette": "buildings"
     },
     {
-      "id": 36,
+      "id": 44,
       "name": "tenement_1_0",
       "palette": "buildings"
     },
     {
-      "id": 37,
+      "id": 45,
       "name": "tenement_0_1",
       "palette": "buildings"
     },
     {
-      "id": 38,
+      "id": 46,
       "name": "tenement_1_1",
       "palette": "buildings"
     },
     {
-      "id": 39,
+      "id": 47,
       "name": "warehouse_0_0",
       "palette": "buildings"
     },
     {
-      "id": 40,
+      "id": 48,
       "name": "warehouse_1_0",
       "palette": "buildings"
     },
     {
-      "id": 41,
+      "id": 49,
       "name": "warehouse_0_1",
       "palette": "buildings"
     },
     {
-      "id": 42,
+      "id": 50,
       "name": "warehouse_1_1",
       "palette": "buildings"
     },
     {
-      "id": 43,
+      "id": 51,
       "name": "factory_0_0",
       "palette": "buildings"
     },
     {
-      "id": 44,
+      "id": 52,
       "name": "factory_1_0",
       "palette": "buildings"
     },
     {
-      "id": 45,
+      "id": 53,
       "name": "factory_0_1",
       "palette": "buildings"
     },
     {
-      "id": 46,
+      "id": 54,
       "name": "factory_1_1",
       "palette": "buildings"
     },
     {
-      "id": 47,
+      "id": 55,
       "name": "tank_0_0",
       "palette": "buildings"
     },
     {
-      "id": 48,
+      "id": 56,
       "name": "tank_1_0",
       "palette": "buildings"
     },
     {
-      "id": 49,
+      "id": 57,
       "name": "tank_0_1",
       "palette": "buildings"
     },
     {
-      "id": 50,
+      "id": 58,
       "name": "tank_1_1",
       "palette": "buildings"
     },
     {
-      "id": 51,
+      "id": 59,
       "name": "depot_0_0",
       "palette": "buildings"
     },
     {
-      "id": 52,
+      "id": 60,
       "name": "depot_1_0",
       "palette": "buildings"
     },
     {
-      "id": 53,
+      "id": 61,
       "name": "depot_0_1",
       "palette": "buildings"
     },
     {
-      "id": 54,
+      "id": 62,
       "name": "depot_1_1",
       "palette": "buildings"
     },
     {
-      "id": 55,
+      "id": 63,
       "name": "pallet_0_0",
       "palette": "buildings"
     },
     {
-      "id": 56,
+      "id": 64,
       "name": "pallet_1_0",
       "palette": "buildings"
     },
     {
-      "id": 57,
+      "id": 65,
       "name": "pallet_0_1",
       "palette": "buildings"
     },
     {
-      "id": 58,
+      "id": 66,
       "name": "pallet_1_1",
       "palette": "buildings"
     },
     {
-      "id": 59,
+      "id": 67,
       "name": "radar_0_0",
       "palette": "buildings"
     },
     {
-      "id": 60,
+      "id": 68,
       "name": "radar_1_0",
       "palette": "buildings"
     },
     {
-      "id": 61,
+      "id": 69,
       "name": "radar_0_1",
       "palette": "buildings"
     },
     {
-      "id": 62,
+      "id": 70,
       "name": "radar_1_1",
       "palette": "buildings"
     },
     {
-      "id": 63,
+      "id": 71,
       "name": "checkpoint_0_0",
       "palette": "buildings"
     },
     {
-      "id": 64,
+      "id": 72,
       "name": "checkpoint_1_0",
       "palette": "buildings"
     },
     {
-      "id": 65,
+      "id": 73,
       "name": "checkpoint_0_1",
       "palette": "buildings"
     },
     {
-      "id": 66,
+      "id": 74,
       "name": "checkpoint_1_1",
       "palette": "buildings"
     },
     {
-      "id": 67,
+      "id": 75,
       "name": "hangar_0_0",
       "palette": "buildings"
     },
     {
-      "id": 68,
+      "id": 76,
       "name": "hangar_1_0",
       "palette": "buildings"
     },
     {
-      "id": 69,
+      "id": 77,
       "name": "hangar_0_1",
       "palette": "buildings"
     },
     {
-      "id": 70,
+      "id": 78,
       "name": "hangar_1_1",
       "palette": "buildings"
     },
     {
-      "id": 71,
+      "id": 79,
       "name": "tower_0_0",
       "palette": "buildings"
     },
     {
-      "id": 72,
+      "id": 80,
       "name": "tower_1_0",
       "palette": "buildings"
     },
     {
-      "id": 73,
+      "id": 81,
       "name": "tower_0_1",
       "palette": "buildings"
     },
     {
-      "id": 74,
+      "id": 82,
       "name": "tower_1_1",
       "palette": "buildings"
     },
     {
-      "id": 75,
+      "id": 83,
       "name": "hall0",
       "palette": "buildings"
     },
     {
-      "id": 76,
+      "id": 84,
       "name": "hall1",
       "palette": "buildings"
     },
     {
-      "id": 77,
+      "id": 85,
       "name": "hall2",
       "palette": "buildings"
     },
     {
-      "id": 78,
+      "id": 86,
       "name": "hall3",
       "palette": "buildings"
     },
     {
-      "id": 79,
+      "id": 87,
       "name": "fire_0",
       "palette": "ruins"
     },
     {
-      "id": 80,
+      "id": 88,
       "name": "fire_1",
       "palette": "ruins"
     },
     {
-      "id": 81,
+      "id": 89,
       "name": "fire_2",
       "palette": "ruins"
     },
     {
-      "id": 82,
+      "id": 90,
       "name": "smoke_0",
       "palette": "buildings"
     },
     {
-      "id": 83,
+      "id": 91,
       "name": "smoke_1",
       "palette": "buildings"
     },
     {
-      "id": 84,
+      "id": 92,
       "name": "smoke_2",
       "palette": "buildings"
     },
     {
-      "id": 85,
+      "id": 93,
       "name": "beacon_0",
       "palette": "buildings"
     },
     {
-      "id": 86,
+      "id": 94,
       "name": "beacon_1",
       "palette": "buildings"
     },
     {
-      "id": 87,
+      "id": 95,
       "name": "sign_0",
       "palette": "buildings"
     },
     {
-      "id": 88,
+      "id": 96,
       "name": "sign_1",
       "palette": "buildings"
     },
     {
-      "id": 89,
+      "id": 97,
       "name": "sign_2",
       "palette": "buildings"
     },
     {
-      "id": 90,
+      "id": 98,
       "name": "highrise_0_0",
       "palette": "buildings"
     },
     {
-      "id": 91,
+      "id": 99,
       "name": "highrise_1_0",
       "palette": "buildings"
     },
     {
-      "id": 92,
+      "id": 100,
       "name": "highrise_2_0",
       "palette": "buildings"
     },
     {
-      "id": 93,
+      "id": 101,
       "name": "highrise_0_1",
       "palette": "buildings"
     },
     {
-      "id": 94,
+      "id": 102,
       "name": "highrise_1_1",
       "palette": "buildings"
     },
     {
-      "id": 95,
+      "id": 103,
       "name": "highrise_2_1",
       "palette": "buildings"
     },
     {
-      "id": 96,
+      "id": 104,
       "name": "highrise_0_2",
       "palette": "buildings"
     },
     {
-      "id": 97,
+      "id": 105,
       "name": "highrise_1_2",
       "palette": "buildings"
     },
     {
-      "id": 98,
+      "id": 106,
       "name": "highrise_2_2",
       "palette": "buildings"
     },
     {
-      "id": 99,
+      "id": 107,
       "name": "citadel_0_0",
       "palette": "buildings"
     },
     {
-      "id": 100,
+      "id": 108,
       "name": "citadel_1_0",
       "palette": "buildings"
     },
     {
-      "id": 101,
+      "id": 109,
       "name": "citadel_2_0",
       "palette": "buildings"
     },
     {
-      "id": 102,
+      "id": 110,
       "name": "citadel_0_1",
       "palette": "buildings"
     },
     {
-      "id": 103,
+      "id": 111,
       "name": "citadel_1_1",
       "palette": "buildings"
     },
     {
-      "id": 104,
+      "id": 112,
       "name": "citadel_2_1",
       "palette": "buildings"
     },
     {
-      "id": 105,
+      "id": 113,
       "name": "citadel_0_2",
       "palette": "buildings"
     },
     {
-      "id": 106,
+      "id": 114,
       "name": "citadel_1_2",
       "palette": "buildings"
     },
     {
-      "id": 107,
+      "id": 115,
       "name": "citadel_2_2",
       "palette": "buildings"
     },
     {
-      "id": 108,
+      "id": 116,
       "name": "collapse_0_0",
       "palette": "buildings"
     },
     {
-      "id": 109,
+      "id": 117,
       "name": "collapse_1_0",
       "palette": "buildings"
     },
     {
-      "id": 110,
+      "id": 118,
       "name": "collapse_2_0",
       "palette": "buildings"
     },
     {
-      "id": 111,
+      "id": 119,
       "name": "collapse_0_1",
       "palette": "buildings"
     },
     {
-      "id": 112,
+      "id": 120,
       "name": "collapse_1_1",
       "palette": "buildings"
     },
     {
-      "id": 113,
+      "id": 121,
       "name": "collapse_2_1",
       "palette": "buildings"
     },
     {
-      "id": 114,
+      "id": 122,
       "name": "collapse_0_2",
       "palette": "buildings"
     },
     {
-      "id": 115,
+      "id": 123,
       "name": "collapse_1_2",
       "palette": "buildings"
     },
     {
-      "id": 116,
+      "id": 124,
       "name": "collapse_2_2",
       "palette": "buildings"
     }
