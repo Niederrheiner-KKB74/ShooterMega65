@@ -202,7 +202,7 @@ cheat_credits:
 cheat_full:
     lda #4
     sta pl_power
-    lda #1
+    lda #2                      // both missiles (Stage 16)
     sta has_missile
     lda #9
     sta inv_count

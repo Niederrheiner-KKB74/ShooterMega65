@@ -29,7 +29,8 @@ sys.path.insert(0, str(ROOT / 'tools'))
 import make_assets as ph  # noqa: E402
 
 # ------------------------------------------------------------------ items (single source)
-# code: 1-3 shot level 2-4, 4 missile, 5 shield (invulnerability), 6 bomb, 7 extra life, 8 exit
+# code: 1-3 shot level 2-4, 4 missile, 5 shield (invulnerability), 6 bomb, 7 extra life, 8 exit,
+#       9 second missile (Stage 16: two homing missiles in flight at once; after MISSILE)
 ITEMS = {                        # cell: (name, price, code, icon)
     0: ('SHOT II', 100, 1, 'shot2'),
     1: ('SHOT III', 200, 2, 'shot3'),
@@ -38,6 +39,7 @@ ITEMS = {                        # cell: (name, price, code, icon)
     4: ('SHIELD', 150, 5, 'shield'),
     5: ('BOMB', 200, 6, 'bomb'),
     6: ('EXTRA LIFE', 300, 7, 'life'),
+    7: ('MISSILE', 400, 9, 'missile2'),     # 'MISSILE II' would need 6 more glyphs (160 reserved)
     15: ('EXIT', 0, 8, 'exit'),
 }
 
@@ -207,6 +209,13 @@ def art_icon(name):
 
 
 def icon(name):
+    if name == 'missile2':                       # two missiles side by side (Stage 16)
+        m = icon('missile')
+        a = np.full((16, 16), 8, np.uint8)
+        for dx in (-3, 3):
+            sh = np.roll(m, dx, axis=1)
+            a[sh != 8] = sh[sh != 8]
+        return a
     if name in ('life', 'exit'):
         return art_icon(name)
     if name in ICON_ART_IDS and ICON_ART.exists():

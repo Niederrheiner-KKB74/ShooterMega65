@@ -174,18 +174,30 @@ enemy_visible:
 // ---------------------------------------------------------------- missile
 // called by player_move when the guns fire
 missile_try:
-    lda has_missile
+    lda has_missile             // missiles in flight < has_missile (1 or 2, Stage 16)
     beq !no+
-    ldx ms_slot
-    lda obj_type,x
+    sta ms_left
+    ldx #SHOT_FIRST
+!:  lda obj_type,x
     cmp #T_MISSILE
-    beq !no+                    // one missile at a time
+    bne !+
+    dec ms_left
+    beq !no+
+!:  inx
+    cpx #SHOT_END
+    bne !--
     jsr pick_target
     bcs !no+
     sty ms_target
-    clc
-    lda pl_x
-    adc #8
+    lda #8                      // from the middle; with two missiles alternately from the wings
+    ldx has_missile
+    cpx #2
+    bcc !+
+    lda ms_side
+    eor #12
+    sta ms_side
+!:  clc
+    adc pl_x
     sta sp_x
     lda pl_x+1
     adc #0
@@ -218,6 +230,8 @@ missile_try:
 !no:
     rts
 ms_target: .byte 0
+ms_left:   .byte 0
+ms_side:   .byte 2                 // x offset 2 or 14 (left/right wing)
 
 // Y = a random visible enemy (carry clear), carry set if there is none
 pick_target:

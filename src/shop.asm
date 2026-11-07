@@ -38,7 +38,7 @@
 // ---------------------------------------------------------------- items owned
 bomb_count:  .byte 0        // order matters: hud.asm reads bomb_count, bomb_count+1
 inv_count:   .byte 0
-has_missile: .byte 0
+has_missile: .byte 0             // 0 none, 1 MISSILE, 2 MISSILE II (two in flight)
 
 // new game: nothing bought yet (pl_power is reset by player_new_game)
 shop_reset:
@@ -333,6 +333,13 @@ item_allowed:
     beq !yes+
     clc
     rts
+!:  cmp #9                      // Stage 16: second missile, after the first, once
+    bne !+
+    lda has_missile
+    cmp #1
+    beq !yes+
+    clc
+    rts
 !:  cmp #5
     bne !+
     lda inv_count
@@ -383,6 +390,11 @@ buy:
     bne !hud+
 !:  bne !+
     lda #1
+    sta has_missile
+    bne !hud+
+!:  cmp #9                      // Stage 16: second missile
+    bne !+
+    lda #2
     sta has_missile
     bne !hud+
 !:  cmp #5
