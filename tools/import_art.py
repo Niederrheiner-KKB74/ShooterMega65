@@ -196,8 +196,9 @@ def enemy_sets(out, table, glyphs, pal, report):
             [('speedboat', d, n) for d in TANK_DIRS for n in range(4)]),
         # level 4 (Stage 14, PR #25): jet -> fighter slots, drone -> bomber slots (banking views), attack helicopter
         # -> helicopter slots, walker -> armoured-plane slots, mech -> tank slots
-        4: (ENEM4, {'air': 5, 'drone': 6, 'heli': 7, 'mechs': 8}, ('air', 'drone', 'heli', 'mechs'),
-            [('jet', d, n) for d in VIEW_DIRS for n in range(3)] +
+        # Stage 14b: the jets are the level-1 fighters (owner's wish), the drone is Claude's 32x32 heavy drone
+        4: (ENEM4, {'air': 5, 'drone': 6, 'heli': 7, 'mechs': 8}, ('L1', 'drone', 'heli', 'mechs'),
+            [('L1', i) for i in range(24)] +
             [('drone', v, n) for v in VIEW_BANK for n in range(3)] +
             [('attack_heli', d, n) for d in VIEW_DIRS for n in range(3)] +
             [('walker', 'south', 0), ('walker', 'south', 1), ('walker', 'destroyed', 0)] +
@@ -215,6 +216,13 @@ def enemy_sets(out, table, glyphs, pal, report):
             if key in placed:
                 tabs.append(placed[key])
                 continue
+            if key[0] == 'L1':                  # a frame of the default set (level-1 fighter)
+                t = table[key[1]]
+                base = start + len(g3[area])
+                g3[area] += glyphs[t['base']:t['base'] + t['w'] * (t['h'] + 1)]
+                placed[key] = dict(t, base=base)
+                tabs.append(placed[key])
+                continue
             f = fr[key]
             a = np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
             h, w = a.shape[0] // 8, a.shape[1] // 16
@@ -230,8 +238,8 @@ def enemy_sets(out, table, glyphs, pal, report):
         g3['air'] += [bytes(64)] * (air1 - air0 - len(g3['air']))
         g3['tank'] += [bytes(64)] * (tank1 - tank0 - len(g3['tank']))
         p3 = []
-        for name in pnames:
-            p3 += [tuple(c) for c in pals.get(name, pals[pnames[1]])]
+        for b, name in enumerate(pnames, 5):
+            p3 += pal[b * 16:b * 16 + 16] if name == 'L1' else [tuple(c) for c in pals.get(name, pals[pnames[1]])]
         data = pack(g3['air'] + g3['tank'], tabs, p3)
         assert len(data) == len(default)
         (out / f'ENEM{lvl}').write_bytes(data)

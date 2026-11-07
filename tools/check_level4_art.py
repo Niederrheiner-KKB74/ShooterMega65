@@ -129,8 +129,8 @@ def check_level(later_phases, animated):
 
 ENEMY_SET = (
     # group, poses, phases, size, palette, area
-    ('jet', DIR8, 3, (16, 16), 'air', 'aircraft'),                  # fighter slots
-    ('drone', ['straight', 'left', 'right'], 3, (16, 16), 'drone', 'aircraft'),   # bomber slots
+    # fighter slots: the level-1 fighters (Stage 14b, 72 glyphs, counted below)
+    ('drone', ['straight', 'left', 'right'], 3, (32, 32), 'drone', 'aircraft'),   # bomber slots, 32x32 (Stage 14b)
     ('attack_heli', DIR8, 3, (16, 16), 'heli', 'aircraft'),         # helicopter slots
     ('walker', ['south'], 2, (32, 32), 'mechs', 'aircraft'),        # armoured-plane slots
     ('walker', ['destroyed'], 1, (32, 32), 'mechs', 'aircraft'),
@@ -143,7 +143,7 @@ def check_enemies():
     pal = load(ENEMIES / 'palettes.json', 'enemy set')
     pl = load(ENEMIES / 'placement.json', 'enemy set')
     if pal is not None:
-        for p in ('air', 'drone', 'heli', 'mechs'):
+        for p in ('drone', 'heli', 'mechs'):
             if p not in pal or len(pal[p]) != 16:
                 err(f'enemies palettes.json: palette "{p}" with exactly 16 entries [R,G,B] missing')
     if src is None:
@@ -170,7 +170,7 @@ def check_enemies():
                 room[area] += glyphs(w, h)
     for key in set(have) - want:
         err(f'enemy set: unexpected frame {key} (group, pose, phase)')
-    room['aircraft'] += 1
+    room['aircraft'] += 1 + 72          # + the level-1 fighters in the fighter slots
     if room['aircraft'] > ENEMY_ROOM:
         err(f'enemy set: {room["aircraft"]} glyphs in the aircraft area, room for {ENEMY_ROOM}')
     if room['boat'] > BOAT_ROOM:

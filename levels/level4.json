@@ -1313,7 +1313,7 @@
       "row": 172,
       "type": "ground",
       "enemy": "heavy_flak",
-      "x": 144
+      "x": 240
     },
     {
       "row": 172,
@@ -1727,7 +1727,7 @@
       "row": 312,
       "type": "ground",
       "enemy": "heavy_flak",
-      "x": 104
+      "x": 112
     },
     {
       "row": 315,
