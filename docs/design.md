@@ -541,6 +541,32 @@ Requests while the plane is destroyed or inside the shop are dropped.
   turbines, slimmer and more colourful enemies (fourth palette `frigate` in bank 8), lying carrier ≤ 128×64.
 - Bank-0 space: BASIC's palette 0 and zero page are saved in chip RAM (`$5DB00`, `$5DE00`) instead of bank 0.
 
+## 22b. Level transition, diagonal shots, art review (Stage 15)
+- **Transition** (`transition.asm`, pictures from `tools/make_overlays.py`): when the boss is gone the victory
+  fanfare (`MUS_LEVEL_CLEAR`) plays and `level_clear_req` counts down 60 frames (the plane is invulnerable meanwhile);
+  then the main loop calls `level_transition`, which pauses the game: LEVEL CLEAR! with a burnt picture of the
+  boss (composed from the boss artwork: body, legs/rotors, destroyed turrets, open core; darkened, scorched, on fire)
+  and a blinking PRESS FIRE TO CONTINUE → fire → the end shop (as before, after the boss) → fade to black →
+  `level_next` behind the black screen → PREPARE FOR LEVEL n → fire → fade in, level music. The end-shop and
+  `end` events of the level are no longer reached (the transition replaces the level); without attic RAM there is no
+  boss, so the old end of level remains. A plane lost during the 60 frames cancels the transition (the level is
+  retried). Test define `TRANS_TEST`: transition 5 s into the game.
+- **Pictures** are drawn like the shop pictures: opaque 14-column rectangles of shop-palette glyphs, copied from
+  attic bank `$0D` over the shop glyphs, maps into `ov_map`, drawn by `blit_msg` (pictures 3 and 4); bank 15 is a copy
+  of bank 13 in which colours 4 and 8 (text, shadow of the blinking line, attribute 18) switch every 16 frames.
+  The shop glyphs come back from attic bank `$0E`.
+- **Fading through palette 2**: the screen shows palette 2 during the fades and the PREPARE picture. `fade_set` writes
+  palette 2 = palette-0 snapshot × k/16 (k = 0–16, register nibbles swapped: a 256-byte table per step), 2 frames per
+  step. Palette 0 is never darkened, so the next level's `palette_init` can run while the screen is black. Every
+  `$D070` write in the game ORs in `pal_show` so it cannot switch back to palette 0 too early.
+- **Diagonal enemy shots**: red bolts and fireballs flying with |dx| ≥ 7/16 of their fall speed (about 24° and more)
+  show a 45° view (down-left / down-right; the bolt sheared, the fireball rotated). Frames in a third pixie area
+  (`PIXIES3`, `$55200`, behind screen buffer A); `eshot_view` in `upd_eshot`. Rockets and the carrier's deck jets keep
+  their frames.
+- **Art review**: the level-2 and level-3 ground targets (`assets/art/level2|3/source/claude_targets.py`, patching
+  the generated tile sets) and the level-3 enemies (`assets/art/enemies-level3/source/claude_l3_enemies.py`) are
+  redrawn in the convention of the level-4 buildings and Claude's level-4 enemies.
+
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?

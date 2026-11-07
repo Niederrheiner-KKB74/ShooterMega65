@@ -1,4 +1,4 @@
-# Memory map (Stage 14)
+# Memory map (Stage 15)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -38,19 +38,20 @@ not in the zero page.
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
-| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`) |
+| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`, Stage 15 at `$A939`: `transition.asm` adds `ov_map` (392 bytes), `fade_tab` (256) and `pal_snap` (768)) |
 
 ## Banks 4/5 (chip RAM)
 
 | Address | Size | Use |
 |---|---|---|
 | `$40000–$43FFF` | 16 KB | landscape NCM glyphs, char `$1000`+ (Stage 13: animated tiles are overwritten with their phases from the level pack by `anim.asm`) (max. 256 per level: tile offsets in the map are bytes; `build_level.py` allows 128 tiles; the coastal level uses 208 glyphs) |
-| `$44000–$467FF` | 10 KB | shop glyphs from the file `SHOP`, char `$1100`+ (160 reserved, 148 used). Guarded in `shop.asm` |
+| `$44000–$467FF` | 10 KB | shop glyphs from the file `SHOP`, char `$1100`+ (160 reserved, 152 used). Guarded in `shop.asm`. Stage 15: during a level transition one picture of `TRANS` (≤ 160 glyphs) is copied over them; the shop glyphs come back from attic `$80E0000` |
 | `$46800–$4F7FF` | 36 KB | pixie NCM glyphs, char `$11A0`+ (max. 576, Stage 8 uses 574 incl. light gun and gun muzzle flashes): loaded at start from the file `PIXIES` (complete image incl. blank guards) straight into this area. Frame bases in `frames.inc` are absolute character numbers. HUD glyphs at `HUD_GLYPH + 2k`, rebuilt at run time |
 | `$4F800–$4FFFF` | 2 KB | Stage 8: destroyed landscape tiles 32–47 (char `$13E0`+, from `LnDEST`) |
 | `$50000–$53FFF` | 16 KB | load buffer while loading (Stage 8: then `LnDAT` ≤ 10 KB at `$50000–$527FF`, `PIXIES2` at `$52800`): first `SHOP` (glyphs → `$44000`), `MUSIC` (→ `$5E000`) (`PIXIES` goes straight to `$46800`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDEST` (destroyed tiles → `$5E000` / `$4F800`), then `LnDAT` (map, events, formations, paths, ground-target tables), which stays here for the whole level |
 | `$52800–$53EBF` | 5.7 KB | Stage 8: heavy-gun glyphs (file `PIXIES2`, 91 of 96 glyphs, char `$14A0`+; frame bases are absolute) |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
+| `$55200–$55FFF` | 3.5 KB | Stage 15: diagonal enemy shots (file `PIXIES3`, 11 of 56 glyphs, char `$1548`+; frame bases absolute). Guarded in `layout.asm` / `ground.asm` |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |
 | `$58000–$5AA7F` | 64×170 | ring buffer, screen part (32 slots stored twice) |
 | `$5B000–$5DA7F` | 64×170 | ring buffer, colour part |
@@ -187,7 +188,13 @@ integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1
 | `$80A0000–$80AFFFF` | Stage 14: level-4 pack (`L4GFX`, `L4DAT`, `L4DEST`, `MUS4`) |
 | `$80B0000` | Stage 14: level-4 boss (`L4BOSS`, mech; all bosses 237 glyphs + palette, 15,216 bytes each) |
 | `$80C0000` | Stage 14: level-4 enemy set (`ENEM4`) |
-| `$80D0000–` | free |
+| `$80D0000` | Stage 15: level-transition pictures (`TRANS`, 39,024 bytes: per picture glyphs, glyph map, attribute map; offsets in `trans_data.inc`) |
+| `$80E0000` | Stage 15: copy of the shop glyphs (`SHOP_GLYPHS` × 64 bytes), restored after a transition picture |
+| `$80F0000–` | free |
+
+Stage 15, palettes: while a level transition runs, the screen shows palette 2 (`$D070` bits 5–4 = 2, `pal_show` =
+`$20`, ORed into every `$D070` write of `video.asm`/`special.asm`); palette 0 keeps the real colours and gets the next
+level's colours from `palette_init` behind the black screen. Only `fade_set` and the PREPARE picture edit palette 2.
 
 Since Stage 13 the banks of each level are tables in `levels.asm` (`lv_pack_bank`, `lv_boss_bank`, `lv_set_bank`).
 
@@ -197,4 +204,4 @@ Detected at start (two patterns written by DMA and read back). Without attic RAM
 
 ## Files on the D81 (Stage 13)
 
-`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS`, `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `L3GFX`, `L3DAT`, `L3DEST`, `L3BOSS`, `L4GFX`, `L4DAT`, `L4DEST`, `L4BOSS`, `ENEM0`, `ENEM3`, `ENEM4`, `SPRITES`, `MUS2`, `MUS3`, `MUS4` (SEQ). Stage 14: the player sprite frames (`SPRITES`, 3 KB) are loaded straight to `SPRITE_ADDR` instead of being part of the PRG.
+`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS`, `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `L3GFX`, `L3DAT`, `L3DEST`, `L3BOSS`, `L4GFX`, `L4DAT`, `L4DEST`, `L4BOSS`, `ENEM0`, `ENEM3`, `ENEM4`, `SPRITES`, `MUS2`, `MUS3`, `MUS4`, Stage 15: `PIXIES3`, `TRANS` (SEQ). Stage 14: the player sprite frames (`SPRITES`, 3 KB) are loaded straight to `SPRITE_ADDR` instead of being part of the PRG.
