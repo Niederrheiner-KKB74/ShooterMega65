@@ -13,6 +13,7 @@
 #import "../build/gen/shop_const.inc"
 #import "../build/gen/music_const.inc"
 #import "../build/gen/screens_const.inc"
+#import "../build/gen/trans_const.inc"
 
 // ---------------------------------------------------------------- zero page
 .const ZP = $02
@@ -69,6 +70,8 @@ start:
 !loaded:
     bcs !fail+
     jsr pixies2_load                   // heavy gun glyphs behind LnDAT (ground.asm)
+    bcs !fail+
+    jsr pixies3_load                   // Stage 15: diagonal enemy shots behind screen buffer A (ground.asm)
     bcs !fail+
     jsr screens_load                   // title and game-over banner: attic RAM or title directly (screens.asm)
     bcc !+
@@ -136,14 +139,22 @@ main_loop:
     jsr build_frame
     lda #0
     sta VIC_BORDER
+    lda level_clear_req                // Stage 15: boss gone -> after CLEAR_DELAY frames LEVEL CLEAR, end shop,
+    beq ml_shop                        // fade, next level (transition.asm); the end shop waits for it
+    dec level_clear_req
+    bne ml_retry
+    jsr level_transition
+    jmp main_loop
+ml_shop:
     lda shop_req                       // shop event reached: paused shop overlay
-    beq !+
+    beq ml_retry
     cmp #1                             // mid-level shop: the checkpoint after a lost plane (Stage 14)
     bne !sh+
     jsr cp_save
 !sh:
     jsr shop_run
-!:  lda level_retry_req                // plane lost: the level again from its start or checkpoint
+ml_retry:
+    lda level_retry_req                // plane lost: the level again from its start or checkpoint
     beq !+
     jsr level_retry
 !:  lda level_next_req                 // level end with attic RAM: the next level (levels.asm)
@@ -254,6 +265,7 @@ random:
 #import "levels.asm"
 #import "anim.asm"
 #import "screens.asm"
+#import "transition.asm"
 
 // file PIXIES: the complete pixie glyph area image (tools/import_art.py), loaded to PIXIE_ADDR
 pixies_load:

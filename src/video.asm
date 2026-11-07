@@ -71,6 +71,7 @@ video_init:
 
 palette_init:
     lda #$04                    // edit text palette 0, sprites use palette 1
+    ora pal_show                // (Stage 15: palette 2 may be shown during a level transition)
     sta VIC_PALSEL
     ldx #0
 !:  lda palette_data,x
@@ -103,6 +104,7 @@ palette_init:
     cpx #64
     bne !-
     lda #$44                    // map palette 1 for editing
+    ora pal_show
     sta VIC_PALSEL
     ldx #31
 !:  lda sprpal_data,x
@@ -114,6 +116,7 @@ palette_init:
     dex
     bpl !-
     lda #$04                    // text: palette 0, sprites: palette 1
+    ora pal_show
     sta VIC_PALSEL
     rts
 

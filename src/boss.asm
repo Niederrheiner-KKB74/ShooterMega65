@@ -911,8 +911,14 @@ boss_dying:
     sta scroll_spd
     lda boss_spd+1
     sta scroll_spd+1
-    lda #MUS_LEVEL1
+    lda #MUS_LEVEL_CLEAR        // Stage 15: victory fanfare, then LEVEL CLEAR (transition.asm)
     jsr music_play
+    lda #$ff
+    jsr music_queue
+    lda #CLEAR_DELAY
+    sta level_clear_req
+    lda #CLEAR_DELAY + 20       // nothing can hit the plane before the transition
+    sta pl_inv
     lda #BS_OFF
     sta boss_state
 !rts:

@@ -660,10 +660,10 @@ shop_restore:
     rts
 
 // ---------------------------------------------------------------- data
-pic_rows: .byte MSG_ROWS, DLG_ROWS, PANEL_ROWS
-pic_cols: .byte MSG_COLS, DLG_COLS, PANEL_COLS
-pic_row0: .byte MSG_ROW0, DLG_ROW0, PANEL_ROW0
-pic_col0: .byte MSG_COL0, DLG_COL0, PANEL_COL0
+pic_rows: .byte MSG_ROWS, DLG_ROWS, PANEL_ROWS, TR_CLEAR_ROWS, TR_PREP_ROWS    // 3, 4: level transition (Stage 15)
+pic_cols: .byte MSG_COLS, DLG_COLS, PANEL_COLS, TR_COLS, TR_COLS
+pic_row0: .byte MSG_ROW0, DLG_ROW0, PANEL_ROW0, TR_CLEAR_ROW0, TR_PREP_ROW0
+pic_col0: .byte MSG_COL0, DLG_COL0, PANEL_COL0, TR_COL0, TR_COL0
 buf_scr_hi: .byte >(SCREEN_A & $ffff), >(SCREEN_B & $ffff)
 buf_col_hi: .byte >COLOUR_A, >COLOUR_B
 .errorif ((<COLOUR_A) != 0 || (<COLOUR_B) != 0 || (<SCREEN_A) != 0 || (<SCREEN_B) != 0), "buffers must be page aligned"

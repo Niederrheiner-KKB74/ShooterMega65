@@ -24,6 +24,7 @@ import build_level    # noqa: E402
 import make_shop      # noqa: E402
 import build_music    # noqa: E402
 import make_screens   # noqa: E402
+import make_overlays  # noqa: E402
 
 LEVELS = [('L1', 'levels/coastal_base.json'), ('L2', 'levels/level2.json'), ('L3', 'levels/level3.json'),
           ('L4', 'levels/level4.json')]   # (file prefix on the disk, source)
@@ -72,6 +73,7 @@ def main():
     print('\n'.join(make_screens.main(ROOT / 'build/gen')))  # title + game-over banner (Stage 7)
     title = (ROOT / 'build/gen/TITLE').read_bytes()
     gover = (ROOT / 'build/gen/GOVER').read_bytes()
+    print('\n'.join(make_overlays.main(ROOT / 'build/gen')))  # level transition pictures (Stage 15)
     level_files = []
     selected_levels = [('L1', a.level or LEVELS[0][1]), ('L2', a.level2 or LEVELS[1][1]),
                        ('L3', a.level3 or LEVELS[2][1]), ('L4', a.level4 or LEVELS[3][1])]
@@ -89,7 +91,9 @@ def main():
         level_files.append((f'ENEM{n}', (ROOT / f'build/gen/ENEM{n}').read_bytes(), d81.SEQ))
     for n in (2, 3, 4):                              # level music pieces (Stage 9, 13, 14)
         level_files.append((f'MUS{n}', (ROOT / f'build/gen/MUS{n}').read_bytes(), d81.SEQ))
+    level_files.append(('TRANS', (ROOT / 'build/gen/TRANS').read_bytes(), d81.SEQ))   # Stage 15
     pixies2 = (ROOT / 'build/gen/PIXIES2').read_bytes()  # heavy gun (Stage 8), loaded to $52800
+    pixies3 = (ROOT / 'build/gen/PIXIES3').read_bytes()  # diagonal enemy shots (Stage 15), loaded to $55200
     prg = out / f'{PRG_NAME}.PRG'
     out.mkdir(parents=True, exist_ok=True)
     # A failed assembly must not leave a previous build looking current.
@@ -118,7 +122,7 @@ def main():
     if run2.returncode or 'Error' in run2.stdout:
         print(run2.stdout)
         sys.exit('assembly of MUSICTEST failed')
-    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ), ('PIXIES', pixies, d81.SEQ), ('SPRITES', (ROOT / 'build/gen/sprite.bin').read_bytes(), d81.SEQ), ('PIXIES2', pixies2, d81.SEQ), ('TITLE', title, d81.SEQ), ('GOVER', gover, d81.SEQ)] + level_files
+    files = [(PRG_NAME, data, d81.PRG), ('MUSICTEST', mt.read_bytes(), d81.PRG), ('SHOP', shop, d81.SEQ), ('MUSIC', music, d81.SEQ), ('PIXIES', pixies, d81.SEQ), ('SPRITES', (ROOT / 'build/gen/sprite.bin').read_bytes(), d81.SEQ), ('PIXIES2', pixies2, d81.SEQ), ('PIXIES3', pixies3, d81.SEQ), ('TITLE', title, d81.SEQ), ('GOVER', gover, d81.SEQ)] + level_files
     image = d81.build_disk(files)
     for fname, payload, _ in files:
         if d81.read_file(image, fname) != payload:

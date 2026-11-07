@@ -374,6 +374,11 @@ game_new:
     sta boss_state
     sta boss_req
     sta game_over_req
+    sta level_clear_req         // Stage 15
+#if TRANS_TEST
+    lda #250                    // test build (build.py --define TRANS_TEST): level transition after 5 s
+    sta level_clear_req
+#endif
     jsr shop_reset
     jsr hud_reset
     jsr player_init

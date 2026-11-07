@@ -136,7 +136,10 @@ levels_load:
     bcc !+
     jmp lv_fail
 !:
-    lda #'1'                    // names back for messages
+    jsr trans_load              // Stage 15: transition pictures, shop glyph copy (transition.asm)
+    bcc !+
+    jmp lv_fail
+!:  lda #'1'                    // names back for messages
     sta name_gfx+1
     sta name_dat+1
     clc
@@ -337,6 +340,7 @@ cp_save:
 level_retry:
     lda #0
     sta level_retry_req
+    sta level_clear_req         // (Stage 15: no transition pending after a lost plane)
     jsr boss_reset              // died at the boss: glyphs, palette and scrolling back (Stage 14c fix)
     lda pl_power                // the shot level drops by one
     cmp #2

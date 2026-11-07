@@ -487,6 +487,7 @@ special_vblank:
     ldx #0
 !:  stx ring_phase
     lda #$44                    // edit palette 1 (sprites)
+    ora pal_show
     sta VIC_PALSEL
     ldy #1                      // colour index 1-6
 !col:
@@ -510,6 +511,7 @@ special_vblank:
     cpy #7
     bne !col-
     lda #$04
+    ora pal_show
     sta VIC_PALSEL
 !flash:
     lda bomb_flash
