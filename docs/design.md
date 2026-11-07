@@ -567,6 +567,35 @@ Requests while the plane is destroyed or inside the shop are dropped.
   the generated tile sets) and the level-3 enemies (`assets/art/enemies-level3/source/claude_l3_enemies.py`) are
   redrawn in the convention of the level-4 buildings and Claude's level-4 enemies.
 
+## 22c. High scores, title cycle, end of the mission, second missile (Stage 16)
+- **High-score list** (`hiscore.asm`): 10 entries, name 10 characters (A–Z, 0–9, space . - !), 6-digit BCD score,
+  level reached (1–4, 5 = mission accomplished). File `SH65HI.DAT` (SEQ, 176 bytes, magic `SH65HI`, CRC-16/CCITT).
+  Read at start while the KERNAL still owns the machine (`hi_boot`); without a file the default list (invented
+  pilots VIPER … NOVA). Saving uses **Vyper's disk transaction unchanged** (Stage 10a6, confirmed on hardware;
+  `hiscore_disk.asm`): write `SH65HI.TMP`, read back and verify, check the old `DAT` against the list read at start,
+  scratch `BAK`, rename `DAT`→`BAK`, `TMP`→`DAT`, verify again. A damaged file is never written over (`hi_blocked`);
+  the list then stays in memory for the session only.
+- **KERNAL session** for the save (`kernal_enter`/`kernal_leave`, like Vyper's `hi_suspend`/`hi_resume`): sound off,
+  palette 0 black, VIC registers and CIA direction as BASIC had them (`vic_to_basic`, shared with the exit), the
+  game's zero page to `SAVED_GZP` and BASIC's back, `CLI`; afterwards everything back and `video_init`/`palette_init`.
+  The screen is black for one or two seconds.
+- **Text pages** (`textpage.asm`): the engine only knows 16-px tokens, so text is drawn pixel by pixel with a 6-px
+  font (the shop's 5×7 letters) into a 16×15 glyph block in the landscape glyph area; the logo rows of the title
+  stay above it. Pages: Hall of Fame (the title shows the picture for 10 s, then the list for 10 s, and so on; fire
+  or keys 2–4 start at any time), name entry (keyboard, or joystick up/down = letter, left/right = position, fire =
+  OK; an empty name becomes PILOT), MISSION ACCOMPLISHED (after the level-4 boss: LEVEL CLEAR, fade out, the page with
+  the final score fades in; no end shop), then the name entry if the score enters the list.
+- **Menu overlay** (`menu.asm`): the 5 KB of menu code would not fit in bank 0 below the music (`$AC00`). It is
+  assembled for `swap_start` into the file `HIMENU`, loaded to attic RAM and swapped by DMA over `boss.asm` +
+  `ground.asm` while no game runs (both directions, so the list and the game code's state are kept).
+- **BASIC's screen** `$0800–$0FFF` is saved at start and restored at the exit, so the game may use it as work RAM
+  (transition buffers, font, backup copy of the list). Stage 15 had put the transition buffers there without this
+  save; corrected here.
+- **Second missile**: shop cell 7, $400, two-missile icon, after the first missile; then two homing missiles can be
+  in flight, alternately from the wings. Its label is "MISSILE" like the first: "MISSILE II" would need 6 more
+  shop glyphs than the 160 reserved.
+- Bank 0 freed: the ring sprites come with the file `SPRITES`; PRG ends at `$A333` (Stage 15: `$A939`).
+
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?

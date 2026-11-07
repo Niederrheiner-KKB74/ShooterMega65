@@ -1,4 +1,4 @@
-# Memory map (Stage 15)
+# Memory map (Stage 16)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -24,6 +24,7 @@ Exact addresses of the bank-0 areas come from `build/main.sym`; the values below
 | `$72–$75` | 32-bit pointer into the level data |
 | `$76–$79` | 32-bit pointer into the music data (`sound.asm`) |
 | `$7A–$7D` | 32-bit source pointer of the title / banner routines (`screens.asm`) |
+| `$80–$83` | Stage 16: 32-bit pointer of the text renderer (`textpage.asm`, menu overlay only) |
 
 Shop state (`bomb_count`, `inv_count`, `has_missile`, cursor and dialog variables) lives in bank 0 in `shop.asm`,
 not in the zero page.
@@ -32,13 +33,15 @@ not in the zero page.
 
 | Address | Use |
 |---|---|
+| `$0800–$0FFF` | Stage 16: BASIC's text screen, saved to `SAVED_SCR` at start and restored on exit; meanwhile work RAM: during a level transition `fade_tab` `$0800`, `pal_snap` `$0900`, `ov_map` `$0C00`; on the menu pages the 6-px font `$0800–$09FF` and `hi_backup` `$0A00–$0AAF` |
 | `$2001–$2010` | BASIC stub `BANK 0:SYS 8224` |
 | `$2020–…` | code and tables: sprite pointer table, HUD work buffer (14×64), HUD digits/templates, exit save area, sine table, frame tables, shop code, token maps and palettes |
 | `…` | level loader buffer (256 bytes), metatile tables (3×256 bytes) |
+| `swap_start–swap_end` | Stage 16: `boss.asm` + `ground.asm` (5,630 bytes). While no game runs (start, title, game over, end of mission) the menu overlay `HIMENU` (5,057 bytes: `hiscore.asm`, `hiscore_disk.asm`, `textpage.asm`, `hipages.asm`, assembled for `swap_start`) is swapped in by DMA (`menu.asm`); guarded |
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
-| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`, Stage 15 at `$A939`: `transition.asm` adds `ov_map` (392 bytes), `fade_tab` (256) and `pal_snap` (768)) |
+| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`, Stage 15 at `$A939`, Stage 16 at `$A333`: ring sprites in the file `SPRITES`, transition buffers at `$0800`, the menu code as an overlay) |
 
 ## Banks 4/5 (chip RAM)
 
@@ -51,7 +54,8 @@ not in the zero page.
 | `$50000–$53FFF` | 16 KB | load buffer while loading (Stage 8: then `LnDAT` ≤ 10 KB at `$50000–$527FF`, `PIXIES2` at `$52800`): first `SHOP` (glyphs → `$44000`), `MUSIC` (→ `$5E000`) (`PIXIES` goes straight to `$46800`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDEST` (destroyed tiles → `$5E000` / `$4F800`), then `LnDAT` (map, events, formations, paths, ground-target tables), which stays here for the whole level |
 | `$52800–$53EBF` | 5.7 KB | Stage 8: heavy-gun glyphs (file `PIXIES2`, 91 of 96 glyphs, char `$14A0`+; frame bases are absolute) |
 | `$54000–$551ED` | 27×170 | RRB screen buffer A |
-| `$55200–$55FFF` | 3.5 KB | Stage 15: diagonal enemy shots (file `PIXIES3`, 11 of 56 glyphs, char `$1548`+; frame bases absolute). Guarded in `layout.asm` / `ground.asm` |
+| `$55200–$557FF` | 1.5 KB | Stage 15: diagonal enemy shots (file `PIXIES3`, 11 of 24 glyphs, char `$1548`+; frame bases absolute). Guarded in `layout.asm` / `ground.asm` |
+| `$55800–$55FFF` | 2 KB | Stage 16: BASIC's text screen `$0800–$0FFF` until exit (`SAVED_SCR`) |
 | `$56000–$571ED` | 27×170 | RRB screen buffer B |
 | `$58000–$5AA7F` | 64×170 | ring buffer, screen part (32 slots stored twice) |
 | `$5B000–$5DA7F` | 64×170 | ring buffer, colour part |
@@ -59,9 +63,10 @@ not in the zero page.
 | `$58000–$5966F` | 5.6 KB | **while the game-over banner is shown**: banner glyphs, map, palette (`GOVER`), in the ring (the game is paused) |
 | `$5E000–$5EFFF` | 4 KB | Stage 8: destroyed landscape tiles 0–31 (char `$1780`+, from `LnDEST`) |
 | `$5F000–$5FBFF` | | player sprites, 6 frame pairs (left/right half 256 bytes each) |
-| `$5FC00–$5FEFF` | | invulnerability ring, sprites 2–4 (256 bytes each, `special.asm`) |
+| `$5FC00–$5FEFF` | | invulnerability ring, sprites 2–4 (256 bytes each, `special.asm`; Stage 16: loaded with the file `SPRITES`) |
 | `$5DB00–$5DDFF` | 768 | Stage 13: BASIC's palette 0, saved at start, restored at exit (`SAVED_PAL0`; was 768 bytes in bank 0) |
 | `$5DE00–$5DEFF` | 256 | Stage 13: BASIC's zero page, saved/restored by DMA (`SAVED_ZP`; was 256 bytes in bank 0) |
+| `$5DF00–$5DFFF` | 256 | Stage 16: the game's zero page during a KERNAL session (high-score save, `SAVED_GZP`) |
 | `$5FF00–$5FFFF` | | free |
 
 `$20000–$3FFFF` is ROM and is never used for data (Vyper rule 4).
@@ -106,6 +111,10 @@ All registers above (plus the sprite colour registers `$D029–$D02B`), palette 
 | 5 | fighter | 13 | rocket |
 | 6 | bomber; during the boss fight: boss hit flash (Stage 7b) | 14 | small explosion |
 | 7 | helicopter | 15 | big explosion |
+
+On the title and the menu pages (Stage 16) bank 1 holds the title palette and bank 2 the text palette
+(`textpage.asm`); the text uses the landscape glyph area `$40000` (char `$1000`, 16×15 glyphs), which every game
+start fills again from attic RAM.
 
 While the shop is open (Stage 3b), banks 13–15 hold the shop palettes (normal, dimmed, highlight); no objects
 exist then. They are restored from the game palette when the shop closes.
@@ -188,9 +197,11 @@ integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1
 | `$80A0000–$80AFFFF` | Stage 14: level-4 pack (`L4GFX`, `L4DAT`, `L4DEST`, `MUS4`) |
 | `$80B0000` | Stage 14: level-4 boss (`L4BOSS`, mech; all bosses 237 glyphs + palette, 15,216 bytes each) |
 | `$80C0000` | Stage 14: level-4 enemy set (`ENEM4`) |
-| `$80D0000` | Stage 15: level-transition pictures (`TRANS`, 39,024 bytes: per picture glyphs, glyph map, attribute map; offsets in `trans_data.inc`) |
+| `$80D0000` | Stage 15: level-transition pictures (`TRANS`: per picture glyphs, glyph map, attribute map; offsets in `trans_data.inc`; Stage 16: + the 6-px font, 512 bytes at `TR_FONT_OFS`; 39,536 bytes) |
 | `$80E0000` | Stage 15: copy of the shop glyphs (`SHOP_GLYPHS` × 64 bytes), restored after a transition picture |
-| `$80F0000–` | free |
+| `$80F0000` | Stage 16: menu overlay `HIMENU` (with the current high-score list while the game runs) |
+| `$80F8000` | Stage 16: the bank-0 game code under the overlay while the menu code is in |
+| `$8100000–` | free |
 
 Stage 15, palettes: while a level transition runs, the screen shows palette 2 (`$D070` bits 5–4 = 2, `pal_show` =
 `$20`, ORed into every `$D070` write of `video.asm`/`special.asm`); palette 0 keeps the real colours and gets the next
@@ -204,4 +215,6 @@ Detected at start (two patterns written by DMA and read back). Without attic RAM
 
 ## Files on the D81 (Stage 13)
 
-`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS`, `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `L3GFX`, `L3DAT`, `L3DEST`, `L3BOSS`, `L4GFX`, `L4DAT`, `L4DEST`, `L4BOSS`, `ENEM0`, `ENEM3`, `ENEM4`, `SPRITES`, `MUS2`, `MUS3`, `MUS4`, Stage 15: `PIXIES3`, `TRANS` (SEQ). Stage 14: the player sprite frames (`SPRITES`, 3 KB) are loaded straight to `SPRITE_ADDR` instead of being part of the PRG.
+`SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS`, `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `L3GFX`, `L3DAT`, `L3DEST`, `L3BOSS`, `L4GFX`, `L4DAT`, `L4DEST`, `L4BOSS`, `ENEM0`, `ENEM3`, `ENEM4`, `SPRITES`, `MUS2`, `MUS3`, `MUS4`, Stage 15: `PIXIES3`, `TRANS` (SEQ), Stage 16:
+`HIMENU` (SEQ); written by the game: `SH65HI.DAT` (high-score list), `SH65HI.BAK` (previous list), temporarily
+`SH65HI.TMP`. Stage 14: the player sprite frames (`SPRITES`, 3 KB) are loaded straight to `SPRITE_ADDR` instead of being part of the PRG.
