@@ -101,6 +101,8 @@ boss_reset:
     sta boss_req
     sta ball_on                 // Stage 17
     sta ball_next
+    sta ball_wreck              // Stage 17b
+    sta bl_vis
     rts
 
 // ============================================================== per frame
@@ -543,11 +545,18 @@ hv_touch:
     lda #SFX_BOMB               // the jet ignites
     jsr sfx_play
 !hit:
+    jsr hv_burn
+    jmp boss_touch
+hv_len: .byte 0, HV_WARN, HV_BURN, HV_FADE
+
+// jet: grow/shrink one step; the player in the flame (boss x + fx_flx, boss y + fx_fly, 16 wide) takes damage
+// (Stage 17b: a subroutine, also used by the level-4 sphere)
+hv_burn:
     jsr hv_grow
     lda hv_seg                  // jet (growing or fading): the player in the flame takes damage
-    beq !touch+
+    beq !rts+
     lda pl_state
-    bne !touch+
+    bne !rts+
     clc                         // player centre x - (boss x + flame x) in 0..15
     lda pl_x
     adc #PL_HIT_CX
@@ -568,10 +577,10 @@ hv_touch:
     sta tmp
     lda tmp+1
     sbc tmp2+1
-    bne !touch+
+    bne !rts+
     lda tmp
     cmp #16
-    bcs !touch+
+    bcs !rts+
     lda hv_seg                  // length of the jet: segments * 24 + 8
     asl
     asl
@@ -591,14 +600,13 @@ hv_touch:
     adc #PL_HIT_CY
     sec
     sbc tmp
-    bcc !touch+
+    bcc !rts+
     cmp tmp2
-    bcs !touch+
+    bcs !rts+
     lda #12
-    jsr player_damage
-!touch:
-    jmp boss_touch
-hv_len: .byte 0, HV_WARN, HV_BURN, HV_FADE
+    jmp player_damage
+!rts:
+    rts
 
 // carrier (Stage 13): every 2-5 s a jet takes off from the catapult (hv_jt < 24: launch views in hv_draw) and
 // flies at the player like a fire shot (it cannot be shot down)
@@ -899,6 +907,15 @@ boss_dying:
     cmp #BOSS_DIE / 2           // the wreck disappears (boss_draw): the turret wrecks go with it
     bne !+
     jsr boss_parts_away
+    lda ball_next               // Stage 17b: level 4 - big explosions cover the mech (it is no longer drawn) ...
+    beq !+
+    jsr ball_cover
+!:  lda boss_t
+    cmp #BOSS_DIE / 2 + 3       // ... and when no display list shows it any more, its glyphs become the wreck
+    bne !+
+    lda ball_next
+    beq !+
+    jsr ball_wreck_in
 !:  lda boss_t
     cmp #BOSS_DIE
     bcc !rts+
@@ -917,6 +934,8 @@ boss_dying:
     jmp ball_start
 !:  lda #0
     sta ball_on
+    sta ball_wreck
+    sta bl_vis
     jsr boss_restore
     lda boss_spd
     sta scroll_spd
@@ -1386,7 +1405,11 @@ boss_draw:
     cmp #BS_ENTER
     bcs !+
     rts
-!:  cmp #BS_DIE                 // the wreck disappears halfway through the explosions
+!:  lda ball_on                 // Stage 17b: level 4 after the mech - wreck, sphere, flame column (ball.asm)
+    beq !+
+    jmp ball_draw
+!:  lda boss_state
+    cmp #BS_DIE                 // the wreck disappears halfway through the explosions
     bne !+
     lda boss_t
     cmp #BOSS_DIE / 2
@@ -1403,11 +1426,7 @@ boss_draw:
     ldy #FR_BOSS_BODY
     lda frame_pal,y
     sta px_pal
-    lda ball_on                 // Stage 17: the sphere
-    beq !+
-    lda bl_fr
-    jmp pixie_draw
-!:  lda fx_flame                // the mech (flame and missiles, level 4): legs under the body (Stage 14h)
+    lda fx_flame                // the mech (flame and missiles, level 4): legs under the body (Stage 14h)
     and fx_cat
     sta bd_legs
     beq bd_body

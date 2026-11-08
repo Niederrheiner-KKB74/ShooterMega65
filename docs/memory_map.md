@@ -201,7 +201,7 @@ integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1
 | `$80E0000` | Stage 15: copy of the shop glyphs (`SHOP_GLYPHS` × 64 bytes), restored after a transition picture |
 | `$80F0000` | Stage 16: menu overlay `HIMENU` (with the current high-score list while the game runs) |
 | `$80F8000` | Stage 16: the bank-0 game code under the overlay while the menu code is in |
-| `$8100000` | Stage 17: `L4BALL`, the level-4 boss's third phase (157 glyphs, palette, hit-flash palette; 10,144 bytes); copied over the boss glyph area when the mech is destroyed |
+| `$8100000` | Stage 17: `L4BALL`, the level-4 boss's third phase (Stage 17b: image of the boss room, 298 of 324 glyphs: sphere, mech wreck 128×80, flame frames at the places of `FR_BOSS_FLAME0-2`; palette, hit-flash palette; 19,168 bytes); copied over the boss glyph area halfway through the mech's death explosions |
 | `$8110000–` | free |
 
 Stage 15, palettes: while a level transition runs, the screen shows palette 2 (`$D070` bits 5–4 = 2, `pal_show` =

@@ -323,6 +323,7 @@ so `RUN` works again after an exit.
 | 07.11.2026 | Stage 14f: the drone's hull rolls with the banking (narrower deck towards the lowered side, side wall on the raised side, deck lighting, hidden pod and shorter barrel on the lowered side) |
 | 07.11.2026 | Stage 14g: all level-4 enemies except the jets and the final boss redrawn by Claude (`tools/pixel_vector.py`, scripts in the asset `source/` folders): attack helicopter, gunship (bomber slots, palette `gunship`), small four-legged mech, walker (24 hits), four-legged boss mech (feet as `rotors`, missiles via the catapult, flame); level 4 fires less, 16 guns |
 | 07.11.2026 | Stage 14g confirmed for difficulty. Stage 14h: boss legs as 32×48 leg frames beside the hull, drawn before the body for legged bosses (`bd_rotors`, `bd_legs`); flame as a straight column |
+| 08.11.2026 | Stage 17 confirmed (bomb colours, sphere). Stage 17b: level-3 sea variant C (owner chose it from a preview video: 64×32 swell block, 6-colour cycle over two index ranges, calm water at coasts and features); final boss: wreck field where the mech falls, sphere hidden in explosions, flame column instead of the fire-shot stream |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
@@ -608,6 +609,34 @@ Requests while the plane is destroyed or inside the shop are dropped.
   `BOSS_TEST`: 8) can be hit, also by bombs; hatch closes (24), rolls again. The core's last hit point → `BS_DIE`
   with the sphere, then LEVEL CLEAR as before. A lost plane restarts at the checkpoint with the mech again.
 - Bomb flash fix: `palette_init` after the flash also overwrote banks 5/6 during a boss fight (boss partly red).
+
+## 22e. Wreck field, hidden appearance, flame column; the new sea (Stage 17b)
+- Owner: the mech vanished without a trace, the sphere came out of nothing, its fire stream looked worse than the
+  flame of the earlier bosses. Now, halfway through the mech's death explosions (`BOSS_DIE/2`): four big
+  explosions cover the body and the mech is no longer drawn (`ball_cover`); three frames later, when no RRB display
+  list shows it any more (double buffering: swapping at once flashed sphere glyphs for a frame in XEMU), `L4BALL`
+  is copied into the boss area (`ball_wreck_in`) and the **wreck** (`FR_BALL_WRECK`, 128×80: the mech's legs, body
+  and destroyed turrets, burnt, torn, blown-out core crater, small fires, debris around it) lies where the mech
+  fell (`wk_x/wk_y`) until the level is clear. It smoulders: a small explosion on it every 0.5–1 s.
+- At the end of the explosions four big explosions fill the crater and the sphere is in it (`ball_start`); it rolls
+  down out of the wreck (`BL_EMERGE`, 44 frames), then rolls as before.
+- Flame column: instead of the stream of fire shots the sphere rolls over the player (`BL_AIM`, also to y 56,
+  at most 3 s), opens, warns (small flickering flame in the hatch) and fires the hover bosses' flame thrower straight
+  down: `hv_burn` (grow, sweep after the player at 0.5 px/frame, damage) and `hv_draw`, with `fx_flx/fx_fly` set to
+  the hatch (16, 26), `fx_xmax` 240, no dust, no deck jets. The jet's damage test moved from `hv_flame` into the
+  subroutine `hv_burn` (unchanged for the hover tank and the carrier).
+- `L4BALL` is an image of the whole boss room (298 of 324 glyphs): the mech's flame frames stay at the glyph places
+  of `FR_BOSS_FLAME0-2` (colours mapped to the sphere palette), the sphere and wreck frames fill the gaps
+  (`tools/import_art.py`). The room beyond the mech's 237 glyphs holds aircraft glyphs, which `set_in` brings back.
+- Level 3, sea (`assets/art/level3/source/claude_sea.py`, owner chose variant C of a preview video): the open sea is
+  one 64×32 px swell block (8 tiles, map cell → block tile by column % 4 and row % 2); moving pixels carry the
+  6 colours 9, 10, 11, 12, 1, 2 of a wave profile, so the crests travel when `cycle_frame` rotates them. The
+  colour list now has a second range (level header +30/+31 `first2/count2`, `animations.json` "cycle"). The swell
+  only joins itself, so coast transitions and features (oil, wakes, buoy, pipe, turbines) get calm water with swell
+  pixels dithered in towards their border; coasts get a smoothed coastline with a 1-px rim. A first attempt that
+  gave them the swell of their most frequent block position showed seams; a 16-px swell (joins everywhere)
+  looked like stripes. Tile budget: 124 of 126; unused now `free_blue`, `shelf1`, `edge6`, `edge9`, `edge15`,
+  `island6`, `island9`.
 
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?

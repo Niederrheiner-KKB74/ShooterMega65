@@ -7,6 +7,9 @@ Frames (palette `ball`, light from the top left, 1 px dark outline):
   open_1..3   48x48  the iris hatch opening (slits, small hole, wide hole with a glowing rim)
   core_0, 1   16x16  the core (a separate target object in the hole): steady / bright warning pulse
   none        16x16  empty (the core while the hatch is shut)
+  wreck       128x80 the destroyed mech (Stage 17b): legs, body and shot-up turrets of the mech artwork, burnt,
+                     torn open, with small fires and a field of debris around it; drawn where the mech fell
+  flame_0..2  16x32  the mech's flame-thrower frames, colours mapped to this palette (the sphere's flame column)
 
     python3 assets/art/boss-level4/source/claude_ball.py
 
@@ -20,6 +23,7 @@ import numpy as np
 from PIL import Image
 
 GEN = Path(__file__).resolve().parents[1] / 'generated'
+WRECK_COLS = [1, 2, 3, 4, 13, 14, 7]               # what a burnt mech may become (no bright steel)
 PAL = [(0, 0, 0), (12, 14, 22), (40, 48, 60), (70, 82, 98), (108, 122, 140), (156, 170, 188), (212, 222, 234),
        (110, 20, 18), (180, 36, 30), (236, 80, 56), (248, 150, 40), (255, 220, 90), (255, 250, 220),
        (26, 12, 12), (74, 26, 18), (90, 160, 220)]
@@ -100,6 +104,93 @@ def core(bright):
     return img
 
 
+def mech():
+    src = {f['id']: np.frombuffer(bytes.fromhex(''.join(f['rows'])), np.uint8).reshape(f['height'], f['width'])
+           for f in json.loads((GEN / 'indexed-source.json').read_text())}
+    raw = (GEN / 'palette.rgb').read_bytes()
+    return src, np.array([list(raw[i:i + 3]) for i in range(0, 48, 3)], float)
+
+
+def nearest(rgb, cols):
+    return min(cols, key=lambda i: ((np.array(PAL[i], float) - rgb) ** 2).sum())
+
+
+def flame(src, mpal, n):
+    a = src[f'flame_{n}']
+    return np.vectorize(lambda v: nearest(mpal[v], range(1, 16)) if v else 0)(a).astype(np.uint8)
+
+
+def wreck(src, mpal):
+    """the mech as it lies after the explosions: 128x80 (mech at 8, 4)"""
+    W, H, X0, Y0 = 128, 80, 8, 4
+    idx = np.zeros((H, W), np.uint8)                      # mech palette indices, composited as the game draws it
+    pl = json.loads((GEN / 'placement.json').read_text())
+
+    def blit(a, x, y):
+        for yy in range(a.shape[0]):
+            for xx in range(a.shape[1]):
+                if a[yy, xx] and 0 <= y + yy < H and 0 <= x + xx < W:
+                    idx[y + yy, x + xx] = a[yy, xx]
+    legs = {r['id']: r['offset'] for r in pl['rotors']}
+    sag = {'leg_ne': (3, 5), 'leg_sw': (-2, 2), 'leg_se': (1, -1), 'leg_nw': (-3, 1)}    # legs buckled
+    for lid in ('leg_ne', 'leg_nw', 'leg_se', 'leg_sw'):
+        ox, oy = legs[lid]
+        blit(src[('rotor_0', 'rotor_1', 'rotor_2')[len(lid) % 3]], X0 + ox + sag[lid][0], Y0 + oy + sag[lid][1])
+    blit(src['body'], X0, Y0 + 2)                          # the body sank a little
+    for t in pl['turrets']:
+        blit(src[t['destroyed']], X0 + t['offset'][0], Y0 + 2 + t['offset'][1])
+    mask = idx > 0
+    rgb = mpal[idx]
+    grey = rgb.mean(axis=2, keepdims=True)
+    rgb = (rgb * 0.4 + grey * 0.6) * 0.6                   # burnt: little colour, dark
+    rng = np.random.default_rng(17)
+    out = np.zeros((H, W), np.uint8)
+    for y in range(H):
+        for x in range(W):
+            if mask[y, x]:
+                out[y, x] = nearest(rgb[y, x], WRECK_COLS)
+    cx, cy = X0 + 56, Y0 + 34                              # the core blew out: a burnt crater
+    for y in range(H):
+        for x in range(W):
+            r = math.hypot((x - cx) / 1.3, y - cy)
+            if mask[y, x] and r < 13 + rng.normal(0, 1.2):
+                out[y, x] = 13 if r < 7 else (1 if r < 10 else 14)
+    for _ in range(26):                                    # tears and scorch lines
+        x, y = int(rng.integers(X0, X0 + 112)), int(rng.integers(Y0, Y0 + 68))
+        dx, dy = int(rng.integers(-1, 2)), int(rng.integers(-1, 2)) or 1
+        for k in range(int(rng.integers(3, 10))):
+            xx, yy = x + k * dx, y + k * dy
+            if 0 <= xx < W and 0 <= yy < H and out[yy, xx]:
+                out[yy, xx] = 0 if k % 4 == 1 and rng.random() < 0.5 else 13
+    for _ in range(46):                                    # debris thrown around (outside the mech)
+        a = rng.uniform(0, 2 * math.pi)
+        d = rng.uniform(0.85, 1.25)
+        x = int(cx + math.cos(a) * 62 * d)
+        y = int(cy + math.sin(a) * 38 * d)
+        size = int(rng.integers(1, 4))
+        col = int(rng.choice([2, 3, 3, 14, 13]))
+        for k in range(size + 1):
+            xx, yy = x + int(rng.integers(0, size + 1)), y + int(rng.integers(0, 2))
+            if 0 <= xx < W and 0 <= yy < H and not out[yy, xx]:
+                out[yy, xx] = col
+                if 0 <= yy + 1 < H and not out[yy + 1, xx]:
+                    out[yy + 1, xx] = 1                    # its shadow
+    for _ in range(6):                                     # small fires
+        x, y = int(rng.integers(X0 + 16, X0 + 96)), int(rng.integers(Y0 + 10, Y0 + 56))
+        for k in range(26):
+            dx, dy = rng.normal(0, 1.6), -abs(rng.normal(0, 2.6))
+            xx, yy = int(x + dx), int(y + dy)
+            if 0 <= xx < W and 0 <= yy < H and out[yy, xx]:
+                r = abs(dx) + abs(dy) * 0.5
+                out[yy, xx] = 11 if r < 0.8 else (10 if r < 1.8 else (9 if r < 2.8 else 8))
+    o2 = out.copy()                                        # outline where the wreck meets the ground
+    for y in range(H):
+        for x in range(W):
+            if out[y, x] == 0 and mask[max(0, y - 1), x] and y > 0 and out[y - 1, x]:
+                o2[y, x] = 1
+    return o2
+
+
 def lighten(c, f=0.55):
     return tuple(int(v + (255 - v) * f) for v in c)
 
@@ -114,6 +205,10 @@ def main():
     frames['core_0'] = core(False)
     frames['core_1'] = core(True)
     frames['none'] = np.zeros((16, 16), np.uint8)
+    src, mpal = mech()
+    frames['wreck'] = wreck(src, mpal)
+    for n in range(3):
+        frames[f'flame_{n}'] = flame(src, mpal, n)
     data = {'palette': [list(c) for c in PAL],
             'flash_palette': [list(lighten(c)) for c in PAL],
             'frames': [{'id': k, 'width': a.shape[1], 'height': a.shape[0],
@@ -121,9 +216,9 @@ def main():
     (GEN / 'ball.json').write_text(json.dumps(data, indent=1) + '\n')
     z = 5
     keys = ['roll_0', 'roll_1', 'roll_2', 'roll_3', 'open_1', 'open_2', 'open_3']
-    img = Image.new('RGB', ((52 * len(keys) + 2 * 20) * z, 52 * z), (44, 48, 54))
+    img = Image.new('RGB', ((52 * len(keys) + 2 * 20 + 132 + 3 * 20) * z, 84 * z), (44, 48, 54))
     x = 0
-    for k in keys + ['core_0', 'core_1']:
+    for k in keys + ['core_0', 'core_1', 'wreck', 'flame_0', 'flame_1', 'flame_2']:
         a = frames[k]
         for yy in range(a.shape[0]):
             for xx in range(a.shape[1]):

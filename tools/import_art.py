@@ -562,25 +562,46 @@ def main(out):
     # ------------------------------------------------------------ level-4 boss phase 3 (Stage 17), file L4BALL
     # The rolling sphere (assets/art/boss-level4/source/claude_ball.py) replaces the mech's glyphs in the boss area
     # when the mech is destroyed: glyphs, then its palette and the lightened hit-flash palette (bank 5 / 6).
+    # Stage 17b: the file is an image of the whole boss area. The mech's flame frames (FR_BOSS_FLAME0-2, the sphere's
+    # flame column) stay at their glyph places, in the sphere's colours; the sphere and the wreck fill the gaps.
     bj = json.loads((BOSS4 / 'ball.json').read_text())
     bsrc = {f['id']: np.array([[int(c, 16) for c in r] for r in f['rows']], np.uint8) for f in bj['frames']}
-    ballg = [bytes(64)]
+    names_all = {t['name']: t for t in table}
+    area = [bytes(64)] * (swap_end - swap0)              # the whole room (the aircraft come back afterwards)
+    used = [False] * len(area)
+    used[0] = True
+    for n in range(3):
+        t = names_all[f'BOSS_FLAME{n}']
+        a = np.zeros(ref[f'flame_{n}'], np.uint8)
+        f = bsrc[f'flame_{n}']
+        a[:f.shape[0], :f.shape[1]] = f
+        o = t['base'] - swap0
+        for c in range(t['w']):
+            for i in range(t['h']):
+                area[o + c * (t['h'] + 1) + i] = ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16])
+        for k in range(o - 1, o + t['w'] * (t['h'] + 1)):        # its glyphs and the blank guards around them
+            used[k] = True
     for name, sid in [(f'BALL_ROLL{n}', f'roll_{n}') for n in range(4)] + \
                      [(f'BALL_OPEN{n}', f'open_{n}') for n in (1, 2, 3)] + \
-                     [('BALL_CORE0', 'core_0'), ('BALL_CORE1', 'core_1'), ('BALL_NONE', 'none')]:
+                     [('BALL_CORE0', 'core_0'), ('BALL_CORE1', 'core_1'), ('BALL_NONE', 'none'),
+                      ('BALL_WRECK', 'wreck')]:
         a = bsrc[sid]
         h, w = a.shape[0] // 8, a.shape[1] // 16
-        base = swap0 + len(ballg)
+        need = w * (h + 1)
+        o = next((k for k in range(1, len(area) - need + 1) if not any(used[k:k + need]) and used[k - 1]), None)
+        assert o is not None, f'sphere frame {name} does not fit into the boss area'
         for c in range(w):
             for i in range(h):
-                ballg.append(ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
-            ballg.append(bytes(64))
-        table.append(dict(name=name, base=base, w=w, h=h, pal=(BOSS_BANK << 4) | 15, hit=hitbox(a)))
+                area[o + c * (h + 1) + i] = ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16])
+        for k in range(o, o + need):
+            used[k] = True
+        table.append(dict(name=name, base=swap0 + o, w=w, h=h, pal=(BOSS_BANK << 4) | 15, hit=hitbox(a)))
+    ballg = area[:max(k for k in range(len(area)) if used[k]) + 1]
     assert swap0 + len(ballg) <= swap_end, f'sphere glyphs ({len(ballg)}) exceed the aircraft area'
     ballfile = b''.join(ballg) + bytes(ph.swap(c[ch]) for ch in range(3) for c in bj['palette']) + \
         bytes(ph.swap(c[ch]) for ch in range(3) for c in bj['flash_palette'])
     (out / 'L4BALL').write_bytes(ballfile)
-    report.append(f'boss 4 sphere: {len(ballg)} glyphs')
+    report.append(f'boss 4 sphere and wreck: {sum(used)} of {len(ballg)} glyphs')
     gun_consts[0:0] = [f'.const BALL_GLYPHS={len(ballg)}', f'.const BALL_FILE_BYTES={len(ballfile)}']
     for key, pre in (('ground_gun', 'gun'), ('heavy_gun', 'hgun')):
         mz = gt[key]['muzzle']
