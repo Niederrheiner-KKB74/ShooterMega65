@@ -2,47 +2,47 @@
   "tiles": [
     {
       "id": 0,
-      "name": "sand0",
+      "name": "dune_b00",
       "palette": "nature"
     },
     {
       "id": 1,
-      "name": "sand1",
+      "name": "dune_b10",
       "palette": "nature"
     },
     {
       "id": 2,
-      "name": "sand2",
+      "name": "dune_b20",
       "palette": "nature"
     },
     {
       "id": 3,
-      "name": "sand3",
+      "name": "dune_b30",
       "palette": "nature"
     },
     {
       "id": 4,
-      "name": "sand4",
+      "name": "dune_b01",
       "palette": "nature"
     },
     {
       "id": 5,
-      "name": "sand5",
+      "name": "dune_b11",
       "palette": "nature"
     },
     {
       "id": 6,
-      "name": "sand6",
+      "name": "dune_b21",
       "palette": "nature"
     },
     {
       "id": 7,
-      "name": "sand7",
+      "name": "dune_b31",
       "palette": "nature"
     },
     {
       "id": 8,
-      "name": "sand8",
+      "name": "dune_b02",
       "palette": "nature"
     },
     {
@@ -112,13 +112,13 @@
     },
     {
       "id": 22,
-      "name": "cliff6",
+      "name": "dune_b12",
       "palette": "nature"
     },
     {
       "id": 23,
-      "name": "bank6",
-      "palette": "water"
+      "name": "dune_b22",
+      "palette": "nature"
     },
     {
       "id": 24,
@@ -142,13 +142,13 @@
     },
     {
       "id": 28,
-      "name": "cliff9",
+      "name": "dune_b32",
       "palette": "nature"
     },
     {
       "id": 29,
-      "name": "bank9",
-      "palette": "water"
+      "name": "dune_b03",
+      "palette": "nature"
     },
     {
       "id": 30,
@@ -262,7 +262,7 @@
     },
     {
       "id": 52,
-      "name": "salt_flat",
+      "name": "dune_b13",
       "palette": "nature"
     },
     {
@@ -272,7 +272,7 @@
     },
     {
       "id": 54,
-      "name": "red_scree",
+      "name": "dune_b23",
       "palette": "nature"
     },
     {
@@ -282,23 +282,23 @@
     },
     {
       "id": 56,
-      "name": "shaded_boulders",
+      "name": "dune_b33",
       "palette": "nature"
     },
     {
       "id": 57,
-      "name": "road12",
-      "palette": "structures"
+      "name": "rocksA_00",
+      "palette": "nature"
     },
     {
       "id": 58,
-      "name": "road13",
-      "palette": "structures"
+      "name": "rocksA_10",
+      "palette": "nature"
     },
     {
       "id": 59,
-      "name": "road14",
-      "palette": "structures"
+      "name": "rocksA_01",
+      "palette": "nature"
     },
     {
       "id": 60,
@@ -307,23 +307,23 @@
     },
     {
       "id": 61,
-      "name": "pipe1",
-      "palette": "structures"
+      "name": "rocksA_11",
+      "palette": "nature"
     },
     {
       "id": 62,
-      "name": "pipe2",
-      "palette": "structures"
+      "name": "rocksB_00",
+      "palette": "nature"
     },
     {
       "id": 63,
-      "name": "pipe3",
-      "palette": "structures"
+      "name": "rocksB_10",
+      "palette": "nature"
     },
     {
       "id": 64,
-      "name": "pipe4",
-      "palette": "structures"
+      "name": "rocksB_20",
+      "palette": "nature"
     },
     {
       "id": 65,
@@ -332,8 +332,8 @@
     },
     {
       "id": 66,
-      "name": "pipe6",
-      "palette": "structures"
+      "name": "rocksB_01",
+      "palette": "nature"
     },
     {
       "id": 67,
@@ -342,13 +342,13 @@
     },
     {
       "id": 68,
-      "name": "pipe8",
-      "palette": "structures"
+      "name": "rocksB_11",
+      "palette": "nature"
     },
     {
       "id": 69,
-      "name": "pipe9",
-      "palette": "structures"
+      "name": "rocksB_21",
+      "palette": "nature"
     },
     {
       "id": 70,
@@ -357,13 +357,13 @@
     },
     {
       "id": 71,
-      "name": "pipe11",
-      "palette": "structures"
+      "name": "rocksC_00",
+      "palette": "nature"
     },
     {
       "id": 72,
-      "name": "pipe12",
-      "palette": "structures"
+      "name": "rocksC_10",
+      "palette": "nature"
     },
     {
       "id": 73,
@@ -372,12 +372,12 @@
     },
     {
       "id": 74,
-      "name": "pipe14",
-      "palette": "structures"
+      "name": "rocksC_20",
+      "palette": "nature"
     },
     {
       "id": 75,
-      "name": "pipe15",
+      "name": "yard_b00",
       "palette": "structures"
     },
     {
@@ -387,12 +387,12 @@
     },
     {
       "id": 77,
-      "name": "bridge_end",
+      "name": "yard_b10",
       "palette": "structures"
     },
     {
       "id": 78,
-      "name": "yard",
+      "name": "yard_b20",
       "palette": "structures"
     },
     {
@@ -402,7 +402,7 @@
     },
     {
       "id": 80,
-      "name": "gravel",
+      "name": "yard_b30",
       "palette": "structures"
     },
     {

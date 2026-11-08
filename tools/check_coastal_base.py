@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parents[1];BASE=ROOT/'assets/art/coastal-base/gene
 def main():
     lv=json.loads((ROOT/'levels/coastal_base.json').read_text());rows=build_level.expand_map(lv['map'])
     assert len(rows)==375 and all(len(r)==21 for r in rows)
-    assert len(set(tuple(r) for r in rows))<=256
+    assert len(set(tuple(r) for r in rows))<=512   # Stage 18b: level format 3
     gfx=(BUILD/'LCGFX').read_bytes();dat=(BUILD/'LCDAT').read_bytes()
     assert len(gfx)<=16384 and len(dat)<=16384 and gfx[:2]==b'SG' and dat[:2]==b'SL'
     ntiles=(len(gfx)-196)//128

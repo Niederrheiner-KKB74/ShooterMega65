@@ -24,7 +24,7 @@ PALETTES = ('water', 'nature', 'structures', 'fixed_targets')
 MAX_TILES = 128
 MAX_DEST = 48
 BOSS_ROOM = 324                 # glyphs of the fighter, bomber, helicopter and armoured-plane area (Stage 9b)
-MAX_ROWS_DELIVERED = 240        # different map rows; room for the palms of tools/decorate_level2.py
+MAX_ROWS_DELIVERED = 512        # Stage 18b: level format 3 (16-bit row indices); was 240
 TURRETS = ['nw', 'ne', 'sw', 'se']
 
 errors, notes = [], []

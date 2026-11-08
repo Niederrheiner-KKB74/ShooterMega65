@@ -2,47 +2,47 @@
   "tiles": [
     {
       "id": 0,
-      "name": "sea0",
+      "name": "sea_b0",
       "palette": "water"
     },
     {
       "id": 1,
-      "name": "grass0",
+      "name": "canopy_b31",
       "palette": "nature"
     },
     {
       "id": 2,
-      "name": "sea1",
+      "name": "sea_b1",
       "palette": "water"
     },
     {
       "id": 3,
-      "name": "forest0",
+      "name": "wood_b20",
       "palette": "nature"
     },
     {
       "id": 4,
-      "name": "forest1",
+      "name": "wood_b30",
       "palette": "nature"
     },
     {
       "id": 5,
-      "name": "forest2",
+      "name": "wood_b01",
       "palette": "nature"
     },
     {
       "id": 6,
-      "name": "forest3",
+      "name": "wood_b11",
       "palette": "nature"
     },
     {
       "id": 7,
-      "name": "forest4",
+      "name": "wood_b21",
       "palette": "nature"
     },
     {
       "id": 8,
-      "name": "forest5",
+      "name": "wood_b31",
       "palette": "nature"
     },
     {
@@ -152,13 +152,13 @@
     },
     {
       "id": 30,
-      "name": "road9_1_0",
-      "palette": "structures"
+      "name": "meadow_b00",
+      "palette": "nature"
     },
     {
       "id": 31,
-      "name": "road9_0_1",
-      "palette": "structures"
+      "name": "meadow_b10",
+      "palette": "nature"
     },
     {
       "id": 32,
@@ -167,8 +167,8 @@
     },
     {
       "id": 33,
-      "name": "road12_0_0",
-      "palette": "structures"
+      "name": "meadow_b20",
+      "palette": "nature"
     },
     {
       "id": 34,
@@ -182,13 +182,13 @@
     },
     {
       "id": 36,
-      "name": "road12_1_1",
-      "palette": "structures"
+      "name": "meadow_b30",
+      "palette": "nature"
     },
     {
       "id": 37,
-      "name": "road7_0_0",
-      "palette": "structures"
+      "name": "meadow_b01",
+      "palette": "nature"
     },
     {
       "id": 38,
@@ -197,8 +197,8 @@
     },
     {
       "id": 39,
-      "name": "road7_0_1",
-      "palette": "structures"
+      "name": "meadow_b11",
+      "palette": "nature"
     },
     {
       "id": 40,
@@ -207,33 +207,33 @@
     },
     {
       "id": 41,
-      "name": "road15_0_0",
-      "palette": "structures"
+      "name": "meadow_b21",
+      "palette": "nature"
     },
     {
       "id": 42,
-      "name": "road15_1_0",
-      "palette": "structures"
+      "name": "meadow_b31",
+      "palette": "nature"
     },
     {
       "id": 43,
-      "name": "road15_0_1",
-      "palette": "structures"
+      "name": "canopy_b00",
+      "palette": "nature"
     },
     {
       "id": 44,
-      "name": "road15_1_1",
-      "palette": "structures"
+      "name": "canopy_b10",
+      "palette": "nature"
     },
     {
       "id": 45,
-      "name": "road1_0_0",
-      "palette": "structures"
+      "name": "canopy_b20",
+      "palette": "nature"
     },
     {
       "id": 46,
-      "name": "road1_1_0",
-      "palette": "structures"
+      "name": "canopy_b30",
+      "palette": "nature"
     },
     {
       "id": 47,
@@ -257,13 +257,13 @@
     },
     {
       "id": 51,
-      "name": "bridge_0_1",
-      "palette": "structures"
+      "name": "canopy_b01",
+      "palette": "nature"
     },
     {
       "id": 52,
-      "name": "bridge_1_1",
-      "palette": "structures"
+      "name": "canopy_b11",
+      "palette": "nature"
     },
     {
       "id": 53,
@@ -282,8 +282,8 @@
     },
     {
       "id": 56,
-      "name": "bridge_enter_1_1",
-      "palette": "structures"
+      "name": "canopy_b21",
+      "palette": "nature"
     },
     {
       "id": 57,
@@ -437,7 +437,7 @@
     },
     {
       "id": 87,
-      "name": "rocks",
+      "name": "wood_b10",
       "palette": "nature"
     },
     {
@@ -447,7 +447,7 @@
     },
     {
       "id": 89,
-      "name": "meadow",
+      "name": "wood_b00",
       "palette": "nature"
     },
     {

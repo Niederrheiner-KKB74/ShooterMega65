@@ -327,6 +327,7 @@ so `RUN` works again after an exit.
 | 08.11.2026 | Stage 17b: final boss accepted ("sehr gut"); sea still looked like a blinking area on the big screen. Stage 17c: narrower crests, softer 5-colour cycle every 12 frames, whitecaps with two flash rhythms |
 | 08.11.2026 | Stage 17c: music confirmed after the move, sea much better. Second sea preview; owner chose variant C (7.5 px) with the fine crest line of D: Stage 17d |
 | 08.11.2026 | Stage 17d confirmed, tagged `stage17-stable` by the owner. Stage 18: enemies also fire upwards (half the rate); ground guns' upward shots fixed. Next: a look at the backgrounds of levels 1 and 2 (monotone) |
+| 08.11.2026 | Previews for levels 1 and 2 accepted ("großartig"); owner chose option 1 (raise the row limit) and irregular forest outlines: Stage 18b, level format 3 (512 rows) |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
@@ -674,6 +675,30 @@ Requests while the plane is destroyed or inside the shop are dropped.
   removes them 32 px above the screen; `eshot_view` mirrors the slanted bolt views.
 - Ground guns turned towards a player above them but their shots still flew down (a bug): now they fire up, aimed
   (`aim_shot` handles upward shots), also at half the rate. Bosses unchanged.
+
+## 22i. Levels 1 and 2: big seamless patterns, irregular forests (Stage 18b)
+- Owner: levels 1 and 2 looked monotone (one grass tile, six forest tiles with trees at the same places, regular
+  rows of rock tiles). After a preview (single sections, then both complete levels) the owner chose the proposal:
+  big seamless patterns instead of single repeated tiles, irregular forest outlines, and - because the patterns
+  multiply the number of different map rows (a row exists once per position in the pattern) - a larger row limit.
+- Level format 3: the map's row list holds 16-bit indices into the row dictionary, so a level may have 512
+  different rows (was 256; `level_row` in `level.asm`, `MAX_ROWS` in `build_level.py`). Cost: 2 instead of 1 byte
+  per map row and 21 bytes per extra different row. `LnDAT` stays at most 10 KB: L1DAT 9,632, L2DAT 9,760 bytes.
+  Levels 3 and 4 unchanged (only +375 bytes each); level 1 in XEMU pixel-identical before the art change.
+- Level 1 (`assets/art/coastal-base/source/claude_terrain.py`): meadow 64x32 (8 tiles), forest canopy 64x32
+  (overlapping crowns, 8 tiles) inside the forest, forest edge (whole crowns on the meadow of the same block
+  position, 8 tiles), still sea 32x16 (2 tiles). Room: the 15 pixel-identical road/bridge tile pairs merged, the
+  old grass/forest/sea tiles, `rocks` and the dotted `meadow` patch: 26 tiles for 26. Forest outlines redrawn
+  within 3 cells of the old outline from the signed distance plus smooth noise (only meadow/forest cells; forest
+  area 2,791 -> 2,718 cells); 316 different rows. The map is written without `repeat` blocks.
+- Level 2 (`assets/art/level2/source/claude_desert.py`): dunes 64x64 (16 tiles; ripples, flat irregular crests
+  with lee shadow), three rock formations (2x2, 3x2, 3x1 tiles) that each sit only on one dune block position
+  (their tiles carry that dune background, so the dunes run on seamlessly) - 42 formations at random among the
+  anchor positions, boss yard as concrete plates 64x16 (4 tiles, palette structures). Room: 20 unused tiles, the 12
+  sand/scree/salt/boulder tiles and `yard`: 33 for 33; 316 different rows. `tools/decorate_level2.py` (palms, from
+  the ChatGPT phase) expects the old sand tiles and must not be run again.
+- Sea in level 1 stays still: an animation like level 3's would need free palette colours, and the water palette
+  of level 1 is full.
 
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
