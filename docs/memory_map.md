@@ -1,4 +1,4 @@
-# Memory map (Stage 16)
+# Memory map (Stage 17)
 
 All addresses are 28-bit physical addresses. The program keeps BASIC's SYS memory map (RAM below `$C000`,
 I/O at `$D000`, KERNAL above) and returns to BASIC with X or RUN/STOP (see `docs/design.md` §13).
@@ -41,7 +41,7 @@ not in the zero page.
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
-| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`, Stage 15 at `$A939`, Stage 16 at `$A333`: ring sprites in the file `SPRITES`, transition buffers at `$0800`, the menu code as an overlay) |
+| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`, Stage 15 at `$A939`, Stage 16 at `$A333`, Stage 17 at `$A808` (`ball.asm`, inside the overlay area): ring sprites in the file `SPRITES`, transition buffers at `$0800`, the menu code as an overlay) |
 
 ## Banks 4/5 (chip RAM)
 
@@ -201,7 +201,8 @@ integration must add its own address/region guards. See `docs/SCREENS_AND_LEVEL1
 | `$80E0000` | Stage 15: copy of the shop glyphs (`SHOP_GLYPHS` × 64 bytes), restored after a transition picture |
 | `$80F0000` | Stage 16: menu overlay `HIMENU` (with the current high-score list while the game runs) |
 | `$80F8000` | Stage 16: the bank-0 game code under the overlay while the menu code is in |
-| `$8100000–` | free |
+| `$8100000` | Stage 17: `L4BALL`, the level-4 boss's third phase (157 glyphs, palette, hit-flash palette; 10,144 bytes); copied over the boss glyph area when the mech is destroyed |
+| `$8110000–` | free |
 
 Stage 15, palettes: while a level transition runs, the screen shows palette 2 (`$D070` bits 5–4 = 2, `pal_show` =
 `$20`, ORed into every `$D070` write of `video.asm`/`special.asm`); palette 0 keeps the real colours and gets the next
@@ -216,5 +217,5 @@ Detected at start (two patterns written by DMA and read back). Without attic RAM
 ## Files on the D81 (Stage 13)
 
 `SHOOTER`, `MUSICTEST` (PRG), `SHOP`, `MUSIC`, `PIXIES`, `PIXIES2`, `TITLE`, `GOVER`, `L1GFX`, `L1DAT`, `L1DEST`, `L1BOSS`, `L2GFX`, `L2DAT`, `L2DEST`, `L2BOSS`, `L3GFX`, `L3DAT`, `L3DEST`, `L3BOSS`, `L4GFX`, `L4DAT`, `L4DEST`, `L4BOSS`, `ENEM0`, `ENEM3`, `ENEM4`, `SPRITES`, `MUS2`, `MUS3`, `MUS4`, Stage 15: `PIXIES3`, `TRANS` (SEQ), Stage 16:
-`HIMENU` (SEQ); written by the game: `SH65HI.DAT` (high-score list), `SH65HI.BAK` (previous list), temporarily
+`HIMENU` (SEQ), Stage 17: `L4BALL` (SEQ); written by the game: `SH65HI.DAT` (high-score list), `SH65HI.BAK` (previous list), temporarily
 `SH65HI.TMP`. Stage 14: the player sprite frames (`SPRITES`, 3 KB) are loaded straight to `SPRITE_ADDR` instead of being part of the PRG.

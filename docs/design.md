@@ -596,6 +596,19 @@ Requests while the plane is destroyed or inside the shop are dropped.
   shop glyphs than the 160 reserved.
 - Bank 0 freed: the ring sprites come with the file `SPRITES`; PRG ends at `$A333` (Stage 15: `$A939`).
 
+## 22d. Level-4 boss, third phase (Stage 17)
+- Owner: the final boss is too easy with full equipment. When the mech's core falls, its death explosions run as
+  before, then (`ball_next`) an armoured sphere rolls out of the wreck (`ball.asm`, artwork
+  `assets/art/boss-level4/source/claude_ball.py`). Its glyphs (file `L4BALL`, attic `$8100000`) replace the mech's
+  in the boss area, its palette and lightened hit-flash palette go to banks 5/6 (`boss_palette` knows `ball_on`).
+- The sphere (48×48, `boss_x/boss_y`, drawn by `boss_draw`) rolls in the upper half (y 16–92), bounces, picks a new
+  direction every 1–2 s and fires fans of five red shots. After 3–4 s it stops: hatch opens (24 frames), core pulses
+  with warning beeps (50), stream of fire shots every 2nd frame for 36 frames, all with the direction aimed at the
+  player when the stream starts; then open for 110 frames: only now the core (`T_BOSS`, `obj_kind` 5, 180 hp,
+  `BOSS_TEST`: 8) can be hit, also by bombs; hatch closes (24), rolls again. The core's last hit point → `BS_DIE`
+  with the sphere, then LEVEL CLEAR as before. A lost plane restarts at the checkpoint with the mech again.
+- Bomb flash fix: `palette_init` after the flash also overwrote banks 5/6 during a boss fight (boss partly red).
+
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
 3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
