@@ -369,7 +369,9 @@ level_row:
     sty lev_t
     jmp !wrap-
 !ok:
-    clc                         // dictionary index = rows[metarow]
+    asl lev_t                   // Stage 18b: dictionary index = rows[metarow], 16 bit (up to 512 rows)
+    rol lev_t+1
+    clc
     lda lev_offrows
     adc lev_t
     sta tmp2
@@ -378,11 +380,10 @@ level_row:
     sta tmp2+1
     jsr lev_read
     sta lev_t                   // index * 21 = index * 16 + index * 4 + index
-    lda #0
-    sta lev_t+1
-    lda lev_t
     sta lev_m
-    lda #0
+    jsr lev_inc
+    jsr lev_read
+    sta lev_t+1
     sta lev_m+1
     ldy #2
 !:  asl lev_m

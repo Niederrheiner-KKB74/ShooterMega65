@@ -26,6 +26,7 @@ MAX_FILE = 0x4000
 MAX_DAT = 0x2800                 # Stage 8: LnDAT stays at $50000-$527FF (behind it: heavy gun glyphs, PIXIES2)
 ANIM_MAX = 8                     # Stage 13: tile animations (anim.asm)
 ANIM_BUF = 128
+MAX_ROWS = 512                   # Stage 18b: different map rows (16-bit row indices; was 256)
 MAX_DEST = 48                    # destroyed tiles: 32 at $5E000 (char $1780), 16 in the last 32 pixie glyphs
 DEST_CHARS = (0x1780, 0x13E0)    # $4F800 (PIXIE_CHAR $11A0 + 576); see src/ground.asm
 # destroyable landscape targets (Stage 8): kind = index (hit points, points: src/ground.asm); 2x2 groups by name
@@ -187,15 +188,17 @@ def build(src, outdir, name):
     meta_id = {t: i for i, t in enumerate(used)}
     meta = b''.join(bytes((2 * t, 2 * t + 1, (tile_bank[t] << 4) | 0x0F)) for t in used)
     dict_rows, row_index = [], {}
-    rowlist = bytearray()
+    rowlist = bytearray()                           # Stage 18b: 16-bit indices, up to MAX_ROWS different rows
+    rowidx = []
     for row in rows:
         key = tuple(meta_id[t] for t in row)
         if key not in row_index:
             row_index[key] = len(dict_rows)
             dict_rows.append(key)
-        rowlist.append(row_index[key])
-    if len(dict_rows) > 256:
-        raise LevelError(f'{len(dict_rows)} different map rows, maximum 256')
+        rowidx.append(row_index[key])
+        rowlist += struct.pack('<H', row_index[key])
+    if len(dict_rows) > MAX_ROWS:
+        raise LevelError(f'{len(dict_rows)} different map rows, maximum {MAX_ROWS}')
 
     # ---------------- paths and formations
     path_names = list(lv.get('paths', {}))
@@ -313,7 +316,7 @@ def build(src, outdir, name):
     for p in paths:
         ptab += struct.pack('<H', off_code + len(code))
         code += p
-    header = struct.pack('<2sBBHHHHHHHHBHB', b'SL', 2, len(used), nrows, off_meta, off_dict, off_rows,
+    header = struct.pack('<2sBBHHHHHHHHBHB', b'SL', 3, len(used), nrows, off_meta, off_dict, off_rows,
                          off_events, off_forms, off_ptab, speed, len(dict_rows) & 0xFF, off_gt, len(dest_tab) // 3)
     header = (header + struct.pack('<H', off_anim) + cyc).ljust(hdr_len, b'\0')
     dat = header + meta + b''.join(bytes(r) for r in dict_rows) + bytes(rowlist) + bytes(events) + bytes(forms) + bytes(ptab) + bytes(code) + gt_block + bytes(anim)
@@ -334,7 +337,7 @@ def build(src, outdir, name):
     img = np.zeros((nrows * 16, COLS * 16, 3), np.uint8)
     for r in range(nrows):
         y0 = (nrows - 1 - r) * 16
-        drow = dat[off_dict + COLS * rowlist[r]:][:COLS]
+        drow = dat[off_dict + COLS * rowidx[r]:][:COLS]
         for c in range(COLS):
             top, bot, col = meta[3 * drow[c]:3 * drow[c] + 3]
             for half, g in ((0, top), (1, bot)):
@@ -355,7 +358,7 @@ def build(src, outdir, name):
     im.save(outdir / f'{name.lower()}_preview.png')
     report = [f'level {lv.get("name", name)}: {nrows} map rows ({nrows * 16} px, '
               f'{nrows * 16 / (speed / 256 * 50):.0f} s at {speed / 256} px/frame)',
-              f'metatiles {len(used)}, different rows {len(dict_rows)}/256, glyphs {ntiles * 2}',
+              f'metatiles {len(used)}, different rows {len(dict_rows)}/{MAX_ROWS}, glyphs {ntiles * 2}',
               f'events {len(lv["events"])}, formations {len(form_names)}, paths {len(paths)} ({len(code)} bytes)',
               f'{name}GFX {len(gfx)} bytes (max. {MAX_FILE}), {name}DAT {len(dat)} bytes (max. {MAX_DAT}), '
               f'{name}DEST {len(dest_glyphs)} bytes ({len(dest_tab) // 3} destroyed tiles)']
