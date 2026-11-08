@@ -26,7 +26,7 @@ s_cont:   .text "PRESS FIRE TO CONTINUE"
           .byte 0
 s_enter:  .text "ENTER YOUR NAME"
           .byte 0
-s_help:   .text "JOYSTICK OR KEYBOARD - FIRE: OK"
+s_help:   .text "UP/DOWN: LETTER  FIRE: NEXT  >: END"
           .byte 0
 s_saved:  .text "SAVED ON DISK"
           .byte 0
@@ -47,7 +47,8 @@ s_mis3:   .text "THE ENEMY FORCES ARE DEFEATED."
 s_final:  .text "FINAL SCORE"
           .byte 0
 s_pilot:  .text "PILOT     "
-pg_alpha: .text " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-!"
+pg_alpha: .text "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-! "
+          .byte $3c, $3e              // < delete, > end (joystick only, never stored)
 pg_alpha_end:
 
 // screen A with the logo rows, palettes, empty text block
@@ -334,7 +335,7 @@ hi_after_game:
     jsr pg_small
     lda #TC_GREY
     sta tp_c
-    lda #31
+    lda #35
     sta pg_key
     lda #<s_help
     ldx #>s_help
@@ -383,8 +384,12 @@ hi_after_game:
     rts
 
 // ============================================================== name entry
-// keyboard: letters, digits, space . - !, DEL, RETURN; joystick: up/down letter, left/right cursor, fire = OK
+// keyboard: letters, digits, space . - !, DEL, RETURN; joystick (arcade style, Stage 16b): up/down letter,
+// fire = accept and next position, '<' = back one position, '>' or fire on the 10th character = done;
+// left/right move the cursor
 name_entry:
+    lda #$41                    // the first position shows A
+    sta hi_name
     lda #0
     sta pg_cur
     sta pg_rep
@@ -396,6 +401,15 @@ name_entry:
     jmp !frame+
 ne_ret:
     jmp !done+                  // (branch trampoline)
+ne_fire:
+    jsr ne_accept
+    bcs ne_ret
+    lda #SFX_SELECT
+    jsr sfx_play
+    lda #8
+    sta pg_blink
+    jsr ne_draw
+    jmp !next+
 !frame:
     jsr wait_vblank
     jsr sound_frame
@@ -438,7 +452,7 @@ ne_ret:
     beq !+
     lda pg_prev
     and #$10
-    beq ne_ret
+    beq ne_fire
 !:  lda joy
     and #$0f
     bne !dir+
@@ -484,6 +498,15 @@ ne_ret:
     sta pg_prev
     jmp !frame-
 !done:
+    ldx #HI_NAME - 1            // characters a file may not hold (< > left behind) -> space
+!:  lda hi_name,x
+    jsr hi_allowed
+    bcc !ok+
+    lda #$20
+    sta hi_name,x
+!ok:
+    dex
+    bpl !-
     ldx #HI_NAME - 1            // empty name: PILOT
 !:  lda hi_name,x
     cmp #$20
@@ -499,6 +522,40 @@ ne_ret:
     jsr ne_copy
     lda #SFX_SELECT
     jmp sfx_play
+
+// fire: carry set = name complete
+ne_accept:
+    ldx pg_cur
+    lda hi_name,x
+    cmp #$3e                    // > end
+    bne !+
+    lda #$20
+    sta hi_name,x
+    sec
+    rts
+!:  cmp #$3c                    // < back
+    bne !+
+    lda #$20
+    sta hi_name,x
+    cpx #0
+    beq !keep+
+    dec pg_cur
+!keep:
+    clc
+    rts
+!:  cpx #HI_NAME - 1            // 10th character accepted: done
+    bcc !+
+    sec
+    rts
+!:  inc pg_cur
+    ldx pg_cur
+    lda hi_name,x
+    cmp #$20
+    bne !keep-
+    lda #$41                    // a new position starts with A
+    sta hi_name,x
+    clc
+    rts
 
 // character A at the cursor
 ne_put:
@@ -634,6 +691,7 @@ mission_page:
     lda fd_step
     cmp #17
     bne !-
+    RunDma(job_tp_font)         // the fade used $0800-$0BFF (fade_tab, pal_snap): font back for line 14
     lda #0
     sta pal_show
     lda #PALSEL_GAME
