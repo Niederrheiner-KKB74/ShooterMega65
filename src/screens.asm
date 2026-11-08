@@ -415,6 +415,10 @@ game_new:
     sta boss_req
     sta game_over_req
     sta level_clear_req         // Stage 15
+#if BALL_TEST
+    lda #1                      // test build (--define BALL_TEST): the boss comes at once
+    sta boss_req
+#endif
 #if TRANS_TEST
     lda #250                    // test build (build.py --define TRANS_TEST): level transition after 5 s
     sta level_clear_req

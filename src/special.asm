@@ -544,7 +544,12 @@ special_vblank:
 !done:
     rts
 !restore:
-    jmp palette_init
+    jsr palette_init
+    lda boss_state              // Stage 17: during a boss fight banks 5/6 hold the boss palette (boss.asm:
+    cmp #2                      // BS_ENTER = 2 and later; not while it waits for the sky to clear)
+    bcc !+
+    jmp boss_palette
+!:  rts
 
 // shimmer: white -> light cyan -> blue -> light cyan (nibble-swapped palette values)
 ring_r: .byte nswap(255), nswap(190), nswap(110), nswap(60), nswap(110), nswap(190)

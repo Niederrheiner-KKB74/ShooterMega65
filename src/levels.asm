@@ -139,6 +139,9 @@ levels_load:
     jsr trans_load              // Stage 15: transition pictures, shop glyph copy (transition.asm)
     bcc !+
     jmp lv_fail
+!:  jsr ball_load               // Stage 17: the level-4 boss's third phase (ball.asm)
+    bcc !+
+    jmp lv_fail
 !:  lda #'1'                    // names back for messages
     sta name_gfx+1
     sta name_dat+1

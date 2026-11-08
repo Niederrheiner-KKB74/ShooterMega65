@@ -92,6 +92,7 @@ def main():
     for n in (2, 3, 4):                              # level music pieces (Stage 9, 13, 14)
         level_files.append((f'MUS{n}', (ROOT / f'build/gen/MUS{n}').read_bytes(), d81.SEQ))
     level_files.append(('TRANS', (ROOT / 'build/gen/TRANS').read_bytes(), d81.SEQ))   # Stage 15
+    level_files.append(('L4BALL', (ROOT / 'build/gen/L4BALL').read_bytes(), d81.SEQ))  # Stage 17
     pixies2 = (ROOT / 'build/gen/PIXIES2').read_bytes()  # heavy gun (Stage 8), loaded to $52800
     pixies3 = (ROOT / 'build/gen/PIXIES3').read_bytes()  # diagonal enemy shots (Stage 15), loaded to $55200
     prg = out / f'{PRG_NAME}.PRG'

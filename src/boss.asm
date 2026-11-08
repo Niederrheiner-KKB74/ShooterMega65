@@ -43,6 +43,7 @@
 .const BS_FIGHT = 3
 .const BS_CORE = 4
 .const BS_DIE = 5
+.const BS_BALL = 6                 // Stage 17: level 4, phase 3 (ball.asm)
 
 boss_req:   .byte 0
 boss_state: .byte 0
@@ -98,6 +99,8 @@ boss_reset:
 !:  lda #0
     sta boss_state
     sta boss_req
+    sta ball_on                 // Stage 17
+    sta ball_next
     rts
 
 // ============================================================== per frame
@@ -125,6 +128,9 @@ boss_update:
 !:  cmp #BS_DIE
     bne !+
     jmp boss_dying
+!:  cmp #BS_BALL                // Stage 17: level 4, phase 3 (ball.asm)
+    bne !+
+    jmp ball_fight
 !:  jmp boss_fight
 
 // wait until no aircraft are left (or the time is up), then the boss arrives
@@ -906,6 +912,11 @@ boss_dying:
 !:  inx
     cpx #AIR_END
     bne !--
+    lda ball_next               // Stage 17: the mech is gone, the sphere rolls out (ball.asm)
+    beq !+
+    jmp ball_start
+!:  lda #0
+    sta ball_on
     jsr boss_restore
     lda boss_spd
     sta scroll_spd
@@ -962,6 +973,14 @@ upd_boss:
     cmp #BS_DIE
     bne !+
     rts
+!:  lda obj_kind,x              // Stage 17: the sphere's core only follows and flashes (ball.asm fires)
+    cmp #5
+    bne !+
+    jsr part_pos
+    lda obj_a,x
+    beq !f+
+    dec obj_a,x
+!f: jmp ball_core_frame
 !:  jsr part_pos
     lda obj_a,x                 // hit flash timer
     beq !+
@@ -1136,7 +1155,10 @@ as_sg: .byte 0
 // frame of part X: turrets aim south / south-east / south-west, destroyed view; core overlay
 part_frame:
     lda obj_kind,x
-    cmp #4
+    cmp #5
+    bne !+
+    jmp ball_core_frame
+!:  cmp #4
     bne !+
     lda #FR_BOSS_CORE
     sta obj_fr,x
@@ -1196,7 +1218,24 @@ part_frame:
 // part X at boss position + its offset
 part_pos:
     ldy obj_kind,x
+    cpy #5                      // Stage 17: the sphere's core sits in its middle
+    bne !+
     clc
+    lda boss_x
+    adc #16
+    sta obj_xl,x
+    lda boss_x+1
+    adc #0
+    sta obj_xh,x
+    clc
+    lda boss_y
+    adc #16
+    sta obj_yl,x
+    lda boss_y+1
+    adc #0
+    sta obj_yh,x
+    rts
+!:  clc
     lda boss_x
     adc part_dx,y
     sta obj_xl,x
@@ -1229,7 +1268,7 @@ boss_part_down:
     sta sp_y+1
     lda obj_kind,x
     cmp #4
-    beq !core+
+    bcs !core+                  // core (4) or the sphere's core (5)
     lda #FR_EX16_0
     jsr spawn_explosion
     lda #SFX_EXPLODE
@@ -1264,7 +1303,14 @@ boss_part_down:
     sta boss_t
     lda #BS_DIE
     sta boss_state
-    ldx bpd_x
+    lda cur_level               // Stage 17: level 4, the mech falls: the sphere follows its explosions
+    cmp #3
+    bne !+
+    lda ball_on
+    bne !+
+    lda #1
+    sta ball_next
+!:  ldx bpd_x
     rts
 bpd_x: .byte 0
 
@@ -1357,7 +1403,11 @@ boss_draw:
     ldy #FR_BOSS_BODY
     lda frame_pal,y
     sta px_pal
-    lda fx_flame                // the mech (flame and missiles, level 4): legs under the body (Stage 14h)
+    lda ball_on                 // Stage 17: the sphere
+    beq !+
+    lda bl_fr
+    jmp pixie_draw
+!:  lda fx_flame                // the mech (flame and missiles, level 4): legs under the body (Stage 14h)
     and fx_cat
     sta bd_legs
     beq bd_body
@@ -1430,12 +1480,25 @@ boss_palette:
     dex
     bpl !-
     ldz #0
+    lda ball_on                 // Stage 17: the sphere has its own lightened copy
+    bne !ball+
     ldx #15                     // lightened copy for the hit flash
 !:  lda boss_flash_pal,x
     sta PAL_RED + FLASH_BANK * 16,x
     lda boss_flash_pal+16,x
     sta PAL_GREEN + FLASH_BANK * 16,x
     lda boss_flash_pal+32,x
+    sta PAL_BLUE + FLASH_BANK * 16,x
+    dex
+    bpl !-
+    rts
+!ball:
+    ldx #15
+!:  lda ball_flash,x
+    sta PAL_RED + FLASH_BANK * 16,x
+    lda ball_flash+16,x
+    sta PAL_GREEN + FLASH_BANK * 16,x
+    lda ball_flash+32,x
     sta PAL_BLUE + FLASH_BANK * 16,x
     dex
     bpl !-

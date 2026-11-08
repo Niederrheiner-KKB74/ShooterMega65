@@ -281,6 +281,7 @@ random:
 #import "sound.asm"
 swap_start:                            // Stage 16: overlay area for the menu code (menu.asm)
 #import "boss.asm"
+#import "ball.asm"
 #import "ground.asm"
 swap_end:
 #import "levels.asm"

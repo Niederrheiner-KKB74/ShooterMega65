@@ -559,6 +559,29 @@ def main(out):
     (out / 'PIXIES3').write_bytes(b''.join(g3))
     report.append(f'pixies3: diagonal shots {len(g3)} glyphs of {PIXIE3_MAX}')
     gun_consts[0:0] = [f'.const PIXIES3_BYTES={len(g3) * 64}']
+    # ------------------------------------------------------------ level-4 boss phase 3 (Stage 17), file L4BALL
+    # The rolling sphere (assets/art/boss-level4/source/claude_ball.py) replaces the mech's glyphs in the boss area
+    # when the mech is destroyed: glyphs, then its palette and the lightened hit-flash palette (bank 5 / 6).
+    bj = json.loads((BOSS4 / 'ball.json').read_text())
+    bsrc = {f['id']: np.array([[int(c, 16) for c in r] for r in f['rows']], np.uint8) for f in bj['frames']}
+    ballg = [bytes(64)]
+    for name, sid in [(f'BALL_ROLL{n}', f'roll_{n}') for n in range(4)] + \
+                     [(f'BALL_OPEN{n}', f'open_{n}') for n in (1, 2, 3)] + \
+                     [('BALL_CORE0', 'core_0'), ('BALL_CORE1', 'core_1'), ('BALL_NONE', 'none')]:
+        a = bsrc[sid]
+        h, w = a.shape[0] // 8, a.shape[1] // 16
+        base = swap0 + len(ballg)
+        for c in range(w):
+            for i in range(h):
+                ballg.append(ph.ncm_glyph(a[i * 8:i * 8 + 8, c * 16:c * 16 + 16]))
+            ballg.append(bytes(64))
+        table.append(dict(name=name, base=base, w=w, h=h, pal=(BOSS_BANK << 4) | 15, hit=hitbox(a)))
+    assert swap0 + len(ballg) <= swap_end, f'sphere glyphs ({len(ballg)}) exceed the aircraft area'
+    ballfile = b''.join(ballg) + bytes(ph.swap(c[ch]) for ch in range(3) for c in bj['palette']) + \
+        bytes(ph.swap(c[ch]) for ch in range(3) for c in bj['flash_palette'])
+    (out / 'L4BALL').write_bytes(ballfile)
+    report.append(f'boss 4 sphere: {len(ballg)} glyphs')
+    gun_consts[0:0] = [f'.const BALL_GLYPHS={len(ballg)}', f'.const BALL_FILE_BYTES={len(ballfile)}']
     for key, pre in (('ground_gun', 'gun'), ('heavy_gun', 'hgun')):
         mz = gt[key]['muzzle']
         half = gt[key]['size'][0] // 2
@@ -645,7 +668,7 @@ def main(out):
              f'.const TANK_PHASES={TANK_PHASES}', f'.const SHIELD_MAX={SHIELD_MAX}', f'.const BAR_X0={BAR_X0}',
              f'.const HUD_GLYPH={table[names["HUD_SCORE"]]["base"]}',
              f'.const PAL_HUD=${(HUD_BANK << 4) | 15:02x}']
-    lines += boss_consts + gun_consts[:2] + set_consts
+    lines += boss_consts + gun_consts[:4] + set_consts
     for name, i in names.items():
         lines.append(f'.const FR_{name}={i}')
     for alias, name in air_extra:
@@ -662,7 +685,7 @@ def main(out):
         tl.append(f'{label}: .byte ' + ','.join(str(f(t)) for t in table))
     # boss hit flash (Stage 7b): the boss palette lightened towards white, loaded into bank 6 during the fight
     flash = [tuple(min(255, int(v + (255 - v) * 0.65)) for v in c) for c in bpal]
-    tl += gun_consts[2:]
+    tl += gun_consts[4:]
     # boss part positions per level (Stage 9): part_dx[5], part_dy[5], rotor_dx[4], rotor_dy[4], rotor_ph[4]
     for lvl in (1, 2, 3, 4):
         tl.append(f'boss_place{lvl}: .byte ' + ','.join(str(v) for v in boss_place[lvl]))
