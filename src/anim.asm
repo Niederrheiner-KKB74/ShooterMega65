@@ -53,8 +53,9 @@ anim_init:
 !rts:
     rts
 
-// colour cycling (Stage 13d, header +26..29: bank, first index, count, frames per step; bank 0 = none):
-// the colours first .. first+count-1 of the landscape bank rotate by one place each step
+// colour cycling (Stage 13d, header +26..29: bank, first index, count, frames per step; bank 0 = none;
+// Stage 17b: +30/+31 a second range first2/count2, 0 = none): the colours of the list first .. first+count-1,
+// first2 .. first2+count2-1 rotate by one place each step (the last one moves to the front)
 cycle_frame:
     lda lev_hdr+26
     beq !rts+
@@ -62,36 +63,48 @@ cycle_frame:
     bne !rts+
     lda lev_hdr+29
     sta cy_t
-    lda lev_hdr+26              // x = first register, y = last
+    lda lev_hdr+26              // palette registers of the list
     asl
     asl
     asl
     asl
-    ora lev_hdr+27
-    tax
-    clc
-    adc lev_hdr+28
-    tay
-    dey
-    lda PAL_RED,y               // the last colour moves to the front
+    sta cy_b
+    ldy #0
+    ldx lev_hdr+27
+    lda lev_hdr+28
+    jsr cy_range
+    ldx lev_hdr+30
+    lda lev_hdr+31
+    beq !+
+    jsr cy_range
+!:  dey                         // y = last entry
+    ldx cy_list,y               // its colour moves to the front
+    lda PAL_RED,x
     pha
-    lda PAL_GREEN,y
+    lda PAL_GREEN,x
     pha
-    lda PAL_BLUE,y
+    lda PAL_BLUE,x
     pha
-!:  tya                         // down to the first index (low nibble)
-    and #15
-    cmp lev_hdr+27
+!r: cpy #0
     beq !put+
-    lda PAL_RED-1,y
-    sta PAL_RED,y
-    lda PAL_GREEN-1,y
-    sta PAL_GREEN,y
-    lda PAL_BLUE-1,y
-    sta PAL_BLUE,y
+    ldx cy_list-1,y             // entry k <- entry k-1
+    lda PAL_RED,x
+    sta cy_r
+    lda PAL_GREEN,x
+    sta cy_g
+    lda PAL_BLUE,x
+    sta cy_bl
+    ldx cy_list,y
+    lda cy_r
+    sta PAL_RED,x
+    lda cy_g
+    sta PAL_GREEN,x
+    lda cy_bl
+    sta PAL_BLUE,x
     dey
-    bne !-
+    jmp !r-
 !put:
+    ldx cy_list
     pla
     sta PAL_BLUE,x
     pla
@@ -100,6 +113,24 @@ cycle_frame:
     sta PAL_RED,x
 !rts:
     rts
+
+// append A registers from index X to cy_list (at Y)
+cy_range:
+    sta cy_n
+!:  txa
+    ora cy_b
+    sta cy_list,y
+    iny
+    inx
+    dec cy_n
+    bne !-
+    rts
+cy_b:    .byte 0
+cy_n:    .byte 0
+cy_r:    .byte 0
+cy_g:    .byte 0
+cy_bl:   .byte 0
+cy_list: .fill 16, 0
 cy_t: .byte 1
 
 // once per frame (build_frame)

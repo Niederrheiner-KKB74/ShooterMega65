@@ -288,13 +288,17 @@ def build(src, outdir, name):
         if len(al) > ANIM_MAX or len(anim) > ANIM_BUF:
             raise LevelError(f'tile animations: {len(al)} animations / {len(anim)} bytes, maximum {ANIM_MAX} / {ANIM_BUF}')
     off_anim = off_gt + len(gt_block) if anim else 0
-    # Stage 13d: colour cycling ("cycle" in animations.json): landscape bank, first index, count, frames per step
-    cyc = bytes(4)
+    # Stage 13d: colour cycling ("cycle" in animations.json): landscape bank, first index, count, frames per step;
+    # Stage 17b: optional second range first2/count2 (header +30/+31), rotated after the first one as one list
+    cyc = bytes(6)
     if af.exists() and 'cycle' in json.loads(af.read_text()):
         c = json.loads(af.read_text())['cycle']
+        f2, n2 = c.get('first2', 0), c.get('count2', 0)
         if not (1 <= c['first'] and c['first'] + c['count'] <= 16 and 2 <= c['count'] and 2 <= c['period'] <= 255):
             raise LevelError(f'colour cycle {c}: indices 1-15, at least 2 colours, period 2-255')
-        cyc = bytes((LAND_BANKS[alias(c['palette'])], c['first'], c['count'], c['period']))
+        if n2 and not (1 <= f2 and f2 + n2 <= 16 and (f2 + n2 <= c['first'] or f2 >= c['first'] + c['count'])):
+            raise LevelError(f'colour cycle {c}: second range must be 1-15 and must not overlap the first')
+        cyc = bytes((LAND_BANKS[alias(c['palette'])], c['first'], c['count'], c['period'], f2, n2))
     ptab, code = bytearray(), bytearray()
     for p in paths:
         ptab += struct.pack('<H', off_code + len(code))

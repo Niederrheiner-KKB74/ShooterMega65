@@ -2,42 +2,42 @@
   "tiles": [
     {
       "id": 0,
-      "name": "deep0",
+      "name": "sea_b00",
       "palette": "water"
     },
     {
       "id": 1,
-      "name": "deep1",
+      "name": "sea_b10",
       "palette": "water"
     },
     {
       "id": 2,
-      "name": "deep2",
+      "name": "sea_b20",
       "palette": "water"
     },
     {
       "id": 3,
-      "name": "deep3",
+      "name": "sea_b30",
       "palette": "water"
     },
     {
       "id": 4,
-      "name": "sea0",
+      "name": "sea_b01",
       "palette": "water"
     },
     {
       "id": 5,
-      "name": "sea1",
+      "name": "sea_b11",
       "palette": "water"
     },
     {
       "id": 6,
-      "name": "sea2",
+      "name": "sea_b21",
       "palette": "water"
     },
     {
       "id": 7,
-      "name": "sea3",
+      "name": "sea_b31",
       "palette": "water"
     },
     {
@@ -62,7 +62,7 @@
     },
     {
       "id": 12,
-      "name": "blue",
+      "name": "free_blue",
       "palette": "water"
     },
     {
