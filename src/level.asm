@@ -816,7 +816,7 @@ path_fetch:
     jsr pf_skip
     lda pl_state
     bne !again+
-    jsr spawn_eshot             // keeps X
+    jsr enemy_fire              // keeps X (Stage 18: also upwards)
     jmp !again+
 !:  cmp #OP_WAIT
     bne !bad+

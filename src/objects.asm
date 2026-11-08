@@ -219,6 +219,13 @@ spawn_eshot_at:
     jsr set_kind
     lda shot_speed-K_SHOT_RED,y
     sta obj_b,x
+    lda es_up                   // Stage 18: upwards: negative speed
+    beq !+
+    lda #0
+    sec
+    sbc obj_b,x
+    sta obj_b,x
+!:
     // dx = sign(player centre - shot centre)
     clc
     lda pl_x
@@ -245,10 +252,13 @@ spawn_eshot_at:
     lda #0
     sta obj_xf,x
 !full:
+    lda #0
+    sta es_up
     ldx ob_i
     rts
 es_kind: .byte 0
 es_slot: .byte $ff
+es_up:   .byte 0                    // Stage 18: 1 = the next shot flies upwards (reset by spawn_eshot_at)
 
 // Stage 15: red bolts and fireballs flying at an angle are shown turned by 45 degrees. Diagonal when
 // |dx| >= 7/16 of the fall speed (about 24 degrees and more); the carrier's deck jets keep their frame.
@@ -271,12 +281,17 @@ eshot_view:
     adc #1
 ev_pos:
     sta ev_abs
-    lda obj_b,x                 // speed * 7 (speed 1-3 px/frame, dx in 1/16 px)
+    lda obj_b,x                 // |speed| * 7 (speed 1-3 px/frame, dx in 1/16 px)
+    bpl !+
+    eor #$ff
+    clc
+    adc #1
+!:  sta ev_sp
     asl
     asl
     asl
     sec
-    sbc obj_b,x
+    sbc ev_sp
     cmp ev_abs
     beq ev_diag
     bcs ev_set
@@ -286,7 +301,14 @@ ev_diag:
     bmi ev_set
     iny
 ev_set:
-    lda obj_kind,x
+    lda obj_b,x                 // Stage 18: flying up, a bolt slanting down-left flies up-right
+    bpl !+
+    cpy #0
+    beq !+
+    tya
+    eor #3
+    tay
+!:  lda obj_kind,x
     cmp #K_SHOT_FIRE
     bne !+
     iny
@@ -298,6 +320,7 @@ ev_rts:
     rts
 ev_dx:  .byte 0
 ev_abs: .byte 0
+ev_sp:  .byte 0
 es_views: .byte FR_ESHOT_RED, FR_ESHOT_RED_DL, FR_ESHOT_RED_DR, FR_ESHOT_FIRE, FR_ESHOT_FIRE_DL, FR_ESHOT_FIRE_DR
 
 // explosion with first frame A at sp_x/sp_y (air range, does not scroll)
@@ -726,9 +749,48 @@ maybe_fire:
     ldy obj_kind,x
     cmp kind_fire,y
     bcs !no+
-    jmp spawn_eshot
+    jmp enemy_fire
 !no:
     rts
+
+// Stage 18: an enemy fires: down as before, or - when the player is above it - up, at half the rate and always a
+// red bolt (fireballs and rockets have a direction in their picture). Keeps X.
+enemy_fire:
+    jsr pl_above
+    bcs !+
+    jmp spawn_eshot
+!:  jsr random
+    bmi !rts+
+    lda #1
+    sta es_up
+    lda #K_SHOT_RED
+    jmp spawn_eshot_a
+!rts:
+    rts
+
+// C set: the player's centre is more than 8 px above the centre of object X (on screen). Keeps X.
+pl_above:
+    lda obj_yh,x
+    bne !no+
+    ldy obj_fr,x
+    clc
+    lda obj_yl,x
+    adc frame_hit_cy,y
+    bcs !yes+
+    sta pa_y
+    clc
+    lda pl_y
+    adc #PL_HIT_CY + 8
+    bcs !no+
+    cmp pa_y
+    bcc !yes+
+!no:
+    clc
+    rts
+!yes:
+    sec
+    rts
+pa_y: .byte 0
 
 // Tanks drive on the ground (moving with the landscape) in one of four directions:
 // obj_b = direction 0 north, 1 east, 2 south, 3 west; obj_wave = track phase 0-3.
@@ -922,10 +984,24 @@ tank_frame:
 
 upd_eshot:
     jsr eshot_view
-    lda obj_b,x                 // speed
+    lda obj_b,x                 // speed (Stage 18: negative = upwards)
+    bpl !dn+
+    clc
+    adc obj_yl,x
+    sta obj_yl,x
+    lda obj_yh,x
+    adc #$ff
+    sta obj_yh,x
+    bpl !dx+
+    lda obj_yl,x                // 32 px above the screen: gone
+    cmp #$e0
+    bcs !dx+
+    jmp free_x
+!dn:
     jsr move_down
     lda obj_type,x
     beq !gone+
+!dx:
     lda obj_a,x                 // x += dx (signed, 1/16 px per frame; Stage 7c)
     beq !gone+
     sta tmp

@@ -979,6 +979,15 @@ upd_gun:
     lda #6
     sta obj_wave,x
     jsr gun_frame               // the shot leaves from the current view
+    lda #0                      // Stage 18: the player above the gun: the shots fly up, half as often
+    sta gu_up
+    jsr pl_above
+    bcc !+
+    jsr random
+    bmi !frame+
+    inc gu_up
+!:  lda gu_up
+    sta es_up
     lda #K_SHOT_RED
     jsr spawn_eshot_a           // keeps X
     ldy es_slot
@@ -986,6 +995,8 @@ upd_gun:
     jsr aim_shot
     lda obj_kind,x
     beq !frame+
+    lda gu_up
+    sta es_up
     lda #K_SHOT_RED             // heavy: a second shot, slightly to the side
     jsr spawn_eshot_a
     ldy es_slot
@@ -998,6 +1009,7 @@ upd_gun:
 !frame:
     jmp gun_frame
 gu_t: .byte 0
+gu_up: .byte 0
 
 // gun X destroyed (shot, missile, bomb): wreck, explosion, points
 gun_down:

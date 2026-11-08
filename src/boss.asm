@@ -1093,18 +1093,33 @@ core_extra:
 !aim:
     jmp aim_shot
 
-// shot Y (red, 2 px/frame down): dx so that it flies at the player's centre.
+// shot Y (red, 2 px/frame down, Stage 18: or up): dx so that it flies at the player's centre.
 // dx(1/16 px) = (player x - shot x) * 2 * 16 / (player y - shot y), at most 4 px/frame. Keeps X and Y.
 aim_shot:
     sty as_y
     lda obj_yh,y                // only from the visible area
-    bne !rts+
+    beq !+
+    jmp !rts+
+!:  lda obj_b,y                 // Stage 18: a shot flying up (negative speed) aims at a player above it
+    bmi !up+
     clc                         // dy = player centre y - shot centre y (shot 16x16: +8)
     lda pl_y
     adc #PL_HIT_CY - 8
     sec
     sbc obj_yl,y
-    bcc !rts+                   // player above the shot: keep the default
+    bcs !dv+
+    jmp !rts+                   // player above the shot: keep the default
+!up:
+    clc
+    lda pl_y
+    adc #PL_HIT_CY - 8
+    sta as_dv
+    lda obj_yl,y
+    sec
+    sbc as_dv
+    bcs !dv+
+    jmp !rts+                   // player below the shot: keep the default
+!dv:
     cmp #16
     bcs !+
     lda #16

@@ -326,6 +326,7 @@ so `RUN` works again after an exit.
 | 08.11.2026 | Stage 17 confirmed (bomb colours, sphere). Stage 17b: level-3 sea variant C (owner chose it from a preview video: 64×32 swell block, 6-colour cycle over two index ranges, calm water at coasts and features); final boss: wreck field where the mech falls, sphere hidden in explosions, flame column instead of the fire-shot stream |
 | 08.11.2026 | Stage 17b: final boss accepted ("sehr gut"); sea still looked like a blinking area on the big screen. Stage 17c: narrower crests, softer 5-colour cycle every 12 frames, whitecaps with two flash rhythms |
 | 08.11.2026 | Stage 17c: music confirmed after the move, sea much better. Second sea preview; owner chose variant C (7.5 px) with the fine crest line of D: Stage 17d |
+| 08.11.2026 | Stage 17d confirmed, tagged `stage17-stable` by the owner. Stage 18: enemies also fire upwards (half the rate); ground guns' upward shots fixed. Next: a look at the backgrounds of levels 1 and 2 (monotone) |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
@@ -663,6 +664,16 @@ Requests while the plane is destroyed or inside the shop are dropped.
   phase is `6u + 3v` (crests about 7.5 px apart, zones about 1.5 px) and the 5 cycle colours are crest, crest edge,
   base, base, shadow: a bright line with a shadow behind it on almost even water. Narrower would break the zones
   into single pixels. Whitecaps, period and everything else as in Stage 17c.
+
+## 22h. Enemies also fire upwards (Stage 18)
+- Owner: almost all enemies fire only downwards, so the player is safe above the middle of the screen. Now
+  `enemy_fire` (planes and tanks via `maybe_fire`, scripted `OP_FIRE`): if the player's centre is more than 8 px
+  above the enemy's centre (`pl_above`), the shot flies up - at half the rate (a random bit) and always as a red
+  bolt (fireballs and rockets have a direction in their pictures). Otherwise everything as before.
+- Upward shots have a negative speed in `obj_b` (`es_up` before `spawn_eshot_a`); `upd_eshot` moves them up and
+  removes them 32 px above the screen; `eshot_view` mirrors the slanted bolt views.
+- Ground guns turned towards a player above them but their shots still flew down (a bug): now they fire up, aimed
+  (`aim_shot` handles upward shots), also at half the rate. Bosses unchanged.
 
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?
