@@ -1,5 +1,6 @@
 // ----------------------------------------------------------------------------
-// Tile animation (Stage 13)
+// Tile animation (Stage 13). Stage 17c: in the swap area (main.asm, after ground.asm) - it runs only in the game;
+// cycle_reset and the cycle state stay in video.asm (palette_init also runs while the menu overlay is in).
 //
 // LnDAT carries a table from animations.json of the tile set (tools/build_level.py, header word at +24):
 //   count, then per animation: period (frames per phase), phases, tiles, tile ids phase by phase.
@@ -55,16 +56,17 @@ anim_init:
 
 // colour cycling (Stage 13d, header +26..29: bank, first index, count, frames per step; bank 0 = none;
 // Stage 17b: +30/+31 a second range first2/count2, 0 = none): the colours of the list first .. first+count-1,
-// first2 .. first2+count2-1 rotate by one place each step (the last one moves to the front)
+// first2 .. first2+count2-1 rotate by one place each step (the last one moves to the front).
+// Stage 17c, whitecaps (header +32: count 0-2, then per cap +33 index, +34 list position, +35 every n-th pass):
+// a cap register shows the current colour of its list position (its pixels lie on pixels of that colour, so they
+// are invisible), and when the crest colour (list entry 0 at the start, cy_s = where it is now) reaches that
+// position for the n-th time, it flashes white and fades (CAP_FRAMES).
+.const CAP_FRAMES = 24
 cycle_frame:
     lda lev_hdr+26
-    beq !rts+
-    dec cy_t
-    bne !rts+
-    lda lev_hdr+29
-    sta cy_t
-    lda lev_hdr+26              // palette registers of the list
-    asl
+    bne !+
+    rts
+!:  asl                         // palette registers of the list
     asl
     asl
     asl
@@ -77,7 +79,13 @@ cycle_frame:
     lda lev_hdr+31
     beq !+
     jsr cy_range
-!:  dey                         // y = last entry
+!:  sty cy_len
+    dec cy_t
+    beq !+
+    jmp cy_caps
+!:  lda lev_hdr+29
+    sta cy_t
+    dey                         // y = last entry
     ldx cy_list,y               // its colour moves to the front
     lda PAL_RED,x
     pha
@@ -111,8 +119,85 @@ cycle_frame:
     sta PAL_GREEN,x
     pla
     sta PAL_RED,x
-!rts:
+    inc cy_s                    // the crest moved one list place on
+    lda cy_s
+    cmp cy_len
+    bcc !+
+    lda #0
+    sta cy_s
+!:  ldx #0                      // caps at that place: every n-th time a flash
+!c: cpx lev_hdr+32
+    bcs cy_caps
+    stx cy_k
+    txa
+    asl
+    adc cy_k
+    tay
+    lda lev_hdr+34,y
+    cmp cy_s
+    bne !n+
+    dec cy_cnt,x
+    bne !n+
+    lda lev_hdr+35,y
+    sta cy_cnt,x
+    lda #CAP_FRAMES
+    sta cy_ft,x
+!n: inx
+    bne !c-
+
+// every frame: the cap registers (flash colour or the colour of their list place)
+cy_caps:
+    ldx #0
+!c: cpx lev_hdr+32
+    bcc !+
     rts
+!:  stx cy_k
+    txa
+    asl
+    adc cy_k
+    tay
+    lda lev_hdr+33,y
+    ora cy_b
+    sta cy_dst
+    lda lev_hdr+34,y
+    tay
+    lda cy_list,y
+    tay                         // y = source register
+    lda cy_ft,x
+    beq !copy+
+    dec cy_ft,x
+    lda cy_ft,x
+    lsr
+    lsr
+    lsr
+    tay                         // 2 white, 1 light, 0 pale
+    ldx cy_dst
+    lda cap_r,y
+    sta PAL_RED,x
+    lda cap_g,y
+    sta PAL_GREEN,x
+    lda cap_b,y
+    sta PAL_BLUE,x
+    jmp !n+
+!copy:
+    ldx cy_dst
+    lda PAL_RED,y
+    sta PAL_RED,x
+    lda PAL_GREEN,y
+    sta PAL_GREEN,x
+    lda PAL_BLUE,y
+    sta PAL_BLUE,x
+!n: ldx cy_k
+    inx
+    jmp !c-
+
+.function cap_sw(v) { .return ((v & $0f) << 4) | ((v >> 4) & $0f) }    // palette registers: nybbles swapped
+cap_r: .byte cap_sw(118), cap_sw(168), cap_sw(225)
+cap_g: .byte cap_sw(170), cap_sw(206), cap_sw(240)
+cap_b: .byte cap_sw(190), cap_sw(210), cap_sw(218)
+cy_len: .byte 0
+cy_k:   .byte 0
+cy_dst: .byte 0
 
 // append A registers from index X to cy_list (at Y)
 cy_range:

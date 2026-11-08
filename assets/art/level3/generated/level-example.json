@@ -47,7 +47,7 @@
     },
     {
       "id": 9,
-      "name": "shelf1",
+      "name": "cap_b10",
       "palette": "water"
     },
     {
@@ -62,7 +62,7 @@
     },
     {
       "id": 12,
-      "name": "free_blue",
+      "name": "cap_b00",
       "palette": "water"
     },
     {
@@ -92,7 +92,7 @@
     },
     {
       "id": 18,
-      "name": "edge6",
+      "name": "cap_b20",
       "palette": "water"
     },
     {
@@ -107,7 +107,7 @@
     },
     {
       "id": 21,
-      "name": "edge9",
+      "name": "cap_b30",
       "palette": "water"
     },
     {
@@ -137,7 +137,7 @@
     },
     {
       "id": 27,
-      "name": "edge15",
+      "name": "cap_b01",
       "palette": "water"
     },
     {
@@ -252,8 +252,8 @@
     },
     {
       "id": 50,
-      "name": "island6",
-      "palette": "nature"
+      "name": "cap_b11",
+      "palette": "water"
     },
     {
       "id": 51,
@@ -267,8 +267,8 @@
     },
     {
       "id": 53,
-      "name": "island9",
-      "palette": "nature"
+      "name": "cap_b21",
+      "palette": "water"
     },
     {
       "id": 54,
@@ -619,6 +619,11 @@
       "id": 123,
       "name": "hall0",
       "palette": "structures"
+    },
+    {
+      "palette": "water",
+      "id": 124,
+      "name": "cap_b31"
     }
   ]
 }

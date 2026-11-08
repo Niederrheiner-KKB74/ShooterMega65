@@ -69,7 +69,23 @@ video_init:
     jsr show_buffer_a
     jmp palette_init
 
+// palette_init (the level's colours are back, crest at list place 0): cycling and caps start again
+cycle_reset:
+    lda #0
+    sta cy_s
+    sta cy_ft
+    sta cy_ft+1
+    lda lev_hdr+35
+    sta cy_cnt
+    lda lev_hdr+38
+    sta cy_cnt+1
+    rts
+cy_s:   .byte 0                     // list place of the crest colour (anim.asm cycle_frame)
+cy_cnt: .fill 2, 0                  // whitecaps: passes left until the next flash
+cy_ft:  .fill 2, 0                  //            frames left of the flash
+
 palette_init:
+    jsr cycle_reset             // Stage 17c: colour cycling starts again with the level's colours
     lda #$04                    // edit text palette 0, sprites use palette 1
     ora pal_show                // (Stage 15: palette 2 may be shown during a level transition)
     sta VIC_PALSEL

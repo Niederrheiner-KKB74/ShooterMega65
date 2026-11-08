@@ -55,9 +55,21 @@
   "cycle": {
     "palette": "water",
     "first": 9,
-    "count": 4,
+    "count": 3,
     "first2": 1,
     "count2": 2,
-    "period": 9
+    "period": 12,
+    "caps": [
+      {
+        "index": 12,
+        "pos": 0,
+        "every": 2
+      },
+      {
+        "index": 3,
+        "pos": 0,
+        "every": 3
+      }
+    ]
   }
 }

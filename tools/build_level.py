@@ -262,7 +262,7 @@ def build(src, outdir, name):
 
     # ---------------- DAT file
     speed = round(lv.get('scroll_speed', 0.5) * 256)
-    hdr_len = 32
+    hdr_len = 40                                    # Stage 17c: was 32 (whitecaps at +32..+38)
     off_meta = hdr_len
     off_dict = off_meta + len(meta)
     off_rows = off_dict + COLS * len(dict_rows)
@@ -299,6 +299,16 @@ def build(src, outdir, name):
         if n2 and not (1 <= f2 and f2 + n2 <= 16 and (f2 + n2 <= c['first'] or f2 >= c['first'] + c['count'])):
             raise LevelError(f'colour cycle {c}: second range must be 1-15 and must not overlap the first')
         cyc = bytes((LAND_BANKS[alias(c['palette'])], c['first'], c['count'], c['period'], f2, n2))
+        # Stage 17c: whitecaps (+32 count, per cap: index, list position, every n-th pass of the crest)
+        caps = c.get('caps', [])
+        lst = list(range(c['first'], c['first'] + c['count'])) + list(range(f2, f2 + n2))
+        if len(caps) > 2:
+            raise LevelError(f'colour cycle: at most 2 caps, not {len(caps)}')
+        for cp in caps:
+            if not (1 <= cp['index'] <= 15 and cp['index'] not in lst and 0 <= cp['pos'] < len(lst)
+                    and 1 <= cp['every'] <= 255):
+                raise LevelError(f'colour cycle cap {cp}: index 1-15 outside the list, pos inside it, every 1-255')
+        cyc += bytes([len(caps)] + [v for cp in caps for v in (cp['index'], cp['pos'], cp['every'])])
     ptab, code = bytearray(), bytearray()
     for p in paths:
         ptab += struct.pack('<H', off_code + len(code))

@@ -272,7 +272,7 @@ msg_bad:   .text "SHOOTER65: LEVEL FILE DAMAGED"
 job_ldflush: DmaJob(DMA_CMD_COPY, ld_buf, LEVEL_BUF, 256)
 job_gfxhdr:  DmaJob(DMA_CMD_COPY, LEVEL_BUF, lev_gfxhdr, 4 + 192)
 job_glyphs:  DmaJob(DMA_CMD_COPY, LEVEL_BUF + 4 + 192, TILE_ADDR, 0)
-job_dathdr:  DmaJob(DMA_CMD_COPY, LEVEL_BUF, lev_hdr, 32)
+job_dathdr:  DmaJob(DMA_CMD_COPY, LEVEL_BUF, lev_hdr, 40)
 
 // ============================================================== runtime
 // read the byte at offset tmp2 (16 bit) of the level data
@@ -857,7 +857,7 @@ pf_skip:                        // pc += A
 // ---------------------------------------------------------------- data
 lev_gfxhdr: .fill 4, 0
 lev_pal:    .fill 192, 0         // banks 1-4: R[16] G[16] B[16] each, nibble-swapped
-lev_hdr:    .fill 32, 0
+lev_hdr:    .fill 40, 0                 // Stage 17c: 40 bytes (whitecaps at +32)
 lev_evp:    .word 0
 lev_base:   .word 0
 lev_t:      .word 0

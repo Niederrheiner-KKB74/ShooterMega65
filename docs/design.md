@@ -324,6 +324,7 @@ so `RUN` works again after an exit.
 | 07.11.2026 | Stage 14g: all level-4 enemies except the jets and the final boss redrawn by Claude (`tools/pixel_vector.py`, scripts in the asset `source/` folders): attack helicopter, gunship (bomber slots, palette `gunship`), small four-legged mech, walker (24 hits), four-legged boss mech (feet as `rotors`, missiles via the catapult, flame); level 4 fires less, 16 guns |
 | 07.11.2026 | Stage 14g confirmed for difficulty. Stage 14h: boss legs as 32×48 leg frames beside the hull, drawn before the body for legged bosses (`bd_rotors`, `bd_legs`); flame as a straight column |
 | 08.11.2026 | Stage 17 confirmed (bomb colours, sphere). Stage 17b: level-3 sea variant C (owner chose it from a preview video: 64×32 swell block, 6-colour cycle over two index ranges, calm water at coasts and features); final boss: wreck field where the mech falls, sphere hidden in explosions, flame column instead of the fire-shot stream |
+| 08.11.2026 | Stage 17b: final boss accepted ("sehr gut"); sea still looked like a blinking area on the big screen. Stage 17c: narrower crests, softer 5-colour cycle every 12 frames, whitecaps with two flash rhythms |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
@@ -637,6 +638,23 @@ Requests while the plane is destroyed or inside the shop are dropped.
   gave them the swell of their most frequent block position showed seams; a 16-px swell (joins everywhere)
   looked like stripes. Tile budget: 124 of 126; unused now `free_blue`, `shelf1`, `edge6`, `edge9`, `edge15`,
   `island6`, `island9`.
+
+## 22f. Sea: narrower crests, slower, whitecaps (Stage 17c)
+- Owner: on the screen the wide colour bands and the fast cycling looked like a blinking area. Now the crests are
+  about 11 px apart (phase `4u + 2v`, was `2u + v`), the cycle has 5 softer colours (9, 10, 11, 1, 2: crest, crest
+  edge, base, shadow, base) and steps every 12 frames (was 6 colours every 9). Calm patches are one colour (4).
+- Whitecaps: the freed palette indices 12 and 3 are cap registers. `cycle_frame` gives them the colour of their list
+  place every frame (place 0, where index 9 starts with the crest colour), so their pixels are invisible on the
+  crest pixels; when the crest colour reaches that place for the n-th time (12: every 2nd, 3: every 3rd pass) the
+  register flashes white and fades for 24 frames. Their flecks (4-6 crest pixels) are only in 8 extra tiles
+  `cap_bXY` (same swell as `sea_bXY`; the 7 unused tiles and one new tile, 125 tiles now). They replace about 10 %
+  of the open-sea cells. The level format allows 256 different rows, so every different row has a few fixed
+  variants (the frequent pure-sea rows 8, within the budget: 249 rows) and each map row takes one at random.
+- Level header 40 bytes (was 32): +32 cap count, +33.. index / list place / every per cap (`animations.json`
+  "cycle" "caps", checked by `build_level.py`). `cycle_reset` (in `video.asm`, called by `palette_init`) starts
+  the crest at place 0 again whenever the level colours are reloaded (level start, after a bomb flash).
+- Program room: `anim.asm` moved into the overlay area (it runs only in the game), `ATTIC_LEVELS` to `layout.asm`,
+  the music data from `$AC00` to `$AE00` (4,519 of 4,608 bytes).
 
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?

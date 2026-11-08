@@ -41,7 +41,7 @@ not in the zero page.
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
-| `$AC00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 5,120 bytes; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B74D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `$AC00` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`, Stage 15 at `$A939`, Stage 16 at `$A333`, Stage 17 at `$A808` (`ball.asm`, inside the overlay area): ring sprites in the file `SPRITES`, transition buffers at `$0800`, the menu code as an overlay) |
+| `$AE00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 4,608 bytes; Stage 17c: moved up from `$AC00` for program room; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B94D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `MUSIC_ADDR` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`, Stage 15 at `$A939`, Stage 16 at `$A333`, Stage 17 at `$A808` (`ball.asm`, inside the overlay area), Stage 17c at `$AC00` (colour cycling with whitecaps; `anim.asm` now inside the overlay area as well): ring sprites in the file `SPRITES`, transition buffers at `$0800`, the menu code as an overlay) |
 
 ## Banks 4/5 (chip RAM)
 

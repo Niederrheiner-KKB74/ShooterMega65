@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""Level-3 sea redrawn by Claude (Stage 17b, owner chose variant C of the preview; revised after the XEMU test).
+"""Level-3 sea redrawn by Claude (Stage 17b, owner chose variant C of the preview; Stage 17c: narrower crests,
+softer colours, slower, whitecaps - owner: on the big screen the wide colour bands looked like a blinking area).
 
-The open water is a 64x32 px swell block (4x2 tiles): diagonal crests, calm patches. Every moving pixel carries a
-colour of the 6-colour cycle list 9, 10, 11, 12, 1, 2 (a wave profile: bright crest, crest edge, flank, flank,
-trough, flank), so when the colours rotate (anim.asm) the crests travel.
+The open water is a 64x32 px swell block (4x2 tiles): diagonal crests about 11 px apart, calm patches. Every moving
+pixel carries a colour of the 5-colour cycle list 9, 10, 11, 1, 2 (a soft wave profile: crest, crest edge, base,
+shadow, base), so when the colours rotate (anim.asm, one step every 12 frames) the crests travel.
+
+Whitecaps: palette indices 12 and 3 are not in the cycle. anim.asm gives them the current colour of the crest
+register 9 (invisible), and lets them flash white and fade when the crest passes them - index 12 every 2nd pass,
+index 3 every 3rd. Small flecks of them lie on the crest pixels of 8 extra sea tiles (cap_bXY, the same swell as
+sea_bXY), which replace about one open-sea cell in eight at random, never two side by side, so they form no grid.
 
 The swell block only joins itself, so the other water tiles (coast transitions, oil, wakes, buoy, pipe, wind
 turbines) - used at changing block positions - get calm water (the still colours of the swell at their most frequent
@@ -13,7 +19,9 @@ the dithered border is smoothed and a 1-px rim of colour 5 separates the deep wa
 Shallow water (shelf, reef, sandbank) and the islands keep their art; their old sparkle pixels (9-12, now swell
 colours) become colour 7. No foam flecks: in a 64x32 block they form a visible grid.
 
-  sea_bXY    open sea, block position X (0-3), Y (0-1) (were deep0-3 and sea0-3; `blue` is freed)
+  sea_bXY    open sea, block position X (0-3), Y (0-1) (were deep0-3 and sea0-3)
+  cap_bXY    the same with whitecap flecks (were the unused tiles blue, shelf1, edge6, edge9, edge15, island6,
+             island9 and one new tile)
 The map is renumbered: an open-water cell gets the block tile of its position (column % 4, row % 2).
 
 Patches assets/art/level3/generated (terrain.ncm.bin, level-example.json, manifest.json, animations.json) and
@@ -33,15 +41,22 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[4]
 G = ROOT / 'assets/art/level3/generated'
 LEVEL = ROOT / 'levels/level3.json'
-CYCLE = [9, 10, 11, 12, 1, 2]
-PROFILE = [(104, 170, 186), (60, 116, 146), (38, 78, 106), (38, 78, 106), (24, 50, 80), (32, 64, 94)]
-CALM = (3, 4)                                  # still colours of the calm patches (trough half, crest half)
+CYCLE = [9, 10, 11, 1, 2]
+PROFILE = [(84, 146, 168), (58, 112, 138), (42, 86, 112), (32, 68, 98), (40, 82, 108)]
+CALM = (4, 4)                                  # still colour of the calm patches (index 3 is a whitecap now)
+CAPS = [{'index': 12, 'pos': 0, 'every': 2}, {'index': 3, 'pos': 0, 'every': 3}]
+CAP_TILES = ['blue', 'shelf1', 'edge6', 'edge9', 'edge15', 'island6', 'island9']     # + one new tile
+CAP_SHARE = 0.13
+ROW_LIMIT = 252                                # the level format: at most 256 different rows (4 spare)
+MAX_VAR = 8
 SPARKLE = {9, 10, 11, 12}
 SHALLOW = {6, 7, 8, 15}
+
+
 def field(x, y):
     """swell phase (radians) and roughness, periodic in 64 x 32 px (y downwards) - variant C of the preview"""
     u, v = 2 * math.pi * x / 64, 2 * math.pi * y / 32
-    th = 2 * u + v + 0.55 * math.sin(u - v + 0.7) + 0.3 * math.sin(3 * u + 2 * v + 2.1)
+    th = 4 * u + 2 * v + 0.8 * math.sin(u - v + 0.7) + 0.45 * math.sin(3 * u + 2 * v + 2.1)
     rough = 0.55 + 0.3 * math.sin(u + 0.4) * math.cos(v + 1.0) + 0.15 * math.sin(3 * u - v + 1.7)
     return th, rough
 
@@ -54,9 +69,36 @@ def block(calm=False):
             th, rough = field(x, y)
             f = (th / (2 * math.pi)) % 1.0
             if not calm and rough + rng.normal(0, 0.06) > 0.36:
-                a[y, x] = CYCLE[int(f * 6) % 6]
+                a[y, x] = CYCLE[int(f * len(CYCLE)) % len(CYCLE)]
             else:
                 a[y, x] = CALM[0] if f < 0.5 else CALM[1]
+    return a
+
+
+def flecks(tile, rng):
+    """whitecap flecks on the crest pixels (index 9) of a 16x16 swell tile: 1-2 small clusters, one per cap index"""
+    a = tile.copy()
+    crest = list(zip(*np.nonzero(a[1:15, 1:15] == CYCLE[0])))
+    rng.shuffle(crest)
+    caps = [c['index'] for c in CAPS]
+    rng.shuffle(caps)
+    used = []
+    for y, x in crest:
+        y, x = y + 1, x + 1
+        if len(used) == 2 or any(abs(y - yy) + abs(x - xx) < 7 for yy, xx in used):
+            continue
+        cap = caps[len(used)]
+        todo, n = [(y, x)], 0                           # 4-6 crest pixels around the seed
+        size = int(rng.integers(4, 7))
+        while todo and n < size:
+            yy, xx = todo.pop(0)
+            if not (1 <= yy < 15 and 1 <= xx < 15) or a[yy, xx] != CYCLE[0]:
+                continue
+            a[yy, xx] = cap
+            n += 1
+            todo += [(yy + dy, xx + dx) for dy, dx in ((0, 1), (0, -1), (-1, 1), (1, -1), (1, 0), (-1, 0))]
+        used.append((y, x))
+    assert used, 'no crest pixel for a whitecap'
     return a
 
 
@@ -138,6 +180,8 @@ def main():
     wp = man['palettes']['water']
     for idx, c in zip(CYCLE, PROFILE):
         wp[idx] = list(c)
+    for c in CAPS:                                      # off: the crest colour (anim.asm copies it every frame)
+        wp[c['index']] = list(PROFILE[0])
     blk = block()
     still = block(calm=True)
 
@@ -151,7 +195,19 @@ def main():
         t['name'] = f'sea_b{bx}{by}'
         put(terr, t['id'], cell(blk, bx, by))
         new_id[(bx, by)] = t['id']
-    byname['blue']['name'] = 'free_blue'                # no longer used in the map
+    # whitecap variants: 7 unused tiles and one new one
+    nid = max(t['id'] for t in tiles) + 1
+    tiles.append({**{k: v for k, v in byname['blue'].items() if k not in ('id', 'name')}, 'id': nid, 'name': 'cap_new'})
+    terr += bytes(128)
+    cap_id = {}
+    rng = np.random.default_rng(23)
+    for k, n in enumerate(CAP_TILES + ['cap_new']):
+        bx, by = k % 4, k // 4
+        t = next(t for t in tiles if t['name'] == n)
+        t['name'] = f'cap_b{bx}{by}'
+        t['palette'] = 'water'
+        put(terr, t['id'], flecks(cell(blk, bx, by), rng))
+        cap_id[(bx, by)] = t['id']
 
     # where are the other water tiles used (block position)?
     pos = {}
@@ -167,7 +223,7 @@ def main():
     changed = []
     for t in tiles:
         name = t['name']
-        if t['palette'] != 'water' or t['id'] in new_id.values() or name == 'free_blue':
+        if t['palette'] != 'water' or t['id'] in new_id.values() or t['id'] in cap_id.values():
             continue
         ref = byname[group.get(name, name)]['id']
         bx, by = pos[ref].most_common(1)[0][0] if ref in pos else (0, 0)
@@ -189,8 +245,50 @@ def main():
             if tid in is_sea:
                 row[c] = new_id[(c % 4, by_of(r))]
                 n += 1
+    # whitecap cells. The level format allows 256 different map rows, so every different row gets a few fixed
+    # whitecap variants (the frequent pure-sea rows up to MAX_VAR, the others one) within the free row budget, and
+    # each map row takes one of its row's variants at random - preferably one without a whitecap next to the row
+    # below.
+    caps = set(cap_id.values())
+    sea_ids = set(new_id.values())
+    rng = np.random.default_rng(29)
+    m = lv['map']
+    freq = Counter(tuple(row) for row in m)
+    budget = ROW_LIMIT - len(freq)
+    variants = {}
+    for key, cnt in freq.most_common():
+        if not any(t in sea_ids for t in key):
+            continue
+        nv = min(MAX_VAR, 1 + budget) if cnt >= 6 else 1
+        budget -= nv - 1
+        vs = []
+        for _ in range(nv):
+            cols = []
+            for c, t in enumerate(key):
+                if t in sea_ids and rng.random() < CAP_SHARE and (not cols or cols[-1] < c - 1):
+                    cols.append(c)
+            vs.append(cols)
+        variants[key] = vs
+    ncap = 0
+    prev = []
+    for r, row in enumerate(m):
+        key = tuple(row)
+        if key not in variants:
+            prev = []
+            continue
+        vs = list(variants[key])
+        rng.shuffle(vs)
+        cols = min(vs, key=lambda v: sum(1 for c in v for p in prev if abs(c - p) <= 1))
+        for c in cols:
+            row[c] = cap_id[(c % 4, by_of(r))]
+        ncap += len(cols)
+        prev = cols
+    for t in tiles:                                     # only the whitecap tiles carry the cap indices
+        if t['palette'] == 'water' and t['id'] not in caps:
+            assert not np.isin(untile(terr, t['id']), [c['index'] for c in CAPS]).any(), t['name']
 
-    anims['cycle'] = {'palette': 'water', 'first': 9, 'count': 4, 'first2': 1, 'count2': 2, 'period': 9}
+    anims['cycle'] = {'palette': 'water', 'first': 9, 'count': 3, 'first2': 1, 'count2': 2, 'period': 12,
+                      'caps': CAPS}
     (G / 'terrain.ncm.bin').write_bytes(bytes(terr))
     (G / 'level-example.json').write_text(json.dumps(ex, indent=2) + '\n')
     (G / 'manifest.json').write_text(json.dumps(man, indent=2) + '\n')
@@ -204,7 +302,7 @@ def main():
         for x in range(64):
             prev[y, x] = prev[y, 72 + x] = wp[blk[y, x]]
     Image.fromarray(prev).resize((136 * 4, 32 * 4), Image.NEAREST).save(G / 'sea-preview.png')
-    print(f'{n} map cells renumbered; tiles redrawn: {", ".join(changed)}')
+    print(f'{n} map cells renumbered ({ncap} whitecap cells); tiles redrawn: {", ".join(changed)}')
 
 
 if __name__ == '__main__':

@@ -283,9 +283,9 @@ swap_start:                            // Stage 16: overlay area for the menu co
 #import "boss.asm"
 #import "ball.asm"
 #import "ground.asm"
+#import "anim.asm"                     // Stage 17c: here (only used in the game)
 swap_end:
 #import "levels.asm"
-#import "anim.asm"
 #import "screens.asm"
 #import "transition.asm"
 #import "menu.asm"

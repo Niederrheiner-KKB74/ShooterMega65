@@ -63,3 +63,5 @@
 .if (COLOUR_A + ROW_BYTES * BUF_ROWS > COLOUR_B) .error "colour buffer A overlaps B"
 .const CLEAR_DELAY  = 60                // Stage 15: frames between the end of the boss and LEVEL CLEAR (transition.asm)
 .errorif (PIXIE3_ADDR + 24 * 64 > SAVED_SCR || SAVED_SCR + $800 > SCREEN_B), "PIXIES3 / SAVED_SCR overlap"
+
+.const ATTIC_LEVELS = $8040000           // level packs in attic RAM (levels.asm; Stage 17c: moved here)

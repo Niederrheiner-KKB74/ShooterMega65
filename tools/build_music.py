@@ -27,7 +27,7 @@ MUSIC_PIECES = ['level1', 'shop', 'game_over', 'level_clear', 'boss', 'title']  
 # there; LEVEL_PIECES[n] is built for the same slot (file MUSn, level 1 copy MUS1) and copied in by DMA when
 # level n+1 starts; entry 0 of the header table is set to that piece's header (MUS_HDR1, MUS_HDR2).
 LEVEL_PIECES = ['level1', 'level2', 'level3', 'level4']
-MUSIC_ADDR = 0x0AC00          # bank 0 behind the program (Stage 8: $AC00-$BFFF, 5 KB; Stage 7: $A000; before $5E000)
+MUSIC_ADDR = 0x0AE00          # bank 0 behind the program (Stage 17c: $AE00-$BFFF; Stage 8: $AC00; Stage 7: $A000; before $5E000)
 MUSIC_MAX = 0xC000 - MUSIC_ADDR
 SID_CLOCK = 1_000_000            # MEGA65 SID clock as emulated by XEMU (check the tuning on hardware: A-4 = 440 Hz)
 WAVES = {'triangle': 0x10, 'saw': 0x20, 'pulse': 0x40, 'noise': 0x80}

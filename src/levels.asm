@@ -10,7 +10,7 @@
 // At the end of a level (event `end`) the next level starts with the next map; score, lives, credits and
 // everything bought are kept. After the last level comes level 1 again.
 // ----------------------------------------------------------------------------
-.const ATTIC_LEVELS = $8040000
+// ATTIC_LEVELS ($8040000): layout.asm (Stage 17c: anim.asm, assembled before this file, needs it)
 .const LEVELS       = 4
 .const LV_GFX  = $0000
 .const LV_DAT  = $4000
