@@ -325,6 +325,7 @@ so `RUN` works again after an exit.
 | 07.11.2026 | Stage 14g confirmed for difficulty. Stage 14h: boss legs as 32×48 leg frames beside the hull, drawn before the body for legged bosses (`bd_rotors`, `bd_legs`); flame as a straight column |
 | 08.11.2026 | Stage 17 confirmed (bomb colours, sphere). Stage 17b: level-3 sea variant C (owner chose it from a preview video: 64×32 swell block, 6-colour cycle over two index ranges, calm water at coasts and features); final boss: wreck field where the mech falls, sphere hidden in explosions, flame column instead of the fire-shot stream |
 | 08.11.2026 | Stage 17b: final boss accepted ("sehr gut"); sea still looked like a blinking area on the big screen. Stage 17c: narrower crests, softer 5-colour cycle every 12 frames, whitecaps with two flash rhythms |
+| 08.11.2026 | Stage 17c: music confirmed after the move, sea much better. Second sea preview; owner chose variant C (7.5 px) with the fine crest line of D: Stage 17d |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
@@ -655,6 +656,13 @@ Requests while the plane is destroyed or inside the shop are dropped.
   the crest at place 0 again whenever the level colours are reloaded (level start, after a bomb flash).
 - Program room: `anim.asm` moved into the overlay area (it runs only in the game), `ATTIC_LEVELS` to `layout.asm`,
   the music data from `$AC00` to `$AE00` (4,519 of 4,608 bytes).
+
+## 22g. Sea: finer still (Stage 17d)
+- Owner: much better, the colour zones could be narrower still; a second preview video showed four variants (A as
+  17c, B 8 px, C 7.5 px at 45°, D = B with a fine crest line). Owner's choice: C with the fine line of D. Now the
+  phase is `6u + 3v` (crests about 7.5 px apart, zones about 1.5 px) and the 5 cycle colours are crest, crest edge,
+  base, base, shadow: a bright line with a shadow behind it on almost even water. Narrower would break the zones
+  into single pixels. Whitecaps, period and everything else as in Stage 17c.
 
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Level-3 sea redrawn by Claude (Stage 17b, owner chose variant C of the preview; Stage 17c: narrower crests,
-softer colours, slower, whitecaps - owner: on the big screen the wide colour bands looked like a blinking area).
+softer colours, slower, whitecaps - owner: on the big screen the wide colour bands looked like a blinking area;
+Stage 17d: owner chose variant C of a second preview with the fine crest line of variant D).
 
-The open water is a 64x32 px swell block (4x2 tiles): diagonal crests about 11 px apart, calm patches. Every moving
-pixel carries a colour of the 5-colour cycle list 9, 10, 11, 1, 2 (a soft wave profile: crest, crest edge, base,
-shadow, base), so when the colours rotate (anim.asm, one step every 12 frames) the crests travel.
+The open water is a 64x32 px swell block (4x2 tiles): diagonal crests about 7.5 px apart, calm patches. Every moving
+pixel carries a colour of the 5-colour cycle list 9, 10, 11, 1, 2 (a fine wave line: crest, crest edge, base, base,
+shadow), so when the colours rotate (anim.asm, one step every 12 frames) the crests travel.
 
 Whitecaps: palette indices 12 and 3 are not in the cycle. anim.asm gives them the current colour of the crest
 register 9 (invisible), and lets them flash white and fade when the crest passes them - index 12 every 2nd pass,
@@ -42,7 +43,7 @@ ROOT = Path(__file__).resolve().parents[4]
 G = ROOT / 'assets/art/level3/generated'
 LEVEL = ROOT / 'levels/level3.json'
 CYCLE = [9, 10, 11, 1, 2]
-PROFILE = [(84, 146, 168), (58, 112, 138), (42, 86, 112), (32, 68, 98), (40, 82, 108)]
+PROFILE = [(84, 146, 168), (54, 104, 132), (42, 86, 112), (42, 86, 112), (30, 64, 94)]
 CALM = (4, 4)                                  # still colour of the calm patches (index 3 is a whitecap now)
 CAPS = [{'index': 12, 'pos': 0, 'every': 2}, {'index': 3, 'pos': 0, 'every': 3}]
 CAP_TILES = ['blue', 'shelf1', 'edge6', 'edge9', 'edge15', 'island6', 'island9']     # + one new tile
@@ -56,7 +57,7 @@ SHALLOW = {6, 7, 8, 15}
 def field(x, y):
     """swell phase (radians) and roughness, periodic in 64 x 32 px (y downwards) - variant C of the preview"""
     u, v = 2 * math.pi * x / 64, 2 * math.pi * y / 32
-    th = 4 * u + 2 * v + 0.8 * math.sin(u - v + 0.7) + 0.45 * math.sin(3 * u + 2 * v + 2.1)
+    th = 6 * u + 3 * v + 0.8 * math.sin(u - v + 0.7) + 0.45 * math.sin(3 * u + 2 * v + 2.1)
     rough = 0.55 + 0.3 * math.sin(u + 0.4) * math.cos(v + 1.0) + 0.15 * math.sin(3 * u - v + 1.7)
     return th, rough
 
