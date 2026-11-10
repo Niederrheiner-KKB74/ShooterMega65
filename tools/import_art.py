@@ -374,7 +374,7 @@ def main(out):
         default = poses.index('south' if poses == VIEW_DIRS else 'straight')
         air_extra += [(f'{const}0', f'{const}_{default}_0'), (f'{const}_DIR0', f'{const}_0_0')]
     # player shots (Stage 8b): one object per volley, the number of bolts shows the shot level:
-    # PSHOT1 one bolt, PSHOT2 two, PSHOT3 three, PSHOT4 a thick bar (16x16). Built from the bolt of PR #4.
+    # PSHOT1 one bolt, PSHOT2 two, PSHOT3 three, PSHOT4 four (16x16; Stage 19, was a thick bar). Built from the bolt of PR #4.
     shot, sbank = grp('player_shot_blue', 0)
     bolt = shot[:7, 6:9]                                    # 3 x 7 pixels
     for n, xs in ((1, [6]), (2, [2, 10]), (3, [1, 6, 11])):
@@ -382,14 +382,12 @@ def main(out):
         for x0 in xs:
             a[:7, x0:x0 + 3] = bolt
         add(f'PSHOT{n}', a, sbank)
-    bar = np.zeros((16, 16), np.uint8)
-    for y in range(14):                                     # 5 px wide (bolt: 3), 14 high (Stage 9: was 8 wide)
-        row = bolt[min(6, y // 2)]
-        bar[y, 5] = row[0]
-        bar[y, 6:9] = row[1]
-        bar[y, 9] = row[2]
-    bar[2:12, 7] = bolt[3, 1] if bolt[3, 1] else bolt[2, 1]     # bright core
-    add('PSHOT4', bar, sbank)
+    # Stage 19 (owner: the bar looked strange next to levels 1-3): four bolts like the shop icon, the middle two
+    # 3 px further forward (16x16 frame, as before)
+    four = np.zeros((16, 16), np.uint8)
+    for x0, y0 in ((0, 3), (4, 0), (9, 0), (13, 3)):
+        four[y0:y0 + 7, x0:x0 + 3] = bolt
+    add('PSHOT4', four, sbank)
     add('ESHOT_RED', *grp('enemy_shot_red', 0))
     add('ESHOT_FIRE', *grp('enemy_shot_fire', 0))
     add('ROCKET', *grp('rocket', 0))

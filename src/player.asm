@@ -229,7 +229,7 @@ fire_shot:
     bcs !+
     lda #T_PSHOT
     jsr init_slot
-    ldy pl_power                // 1 bolt, 2 bolts, 3 bolts, bar (frames are consecutive)
+    ldy pl_power                // 1, 2, 3, 4 bolts (frames are consecutive; Stage 19: 4 was a bar)
     lda pshot_frame-1,y
     sta obj_fr,x
     tya                         // damage 2 x shot level (as the two shots of Stage 8 together)
