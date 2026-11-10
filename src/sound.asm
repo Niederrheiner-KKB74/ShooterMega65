@@ -71,7 +71,9 @@ sound_init:
     sta s_active+2
     lda #$ff
     sta mu_next
-    lda #$0f                    // effects SIDs: full volume, no filter
+// effects SIDs: full volume, no filter (Stage 18c: also after kernal_leave - sound_off clears it)
+sfx_volume:
+    lda #$0f
     sta SID_S+$18
     sta SID_S2+$18
     rts

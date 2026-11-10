@@ -331,6 +331,7 @@ kernal_leave:
     sta CIA1_DDRA
     jsr video_init
     jsr palette_init
+    jsr sfx_volume              // Stage 18c: kernal_enter's sound_off also silenced the effects SIDs
     jmp key_drain
 
 job_gzp_save: DmaJob(DMA_CMD_COPY, $0002, SAVED_GZP + 2, 254)

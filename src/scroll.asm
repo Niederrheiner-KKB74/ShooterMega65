@@ -227,7 +227,8 @@ slot_ofs_hi: .fill RING_SLOTS*2, >(i * ROW_BYTES)
 
 // ---------------------------------------------------------------- terrain (Stage 7c)
 // land_ring: per ring slot 3 bytes, bit c = map column c is land (its palette bank is not the water bank 1;
-// coast tiles use the water bank and count as water).
+// coast tiles use the water bank and count as water). Stage 18c: tiles from the level header's +39 on (forest in
+// level 1; 0 = none) are not land either - tanks do not drive over the tree tops.
 land_store:
     lda dr_slot
     sta ls_i
@@ -244,6 +245,14 @@ land_store:
     and #$f0
     cmp #$10
     beq !next+
+    lda lev_hdr+39              // Stage 18c: forest tiles (glyph >= 2 * first tile)
+    beq !land+
+    asl
+    sta ls_b
+    lda dr_glyph,y
+    cmp ls_b
+    bcs !next+
+!land:
     tya
     and #7
     tax

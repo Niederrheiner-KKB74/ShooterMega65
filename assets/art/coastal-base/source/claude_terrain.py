@@ -6,7 +6,9 @@ preview: big seamless patterns instead of single repeated tiles, irregular fores
   canopy_bXY  64x32 px dense forest: overlapping crowns of different sizes, shadows          (nature)
   wood_bXY    forest edge (8 tiles): whole crowns on the meadow of the same block position, their shadows
   sea_bX      32x16 px sea (2 tiles): diagonal swell, still                                  (water)
-A forest cell whose 8 neighbours are all forest is canopy, any other forest cell an edge tile.
+A forest cell whose 8 neighbours are all forest is canopy, any other forest cell an edge tile. Stage 18c: the 16
+forest tiles are the last tile ids and carry "blocks_tanks" (tanks turn in front of them like in front of water),
+and every tank starts in a 5x5-cell clearing.
 
 Tile budget (126 tiles, all used before): the 15 pixel-identical road/bridge tile pairs are merged, grass0,
 forest0-5, sea0, sea1, rocks and meadow (the dotted flower patch) go: 26 places for the 26 new tiles.
@@ -236,6 +238,16 @@ def main():
             elif not newf[r, c] and n >= 7:
                 newf[r, c] = True
 
+    # Stage 18c: tanks only drive in the open - a clearing of 5x5 cells around every tank's starting point (it
+    # appears just above the top edge in map column (x + 24) // 16); the forest tiles stop them (blocks_tanks)
+    for e in lv['events']:
+        if e.get('type') == 'ground' and e.get('enemy') == 'tank':
+            r0, c0 = e['row'] + 1, (e['x'] + 24) // 16
+            for r in range(r0 - 2, r0 + 3):
+                for c in range(c0 - 2, c0 + 3):
+                    if 0 <= r < R and 0 <= c < C:
+                        newf[r, c] = False
+
     # 4. new tiles into the free places
     mb, cb = meadow(), canopy()
     wb, sb = wood(mb), sea()
@@ -270,6 +282,23 @@ def main():
             elif t in seaid:
                 by, bx = cell(sb, r, c)
                 M[r][c] = tid[('sea', bx, by)]
+
+    # 6. Stage 18c: the 16 forest tiles become the last tile ids and stop tanks (level header +39, land_store)
+    n = len(tiles)
+    forest_ids = [tid[(k, bx, by)] for k in ('canopy', 'wood') for by in range(2) for bx in range(4)]
+    tail = list(range(n - len(forest_ids), n))
+    swap = dict(zip([i for i in forest_ids if i not in tail], [i for i in tail if i not in forest_ids]))
+    swap.update({b: a for a, b in list(swap.items())})
+    byid = {t['id']: t for t in tiles}
+    old_terr = bytes(terr)
+    for a, b in swap.items():
+        terr[b * 128:b * 128 + 128] = old_terr[a * 128:a * 128 + 128]
+    for t in byid.values():
+        t['id'] = swap.get(t['id'], t['id'])
+        if t['id'] >= n - len(forest_ids):
+            t['blocks_tanks'] = True
+    tiles.sort(key=lambda t: t['id'])
+    M = [[swap.get(t, t) for t in row] for row in M]
 
     lv['map'] = M
     (G / 'terrain.ncm.bin').write_bytes(bytes(terr))

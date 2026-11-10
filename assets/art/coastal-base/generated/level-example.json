@@ -7,8 +7,8 @@
     },
     {
       "id": 1,
-      "name": "canopy_b31",
-      "palette": "nature"
+      "name": "complex_brick_0_0",
+      "palette": "structures"
     },
     {
       "id": 2,
@@ -17,33 +17,33 @@
     },
     {
       "id": 3,
-      "name": "wood_b20",
-      "palette": "nature"
+      "name": "complex_brick_0_1",
+      "palette": "structures"
     },
     {
       "id": 4,
-      "name": "wood_b30",
-      "palette": "nature"
+      "name": "complex_brick_1_1",
+      "palette": "structures"
     },
     {
       "id": 5,
-      "name": "wood_b01",
-      "palette": "nature"
+      "name": "complex_brick_2_1",
+      "palette": "structures"
     },
     {
       "id": 6,
-      "name": "wood_b11",
-      "palette": "nature"
+      "name": "complex_brick_0_2",
+      "palette": "structures"
     },
     {
       "id": 7,
-      "name": "wood_b21",
-      "palette": "nature"
+      "name": "complex_brick_1_2",
+      "palette": "structures"
     },
     {
       "id": 8,
-      "name": "wood_b31",
-      "palette": "nature"
+      "name": "complex_brick_2_2",
+      "palette": "structures"
     },
     {
       "id": 9,
@@ -217,23 +217,23 @@
     },
     {
       "id": 43,
-      "name": "canopy_b00",
-      "palette": "nature"
+      "name": "complex_steel_0_1",
+      "palette": "structures"
     },
     {
       "id": 44,
-      "name": "canopy_b10",
-      "palette": "nature"
+      "name": "complex_steel_1_1",
+      "palette": "structures"
     },
     {
       "id": 45,
-      "name": "canopy_b20",
-      "palette": "nature"
+      "name": "complex_steel_2_1",
+      "palette": "structures"
     },
     {
       "id": 46,
-      "name": "canopy_b30",
-      "palette": "nature"
+      "name": "complex_steel_0_2",
+      "palette": "structures"
     },
     {
       "id": 47,
@@ -257,13 +257,13 @@
     },
     {
       "id": 51,
-      "name": "canopy_b01",
-      "palette": "nature"
+      "name": "complex_steel_1_2",
+      "palette": "structures"
     },
     {
       "id": 52,
-      "name": "canopy_b11",
-      "palette": "nature"
+      "name": "complex_steel_2_2",
+      "palette": "structures"
     },
     {
       "id": 53,
@@ -282,8 +282,8 @@
     },
     {
       "id": 56,
-      "name": "canopy_b21",
-      "palette": "nature"
+      "name": "complex_brick_plain",
+      "palette": "structures"
     },
     {
       "id": 57,
@@ -437,8 +437,8 @@
     },
     {
       "id": 87,
-      "name": "wood_b10",
-      "palette": "nature"
+      "name": "complex_brick_2_0",
+      "palette": "structures"
     },
     {
       "id": 88,
@@ -447,8 +447,8 @@
     },
     {
       "id": 89,
-      "name": "wood_b00",
-      "palette": "nature"
+      "name": "complex_brick_1_0",
+      "palette": "structures"
     },
     {
       "id": 90,
@@ -552,83 +552,99 @@
     },
     {
       "id": 110,
-      "name": "complex_steel_0_1",
-      "palette": "structures"
+      "name": "canopy_b00",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 111,
-      "name": "complex_steel_1_1",
-      "palette": "structures"
+      "name": "canopy_b10",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 112,
-      "name": "complex_steel_2_1",
-      "palette": "structures"
+      "name": "canopy_b20",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 113,
-      "name": "complex_steel_0_2",
-      "palette": "structures"
+      "name": "canopy_b30",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 114,
-      "name": "complex_steel_1_2",
-      "palette": "structures"
+      "name": "canopy_b01",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 115,
-      "name": "complex_steel_2_2",
-      "palette": "structures"
+      "name": "canopy_b11",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 116,
-      "name": "complex_brick_plain",
-      "palette": "structures"
+      "name": "canopy_b21",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 117,
-      "name": "complex_brick_0_0",
-      "palette": "structures"
+      "name": "canopy_b31",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 118,
-      "name": "complex_brick_1_0",
-      "palette": "structures"
+      "name": "wood_b00",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 119,
-      "name": "complex_brick_2_0",
-      "palette": "structures"
+      "name": "wood_b10",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 120,
-      "name": "complex_brick_0_1",
-      "palette": "structures"
+      "name": "wood_b20",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 121,
-      "name": "complex_brick_1_1",
-      "palette": "structures"
+      "name": "wood_b30",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 122,
-      "name": "complex_brick_2_1",
-      "palette": "structures"
+      "name": "wood_b01",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 123,
-      "name": "complex_brick_0_2",
-      "palette": "structures"
+      "name": "wood_b11",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 124,
-      "name": "complex_brick_1_2",
-      "palette": "structures"
+      "name": "wood_b21",
+      "palette": "nature",
+      "blocks_tanks": true
     },
     {
       "id": 125,
-      "name": "complex_brick_2_2",
-      "palette": "structures"
+      "name": "wood_b31",
+      "palette": "nature",
+      "blocks_tanks": true
     }
   ]
 }

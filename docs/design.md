@@ -328,6 +328,7 @@ so `RUN` works again after an exit.
 | 08.11.2026 | Stage 17c: music confirmed after the move, sea much better. Second sea preview; owner chose variant C (7.5 px) with the fine crest line of D: Stage 17d |
 | 08.11.2026 | Stage 17d confirmed, tagged `stage17-stable` by the owner. Stage 18: enemies also fire upwards (half the rate); ground guns' upward shots fixed. Next: a look at the backgrounds of levels 1 and 2 (monotone) |
 | 08.11.2026 | Previews for levels 1 and 2 accepted ("großartig"); owner chose option 1 (raise the row limit) and irregular forest outlines: Stage 18b, level format 3 (512 rows) |
+| 10.11.2026 | Stage 18b: new level designs "sehr gut". Fixes (Stage 18c): tanks on tree tops, animated sea in a level-3 island, no sound effects after Game Over / the last level |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
@@ -699,6 +700,19 @@ Requests while the plane is destroyed or inside the shop are dropped.
   the ChatGPT phase) expects the old sand tiles and must not be run again.
 - Sea in level 1 stays still: an animation like level 3's would need free palette colours, and the water palette
   of level 1 is full.
+
+## 22j. Fixes after Stage 18b (Stage 18c)
+- Owner: in level 1 a tank drove over the tree tops. Tanks only knew water (`land_store`: palette bank 1 is
+  water). Now tiles from the level header's +39 on (0 = none) count as not land too; `build_level.py` writes the
+  first id of the tiles marked `"blocks_tanks"` in level-example.json (they must be the last ids). Level 1: the 16
+  forest tiles (canopy, wood) are ids 110-125 (`claude_terrain.py` renumbers them), and every tank starts in a 5x5
+  cell clearing (forest 2,718 -> 2,488 cells, 314 rows). Tanks turn in front of forest as in front of water.
+- Owner: in level 3 animated open sea showed in an island (rows 247/248, columns 14/15: a 2x2 of former deep
+  water inside the reef ring, now the cycling swell). Replaced by the shallow tiles shelf2/shelf3/shelf0.
+- Owner: after Game Over and after the last level the sound effects were silent in the next game, the music played.
+  Cause: the highscore disk session (`kernal_enter`) calls `sound_off`, which also clears the volume of the effects
+  SIDs; music sets its volume with every piece, the effects only once at program start (`sound_init`). Now
+  `kernal_leave` calls `sfx_volume` (Stage 16 bug, since the highscore table).
 
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?

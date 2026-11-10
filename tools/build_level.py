@@ -318,7 +318,12 @@ def build(src, outdir, name):
         code += p
     header = struct.pack('<2sBBHHHHHHHHBHB', b'SL', 3, len(used), nrows, off_meta, off_dict, off_rows,
                          off_events, off_forms, off_ptab, speed, len(dict_rows) & 0xFF, off_gt, len(dest_tab) // 3)
-    header = (header + struct.pack('<H', off_anim) + cyc).ljust(hdr_len, b'\0')
+    # Stage 18c: tiles that tanks do not drive over (forest): "blocks_tanks" in level-example.json, the last tile
+    # ids; header +39 = the first of them (0 = none). land_store treats them like water.
+    block = [t['id'] for t in tiles_meta if t.get('blocks_tanks')]
+    if block and sorted(block) != list(range(len(tiles_meta) - len(block), len(tiles_meta))):
+        raise LevelError('tiles with "blocks_tanks" must be the last tile ids')
+    header = (header + struct.pack('<H', off_anim) + cyc).ljust(hdr_len - 1, b'\0') + bytes([min(block) if block else 0])
     dat = header + meta + b''.join(bytes(r) for r in dict_rows) + bytes(rowlist) + bytes(events) + bytes(forms) + bytes(ptab) + bytes(code) + gt_block + bytes(anim)
     for fname, data, mx in (('GFX', gfx, MAX_FILE), ('DAT', dat, MAX_DAT)):
         if len(data) > mx:
