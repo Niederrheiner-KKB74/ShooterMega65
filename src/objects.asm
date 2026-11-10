@@ -1240,6 +1240,9 @@ hit_axis:
 
 hit_centre: .byte 0
 hit_limit:  .byte 0
+cp_hw:      .byte 0             // Stage 19: half sizes of the tested point (player or drone)
+cp_hh:      .byte 0
+cp_mode:    .byte 0
 
 // Player against enemy planes, enemy shots and bonus items.
 collide_player:
@@ -1260,6 +1263,14 @@ collide_player:
     lda #0
     adc #0
     sta pc_y+1
+    lda #PL_HIT_HW
+    sta cp_hw
+    lda #PL_HIT_HH
+    sta cp_hh
+    lda #0
+    sta cp_mode
+// Stage 19: the scan for a point pc_x/pc_y with half sizes cp_hw/cp_hh; cp_mode 1 = the drone (special.asm)
+cp_scan:
     ldx #AIR_FIRST
 !obj:
     lda obj_type,x
@@ -1277,7 +1288,7 @@ collide_player:
     sta hit_centre
     lda frame_hit_halfw,y
     clc
-    adc #PL_HIT_HW
+    adc cp_hw
     sta hit_limit
     sec
     lda pc_x
@@ -1295,7 +1306,7 @@ collide_player:
     sta hit_centre
     lda frame_hit_halfh,y
     clc
-    adc #PL_HIT_HH
+    adc cp_hh
     sta hit_limit
     sec
     lda pc_y
@@ -1309,6 +1320,32 @@ collide_player:
     jmp !next+
 !:
     // contact
+    lda cp_mode                 // Stage 19: the drone catches enemy shots and rams enemy planes
+    beq !pl+
+    lda obj_type,x
+    cmp #T_ESHOT
+    bne !+
+    jsr free_x
+    jmp !next+
+!:  cmp #T_AIR
+    bne !nx+
+    lda dr_cd                   // at most every 8 frames
+    bne !nx+
+    lda #8
+    sta dr_cd
+    sec
+    lda obj_hp,x
+    sbc #DRONE_DMG
+    beq !k+
+    bcc !k+
+    sta obj_hp,x
+!nx:
+    jmp !next+
+!k: lda #1                      // destroyed by the drone: points
+    sta ko_flags
+    jsr kill_obj
+    jmp !next+
+!pl:
     lda obj_type,x
     cmp #T_BONUS
     bne !harm+

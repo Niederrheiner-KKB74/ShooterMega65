@@ -239,6 +239,7 @@ build_frame:
     jsr objects_update
     jsr collide_shots
     jsr collide_player
+    jsr drone_update                   // Stage 19: the drone catches shots, rams planes (special.asm)
     jsr hud_update
     jsr objects_draw                   // objects, then the HUD on top
     rts
@@ -298,8 +299,8 @@ pixies_load:
     sta ld_dst+1
     lda #(PIXIE_ADDR >> 16)
     sta ld_dst+2
-    lda #>(PIXIE_MAX * 64)
-    sta ld_maxhi
+    lda #>(PIXIE_MAX * 64 + 255) // Stage 19: the room ends inside a page; the loader checks whole pages only,
+    sta ld_maxhi                // the exact limit is import_art.py's (PIXIE_MAX glyphs)
     lda #<name_pixies
     ldx #>name_pixies
     ldy #name_pixies_end - name_pixies
@@ -313,7 +314,7 @@ sprites_load:
     sta ld_dst+1
     lda #(SPRITE_ADDR >> 16)
     sta ld_dst+2
-    lda #(>(PLAYER_FRAMES * $200 + 3 * 256)) + 1     // Stage 16: the ring sprites follow (RING_ADDR)
+    lda #(>(PLAYER_FRAMES * $200 + 4 * 256)) + 1     // Stage 16: the ring sprites follow (RING_ADDR); Stage 19: the drone
     sta ld_maxhi
     lda #<name_sprites
     ldx #>name_sprites
@@ -322,6 +323,7 @@ sprites_load:
 name_sprites: .text "SPRITES"
 
 .errorif (SPRITE_ADDR + PLAYER_FRAMES * $200 != RING_ADDR), "file SPRITES: the ring must follow the player frames"
+.errorif (RING_ADDR + 3 * $100 != DRONE_ADDR || DRONE_ADDR + $100 > $060000), "file SPRITES: the drone follows the ring, inside bank 5"
 .errorif (((PIXIE_ADDR & $ffff) + PIXIE_MAX * 64) > $10000), "pixie area crosses a 64 KB boundary"
 
 // ---------------------------------------------------------------- data
@@ -331,6 +333,7 @@ code_end:
 pixie_end:
 palette_data: .import binary "../build/gen/palette.bin"
 sprpal_data:  .import binary "../build/gen/sprpal.bin"
+dronepal_data: .import binary "../build/gen/dronepal.bin"   // Stage 19: drone, sprite palette $50-$5F
 prg_end:
 .errorif (prg_end > $c000), "PRG too large for bank 0 below $c000"
 .errorif (PIXIE_GLYPHS > PIXIE_MAX), "pixie glyph area ($46800-$4FFFF) exceeded"

@@ -131,6 +131,15 @@ palette_init:
     sta PAL_BLUE,x
     dex
     bpl !-
+    ldx #8                      // Stage 19: drone colours 0-8, sprite 5 = entries $50-$58
+!:  lda dronepal_data,x
+    sta PAL_RED+$50,x
+    lda dronepal_data+9,x
+    sta PAL_GREEN+$50,x
+    lda dronepal_data+18,x
+    sta PAL_BLUE+$50,x
+    dex
+    bpl !-
     lda #$04                    // text: palette 0, sprites: palette 1
     ora pal_show
     sta VIC_PALSEL

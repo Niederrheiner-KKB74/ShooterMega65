@@ -31,7 +31,7 @@
 
 .errorif (SHOP_GLYPHS > 255), "shop glyphs exceed 255"
 .errorif (TILE_ADDR + 256*64 > SHOP_ADDR), "shop glyphs overlap the landscape glyphs"
-.errorif (SHOP_ADDR + SHOP_GLYPHS*64 > PIXIE_ADDR), "shop glyphs overlap the pixie glyphs (160 reserved)"
+.errorif (SHOP_ADDR + SHOP_GLYPHS*64 > PIXIE_ADDR), "shop glyphs overlap the pixie glyphs (162 reserved)"
 .errorif (PANEL_ROW0 + PANEL_ROWS > VIS_ROWS - 1), "shop panel below the visible rows"
 .errorif (PANEL_COL0 + PANEL_COLS > BG_TOKENS), "shop panel wider than the background"
 
@@ -39,12 +39,17 @@
 bomb_count:  .byte 0        // order matters: hud.asm reads bomb_count, bomb_count+1
 inv_count:   .byte 0
 has_missile: .byte 0             // 0 none, 1 MISSILE, 2 MISSILE II (two in flight)
+has_drone:   .byte 0             // Stage 19: 1 = the drone orbits the plane (until a life is lost)
 
 // new game: nothing bought yet (pl_power is reset by player_new_game)
 shop_reset:
     lda #0
     sta inv_count
     sta has_missile
+    sta has_drone
+#if DRONE_TEST
+    inc has_drone               // test build (--define DRONE_TEST): start with the drone
+#endif
 #if TEST_CREDITS
     lda #9                      // test build (build.py --test-credits): 9 bombs
 #endif
@@ -340,6 +345,12 @@ item_allowed:
     beq !yes+
     clc
     rts
+!:  cmp #10                     // Stage 19: drone, while there is none
+    bne !+
+    lda has_drone
+    beq !yes+
+    clc
+    rts
 !:  cmp #5
     bne !+
     lda inv_count
@@ -396,6 +407,11 @@ buy:
     bne !+
     lda #2
     sta has_missile
+    bne !hud+
+!:  cmp #10                     // Stage 19: drone
+    bne !+
+    lda #1
+    sta has_drone
     bne !hud+
 !:  cmp #5
     bne !+

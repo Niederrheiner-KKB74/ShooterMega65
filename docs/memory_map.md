@@ -41,15 +41,15 @@ not in the zero page.
 | `…` | pixie glyph staging: only the non-blank glyphs (174) plus a run table; exact addresses in `build/main.sym` |
 | `$9E00–$A9FF` | player sprites, 6 pairs × 512 bytes |
 | `$AA00–$AD5F` | text palette (768 bytes) and sprite palette (96 bytes) |
-| `$AE00–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 4,608 bytes; Stage 17c: moved up from `$AC00` for program room; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B94D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `MUSIC_ADDR` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`, Stage 15 at `$A939`, Stage 16 at `$A333`, Stage 17 at `$A808` (`ball.asm`, inside the overlay area), Stage 17c at `$AC00` (colour cycling with whitecaps; `anim.asm` now inside the overlay area as well): ring sprites in the file `SPRITES`, transition buffers at `$0800`, the menu code as an overlay) |
+| `$AE40–$BFFF` | music and sound effects from the file `MUSIC` (4,519 of 4,544 bytes; Stage 19: moved up from `$AE00`, Stage 17c from `$AC00`, for program room; Stage 7: `$A000`); since Stage 9 the level piece is in a slot at `MUS_SLOT` (`$B98D`, 1,626 bytes) that is overwritten from attic RAM when a level starts; the PRG must end below `MUSIC_ADDR` (guard in `sound.asm`; Stage 9 PRG ends at `$A560`, Stage 13 at `$AA60`, Stage 14 at `$A004`, Stage 15 at `$A939`, Stage 16 at `$A333`, Stage 17 at `$A808` (`ball.asm`, inside the overlay area), Stage 17c at `$AC00` (colour cycling with whitecaps; `anim.asm` now inside the overlay area as well), Stage 19 at `$AE2D` (drone): ring sprites in the file `SPRITES`, transition buffers at `$0800`, the menu code as an overlay) |
 
 ## Banks 4/5 (chip RAM)
 
 | Address | Size | Use |
 |---|---|---|
 | `$40000–$43FFF` | 16 KB | landscape NCM glyphs, char `$1000`+ (Stage 13: animated tiles are overwritten with their phases from the level pack by `anim.asm`) (max. 256 per level: tile offsets in the map are bytes; `build_level.py` allows 128 tiles; the coastal level uses 208 glyphs) |
-| `$44000–$467FF` | 10 KB | shop glyphs from the file `SHOP`, char `$1100`+ (160 reserved, 152 used). Guarded in `shop.asm`. Stage 15: during a level transition one picture of `TRANS` (≤ 160 glyphs) is copied over them; the shop glyphs come back from attic `$80E0000` |
-| `$46800–$4F7FF` | 36 KB | pixie NCM glyphs, char `$11A0`+ (max. 576, Stage 8 uses 574 incl. light gun and gun muzzle flashes): loaded at start from the file `PIXIES` (complete image incl. blank guards) straight into this area. Frame bases in `frames.inc` are absolute character numbers. HUD glyphs at `HUD_GLYPH + 2k`, rebuilt at run time |
+| `$44000–$4687F` | 10 KB | shop glyphs from the file `SHOP`, char `$1100`+ (Stage 19: 162 reserved and used - DRONE item; was 160; the shop writes the char high byte `$11` as a constant, so it must stay in page `$11`). Guarded in `shop.asm`. Stage 15: during a level transition one picture of `TRANS` (≤ 160 glyphs) is copied over them; the shop glyphs come back from attic `$80E0000` |
+| `$46880–$4F7FF` | 36 KB | pixie NCM glyphs, char `$11A2`+ (Stage 19: moved up 2 glyphs for the shop; max. 574, 573 used incl. light gun and gun muzzle flashes; the loader checks whole pages, `pixies_load` rounds the limit up): loaded at start from the file `PIXIES` (complete image incl. blank guards) straight into this area. Frame bases in `frames.inc` are absolute character numbers. HUD glyphs at `HUD_GLYPH + 2k`, rebuilt at run time |
 | `$4F800–$4FFFF` | 2 KB | Stage 8: destroyed landscape tiles 32–47 (char `$13E0`+, from `LnDEST`) |
 | `$50000–$53FFF` | 16 KB | load buffer while loading (Stage 8: then `LnDAT` ≤ 10 KB at `$50000–$527FF`, `PIXIES2` at `$52800`): first `SHOP` (glyphs → `$44000`), `MUSIC` (→ `$5E000`) (`PIXIES` goes straight to `$46800`), then `LnGFX` (glyphs → `$40000`, palettes → bank 0), then `LnDEST` (destroyed tiles → `$5E000` / `$4F800`), then `LnDAT` (map, events, formations, paths, ground-target tables), which stays here for the whole level (Stage 18b, level format 3: 16-bit row list, up to 512 different rows; L1DAT 9,632 and L2DAT 9,760 of 10,240 bytes) |
 | `$52800–$53EBF` | 5.7 KB | Stage 8: heavy-gun glyphs (file `PIXIES2`, 91 of 96 glyphs, char `$14A0`+; frame bases are absolute) |
@@ -64,6 +64,7 @@ not in the zero page.
 | `$5E000–$5EFFF` | 4 KB | Stage 8: destroyed landscape tiles 0–31 (char `$1780`+, from `LnDEST`) |
 | `$5F000–$5FBFF` | | player sprites, 6 frame pairs (left/right half 256 bytes each) |
 | `$5FC00–$5FEFF` | | invulnerability ring, sprites 2–4 (256 bytes each, `special.asm`; Stage 16: loaded with the file `SPRITES`) |
+| `$5FF00–$5FFFF` | | Stage 19: drone, sprite 5 (256 bytes, 16×24; file `SPRITES` after the ring) |
 | `$5DB00–$5DDFF` | 768 | Stage 13: BASIC's palette 0, saved at start, restored at exit (`SAVED_PAL0`; was 768 bytes in bank 0) |
 | `$5DE00–$5DEFF` | 256 | Stage 13: BASIC's zero page, saved/restored by DMA (`SAVED_ZP`; was 256 bytes in bank 0) |
 | `$5DF00–$5DFFF` | 256 | Stage 16: the game's zero page during a KERNAL session (high-score save, `SAVED_GZP`) |
@@ -120,7 +121,7 @@ While the shop is open (Stage 3b), banks 13–15 hold the shop palettes (normal,
 exist then. They are restored from the game palette when the shop closes.
 
 All 16 banks are in use. Further object types must share a bank; the importer merges and, if needed,
-reduces colours (`merge_bank`). Sprite palette (set 1) entries `$00–$1F`: player (sprites 0 and 1); `$20–$4F`: invulnerability ring (sprites 2–4), indices 1–6 rotated at run time.
+reduces colours (`merge_bank`). Sprite palette (set 1) entries `$00–$1F`: player (sprites 0 and 1); `$20–$4F`: invulnerability ring (sprites 2–4), indices 1–6 rotated at run time; `$50–$58`: drone (sprite 5, Stage 19, `dronepal.bin`, set by `palette_init`).
 
 ## Coastal-base level (default since Stage 3b)
 

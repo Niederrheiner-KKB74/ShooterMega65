@@ -42,7 +42,7 @@ player_init:
     sta VIC_SPRPTR+1
     lda #$80                    // table in bank 0, 16-bit pointers
     sta VIC_SPRPTR+2
-    lda #%00011111              // sprites 0-1 plane, 2-4 invulnerability ring (special.asm)
+    lda #%00111111              // sprites 0-1 plane, 2-4 invulnerability ring (special.asm), 5 drone (Stage 19)
     sta VIC_SPR16EN             // 16 colours (16 px wide, 8 bytes per row)
     sta VIC_SPRHGTEN
     lda #PL_H
@@ -58,6 +58,11 @@ player_init:
     sta VIC_SPR0COL+2
     sta VIC_SPR0COL+3
     sta VIC_SPR0COL+4
+    sta VIC_SPR0COL+5
+    lda #<DRONE_PTR             // drone sprite pointer (fixed)
+    sta SPRPTR_TABLE+10
+    lda #>DRONE_PTR
+    sta SPRPTR_TABLE+11
     ldx #5                      // ring sprite pointers (fixed)
 !:  lda ring_ptr_tab,x
     sta SPRPTR_TABLE+4,x
@@ -268,6 +273,8 @@ player_damage:
     rts
 
 player_destroyed:
+    lda #0                      // Stage 19: the drone is lost with the plane
+    sta has_drone
     lda #SFX_PLAYER_DEAD
     jsr sfx_play
     dec pl_lives
@@ -338,7 +345,10 @@ player_update_sprites:
 !plane:
     lda #%00000011
 !en:
-    sta VIC_SPREN
+    ldy has_drone               // Stage 19: the drone (sprite 5)
+    beq !+
+    ora #%00100000
+!:  sta VIC_SPREN
     // x: sprite n at pl_x + spr_xofs[n], bit n of $d010 = bit 8
     lda #0
     sta tmp
@@ -362,6 +372,20 @@ player_update_sprites:
     sta VIC_SPR0Y,y
     dex
     bpl !-
+    clc                         // Stage 19: drone sprite at its centre (drone_update) - (8, 12)
+    lda dr_cx
+    adc #SPR_XOFS - 8
+    sta VIC_SPR0X+10
+    lda dr_cx+1
+    adc #0
+    beq !+
+    lda tmp
+    ora #%00100000
+    sta tmp
+!:  clc
+    lda dr_cy
+    adc #SPR_YOFS - 12
+    sta VIC_SPR0Y+10
     lda tmp
     sta VIC_SPRXMSB
     // all six frame pairs are resident at SPRITE_ADDR: only the pointers change

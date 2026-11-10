@@ -10,6 +10,7 @@ example level (level-example.json + terrain.ncm.bin). Writes into build/gen/:
   PIXIES         all pixie frames, column stacks with blank guards (+ HUD glyph area): file for the D81
   sprite.bin     6 player frame pairs, 512 bytes each (2 x 192 + padding)
   ring.bin       invulnerability ring, 3 sprites x 256 bytes (48x24, colour indices 1-6)
+  drone.bin      drone (Stage 19), 1 sprite x 256 bytes (16x24); dronepal.bin its 16 colours
   palette.bin    text palette 0 (R/G/B planes, nibble-swapped), sprpal.bin sprite palette
   hud.bin        HUD source data: 10 digit half-glyphs (32 bytes), lives glyph template (64 bytes),
                  credits box (192 bytes), shield box template (256 bytes), bombs/invulnerability box (192 bytes)
@@ -82,7 +83,8 @@ AIR_FRAMES = 3
 VIEWS = ROOT / 'assets/art/enemy-views/generated'
 VIEW_DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest']
 VIEW_BANK = ['straight', 'left', 'right']
-PIXIE_MAX = 576              # pixie glyph area $46800-$4F7FF (src/layout.asm); the last 32 glyphs ($4F800-$4FFFF)
+PIXIE_MAX = 574              # pixie glyph area $46880-$4F7FF (src/layout.asm; Stage 19: was $46800, 576 - the shop needs
+                             # 162 glyphs for the drone item); the last 32 glyphs ($4F800-$4FFFF)
                              # hold destroyed landscape tiles (Stage 8, build_level.py)
 PLAYER_STRAIGHT = 0          # straight flight cycles frames 0-2; 3 = left, 5 = right
 ANIM_MIN_SHARED = 0.6        # report frame sets whose consecutive frames share less than this
@@ -93,7 +95,7 @@ PIXIE2_ADDR = 0x52800        # second pixie area (Stage 8): heavy gun, file PIXI
 PIXIE2_MAX = 96
 PIXIE3_ADDR = 0x55200        # third pixie area (Stage 15): diagonal enemy shots, file PIXIES3, behind screen buffer A
 PIXIE3_MAX = 24              # $55200-$557FF (src/layout.asm; Stage 16: BASIC's screen saved at $55800)
-PIXIE_ADDR = 0x46800
+PIXIE_ADDR = 0x46880          # Stage 19: was $46800 (two more shop glyphs)
 CAPSULE_FRAMES = [('CAP_S', 'capsule_S'), ('CAP_D1', 'capsule_dollar_small'),
                   ('CAP_D2', 'capsule_dollar_medium'), ('CAP_D3', 'capsule_dollar_large')]
 
@@ -676,6 +678,31 @@ def main(out):
         part = ring[:, k * 16:k * 16 + 16].reshape(-1)
         rb += bytes((int(part[i]) << 4) | int(part[i + 1]) for i in range(0, len(part), 2)) + bytes(64)
     (out / 'ring.bin').write_bytes(rb)
+    # drone (Stage 19, owner's idea): a small satellite orbiting the plane, sprite 5 (16x24 canvas, image centred),
+    # its own colours at sprite palette 1 entries $50-$58 (dronepal.bin, R/G/B planes of 9)
+    dr = np.zeros((24, 16), np.uint8)
+    for y in range(9, 15):                                  # solar panels left and right, with a grid
+        for x in list(range(0, 4)) + list(range(12, 16)):
+            dr[y, x] = 1 if (y in (9, 14) or x in (0, 3, 12, 15)) else (8 if (x + y) % 3 else 7)
+    dr[11:13, 4:6] = 3                                      # arms
+    dr[11:13, 10:12] = 3
+    for y in range(24):                                     # sphere body, lit from the top left
+        for x in range(16):
+            dx, dy = x - 7.5, y - 11.5
+            r = math.hypot(dx, dy)
+            if r < 4.3:
+                lit = (-dx - dy) / 4.3
+                dr[y, x] = 4 if lit > 0.5 else 3 if lit > -0.2 else 2
+            elif r < 5.3 and dr[y, x] == 0:
+                dr[y, x] = 1
+    dr[11:13, 7:9] = 5                                      # glowing core
+    dr[11, 7] = 6
+    part = dr.reshape(-1)
+    (out / 'drone.bin').write_bytes(bytes((int(part[i]) << 4) | int(part[i + 1]) for i in range(0, len(part), 2))
+                                    + bytes(64))
+    dpal = [(0, 0, 0), (16, 20, 30), (64, 76, 96), (124, 140, 162), (205, 215, 230), (90, 220, 255),
+            (225, 250, 255), (36, 80, 180), (80, 130, 230)]
+    (out / 'dronepal.bin').write_bytes(bytes(ph.swap(c[ch]) for ch in range(3) for c in dpal))
 
     # ------------------------------------------------------------ constants
     names = {t['name']: i for i, t in enumerate(table)}

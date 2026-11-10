@@ -30,7 +30,7 @@ import make_assets as ph  # noqa: E402
 
 # ------------------------------------------------------------------ items (single source)
 # code: 1-3 shot level 2-4, 4 missile, 5 shield (invulnerability), 6 bomb, 7 extra life, 8 exit,
-#       9 second missile (Stage 16: two homing missiles in flight at once; after MISSILE)
+#       9 second missile (Stage 16: two homing missiles in flight at once; after MISSILE), 10 drone (Stage 19)
 ITEMS = {                        # cell: (name, price, code, icon)
     0: ('SHOT II', 100, 1, 'shot2'),
     1: ('SHOT III', 200, 2, 'shot3'),
@@ -38,8 +38,9 @@ ITEMS = {                        # cell: (name, price, code, icon)
     3: ('MISSILE', 250, 4, 'missile'),
     4: ('SHIELD', 150, 5, 'shield'),
     5: ('BOMB', 200, 6, 'bomb'),
-    6: ('EXTRA LIFE', 300, 7, 'life'),
+    6: ('LIFE', 300, 7, 'life'),            # Stage 19: was EXTRA LIFE (shop glyphs for the drone)
     7: ('MISSILE', 400, 9, 'missile2'),     # 'MISSILE II' would need 6 more glyphs (160 reserved)
+    8: ('DRONE', 300, 10, 'drone'),         # Stage 19: a satellite orbiting the plane, until a life is lost
     15: ('EXIT', 0, 8, 'exit'),
 }
 
@@ -163,6 +164,10 @@ def shape(rows, mapping):
 
 
 ICONS = {
+    'drone': ['................', '................', '................', '................',     # rows 4-11: one
+              '......dddd......', 'dddd.dWWccd.dddd', 'dbbd.dWcccd.dbbd', 'dbbdcdcyycdcdbbd',     # glyph row (y 16-23)
+              'dbbdcdccccdcdbbd', 'dbbd.dccccd.dbbd', 'dddd.dcccdd.dddd', '......dddd......',
+              '................', '................', '................', '................'],
     'bullet': ['.c.', 'cdc', 'cdc', 'cdc', '.c.', '.y.'],
     'missile': ['.......r........', '......rrr.......', '......ggg.......', '......gWg.......',
                 '......ggg.......', '......ggg.......', '......ggg.......', '.....dgggd......',
@@ -185,7 +190,7 @@ ICONS = {
              '.....ggggg......', '.....ggggg......', '.....ggggg......', '................',
              '...WWWWWWWWWW...', '................', '................', '................'],
 }
-ICON_MAP = {'c': 14, 'd': 2, 'y': 11, 'r': 9, 'g': 14, 'W': 5, 'o': 10, 'G': 12}   # placeholders
+ICON_MAP = {'c': 14, 'd': 2, 'y': 11, 'r': 9, 'g': 14, 'W': 5, 'o': 10, 'G': 12, 'b': 13}   # placeholders
 # Shop icons from PR #9 are drawn in the HUD palette (bank 12); their colours map to shop palette indices.
 # HUD 0 (transparent) -> cell interior, 2 (white) -> text white, 4 (backdrop) -> outline black.
 ICON_ART = ROOT / 'assets/art/shop-upgrades/generated/indexed-source.json'

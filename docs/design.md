@@ -330,6 +330,7 @@ so `RUN` works again after an exit.
 | 08.11.2026 | Previews for levels 1 and 2 accepted ("großartig"); owner chose option 1 (raise the row limit) and irregular forest outlines: Stage 18b, level format 3 (512 rows) |
 | 10.11.2026 | Stage 18b: new level designs "sehr gut". Fixes (Stage 18c): tanks on tree tops, animated sea in a level-3 island, no sound effects after Game Over / the last level |
 | 10.11.2026 | Stage 18c confirmed on hardware (tanks only in open ground, island without animated hole, sound effects after Game Over and after the last level); Stage 18b checklist (and with it Stage 18) confirmed too. Ready for the tag |
+| 10.11.2026 | Stage 19: Shot IV as four thin bolts; drone (owner chose: catches shots and rams planes, until a life is lost, $300) |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
@@ -714,6 +715,22 @@ Requests while the plane is destroyed or inside the shop are dropped.
   Cause: the highscore disk session (`kernal_enter`) calls `sound_off`, which also clears the volume of the effects
   SIDs; music sets its volume with every piece, the effects only once at program start (`sound_init`). Now
   `kernal_leave` calls `sfx_volume` (Stage 16 bug, since the highscore table).
+
+## 22k. Shot IV, drone (Stage 19)
+- Owner: Shot IV (a thick bar) looked strange next to levels 1-3. Now four thin bolts like the shop icon, the middle
+  two 3 px further forward (`PSHOT4`, 16x16, `import_art.py`); damage unchanged (8).
+- Owner's idea, decided by the owner: a drone that orbits the plane and catches enemy shots, rams enemy planes,
+  lasts until a life is lost, $300 (shop cell 8, code 10, `has_drone`). `drone_update` (special.asm, after
+  `collide_player`): circle of 25 px around the plane's centre, 32 steps, one every 2 frames (1.3 s per turn);
+  the collision scan of `collide_player` became `cp_scan` with a point and half sizes (`cp_hw/cp_hh`) and a mode:
+  for the drone (half size 6) enemy shots vanish, enemy planes lose `DRONE_DMG` 4 hit points at most every 8
+  frames (`kill_obj` with points when destroyed); bosses, guns and tanks are not touched. Drawn as hardware
+  sprite 5 (16 colours, 16x24, `DRONE_ADDR` `$5FF00` after the ring in the file `SPRITES`, colours at sprite
+  palette 1 `$50-$58`). `player_destroyed` clears `has_drone`; test switch `DRONE_TEST`.
+- Room: the shop panel needed 162 glyphs (160 reserved; "EXTRA LIFE" became "LIFE", saving 4): the pixie area
+  moved up 2 glyphs (`$46880`, max. 574, 573 used); bank 4 is now full. The program grew to `$AE2D`: the music
+  data moved from `$AE00` to `$AE40` (4,519 of 4,544 bytes; no page alignment needed - the level slot was never
+  aligned). Little room is left in bank 0: further code needs a new overlay or a smaller music file.
 
 ## 23. Open questions for the owner
 1. Should the scroll speed change per level or section, for example a faster section before the boss?

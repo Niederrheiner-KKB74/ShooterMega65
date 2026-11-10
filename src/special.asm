@@ -78,6 +78,86 @@ special_update:
 !done:
     rts
 
+// ---------------------------------------------------------------- drone (Stage 19)
+// The drone circles the plane's centre at 25 px (32 steps, one every 2 frames: 1.3 s per turn).
+// Enemy shots that touch it vanish, enemy planes take DRONE_DMG every 8 frames (cp_scan, objects.asm). It stays
+// until the plane is destroyed (player_destroyed). Drawn as sprite 5 (player_update_sprites).
+// DRONE_DMG, DRONE_HW: layout.asm (objects.asm needs them first)
+dr_rts:
+    rts
+drone_update:
+    lda has_drone
+    beq dr_rts
+    lda pl_state
+    bne dr_rts
+    inc dr_ang
+    lda dr_ang
+    lsr
+    and #31
+    tay
+    lda dr_sin+8,y              // cos
+    sta dr_dx
+    lda dr_sin,y
+    sta dr_dy
+    lda dr_cd
+    beq !+
+    dec dr_cd
+!:  ldy #0                      // centre: plane centre + (dr_dx, dr_dy), 16 bit
+    lda dr_dx
+    bpl !+
+    dey
+!:  clc
+    lda pl_x
+    adc #PL_HIT_CX
+    sta pc_x
+    lda pl_x+1
+    adc #0
+    sta pc_x+1
+    clc
+    lda pc_x
+    adc dr_dx
+    sta pc_x
+    tya
+    adc pc_x+1
+    sta pc_x+1
+    ldy #0
+    lda dr_dy
+    bpl !+
+    dey
+!:  clc
+    lda pl_y
+    adc #PL_HIT_CY
+    sta pc_y
+    lda #0
+    adc #0
+    sta pc_y+1
+    clc
+    lda pc_y
+    adc dr_dy
+    sta pc_y
+    tya
+    adc pc_y+1
+    sta pc_y+1
+    lda pc_x                    // the sprite follows this centre (player_update_sprites)
+    sta dr_cx
+    lda pc_x+1
+    sta dr_cx+1
+    lda pc_y
+    sta dr_cy
+    lda #DRONE_HW
+    sta cp_hw
+    sta cp_hh
+    lda #1
+    sta cp_mode
+    jmp cp_scan
+dr_ang: .byte 0
+dr_dx:  .byte 0
+dr_dy:  .byte 0
+dr_cd:  .byte 0
+dr_cx:  .word 0
+dr_cy:  .byte 0
+dr_sin: .fill 40, round(25 * sin(toRadians(i * 360 / 32)))     // 32 steps + 8 for the cosine
+
 special_reset_reqs:
     lda #0
     sta special_req

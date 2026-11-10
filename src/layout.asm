@@ -15,7 +15,7 @@
 
 // Chip RAM
 .const TILE_ADDR    = $040000            // landscape NCM glyphs  -> char $1000+ (max. 512 glyphs, $40000-$47FFF)
-.const PIXIE_ADDR   = $046800            // pixie NCM glyphs      -> char $11A0+ (max. 608 glyphs, $46800-$4FFFF)
+.const PIXIE_ADDR   = $046880            // pixie NCM glyphs      -> char $11A2+ (Stage 19: was $46800; the shop needs 162 glyphs)
                                          // (directly behind the 160 glyphs reserved for the shop at $44000)
 .const SCREEN_A     = $054000            // RRB screen buffer A (27 x 170 bytes)
 .const SCREEN_B     = $056000            // RRB screen buffer B
@@ -30,6 +30,10 @@
 .const SPRITE_ADDR  = $05f000            // player sprites (256 bytes each)
 .const RING_ADDR    = $05fc00            // invulnerability ring, sprites 2-4 (256 bytes each)
 .const RING_PTR     = RING_ADDR / 64
+.const DRONE_ADDR   = $05ff00            // Stage 19: drone, sprite 5 (256 bytes, file SPRITES after the ring)
+.const DRONE_PTR    = DRONE_ADDR / 64
+.const DRONE_DMG    = 4                  // damage to an enemy plane the drone touches (every 8 frames at most)
+.const DRONE_HW     = 6                  // half size of the drone's hit box
 
 // Special weapons (special.asm)
 .const INV_LONG     = 500                // bought invulnerability: 10 s
@@ -50,8 +54,8 @@
 .const COLOUR_B     = $2400
 
 .const TILE_CHAR    = TILE_ADDR / 64     // $1000
-.const PIXIE_CHAR   = PIXIE_ADDR / 64    // $11A0 (frame bases in frames.inc are absolute character numbers)
-.const PIXIE_MAX    = ($04F800 - PIXIE_ADDR) / 64   // 576 (Stage 8: $4F800-$4FFFF holds destroyed landscape tiles)
+.const PIXIE_CHAR   = PIXIE_ADDR / 64    // $11A2 (frame bases in frames.inc are absolute character numbers)
+.const PIXIE_MAX    = ($04F800 - PIXIE_ADDR) / 64   // 574 (Stage 8: $4F800-$4FFFF holds destroyed landscape tiles)
 .const SPRITE_PTR0  = SPRITE_ADDR / 64
 .const SPRITE_PTR1  = (SPRITE_ADDR + $100) / 64
 
