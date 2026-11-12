@@ -331,6 +331,7 @@ so `RUN` works again after an exit.
 | 10.11.2026 | Stage 18b: new level designs "sehr gut". Fixes (Stage 18c): tanks on tree tops, animated sea in a level-3 island, no sound effects after Game Over / the last level |
 | 10.11.2026 | Stage 18c confirmed on hardware (tanks only in open ground, island without animated hole, sound effects after Game Over and after the last level); Stage 18b checklist (and with it Stage 18) confirmed too. Ready for the tag |
 | 10.11.2026 | Stage 19: Shot IV as four thin bolts; drone (owner chose: catches shots and rams planes, until a life is lost, $300) |
+| 12.11.2026 | Stage 19 confirmed on hardware by the owner (drone, Shot IV, shop, moved pixie and music data). Ready for the tag |
 | 04.11.2026 | Owner: the turn still looks wrong (diagonal view had to be 85 % size). Decision: replace the land cruiser by a hover tank that glides in every direction, with flame thrower and dust effects (`docs/chatgpt_level2d.md`) |
 | 04.11.2026 | Stage 9 confirmed on hardware; land cruiser turns look abrupt: intermediate diagonal view and dust requested from ChatGPT (`docs/chatgpt_level2c.md`) |
 | 01.11.2026 | Shop: "ENTERING SHOP" 3 s (fire skips), 4×4 grid with thick outer and thin cell frames, 16×16 icon, name above, price below; blinking cursor only on cells that can be bought; "PURCHASE ITEM?" Y/N; unaffordable items dimmed; shot levels in order; items SHOT II–IV, MISSILE, SHIELD (10 s invulnerability), BOMB; HUD shows bombs and invulnerability counts |
