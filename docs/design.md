@@ -1,11 +1,13 @@
 # ShooterMega65 – Technical Design
 
-Status: Stage 2 confirmed on real hardware by the owner on 01.11.2026 (`stage2-stable`). Stage 3 (branch `stage3`)
-in progress: capsule/weapon rules, level files (research: `docs/level_format.md`, JSON format for level design:
-`docs/level_json.md`).
-Items marked **(decision)** need the
-project owner's confirmation. Items marked **(HW)** have to be checked on real
-MEGA65 hardware, because XEMU is not authoritative for them (see Vyper rule 19).
+Status (12.11.2026): **the game is finished.** Stage 19 is the final version, confirmed on real hardware by the
+owner and merged into `main`; the stages and their decisions are listed in §14, the details in §15-§22k and the
+`docs/stageN.md` files. Shooter65 has four levels with their own bosses (the last one in three phases), a shop
+with weapon levels, missiles, shield, bombs, lives and a drone, a high-score list on disk and music by Claude.
+JSON format for level design: `docs/level_json.md`; memory: `docs/memory_map.md`.
+The sections below grew with the stages: where an early section and a later one differ, the later one is right.
+Items marked **(HW)** have to be checked on real MEGA65 hardware, because XEMU is not authoritative for them
+(see Vyper rule 19).
 
 ## 1. Game summary
 
@@ -125,8 +127,7 @@ are unchanged. See `docs/stage1-aircraft.md` for validation and remaining tests.
   are copied once to `$5F000–$5FBFF`. Changing the frame only rewrites the two 16-bit sprite
   pointers in the vertical blank, so no DMA is needed during play.
 - While invulnerable after a hit the sprites blink (enable register toggled every 4 frames).
-- Sprites 2–7 are free. Candidates **(decision)**: the player's shadow, option drones, a HUD part, or boss turrets
-  that must sit above everything.
+- Sprites 2–4: the invulnerability ring (Stage 4), sprite 5: the drone (Stage 19), sprites 6–7 are free.
 
 ## 6. Objects, collisions, gameplay
 
@@ -242,6 +243,8 @@ Original plan:
 Vyper's stage files are not copied wholesale, because they carry their full history of fixed addresses.
 
 ## 12. Roadmap
+The original plan below is completed; the real order of the stages (1 to 19) is in the decisions log (§14).
+
 
 | Stage | Content | Acceptance |
 |---|---|---|
@@ -361,11 +364,13 @@ so `RUN` works again after an exit.
 | Cell | Item | Price | Effect now |
 |---|---|---|---|
 | 0–2 | SHOT II / III / IV | 100 / 200 / 400 | weapon level 2–4 = damage per shot |
-| 3 | MISSILE | 250 | flag `has_missile` (homing missile: later stage) |
-| 4 | SHIELD | 150 | `inv_count` + 1, HUD (activation, 10 s invulnerability with shimmering frame: later stage) |
-| 5 | BOMB | 200 | `bomb_count` + 1, HUD (activation, destroys all enemies on screen: later stage) |
-| 6 | EXTRA LIFE | 300 | one more life |
-| 7–14 | – | | empty, kept for later items |
+| 3 | MISSILE | 250 | homing missile (Stage 4) |
+| 4 | SHIELD | 150 | `inv_count` + 1: 10 s invulnerability with the shimmering ring (key S, Stage 4) |
+| 5 | BOMB | 200 | `bomb_count` + 1: destroys all enemies on screen (space, Stage 4) |
+| 6 | LIFE | 300 | one more life (called EXTRA LIFE until Stage 19) |
+| 7 | MISSILE | 400 | second missile: two in flight (Stage 16) |
+| 8 | DRONE | 300 | the drone until a life is lost (Stage 19) |
+| 9–14 | – | | empty |
 | 15 | EXIT | | leave the shop |
 
 The HUD has a fourth box (48 px, x = 168) with a bomb icon + count and an invulnerability icon + count;
@@ -441,7 +446,7 @@ Requests while the plane is destroyed or inside the shop are dropped.
 - Both files are kept in attic RAM (`$8000000`, `$8010000`, all MEGA65 from R3 on) and copied in when needed.
   Without attic RAM (detected at start) the title is loaded straight to `$56000` and shown once; game over is then
   a small "GAME OVER" box in the shop style and a new game starts directly.
-- High score: kept in memory while the program runs (not saved to disk yet).
+- High score: since Stage 16 a list of 10 names saved on the disk (§22c).
 - New game (`game_new`): all RRB rows, scroll, level events, objects, boss, shop items, HUD, player, level music.
 
 ## 20. Ground targets (Stage 8, `ground.asm`, artwork PR #15)
@@ -734,10 +739,13 @@ Requests while the plane is destroyed or inside the shop are dropped.
   aligned). Little room is left in bank 0: further code needs a new overlay or a smaller music file.
 
 ## 23. Open questions for the owner
-1. Should the scroll speed change per level or section, for example a faster section before the boss?
-3. How many levels, with which themes (for example countryside, desert, coast/sea, city, fortress)?
-4. Should the high score be saved on the disk (with initials)?
-5. Are the damage values and points in §6 a good starting point?
+None. The early questions are decided: the scroll speed stays 0.5 px/frame in every level (stops only for the
+bosses); four levels (coast and forest, desert and refinery, sea, city); the high scores are saved on the disk with
+names (Stage 16); damage values and points were tuned with the owner in Stages 7b-8c, 13b and 14g.
+
+## Notes from the artwork pull requests
+The sections below come from the ChatGPT artwork pull requests (Stages 3-9). Their art was later partly redrawn
+by Claude (§22b, §22e-§22i); the sections are kept as the record of what those PRs delivered.
 
 ## Coastal-base level ("Operation Küstenwald", PR #8)
 
